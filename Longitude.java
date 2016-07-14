@@ -17,25 +17,53 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
+package org.jenetics.example.tsp.gpx;
+
+import static java.lang.String.format;
+
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
+public class Longitude implements Serializable {
 
-@XmlSchema(
-	namespace = "http://www.topografix.com/GPX/1/1",
-	elementFormDefault = XmlNsForm.UNQUALIFIED,
-	xmlns = {
-		@XmlNs(
-			namespaceURI = "http://www.topografix.com/GPX/1/1",
-			prefix = ""
-		)
+	private static final long serialVersionUID = 1L;
+
+	private final double _value;
+
+	private Longitude(final double value) {
+		if (value < -90 || value > 90) {
+			throw new IllegalArgumentException(format("%f is not in range [-90, 90].", value));
+		}
+		_value = value;
 	}
-)
-package org.jenetics.example.tsp.gpx;
 
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+	public double getValue() {
+		return _value;
+	}
+
+	@Override
+	public int hashCode() {
+		return Double.hashCode(_value);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return obj instanceof Longitude &&
+			Double.compare(((Longitude)obj)._value, _value) == 0;
+	}
+
+	@Override
+	public String toString() {
+		return Double.toString(_value);
+	}
+
+
+	public static Longitude of(final double value) {
+		return new Longitude(value);
+	}
+
+}

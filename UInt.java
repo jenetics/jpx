@@ -17,25 +17,53 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
+package org.jenetics.example.tsp.gpx;
+
+import static java.lang.String.format;
+
+import java.io.Serializable;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
+public final class UInt implements Serializable {
 
-@XmlSchema(
-	namespace = "http://www.topografix.com/GPX/1/1",
-	elementFormDefault = XmlNsForm.UNQUALIFIED,
-	xmlns = {
-		@XmlNs(
-			namespaceURI = "http://www.topografix.com/GPX/1/1",
-			prefix = ""
-		)
+	private static final long serialVersionUID = 1L;
+
+	private final int _value;
+
+	private UInt(final int value) {
+		if (value < 0) {
+			throw new IllegalArgumentException(format("%d is negative.", value));
+		}
+		_value = value;
 	}
-)
-package org.jenetics.example.tsp.gpx;
 
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+	public int getValue() {
+		return _value;
+	}
+
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(_value);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return obj instanceof UInt &&
+			((UInt)obj)._value == _value;
+	}
+
+	@Override
+	public String toString() {
+		return Integer.toString(_value);
+	}
+
+
+	public static UInt of(final int value) {
+		return new UInt(value);
+	}
+
+}

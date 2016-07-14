@@ -17,25 +17,42 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
+package org.jenetics.example.tsp.gpx;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
+public enum Fix {
 
-@XmlSchema(
-	namespace = "http://www.topografix.com/GPX/1/1",
-	elementFormDefault = XmlNsForm.UNQUALIFIED,
-	xmlns = {
-		@XmlNs(
-			namespaceURI = "http://www.topografix.com/GPX/1/1",
-			prefix = ""
-		)
+	NONE("none"),
+	DIM_2("2d"),
+	DIM_3("3d"),
+	DGPS("dgps"),
+	PPS("pps");
+
+	private final String _value;
+
+	private Fix(final String value) {
+		_value = requireNonNull(value);
 	}
-)
-package org.jenetics.example.tsp.gpx;
 
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+	public String getValue() {
+		return _value;
+	}
+
+	public static Fix of(final String value) {
+		switch (value) {
+			case "none": return Fix.NONE;
+			case "2d": return Fix.DIM_2;
+			case "3d": return Fix.DIM_3;
+			case "dgps": return Fix.DGPS;
+			case "pps": return Fix.PPS;
+			default: throw new IllegalArgumentException(value);
+		}
+	}
+
+}

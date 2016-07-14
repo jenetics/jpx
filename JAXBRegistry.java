@@ -17,25 +17,24 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
+package org.jenetics.example.tsp.gpx;
+
+import org.jenetics.internal.util.require;
+
+import org.jenetics.util.ISeq;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
+final class JAXBRegistry {
+	private JAXBRegistry() {require.noInstance();}
 
-@XmlSchema(
-	namespace = "http://www.topografix.com/GPX/1/1",
-	elementFormDefault = XmlNsForm.UNQUALIFIED,
-	xmlns = {
-		@XmlNs(
-			namespaceURI = "http://www.topografix.com/GPX/1/1",
-			prefix = ""
-		)
-	}
-)
-package org.jenetics.example.tsp.gpx;
-
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;
+	/**
+	 * The JAXB classes of this package.
+	 */
+	public static final ISeq<Class<?>> CLASSES = ISeq.of(
+		Link.Model.class
+	);
+}
