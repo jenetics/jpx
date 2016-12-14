@@ -34,7 +34,7 @@
 		)
 	}
 )
-package org.jenetics.example.tsp.gpx;
+package jpx;
 
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;

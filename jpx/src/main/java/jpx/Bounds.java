@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
-package org.jenetics.example.tsp.gpx;
+package jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
