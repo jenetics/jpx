@@ -35,6 +35,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Represents a link to an external resource (Web page, digital photo, video
@@ -182,6 +185,56 @@ public final class Link implements Serializable {
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e);
 		}
+	}
+
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		writer.writeStartElement("link");
+		writer.writeAttribute("href", getHref().toString());
+		if (_text != null) {
+			writer.writeStartElement("text");
+			writer.writeCharacters(_text);
+			writer.writeEndElement();
+		}
+		if (_type != null) {
+			writer.writeStartElement("type");
+			writer.writeCharacters(_type);
+			writer.writeEndElement();
+		}
+		writer.writeEndElement();
+	}
+
+	static Link read(final XMLStreamReader reader) throws XMLStreamException {
+		final String href = reader.getAttributeValue(null, "href");
+		String text = null;
+		String type = null;
+
+		while (reader.hasNext()) {
+			switch (reader.next()) {
+				case XMLStreamReader.START_ELEMENT:
+					final String elementName = reader.getLocalName();
+					if ("text".equals(elementName)) {
+						text = XML.readString(reader);
+					} else if ("type".equals(elementName)) {
+						type = XML.readString(reader);
+					}
+					break;
+				case XMLStreamReader.END_ELEMENT:
+					return Link.of(href, text, type);
+			}
+		}
+
+		throw new XMLStreamException("Premature end of file");
 	}
 
 
