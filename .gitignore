@@ -32,3 +32,4 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 .idea
+build

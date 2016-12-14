@@ -272,6 +272,11 @@ public final class GPX implements Serializable {
 	}
 
 
+
+	/* *************************************************************************
+	 *  Load GPX from file.
+	 * ************************************************************************/
+
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
