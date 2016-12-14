@@ -1,0 +1,64 @@
+/*
+ * Java Genetic Algorithm Library (@__identifier__@).
+ * Copyright (c) @__year__@ Franz Wilhelmstötter
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Author:
+ *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
+ */
+
+
+/**
+ * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @since 1.2
+ * @version 1.5
+ */
+
+import java.text.SimpleDateFormat
+
+ext {
+	javaVersion = '1.8'
+
+	now = Calendar.getInstance()
+	year = now.get(Calendar.YEAR);
+	copyrightYear = "2016-${year}".toString()
+	identifier = "${rootProject.name}-${version}".toString()
+	dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+}
+
+allprojects {
+	group = 'io.jenetics'
+	version = '0.1'
+
+	repositories {
+		flatDir(dir: "${rootDir}/buildSrc/lib")
+		mavenCentral()
+	}
+}
+
+subprojects { Project prj ->
+	//prj.plugins.apply(SetupPlugin.class)
+}
+
+allprojects { Project prj ->
+	if (prj.plugins.hasPlugin('java')) {
+		sourceCompatibility = javaVersion
+		targetCompatibility = javaVersion
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.11'
+}
+
