@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.DataBindingException;
 import javax.xml.bind.JAXBContext;
@@ -226,13 +227,13 @@ public final class GPX implements Serializable {
 		public Metadata metadata;
 
 		@XmlElement(name = "wpt", nillable = true)
-		public List<WayPoint> wayPoints;
+		public List<WayPoint.Model> wayPoints;
 
 		@XmlElement(name = "rte", nillable = true)
-		public List<Route> routes;
+		public List<Route.Model> routes;
 
 		@XmlElement(name = "trk", nillable = true)
-		public List<Track> tracks;
+		public List<Track.Model> tracks;
 
 		public static final class Adapter
 			extends XmlAdapter<Model, GPX>
@@ -243,9 +244,15 @@ public final class GPX implements Serializable {
 				model.version = gpx.getVersion();
 				model.creator = gpx._creator;
 				model.metadata = gpx._metadata;
-				model.wayPoints = gpx._wayPoints;
-				model.routes = gpx._routes;
-				model.tracks = gpx._tracks;
+				model.wayPoints = gpx._wayPoints.stream()
+					.map(WayPoint.Model.ADAPTER::marshal)
+					.collect(Collectors.toList());
+				model.routes = gpx._routes.stream()
+					.map(Route.Model.ADAPTER::marshal)
+					.collect(Collectors.toList());
+				model.tracks = gpx._tracks.stream()
+					.map(Track.Model.ADAPTER::marshal)
+					.collect(Collectors.toList());
 
 				return model;
 			}
@@ -256,13 +263,19 @@ public final class GPX implements Serializable {
 					model.creator,
 					model.metadata,
 					model.wayPoints != null
-						? model.wayPoints
+						? model.wayPoints.stream()
+							.map(WayPoint.Model.ADAPTER::unmarshal)
+							.collect(Collectors.toList())
 						: emptyList(),
 					model.routes != null
-						? model.routes
+						? model.routes.stream()
+							.map(Route.Model.ADAPTER::unmarshal)
+							.collect(Collectors.toList())
 						: emptyList(),
 					model.tracks != null
-						? model.tracks
+						? model.tracks.stream()
+							.map(Track.Model.ADAPTER::unmarshal)
+							.collect(Collectors.toList())
 						: emptyList()
 				);
 			}

@@ -23,6 +23,9 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
+import jpx.Route.Model;
+import jpx.Route.Model.Adapter;
+
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
@@ -338,6 +341,9 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				);
 			}
 		}
+
+		static final Adapter ADAPTER = new Adapter();
+
 	}
 
 }

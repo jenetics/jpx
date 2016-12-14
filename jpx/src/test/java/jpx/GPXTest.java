@@ -35,6 +35,7 @@ public class GPXTest {
 	public void loadFromFile() throws IOException {
 		try (InputStream in = getClass().getResourceAsStream("/jpx/Gpx-full-sample.gpx")) {
 			final GPX gpx = GPX.read(in);
+			GPX.write(gpx, System.out);
 		}
 	}
 

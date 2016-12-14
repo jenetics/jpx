@@ -465,5 +465,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			}
 		}
 
+		final static Adapter ADAPTER = new Adapter();
+
 	}
 }

@@ -25,11 +25,11 @@
  */
 
 @XmlSchema(
-	namespace = "http://www.topografix.com/GPX/1/1",
+	namespace = "http://www.topografix.com/GPX/1/0",
 	elementFormDefault = XmlNsForm.UNQUALIFIED,
 	xmlns = {
 		@XmlNs(
-			namespaceURI = "http://www.topografix.com/GPX/1/1",
+			namespaceURI = "http://www.topografix.com/GPX/1/0",
 			prefix = ""
 		)
 	}

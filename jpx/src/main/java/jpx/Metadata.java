@@ -261,24 +261,26 @@ public final class Metadata implements Serializable {
 			@Override
 			public Model marshal(final Metadata metadata) {
 				final Model model = new Model();
-				model.name = metadata._name;
-				model.desc = metadata._description;
-				model.author = metadata.getAuthor()
-					.map(Person.Model.ADAPTER::marshal)
-					.orElse(null);
-				model.copyright = metadata.getCopyright()
-					.map(Copyright.Model.ADAPTER::marshal)
-					.orElse(null);
-				model.link = metadata.getLinks().stream()
-					.map(Link.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-				model.time = metadata.getTime()
-					.map(DTF::format)
-					.orElse(null);
-				model.keywords = metadata._keywords;
-				model.bounds = metadata.getBounds()
-					.map(Bounds.Model.ADAPTER::marshal)
-					.orElse(null);
+				if (metadata != null) {
+					model.name = metadata._name;
+					model.desc = metadata._description;
+					model.author = metadata.getAuthor()
+						.map(Person.Model.ADAPTER::marshal)
+						.orElse(null);
+					model.copyright = metadata.getCopyright()
+						.map(Copyright.Model.ADAPTER::marshal)
+						.orElse(null);
+					model.link = metadata.getLinks().stream()
+						.map(Link.Model.ADAPTER::marshal)
+						.collect(Collectors.toList());
+					model.time = metadata.getTime()
+						.map(DTF::format)
+						.orElse(null);
+					model.keywords = metadata._keywords;
+					model.bounds = metadata.getBounds()
+						.map(Bounds.Model.ADAPTER::marshal)
+						.orElse(null);
+				}
 
 				return model;
 			}
