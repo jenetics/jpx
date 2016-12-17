@@ -107,11 +107,11 @@ final class XMLWriter {
 		_writer.writeEndElement();
 	}
 
-	void elem(final String name, final String text) throws XMLStreamException {
+	void elem(final String name, final Object text) throws XMLStreamException {
 		requireNonNull(name);
 		if (text != null) {
 			_writer.writeStartElement(name);
-			_writer.writeCharacters(text);
+			_writer.writeCharacters(text.toString());
 			_writer.writeEndElement();
 		}
 	}

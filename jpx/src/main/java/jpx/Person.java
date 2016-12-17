@@ -173,8 +173,8 @@ public final class Person implements Serializable {
 
 		xml.elem("person",
 			() -> xml.elem("name", _name),
-			() -> _email.write(writer),
-			() -> _link.write(writer)
+			() -> { if (_email != null) _email.write(writer); },
+			() -> { if (_link != null) _link.write(writer); }
 		);
 	}
 

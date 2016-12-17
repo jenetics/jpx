@@ -21,6 +21,9 @@ package jpx;
 
 import static java.lang.String.format;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.time.Year;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -29,36 +32,31 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
 @Test
-public class PersonTest extends XMLStreamTestBase<Person> {
+public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 
 	@Override
-	protected Params<Person> params(final Random random) {
+	protected Params<Copyright> params(final Random random) {
 		return new Params<>(
-			() -> Person.of(
+			() -> Copyright.of(
+				format("author_%s", random.nextInt(100)),
 				random.nextBoolean()
-					? format("name_%s", random.nextInt(100))
+					? Year.of(random.nextInt(1000))
 					: null,
 				random.nextBoolean()
-					? Email.of(
-						format("id_%s", random.nextInt(100)),
-						format("domain_%s", random.nextInt(100))
-					)
-					: null,
-				random.nextBoolean()
-					? Link.of(
-						format("http://ink_%d", random.nextInt(100)),
-						random.nextBoolean()
-							? format("text_%s", random.nextInt(100))
-							: null,
-						random.nextBoolean()
-							? format("type_%s", random.nextInt(100))
-							: null
-					)
+					? uri(random)
 					: null
 			),
-			Person.reader(),
-			Person::write
+			Copyright.reader(),
+			Copyright::write
 		);
+	}
+
+	private static URI uri(final Random random) {
+		try {
+			return new URI(format("http://uri.com/%s", random.nextInt(100)));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }

@@ -20,6 +20,7 @@
 package jpx;
 
 import static java.util.Objects.requireNonNull;
+import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -36,6 +37,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Information about the copyright holder and any license governing use of this
@@ -225,6 +228,48 @@ public final class Copyright implements Serializable {
 	 */
 	public static Copyright of(final String author) {
 		return new Copyright(author, null, null);
+	}
+
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("copyright",
+			xml.attr("author", _author),
+			() -> xml.elem("year", _year),
+			() -> xml.elem("license", _license)
+		);
+	}
+
+	static XMLReader<Copyright> reader() {
+		return XMLReader.of(
+			a -> Copyright.of(
+				(String)a[0],
+				a[1] != null ? Year.of(Integer.parseInt((String)a[1])) : null,
+				uri((String)a[2])
+			),
+			"copyright", attr("author"),
+			XMLReader.of("year"),
+			XMLReader.of("license")
+		);
+	}
+
+	private static URI uri(final String uri) {
+		try {
+			return uri != null ? new URI(uri) : null;
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 
 	/* *************************************************************************
