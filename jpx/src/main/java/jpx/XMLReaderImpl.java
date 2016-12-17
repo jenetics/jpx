@@ -37,7 +37,7 @@ import javax.xml.stream.XMLStreamReader;
  * @version !__version__!
  * @since !__version__!
  */
-class XMLReader<T> {
+class XMLReaderImpl<T> {
 
 	interface Fun3< R> {
 		R apply(String t1, String t2, String t3);
@@ -58,20 +58,20 @@ class XMLReader<T> {
 
 	private final String _name;
 	private final List<Attr> _attrs;
-	private final Map<String, XMLReader<?>> _children = new HashMap<>();
+	private final Map<String, XMLReaderImpl<?>> _children = new HashMap<>();
 	final Function<Object[], T> _creator;
 
-	XMLReader(
+	XMLReaderImpl(
 		final String name,
 		final List<Attr> attrs,
-		final List<XMLReader<?>> children,
+		final List<XMLReaderImpl<?>> children,
 		final Function<Object[], T> creator
 	) {
 		_name = name;
 		_attrs = attrs;
 		_creator = creator;
 
-		for (XMLReader<?> child : children) {
+		for (XMLReaderImpl<?> child : children) {
 			_children.put(child._name, child);
 		}
 	}
@@ -86,7 +86,7 @@ class XMLReader<T> {
 
 	private int argSize() {
 		int size = _attrs.size() + _children.size() + 1;
-		for (XMLReader<?> child : _children.values()) {
+		for (XMLReaderImpl<?> child : _children.values()) {
 			size += child.argSize();
 		}
 
@@ -106,7 +106,7 @@ class XMLReader<T> {
 			switch (reader.next()) {
 				case XMLStreamReader.START_ELEMENT:
 					final String name = reader.getLocalName();
-					final XMLReader<?> child = _children.get(name);
+					final XMLReaderImpl<?> child = _children.get(name);
 					if (child != null) {
 						System.out.println(name + ": " + child._name);
 						args[index] = child.read(reader);
@@ -123,21 +123,21 @@ class XMLReader<T> {
 		throw new XMLStreamException("Premature end of file.");
 	}
 
-	public static <T> XMLReader<T> of(
+	public static <T> XMLReaderImpl<T> of(
 		final Function<Object[], T> creator,
 		final String name,
 		final Attr attr,
-		final XMLReader<?>... children
+		final XMLReaderImpl<?>... children
 	) {
-		return new XMLReader<T>(
+		return new XMLReaderImpl<T>(
 			name, singletonList(attr),
 			asList(children),
 			creator
 		);
 	}
 
-	public static XMLReader<String> of(final String name) {
-		return new XMLReader<>(name, emptyList(), emptyList(), a -> (String)a[0]);
+	public static XMLReaderImpl<String> of(final String name) {
+		return new XMLReaderImpl<>(name, emptyList(), emptyList(), a -> (String)a[0]);
 	}
 
 }

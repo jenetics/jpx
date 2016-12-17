@@ -19,16 +19,13 @@
  */
 package jpx;
 
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
-import jpx.XMLReader.Attr;
+import jpx.XMLReaderImpl.Attr;
 
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -41,7 +38,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
@@ -212,12 +208,12 @@ public final class Link implements Serializable {
 		);
 	}
 
-	static XMLReader<Link> reader() throws XMLStreamException {
-		return XMLReader.of(
+	static XMLReaderImpl<Link> reader() throws XMLStreamException {
+		return XMLReaderImpl.of(
 			a -> Link.of((String)a[0], (String)a[1], (String)a[2]),
 			"link", Attr.of("href"),
-			XMLReader.of("text"),
-			XMLReader.of("type")
+			XMLReaderImpl.of("text"),
+			XMLReaderImpl.of("type")
 		);
 	}
 
