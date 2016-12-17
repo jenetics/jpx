@@ -45,14 +45,18 @@ public class LinkTest {
 		//Link.of("http://jenetics.io").writeTo(out);
 		Link.of("http://jenetics.io", "some text", "some type").write(writer);
 
+		System.out.println(new String(out.toByteArray()));
+
 		final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		final XMLStreamReader reader = XMLInputFactory
 			.newFactory()
 			.createXMLStreamReader(in);
 
 		reader.next();
-		final Link link = Link.read(reader);
-		System.out.println(link);
+		final Link link = Link.reader().read(reader);
+		System.out.println("URL: " + link.getHref());
+		System.out.println("Text: " + link.getText());
+		System.out.println("Type: " + link.getType());
 	}
 
 }

@@ -29,7 +29,7 @@ import javax.xml.stream.XMLStreamReader;
  */
 final class XML {
 
-	static String readString(XMLStreamReader reader)
+	static String readString(final XMLStreamReader reader)
 		throws XMLStreamException
 	{
 		final StringBuilder result = new StringBuilder();
@@ -44,7 +44,7 @@ final class XML {
 			}
 		}
 
-		throw new XMLStreamException("Premature end of file");
+		throw new XMLStreamException("Premature end of file.");
 	}
 
 }

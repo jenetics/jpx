@@ -19,11 +19,16 @@
  */
 package jpx;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
+
+import jpx.XMLReader.Attr;
 
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -199,42 +204,21 @@ public final class Link implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer.writeStartElement("link");
-		writer.writeAttribute("href", getHref().toString());
-		if (_text != null) {
-			writer.writeStartElement("text");
-			writer.writeCharacters(_text);
-			writer.writeEndElement();
-		}
-		if (_type != null) {
-			writer.writeStartElement("type");
-			writer.writeCharacters(_type);
-			writer.writeEndElement();
-		}
-		writer.writeEndElement();
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("link", xml.attr("href", _href),
+			() -> xml.elem("text", _text),
+			() -> xml.elem("type", _type)
+		);
 	}
 
-	static Link read(final XMLStreamReader reader) throws XMLStreamException {
-		final String href = reader.getAttributeValue(null, "href");
-		String text = null;
-		String type = null;
-
-		while (reader.hasNext()) {
-			switch (reader.next()) {
-				case XMLStreamReader.START_ELEMENT:
-					final String elementName = reader.getLocalName();
-					if ("text".equals(elementName)) {
-						text = XML.readString(reader);
-					} else if ("type".equals(elementName)) {
-						type = XML.readString(reader);
-					}
-					break;
-				case XMLStreamReader.END_ELEMENT:
-					return Link.of(href, text, type);
-			}
-		}
-
-		throw new XMLStreamException("Premature end of file");
+	static XMLReader<Link> reader() throws XMLStreamException {
+		return XMLReader.of(
+			a -> Link.of((String)a[0], (String)a[1], (String)a[2]),
+			"link", Attr.of("href"),
+			XMLReader.of("text"),
+			XMLReader.of("type")
+		);
 	}
 
 
