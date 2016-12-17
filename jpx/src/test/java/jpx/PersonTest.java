@@ -34,30 +34,23 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 	@Override
 	protected Params<Person> params(final Random random) {
 		return new Params<>(
-			() -> Person.of(
-				random.nextBoolean()
-					? format("name_%s", random.nextInt(100))
-					: null,
-				random.nextBoolean()
-					? Email.of(
-						format("id_%s", random.nextInt(100)),
-						format("domain_%s", random.nextInt(100))
-					)
-					: null,
-				random.nextBoolean()
-					? Link.of(
-						format("http://ink_%d", random.nextInt(100)),
-						random.nextBoolean()
-							? format("text_%s", random.nextInt(100))
-							: null,
-						random.nextBoolean()
-							? format("type_%s", random.nextInt(100))
-							: null
-					)
-					: null
-			),
+			() -> nextPerson(random),
 			Person.reader(),
 			Person::write
+		);
+	}
+
+	public static Person nextPerson(final Random random) {
+		return Person.of(
+			random.nextBoolean()
+				? format("name_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? EmailTest.nextEmail(random)
+				: null,
+			random.nextBoolean()
+				? LinkTest.nextLink(random)
+				: null
 		);
 	}
 

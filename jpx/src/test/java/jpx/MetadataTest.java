@@ -21,41 +21,50 @@ package jpx;
 
 import static java.lang.String.format;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.time.ZonedDateTime;
 import java.util.Random;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
  */
 @Test
-public class BoundsTest extends XMLStreamTestBase<Bounds> {
+public class MetadataTest extends XMLStreamTestBase<Metadata> {
 
 	@Override
-	protected Params<Bounds> params(final Random random) {
+	protected Params<Metadata> params(final Random random) {
 		return new Params<>(
-			() -> nextBounds(random),
-			Bounds.reader(),
-			Bounds::write
+			() -> nextMetadata(random),
+			Metadata.reader(),
+			Metadata::write
 		);
 	}
 
-	public static Bounds nextBounds(final Random random) {
-		return Bounds.of(
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90)),
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90))
+	public static Metadata nextMetadata(final Random random) {
+		return Metadata.of(
+			random.nextBoolean()
+				? format("name_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? format("description_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? PersonTest.nextPerson(random)
+				: null,
+			random.nextBoolean()
+				? CopyrightTest.nextCopyright(random)
+				: null,
+			LinkTest.nextLinks(random),
+			random.nextBoolean()
+				? ZonedDateTime.now()
+				: null,
+			random.nextBoolean()
+				? format("keywords_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? BoundsTest.nextBounds(random)
+				: null
 		);
 	}
 

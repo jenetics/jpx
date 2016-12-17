@@ -78,7 +78,7 @@ public abstract class XMLStreamTestBase<T> {
 		Assert.assertEquals(actual, expected);
 	}
 
-	private static <T> byte[] toBytes(final T value, final XMLWriter<T> writer)
+	static <T> byte[] toBytes(final T value, final XMLWriter<T> writer)
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -89,7 +89,7 @@ public abstract class XMLStreamTestBase<T> {
 		return out.toByteArray();
 	}
 
-	private static <T> T fromBytes(final byte[] bytes, final XMLReader<T> reader)
+	static <T> T fromBytes(final byte[] bytes, final XMLReader<T> reader)
 		throws XMLStreamException
 	{
 		final ByteArrayInputStream in = new ByteArrayInputStream(bytes);

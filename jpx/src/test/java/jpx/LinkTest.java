@@ -21,6 +21,8 @@ package jpx;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -34,18 +36,33 @@ public class LinkTest extends XMLStreamTestBase<Link> {
 	@Override
 	protected Params<Link> params(final Random random) {
 		return new Params<>(
-			() -> Link.of(
-				format("http://ink_%d", random.nextInt(100)),
-				random.nextBoolean()
-					? format("text_%s", random.nextInt(100))
-					: null,
-				random.nextBoolean()
-					? format("type_%s", random.nextInt(100))
-					: null
-			),
+			() -> nextLink(random),
 			Link.reader(),
 			Link::write
 		);
+	}
+
+	public static Link nextLink(final Random random) {
+		return Link.of(
+			format("http://link_%d", random.nextInt(100)),
+			random.nextBoolean()
+				? format("text_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? format("type_%s", random.nextInt(100))
+				: null
+		);
+	}
+
+	public static List<Link> nextLinks(final Random random) {
+		final List<Link> links = new ArrayList<>();
+		for (int i = 0, n = random.nextInt(20); i < 3; ++i) {
+			links.add(
+				LinkTest.nextLink(random)
+			);
+		}
+
+		return links;
 	}
 
 }

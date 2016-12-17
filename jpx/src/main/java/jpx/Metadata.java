@@ -21,12 +21,13 @@ package jpx;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
-import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -54,6 +55,10 @@ import javax.xml.stream.XMLStreamWriter;
 public final class Metadata implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private static DateTimeFormatter DTF =
+		DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
+		//DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 	private final String _name;
 	private final String _description;
@@ -178,6 +183,33 @@ public final class Metadata implements Serializable {
 	}
 
 
+	@Override
+	public int hashCode() {
+		int hash = 37;
+		hash += 17*Objects.hashCode(_name) + 31;
+		hash += 17*Objects.hashCode(_description) + 31;
+		hash += 17*Objects.hashCode(_author) + 31;
+		hash += 17*Objects.hashCode(_copyright) + 31;
+		hash += 17*Objects.hashCode(_links) + 31;
+		hash += 17*Objects.hashCode(_time) + 31;
+		hash += 17*Objects.hashCode(_keywords) + 31;
+		hash += 17*Objects.hashCode(_bounds) + 31;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return obj instanceof Metadata &&
+			Objects.equals(((Metadata)obj)._name, _name) &&
+			Objects.equals(((Metadata)obj)._description, _description) &&
+			Objects.equals(((Metadata)obj)._author, _author) &&
+			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
+			Objects.equals(((Metadata)obj)._links, _links) &&
+			Objects.equals(((Metadata)obj)._time, _time) &&
+			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
+			Objects.equals(((Metadata)obj)._bounds, _bounds);
+	}
+
 	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
@@ -238,25 +270,43 @@ public final class Metadata implements Serializable {
 
 		xml.elem("metadata",
 			() -> xml.elem("name", _name),
-			() -> xml.elem("desc", _description)
+			() -> xml.elem("desc", _description),
+			() -> { if (_author != null) _author.write(writer); },
+			() -> { if (_copyright != null) _copyright.write(writer); },
+			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elem("time", _time != null ? DTF.format(_time) : null),
+			() -> xml.elem("keywords", _keywords),
+			() -> { if (_bounds != null) _bounds.write(writer); }
 		);
 	}
 
-	static XMLReader<Bounds> reader() {
-		final Function<Object[], Bounds> create = a -> Bounds.of(
-			Latitude.ofDegrees(Double.parseDouble((String)a[0])),
-			Longitude.ofDegrees(Double.parseDouble((String)a[1])),
-			Latitude.ofDegrees(Double.parseDouble((String)a[2])),
-			Longitude.ofDegrees(Double.parseDouble((String)a[3]))
+	@SuppressWarnings("unchecked")
+	static XMLReader<Metadata> reader() {
+		final Function<Object[], Metadata> create = a -> Metadata.of(
+			(String)a[0],
+			(String)a[1],
+			(Person)a[2],
+			(Copyright)a[3],
+			(List<Link>)a[4],
+			a[5] != null ? ZonedDateTime.parse((String)a[5], DTF) : null,
+			(String)a[6],
+			(Bounds)a[7]
 		);
 
 		return XMLReader.of(
 			create,
-			"bounds",
-			attr("minlat"), attr("minlon"),
-			attr("maxlat"), attr("maxlon")
+			"metadata",
+			XMLReader.of("name"),
+			XMLReader.of("desc"),
+			Person.reader(),
+			Copyright.reader(),
+			XMLReader.ofList(Link.reader()),
+			XMLReader.of("time"),
+			XMLReader.of("keywords"),
+			Bounds.reader()
 		);
 	}
+
 
 	/* *************************************************************************
 	 *  JAXB object serialization

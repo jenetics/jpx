@@ -37,15 +37,7 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 	@Override
 	protected Params<Copyright> params(final Random random) {
 		return new Params<>(
-			() -> Copyright.of(
-				format("author_%s", random.nextInt(100)),
-				random.nextBoolean()
-					? Year.of(random.nextInt(1000))
-					: null,
-				random.nextBoolean()
-					? uri(random)
-					: null
-			),
+			() -> nextCopyright(random),
 			Copyright.reader(),
 			Copyright::write
 		);
@@ -57,6 +49,18 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static Copyright nextCopyright(final Random random) {
+		return Copyright.of(
+			format("author_%s", random.nextInt(100)),
+			random.nextBoolean()
+				? Year.of(random.nextInt(1000))
+				: null,
+			random.nextBoolean()
+				? uri(random)
+				: null
+		);
 	}
 
 }

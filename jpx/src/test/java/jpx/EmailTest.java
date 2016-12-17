@@ -34,12 +34,16 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 	@Override
 	protected Params<Email> params(final Random random) {
 		return new Params<>(
-			() -> Email.of(
-				format("id_%s", random.nextInt(100)),
-				format("domain_%s", random.nextInt(100))
-			),
+			() -> nextEmail(random),
 			Email.reader(),
 			Email::write
+		);
+	}
+
+	public static Email nextEmail(final Random random) {
+		return Email.of(
+			format("id_%s", random.nextInt(100)),
+			format("domain_%s", random.nextInt(100))
 		);
 	}
 

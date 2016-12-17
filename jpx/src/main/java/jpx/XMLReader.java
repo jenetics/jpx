@@ -25,6 +25,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -104,6 +105,10 @@ interface XMLReader<T> {
 		return new XMLTextReader(name, Arrays.asList(attrs));
 	}
 
+	public static <T> XMLReader<List<T>> ofList(final XMLReader<T> reader) {
+		return new XMLListReader<T>(reader);
+	}
+
 }
 
 abstract class AbstractXMLReader<T> implements XMLReader<T> {
@@ -166,9 +171,20 @@ class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 			switch (reader.next()) {
 				case XMLStreamReader.START_ELEMENT:
 					final XMLReader<?> child = _childMap.get(reader.getLocalName());
+					if (child instanceof XMLListReader<?>) {
+						final List<Object> result = (List<Object>)param
+							.computeIfAbsent(child.name(), key -> new ArrayList<Object>());
+
+						result.add(((XMLListReader<?>)child).adoptee().read(reader));
+					} else if (child != null) {
+						param.put(child.name(), child.read(reader));
+					}
+
+					/*
 					if (child != null) {
 						param.put(child.name(), child.read(reader));
 					}
+					*/
 				case XMLStreamReader.END_ELEMENT:
 					if (name().equals(reader.getLocalName())) {
 						final Object[] args = new Object[argSize()];
@@ -217,6 +233,67 @@ final class XMLTextReader extends AbstractXMLReader<String> {
 		}
 
 		throw new XMLStreamException("Premature end of file.");
+	}
+
+}
+
+final class XMLListReader<T> implements XMLReader<List<T>>  {
+
+	private final XMLReader<T> _adoptee;
+
+	XMLListReader(final XMLReader<T> adoptee) {
+		_adoptee = requireNonNull(adoptee);
+	}
+
+	public XMLReader<T> adoptee() {
+		return _adoptee;
+	}
+
+	@Override
+	public String name() {
+		return _adoptee.name();
+	}
+
+	@Override
+	public int argSize() {
+		return _adoptee.argSize();
+	}
+
+	@Override
+	public List<T> read(final XMLStreamReader reader) throws XMLStreamException {
+		final List<T> result = new ArrayList<T>();
+
+		//add(result, reader);
+
+		while (reader.hasNext()) {
+			reader.next();
+			switch (reader.next()) {
+				case XMLStreamReader.START_ELEMENT:
+					if (name().equals(reader.getLocalName())) {
+						result.add(_adoptee.read(reader));
+					}
+				case XMLStreamReader.END_ELEMENT:
+					if (!name().equals(reader.getLocalName())) {
+						return result;
+					}
+			}
+		}
+
+		throw new XMLStreamException("Premature end of file.");
+	}
+
+	private boolean add(final List<T> result, final XMLStreamReader reader) throws XMLStreamException {
+		switch (reader.getEventType()) {
+			case XMLStreamReader.START_ELEMENT:
+				if (name().equals(reader.getLocalName())) {
+					result.add(_adoptee.read(reader));
+				}
+			case XMLStreamReader.END_ELEMENT:
+				return name().equals(reader.getLocalName());
+		}
+
+		return false;
+		//throw new XMLStreamException("Premature end of file. " + reader.getLocalName());
 	}
 
 }
