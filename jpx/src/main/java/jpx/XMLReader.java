@@ -75,6 +75,18 @@ interface XMLReader<T> {
 	public static <T> XMLReader<T> of(
 		final Function<Object[], T> creator,
 		final String name,
+		final XMLReader<?>... children
+	) {
+		return new XMLReaderImpl<T>(
+			name, emptyList(),
+			asList(children),
+			creator
+		);
+	}
+
+	public static <T> XMLReader<T> of(
+		final Function<Object[], T> creator,
+		final String name,
 		final Attr... attrs
 	) {
 		return new XMLReaderImpl<T>(
@@ -139,11 +151,6 @@ class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 
 	@Override
 	public int argSize() {
-		int size = _attrs.size();
-		for (XMLReader<?> child : _childMap.values()) {
-			size += child.argSize();
-		}
-
 		return _attrs.size() + _childMap.size();
 	}
 

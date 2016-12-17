@@ -20,8 +20,10 @@
 package jpx;
 
 import static java.util.Objects.requireNonNull;
+import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
+import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -30,6 +32,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * An email address. Broken into two parts (id and domain) to help prevent email
@@ -116,6 +120,32 @@ public final class Email implements Serializable {
 		return new Email(id, domain);
 	}
 
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("email",
+			xml.attr("id", _id),
+			xml.attr("domain", _domain)
+		);
+	}
+
+	static XMLReader<Email> reader() {
+		return XMLReader.of(
+			a -> Email.of((String)a[0], (String)a[1]),
+			"email", attr("id"), attr("domain")
+		);
+	}
 
 	/* *************************************************************************
 	 *  JAXB object serialization

@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * A person or organization.
@@ -155,6 +157,36 @@ public final class Person implements Serializable {
 		return new Person(null, null, null);
 	}
 
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("person",
+			() -> xml.elem("name", _name),
+			() -> _email.write(writer),
+			() -> _link.write(writer)
+		);
+	}
+
+	static XMLReader<Person> reader() {
+		return XMLReader.of(
+			a -> Person.of((String)a[0], (Email)a[1], (Link)a[2]),
+			"person",
+			XMLReader.of("name"),
+			Email.reader(),
+			Link.reader()
+		);
+	}
 
 	/* *************************************************************************
 	 *  JAXB object serialization

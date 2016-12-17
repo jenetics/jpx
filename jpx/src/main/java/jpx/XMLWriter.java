@@ -79,6 +79,21 @@ final class XMLWriter {
 		_writer.writeEndElement();
 	}
 
+	void elem(final String name, final Elem firstChild, final Elem... children)
+		throws XMLStreamException
+	{
+		requireNonNull(name);
+		requireNonNull(children);
+
+		_writer.writeStartElement(name);
+
+		firstChild.write();
+		for (Elem child : children) {
+			child.write();
+		}
+		_writer.writeEndElement();
+	}
+
 	void elem(final String name, final Attr... attrs)
 		throws XMLStreamException
 	{

@@ -1,5 +1,5 @@
 /*
- * Java GPX Library (@__identifier__@).
+ * Java Genetic Algorithm Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
+ *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
 package jpx;
 
@@ -26,25 +26,20 @@ import java.util.Random;
 import org.testng.annotations.Test;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
 @Test
-public class LinkTest extends XMLStreamTestBase<Link> {
+public class EmailTest extends XMLStreamTestBase<Email> {
 
 	@Override
-	protected Params<Link> params(final Random random) {
+	protected Params<Email> params(final Random random) {
 		return new Params<>(
-			() -> Link.of(
-				format("http://ink_%d", random.nextInt(100)),
-				random.nextBoolean()
-					? format("text_%s", random.nextInt(100))
-					: null,
-				random.nextBoolean()
-					? format("type_%s", random.nextInt(100))
-					: null
+			() -> Email.of(
+				format("id_%s", random.nextInt(100)),
+				format("domain_%s", random.nextInt(100))
 			),
-			Link.reader(),
-			Link::write
+			Email.reader(),
+			Email::write
 		);
 	}
 

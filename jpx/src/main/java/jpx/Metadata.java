@@ -21,12 +21,14 @@ package jpx;
 
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -36,6 +38,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Information about the GPX file, author, and copyright restrictions goes in
@@ -218,6 +222,41 @@ public final class Metadata implements Serializable {
 		);
 	}
 
+
+		/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("metadata",
+			() -> xml.elem("name", _name),
+			() -> xml.elem("desc", _description)
+		);
+	}
+
+	static XMLReader<Bounds> reader() {
+		final Function<Object[], Bounds> create = a -> Bounds.of(
+			Latitude.ofDegrees(Double.parseDouble((String)a[0])),
+			Longitude.ofDegrees(Double.parseDouble((String)a[1])),
+			Latitude.ofDegrees(Double.parseDouble((String)a[2])),
+			Longitude.ofDegrees(Double.parseDouble((String)a[3]))
+		);
+
+		return XMLReader.of(
+			create,
+			"bounds",
+			attr("minlat"), attr("minlon"),
+			attr("maxlat"), attr("maxlon")
+		);
+	}
 
 	/* *************************************************************************
 	 *  JAXB object serialization
