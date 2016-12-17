@@ -76,6 +76,19 @@ interface XMLReader<T> {
 	public static <T> XMLReader<T> of(
 		final Function<Object[], T> creator,
 		final String name,
+		final List<Attr> attrs,
+		final XMLReader<?>... children
+	) {
+		return new XMLReaderImpl<T>(
+			name, attrs,
+			asList(children),
+			creator
+		);
+	}
+
+	public static <T> XMLReader<T> of(
+		final Function<Object[], T> creator,
+		final String name,
 		final XMLReader<?>... children
 	) {
 		return new XMLReaderImpl<T>(

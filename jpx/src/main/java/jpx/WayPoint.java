@@ -23,15 +23,19 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -42,6 +46,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
@@ -55,6 +61,9 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 public final class WayPoint implements Point, Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	private static DateTimeFormatter DTF =
+		DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 
 	private final Latitude _latitude;
 	private final Longitude _longitude;
@@ -555,6 +564,28 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Set the GPS way-point description.
+		 *
+		 * @param description the GPS way-point description.
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder description(final String description) {
+			_description = description;
+			return this;
+		}
+
+		/**
+		 * Set the GPS way-point source.
+		 *
+		 * @param source the GPS way-point source.
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder source(final String source) {
+			_source = source;
+			return this;
+		}
+
+		/**
 		 * Set the links to additional information about the way-point.
 		 *
 		 * @param links the links to additional information about the way-point
@@ -870,6 +901,95 @@ public final class WayPoint implements Point, Serializable {
 			.build(latitude, longitude);
 	}
 
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem(name,
+			Arrays.asList(
+				xml.attr("lat", _latitude),
+				xml.attr("lon", _longitude)
+			),
+			() -> xml.elem("ele", _elevation != null ? _elevation.doubleValue() : null),
+			() -> xml.elem("speed", _speed != null ? _speed.doubleValue() : null),
+			() -> xml.elem("time", _time != null ? DTF.format(_time) : null),
+			() -> xml.elem("magvar", _magneticVariation != null ? _magneticVariation.doubleValue() : null),
+			() -> xml.elem("geoidheight", _geoidHeight != null ? _geoidHeight.doubleValue() : null),
+			() -> xml.elem("name", _name),
+			() -> xml.elem("cmt", _comment),
+			() -> xml.elem("desc", _description),
+			() -> xml.elem("src", _source),
+			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elem("sym", _symbol),
+			() -> xml.elem("type", _type),
+			() -> xml.elem("fix", _fix != null ? _fix.getValue() : null),
+			() -> xml.elem("sat", _sat),
+			() -> xml.elem("hdop", _hdop),
+			() -> xml.elem("vdop", _vdop),
+			() -> xml.elem("pdop", _pdop),
+			() -> xml.elem("ageofdgpsdata", _ageOfGPSData != null ? _ageOfGPSData.getSeconds() : null),
+			() -> xml.elem("dgpsid", _dgpsID)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	static XMLReader<WayPoint> reader(final String name) {
+		final Function<Object[], WayPoint> create = a -> WayPoint.builder()
+			.elevation(a[2] != null ? Length.ofMeters(Double.parseDouble((String)a[2])) : null)
+			.speed(a[3] != null ? Speed.of(Double.parseDouble((String)a[3])) : null)
+			.time(a[4] != null ? ZonedDateTime.parse((String)a[4], DTF) : null)
+			.magneticVariation(a[5] != null ? Degrees.ofDegrees(Double.parseDouble((String)a[5])) : null)
+			.geoidHeight(a[6] != null ? Length.ofMeters(Double.parseDouble((String)a[6])) : null)
+			.name((String)a[7])
+			.comment((String)a[8])
+			.description((String)a[9])
+			.source((String)a[10])
+			.links((List<Link>)a[11])
+			.symbol((String)a[12])
+			.type((String)a[13])
+			.fix(a[14] != null ? Fix.ofName((String)a[14]).orElse(null) : null)
+			.sat(a[15] != null ? UInt.of(Integer.parseInt((String)a[15])) : null)
+			.hdop(a[16] != null ? Double.parseDouble((String)a[16]) : null)
+			.vdop(a[17] != null ? Double.parseDouble((String)a[17]) : null)
+			.pdop(a[18] != null ? Double.parseDouble((String)a[18]) : null)
+			.ageOfDGPSAge(a[19] != null ? Duration.ofSeconds(Long.parseLong((String)a[19])) : null)
+			.dgpsStation(a[20] != null ? DGPSStation.of(Integer.parseInt((String)a[20])) : null)
+			.build(Double.parseDouble((String)a[0]), Double.parseDouble((String)a[1]));
+
+		return XMLReader.of(
+			create,
+			name, Arrays.asList(attr("lat"), attr("lon")),
+			XMLReader.of("ele"),
+			XMLReader.of("speed"),
+			XMLReader.of("time"),
+			XMLReader.of("magvar"),
+			XMLReader.of("geoidheight"),
+			XMLReader.of("name"),
+			XMLReader.of("cmt"),
+			XMLReader.of("desc"),
+			XMLReader.of("src"),
+			XMLReader.ofList(Link.reader()),
+			XMLReader.of("sym"),
+			XMLReader.of("type"),
+			XMLReader.of("fix"),
+			XMLReader.of("sat"),
+			XMLReader.of("hdop"),
+			XMLReader.of("vdop"),
+			XMLReader.of("pdop"),
+			XMLReader.of("ageofdgpsdata"),
+			XMLReader.of("dgpsid")
+		);
+	}
 
 	/* *************************************************************************
 	 *  JAXB object serialization

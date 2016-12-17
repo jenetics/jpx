@@ -21,6 +21,8 @@ package jpx;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
+
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -69,6 +71,25 @@ final class XMLWriter {
 
 		_writer.writeStartElement(name);
 		if (attr.value != null) {
+			_writer.writeAttribute(attr.name, attr.value);
+		}
+
+		firstChild.write();
+		for (Elem child : children) {
+			child.write();
+		}
+		_writer.writeEndElement();
+	}
+
+	void elem(final String name, final List<Attr> attrs, final Elem firstChild, final Elem... children)
+		throws XMLStreamException
+	{
+		requireNonNull(name);
+		requireNonNull(attrs);
+		requireNonNull(children);
+
+		_writer.writeStartElement(name);
+		for (Attr attr : attrs) {
 			_writer.writeAttribute(attr.name, attr.value);
 		}
 
