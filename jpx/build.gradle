@@ -38,7 +38,12 @@ dependencies {
 }
 
 test {
+	outputs.upToDateWhen { false }
+	testLogging.showStandardStreams = true
+
 	useTestNG {
 		preserveOrder true
+		parallel = 'tests' // 'methods'
+		threadCount = Math.max(Runtime.runtime.availableProcessors() + 1, 4)
 	}
 }
