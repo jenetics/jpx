@@ -20,8 +20,7 @@
 package jpx;
 
 import static java.util.Objects.requireNonNull;
-
-import jpx.XMLReaderImpl.Attr;
+import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.net.URI;
@@ -208,12 +207,12 @@ public final class Link implements Serializable {
 		);
 	}
 
-	static XMLReaderImpl<Link> reader() throws XMLStreamException {
-		return XMLReaderImpl.of(
+	static XMLReader<Link> reader() throws XMLStreamException {
+		return XMLReader.of(
 			a -> Link.of((String)a[0], (String)a[1], (String)a[2]),
-			"link", Attr.of("href"),
-			XMLReaderImpl.of("text"),
-			XMLReaderImpl.of("type")
+			"link", attr("href"),
+			XMLReader.of("text"),
+			XMLReader.of("type")
 		);
 	}
 
