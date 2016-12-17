@@ -60,7 +60,7 @@ final class XMLWriter {
 		return Attr.of(name, value);
 	}
 
-	void elem(final String name, final Attr attr, final Elem... children)
+	void elem(final String name, final Attr attr, final Elem firstChild, final Elem... children)
 		throws XMLStreamException
 	{
 		requireNonNull(name);
@@ -72,8 +72,22 @@ final class XMLWriter {
 			_writer.writeAttribute(attr.name, attr.value);
 		}
 
+		firstChild.write();
 		for (Elem child : children) {
 			child.write();
+		}
+		_writer.writeEndElement();
+	}
+
+	void elem(final String name, final Attr... attrs)
+		throws XMLStreamException
+	{
+		requireNonNull(name);
+		requireNonNull(attrs);
+
+		_writer.writeStartElement(name);
+		for (Attr attr : attrs) {
+			_writer.writeAttribute(attr.name, attr.value);
 		}
 		_writer.writeEndElement();
 	}

@@ -72,6 +72,18 @@ interface XMLReader<T> {
 		);
 	}
 
+	public static <T> XMLReader<T> of(
+		final Function<Object[], T> creator,
+		final String name,
+		final Attr... attrs
+	) {
+		return new XMLReaderImpl<T>(
+			name, asList(attrs),
+			emptyList(),
+			creator
+		);
+	}
+
 	public static XMLReader<String> of(final String name) {
 		return new XMLTextReader(name, emptyList());
 	}
@@ -106,7 +118,8 @@ abstract class AbstractXMLReader<T> implements XMLReader<T> {
 
 class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 
-	private final Map<String, XMLReader<?>> _children = new HashMap<>();
+	private final List<XMLReader<?>> _children;
+	private final Map<String, XMLReader<?>> _childMap = new HashMap<>();
 	private final Function<Object[], T> _creator;
 
 	XMLReaderImpl(
@@ -118,38 +131,46 @@ class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 		super(name, attrs);
 		_creator = creator;
 
+		_children = requireNonNull(children);
 		for (XMLReader<?> child : children) {
-			_children.put(child.name(), child);
+			_childMap.put(child.name(), child);
 		}
 	}
 
 	@Override
 	public int argSize() {
 		int size = _attrs.size();
-		for (XMLReader<?> child : _children.values()) {
+		for (XMLReader<?> child : _childMap.values()) {
 			size += child.argSize();
 		}
 
-		return size;
+		return _attrs.size() + _childMap.size();
 	}
 
 	@Override
 	public T read(final XMLStreamReader reader) throws XMLStreamException {
-		final Object[] args = new Object[argSize()];
-		int index = 0;
-		for (; index < _attrs.size(); ++index) {
-			args[index] = reader.getAttributeValue(null, _attrs.get(index).name);
+		final Map<String, Object> param = new HashMap<>();
+		for (Attr attr : _attrs) {
+			final Object value = reader.getAttributeValue(null, attr.name);
+			param.put(attr.name, value);
 		}
 
 		while (reader.hasNext()) {
 			switch (reader.next()) {
 				case XMLStreamReader.START_ELEMENT:
-					final XMLReader<?> child = _children.get(reader.getLocalName());
+					final XMLReader<?> child = _childMap.get(reader.getLocalName());
 					if (child != null) {
-						args[index++] = child.read(reader);
+						param.put(child.name(), child.read(reader));
 					}
 				case XMLStreamReader.END_ELEMENT:
 					if (name().equals(reader.getLocalName())) {
+						final Object[] args = new Object[argSize()];
+						for (int i = 0; i < _attrs.size(); ++i) {
+							args[i] = param.get(_attrs.get(i).name);
+						}
+						for (int i = 0; i < _children.size(); ++i) {
+							args[_attrs.size() + i] = param.get(_children.get(i).name());
+						}
 						return _creator.apply(args);
 					}
 			}

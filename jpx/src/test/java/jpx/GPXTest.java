@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
  */
 public class GPXTest {
 
-	@Test
+	//@Test
 	public void loadFromFile() throws IOException {
 		try (InputStream in = getClass().getResourceAsStream("/jpx/Gpx-full-sample.gpx")) {
 			final GPX gpx = GPX.read(in);

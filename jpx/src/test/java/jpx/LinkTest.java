@@ -19,44 +19,34 @@
  */
 package jpx;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import static java.lang.String.format;
 
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
+import java.util.Random;
 
 import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class LinkTest {
+@Test
+public class LinkTest extends XMLStreamTestBase<Link> {
 
-	@Test
-	public void writeXML() throws XMLStreamException {
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final XMLStreamWriter writer = XMLOutputFactory
-			.newInstance()
-			.createXMLStreamWriter(out);
-
-		//Link.of("http://jenetics.io").writeTo(out);
-		Link.of("http://jenetics.io", "some text", "some type").write(writer);
-
-		System.out.println(new String(out.toByteArray()));
-
-		final ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
-		final XMLStreamReader reader = XMLInputFactory
-			.newFactory()
-			.createXMLStreamReader(in);
-
-		reader.next();
-		final Link link = Link.reader().read(reader);
-		System.out.println("URL: " + link.getHref());
-		System.out.println("Text: " + link.getText());
-		System.out.println("Type: " + link.getType());
+	@Override
+	protected Params<Link> params(final Random random) {
+		return new Params<>(
+			() -> {
+				final String uri = format("http://ink_%d", random.nextInt(1000));
+				final String text = random.nextBoolean()
+					? format("text_%s", random.nextInt(10))
+					: null;
+				final String type = random.nextBoolean()
+					? format("type_%s", random.nextInt(10))
+					: null;
+				return Link.of(uri, text, type);
+			},
+			Link.reader(),
+			Link::write
+		);
 	}
 
 }

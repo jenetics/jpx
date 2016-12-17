@@ -19,6 +19,7 @@
  */
 package jpx;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static jpx.XMLReader.attr;
 
@@ -117,7 +118,7 @@ public final class Link implements Serializable {
 
 	@Override
 	public String toString() {
-		return _href.toString();
+		return format("Link[%s, text=%s, type=%s]", _href, _text, _type);
 	}
 
 
@@ -207,7 +208,7 @@ public final class Link implements Serializable {
 		);
 	}
 
-	static XMLReader<Link> reader() throws XMLStreamException {
+	static XMLReader<Link> reader() {
 		return XMLReader.of(
 			a -> Link.of((String)a[0], (String)a[1], (String)a[2]),
 			"link", attr("href"),
