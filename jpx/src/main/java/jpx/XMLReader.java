@@ -21,9 +21,11 @@ package jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,29 +73,28 @@ interface XMLReader<T> {
 	}
 
 	public static XMLReader<String> of(final String name) {
-		return new XMLTextReader(name);
+		return new XMLTextReader(name, emptyList());
+	}
+
+	public static XMLReader<String> of(final String name, final Attr... attrs) {
+		return new XMLTextReader(name, Arrays.asList(attrs));
 	}
 
 }
 
 abstract class AbstractXMLReader<T> implements XMLReader<T> {
 
-	private final String _name;
-	private final int _argSize;
+	final String _name;
+	final List<Attr> _attrs;
 
-	protected AbstractXMLReader(final String name, final int argSize) {
+	AbstractXMLReader(final String name, final List<Attr> attrs) {
 		_name = requireNonNull(name);
-		_argSize = argSize;
+		_attrs = requireNonNull(attrs);
 	}
 
 	@Override
 	public String name() {
 		return _name;
-	}
-
-	@Override
-	public int argSize() {
-		return _argSize;
 	}
 
 	@Override
@@ -105,7 +106,6 @@ abstract class AbstractXMLReader<T> implements XMLReader<T> {
 
 class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 
-	private final List<Attr> _attrs;
 	private final Map<String, XMLReader<?>> _children = new HashMap<>();
 	private final Function<Object[], T> _creator;
 
@@ -115,8 +115,7 @@ class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 		final List<XMLReader<?>> children,
 		final Function<Object[], T> creator
 	) {
-		super(name, 0);
-		_attrs = attrs;
+		super(name, attrs);
 		_creator = creator;
 
 		for (XMLReader<?> child : children) {
@@ -164,8 +163,13 @@ class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 
 final class XMLTextReader extends AbstractXMLReader<String> {
 
-	XMLTextReader(final String name) {
-		super(name, 1);
+	XMLTextReader(final String name, final List<Attr> attrs) {
+		super(name, attrs);
+	}
+
+	@Override
+	public int argSize() {
+		return _attrs.size() + 1;
 	}
 
 	@Override
