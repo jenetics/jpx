@@ -23,11 +23,7 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
-import jpx.Route.Model;
-import jpx.Route.Model.Adapter;
-
 import java.io.Serializable;
-import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -289,34 +285,35 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			() -> xml.elem("src", _source),
 			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
 			() -> xml.elem("number", _number),
-			() -> xml.elem("type", _type)
+			() -> xml.elem("type", _type),
+			() -> { if (_segments != null) for (TrackSegment seg : _segments) seg.write(writer); }
 		);
 	}
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Metadata> reader() {
-		final Function<Object[], Metadata> create = a -> Metadata.of(
+	static XMLReader<Track> reader() {
+		final Function<Object[], Track> create = a -> Track.of(
 			(String)a[0],
 			(String)a[1],
-			(Person)a[2],
-			(Copyright)a[3],
+			(String)a[2],
+			(String)a[3],
 			(List<Link>)a[4],
-			null,//a[5] != null ? ZonedDateTime.parse((String)a[5], DTF) : null,
+			a[5] != null ? UInt.of(Integer.parseInt((String)a[5])) : null,
 			(String)a[6],
-			(Bounds)a[7]
+			(List<TrackSegment>)a[7]
 		);
 
 		return XMLReader.of(
 			create,
-			"metadata",
+			"trk",
 			XMLReader.of("name"),
+			XMLReader.of("cmt"),
 			XMLReader.of("desc"),
-			Person.reader(),
-			Copyright.reader(),
+			XMLReader.of("src"),
 			XMLReader.ofList(Link.reader()),
-			XMLReader.of("time"),
-			XMLReader.of("keywords"),
-			Bounds.reader()
+			XMLReader.of("number"),
+			XMLReader.of("type"),
+			XMLReader.ofList(TrackSegment.reader())
 		);
 	}
 

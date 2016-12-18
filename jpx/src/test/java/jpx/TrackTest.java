@@ -19,8 +19,8 @@
  */
 package jpx;
 
-import java.util.ArrayList;
-import java.util.List;
+import static java.lang.String.format;
+
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -29,28 +29,40 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
 @Test
-public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
+public class TrackTest extends XMLStreamTestBase<Track> {
 
 	@Override
-	protected Params<TrackSegment> params(final Random random) {
+	protected Params<Track> params(final Random random) {
 		return new Params<>(
-			() -> nextTrackSegment(random),
-			TrackSegment.reader(),
-			TrackSegment::write
+			() -> nextTrack(random),
+			Track.reader(),
+			Track::write
 		);
 	}
 
-	public static TrackSegment nextTrackSegment(final Random random) {
-		return TrackSegment.of(WayPointTest.nextWayPoints(random));
-	}
-
-	public static List<TrackSegment> nextTrackSegments(final Random random) {
-		final List<TrackSegment> segments = new ArrayList<>();
-		for (int i = 0, n = random.nextInt(20); i < n; ++i) {
-			segments.add(nextTrackSegment(random));
-		}
-
-		return segments;
+	public static Track nextTrack(final Random random) {
+		return Track.of(
+			random.nextBoolean()
+				? format("name_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? format("comment_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? format("description_%s", random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? format("source_%s", random.nextInt(100))
+				: null,
+			LinkTest.nextLinks(random),
+			random.nextBoolean()
+				? UInt.of(random.nextInt(100))
+				: null,
+			random.nextBoolean()
+				? format("type_%s", random.nextInt(100))
+				: null,
+			TrackSegmentTest.nextTrackSegments(random)
+		);
 	}
 
 }
