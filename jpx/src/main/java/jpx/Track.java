@@ -27,10 +27,12 @@ import jpx.Route.Model;
 import jpx.Route.Model.Adapter;
 
 import java.io.Serializable;
+import java.time.ZonedDateTime;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -41,6 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Represents a GPX track - an ordered list of points describing a path.
@@ -261,6 +265,58 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			number,
 			type,
 			segments
+		);
+	}
+
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("trk",
+			() -> xml.elem("name", _name),
+			() -> xml.elem("cmt", _comment),
+			() -> xml.elem("desc", _description),
+			() -> xml.elem("src", _source),
+			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elem("number", _number),
+			() -> xml.elem("type", _type)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	static XMLReader<Metadata> reader() {
+		final Function<Object[], Metadata> create = a -> Metadata.of(
+			(String)a[0],
+			(String)a[1],
+			(Person)a[2],
+			(Copyright)a[3],
+			(List<Link>)a[4],
+			null,//a[5] != null ? ZonedDateTime.parse((String)a[5], DTF) : null,
+			(String)a[6],
+			(Bounds)a[7]
+		);
+
+		return XMLReader.of(
+			create,
+			"metadata",
+			XMLReader.of("name"),
+			XMLReader.of("desc"),
+			Person.reader(),
+			Copyright.reader(),
+			XMLReader.ofList(Link.reader()),
+			XMLReader.of("time"),
+			XMLReader.of("keywords"),
+			Bounds.reader()
 		);
 	}
 

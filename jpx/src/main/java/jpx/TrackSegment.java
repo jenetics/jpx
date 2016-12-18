@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -36,6 +37,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * A Track Segment holds a list of Track Points which are logically connected in
@@ -58,11 +61,9 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * Create a new track-segment with the given points.
 	 *
 	 * @param points the points of the track-segment
-	 * @throws NullPointerException if the given {@code points} sequence is
-	 *        {@code null}
 	 */
 	private TrackSegment(final List<WayPoint> points) {
-		_points = unmodifiableList(requireNonNull(points));
+		_points = points != null ? unmodifiableList(points) : emptyList();
 	}
 
 	/**
@@ -132,6 +133,32 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return new TrackSegment(points);
 	}
 
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("trkseg",
+			() -> { if (_points != null) for (WayPoint point : _points) point.write("trkpt", writer); }
+		);
+	}
+
+	static XMLReader<TrackSegment> reader() {
+		return XMLReader.of(
+			a -> TrackSegment.of((List<WayPoint>)a[0]),
+			"trkseg",
+			XMLReader.ofList(WayPoint.reader("trkpt"))
+		);
+	}
 
 	/* *************************************************************************
 	 *  JAXB object serialization
