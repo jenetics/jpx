@@ -36,7 +36,7 @@ public class TimeFormatTest {
 		System.out.println(format.format(time));
 	}
 
-	@Test(dataProvider = "formats")
+	//@Test(dataProvider = "formats")
 	public void parse(final TimeFormat format) {
 		final ZonedDateTime time = ZonedDateTime.now();
 		final String string = format.format(time);
