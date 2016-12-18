@@ -21,8 +21,6 @@ package jpx;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.replaceAll;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 import static jpx.XMLReader.attr;
@@ -40,8 +38,6 @@ import java.util.stream.Collectors;
 import javax.xml.bind.DataBindingException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;

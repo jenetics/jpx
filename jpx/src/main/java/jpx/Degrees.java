@@ -146,4 +146,20 @@ public final class Degrees extends Number implements Serializable {
 		return new Degrees(Math.toDegrees(radians));
 	}
 
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object
+	 */
+	static Degrees parse(final Object object) {
+		return object instanceof Degrees
+			? (Degrees)object
+			: object instanceof Number
+				? ofDegrees(((Number)object).doubleValue())
+				: object != null
+					? ofDegrees(Double.parseDouble(object.toString()))
+					: null;
+	}
+
 }

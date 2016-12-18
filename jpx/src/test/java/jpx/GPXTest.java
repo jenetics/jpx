@@ -42,12 +42,6 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
-//	@Override
-//	void assertEquals(final GPX actual, final GPX expected) {
-//		Assert.assertEquals(actual.getCreator(), expected.getCreator());
-//		Assert.assertEquals(actual.getVersion(), expected.getVersion());
-//	}
-
 	public static GPX nextGPX(final Random random) {
 		return GPX.of(
 			format("creator_%s", random.nextInt(100)),
@@ -63,7 +57,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void loadFromFile() throws IOException {
 		try (InputStream in = getClass().getResourceAsStream("/jpx/Gpx-full-sample.gpx")) {
 			final GPX gpx = GPX.read(in);
-			GPX.write(gpx, System.out);
+			//GPX.write(gpx, System.out);
 		}
 	}
 

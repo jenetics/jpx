@@ -157,7 +157,6 @@ public final class Person implements Serializable {
 		return new Person(null, null, null);
 	}
 
-
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/

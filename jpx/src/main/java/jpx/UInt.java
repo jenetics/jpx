@@ -114,4 +114,20 @@ public final class UInt extends Number implements Serializable {
 		return new UInt(value);
 	}
 
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object
+	 */
+	static UInt parse(final Object object) {
+		return object instanceof UInt
+			? (UInt)object
+			: object instanceof Number
+				? of(((Number)object).intValue())
+				: object != null
+					? of(Integer.parseInt(object.toString()))
+					: null;
+	}
+
 }

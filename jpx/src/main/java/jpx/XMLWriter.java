@@ -19,9 +19,12 @@
  */
 package jpx;
 
+import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -35,6 +38,10 @@ final class XMLWriter {
 
 	interface Elem {
 		void write() throws XMLStreamException;
+	}
+
+	interface Writer<T> {
+		void write(final T data, final XMLStreamWriter writer) throws XMLStreamException;
 	}
 
 	static final class Attr {
@@ -62,6 +69,22 @@ final class XMLWriter {
 		return Attr.of(name, value);
 	}
 
+	<T> void elem(final T data, final Writer<T> writer) throws XMLStreamException {
+		if (data != null) {
+			writer.write(data, _writer);
+		}
+	}
+
+	<T> void elems(final Iterable<T> data, final Writer<T> writer) throws XMLStreamException {
+		if (data != null) {
+			for (T d : data) {
+				if (d != null) {
+					writer.write(d, _writer);
+				}
+			}
+		}
+	}
+
 	void elem(final String name, final Attr attr, final Elem firstChild, final Elem... children)
 		throws XMLStreamException
 	{
@@ -79,6 +102,12 @@ final class XMLWriter {
 			child.write();
 		}
 		_writer.writeEndElement();
+	}
+
+	void elem(final String name, final Attr attr1, final Attr attr2, final Elem firstChild, final Elem... children)
+		throws XMLStreamException
+	{
+		elem(name, asList(attr1, attr2), firstChild, children);
 	}
 
 	void elem(final String name, final List<Attr> attrs, final Elem firstChild, final Elem... children)
@@ -133,6 +162,15 @@ final class XMLWriter {
 		if (text != null) {
 			_writer.writeStartElement(name);
 			_writer.writeCharacters(text.toString());
+			_writer.writeEndElement();
+		}
+	}
+
+	<T> void elem(final String name, final T object, final Function<T, Object> converter) throws XMLStreamException {
+		requireNonNull(name);
+		if (object != null) {
+			_writer.writeStartElement(name);
+			_writer.writeCharacters(converter.apply(object).toString());
 			_writer.writeEndElement();
 		}
 	}

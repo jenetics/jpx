@@ -142,4 +142,21 @@ public class Longitude extends Number implements Serializable {
 		return new Longitude(Math.toDegrees(radians));
 	}
 
+	/**
+	 * Try to parse the given object into a {@code Longitude} object. If the
+	 * given {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object, or {@code null} if the argument is {@code null}
+	 */
+	static Longitude parse(final Object object) {
+		return object instanceof Longitude
+			? (Longitude) object
+			: object instanceof Double
+				? ofDegrees((Double)object)
+				: object != null
+					? ofDegrees(Double.parseDouble(object.toString()))
+					: null;
+	}
+
 }

@@ -131,4 +131,20 @@ public final class Length extends Number implements Serializable {
 		return new Length(km*1000);
 	}
 
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object
+	 */
+	static Length parse(final Object object) {
+		return object instanceof Length
+			? (Length)object
+			: object instanceof Number
+				? ofMeters(((Number) object).doubleValue())
+				: object != null
+					? ofMeters(Double.parseDouble(object.toString()))
+					: null;
+	}
+
 }

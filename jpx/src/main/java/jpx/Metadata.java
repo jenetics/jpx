@@ -19,9 +19,8 @@
  */
 package jpx;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Objects.requireNonNull;
+import static jpx.Lists.immutable;
+import static jpx.Parsers.parseString;
 
 import java.io.Serializable;
 import java.time.ZoneId;
@@ -84,8 +83,6 @@ public final class Metadata implements Serializable {
 	 *        databases can use this information to classify the data.
 	 * @param bounds minimum and maximum coordinates which describe the extent
 	 *        of the coordinates in the file
-	 * @throws NullPointerException if the given {@code links} sequence is
-	 *        {@code null}
 	 */
 	private Metadata(
 		final String name,
@@ -101,7 +98,7 @@ public final class Metadata implements Serializable {
 		_description = description;
 		_author = author;
 		_copyright = copyright;
-		_links = links != null ? unmodifiableList(links) : emptyList();
+		_links = immutable(links);
 		_time = time;
 		_keywords = keywords;
 		_bounds = bounds;
@@ -272,20 +269,20 @@ public final class Metadata implements Serializable {
 		xml.elem("metadata",
 			() -> xml.elem("name", _name),
 			() -> xml.elem("desc", _description),
-			() -> { if (_author != null) _author.write(writer); },
-			() -> { if (_copyright != null) _copyright.write(writer); },
-			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elem(_author, Person::write),
+			() -> xml.elem(_copyright, Copyright::write),
+			() -> xml.elems(_links, Link::write),
 			() -> xml.elem("time", _time != null ? DTF.format(_time) : null),
 			() -> xml.elem("keywords", _keywords),
-			() -> { if (_bounds != null) _bounds.write(writer); }
+			() -> xml.elem(_bounds, Bounds::write)
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Metadata> reader() {
 		final Function<Object[], Metadata> create = a -> Metadata.of(
-			(String)a[0],
-			(String)a[1],
+			parseString(a[0]),
+			parseString(a[1]),
 			(Person)a[2],
 			(Copyright)a[3],
 			(List<Link>)a[4],

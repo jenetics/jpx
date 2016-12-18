@@ -23,6 +23,8 @@ import static java.lang.String.format;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.Parsers.parseDouble;
+import static jpx.Parsers.parseSeconds;
 import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -932,28 +934,26 @@ public final class WayPoint implements Point, Serializable {
 		final XMLWriter xml = new XMLWriter(writer);
 
 		xml.elem(name,
-			Arrays.asList(
-				xml.attr("lat", _latitude),
-				xml.attr("lon", _longitude)
-			),
-			() -> xml.elem("ele", _elevation != null ? _elevation.doubleValue() : null),
-			() -> xml.elem("speed", _speed != null ? _speed.doubleValue() : null),
+			xml.attr("lat", _latitude),
+			xml.attr("lon", _longitude),
+			() -> xml.elem("ele", _elevation, Length::doubleValue),
+			() -> xml.elem("speed", _speed ,Speed::doubleValue),
 			() -> xml.elem("time", _time != null ? DTF.format(_time) : null),
-			() -> xml.elem("magvar", _magneticVariation != null ? _magneticVariation.doubleValue() : null),
-			() -> xml.elem("geoidheight", _geoidHeight != null ? _geoidHeight.doubleValue() : null),
+			() -> xml.elem("magvar", _magneticVariation, Degrees::doubleValue),
+			() -> xml.elem("geoidheight", _geoidHeight, Length::doubleValue),
 			() -> xml.elem("name", _name),
 			() -> xml.elem("cmt", _comment),
 			() -> xml.elem("desc", _description),
 			() -> xml.elem("src", _source),
-			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elems(_links, Link::write),
 			() -> xml.elem("sym", _symbol),
 			() -> xml.elem("type", _type),
-			() -> xml.elem("fix", _fix != null ? _fix.getValue() : null),
+			() -> xml.elem("fix", _fix, Fix::getValue),
 			() -> xml.elem("sat", _sat),
 			() -> xml.elem("hdop", _hdop),
 			() -> xml.elem("vdop", _vdop),
 			() -> xml.elem("pdop", _pdop),
-			() -> xml.elem("ageofdgpsdata", _ageOfGPSData != null ? _ageOfGPSData.getSeconds() : null),
+			() -> xml.elem("ageofdgpsdata", _ageOfGPSData, Duration::getSeconds),
 			() -> xml.elem("dgpsid", _dgpsID)
 		);
 	}
@@ -961,11 +961,11 @@ public final class WayPoint implements Point, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final String name) {
 		final Function<Object[], WayPoint> create = a -> WayPoint.builder()
-			.elevation(a[2] != null ? Length.ofMeters(Double.parseDouble((String)a[2])) : null)
-			.speed(a[3] != null ? Speed.of(Double.parseDouble((String)a[3])) : null)
+			.elevation(Length.parse(a[2]))
+			.speed(Speed.parse(a[3]))
 			.time(a[4] != null ? ZonedDateTime.parse((String)a[4], DTF) : null)
-			.magneticVariation(a[5] != null ? Degrees.ofDegrees(Double.parseDouble((String)a[5])) : null)
-			.geoidHeight(a[6] != null ? Length.ofMeters(Double.parseDouble((String)a[6])) : null)
+			.magneticVariation(Degrees.parse(a[5]))
+			.geoidHeight(Length.parse(a[6]))
 			.name((String)a[7])
 			.comment((String)a[8])
 			.description((String)a[9])
@@ -973,14 +973,14 @@ public final class WayPoint implements Point, Serializable {
 			.links((List<Link>)a[11])
 			.symbol((String)a[12])
 			.type((String)a[13])
-			.fix(a[14] != null ? Fix.ofName((String)a[14]).orElse(null) : null)
-			.sat(a[15] != null ? UInt.of(Integer.parseInt((String)a[15])) : null)
-			.hdop(a[16] != null ? Double.parseDouble((String)a[16]) : null)
-			.vdop(a[17] != null ? Double.parseDouble((String)a[17]) : null)
-			.pdop(a[18] != null ? Double.parseDouble((String)a[18]) : null)
-			.ageOfDGPSAge(a[19] != null ? Duration.ofSeconds(Long.parseLong((String)a[19])) : null)
-			.dgpsStation(a[20] != null ? DGPSStation.of(Integer.parseInt((String)a[20])) : null)
-			.build(Double.parseDouble((String)a[0]), Double.parseDouble((String)a[1]));
+			.fix(Fix.parse(a[14]))
+			.sat(UInt.parse(a[15]))
+			.hdop(parseDouble(a[16]))
+			.vdop(parseDouble(a[17]))
+			.pdop(parseDouble(a[18]))
+			.ageOfDGPSAge(parseSeconds(a[19]))
+			.dgpsStation(DGPSStation.parse(a[20]))
+			.build(parseDouble(a[0]), parseDouble(a[1]));
 
 		return XMLReader.of(
 			create,

@@ -21,9 +21,7 @@ package jpx;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Objects.requireNonNull;
-import static jpx.XMLReader.attr;
+import static jpx.Lists.immutable;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -63,7 +61,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * @param points the points of the track-segment
 	 */
 	private TrackSegment(final List<WayPoint> points) {
-		_points = points != null ? unmodifiableList(points) : emptyList();
+		_points = immutable(points);
 	}
 
 	/**
@@ -148,10 +146,11 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		final XMLWriter xml = new XMLWriter(writer);
 
 		xml.elem("trkseg",
-			() -> { if (_points != null) for (WayPoint point : _points) point.write("trkpt", writer); }
+			() -> xml.elems(_points, (p, w) -> p.write("trkpt", w))
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	static XMLReader<TrackSegment> reader() {
 		return XMLReader.of(
 			a -> TrackSegment.of((List<WayPoint>)a[0]),

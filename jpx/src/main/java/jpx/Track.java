@@ -20,8 +20,6 @@
 package jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 
 import java.io.Serializable;
@@ -282,10 +280,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			() -> xml.elem("cmt", _comment),
 			() -> xml.elem("desc", _description),
 			() -> xml.elem("src", _source),
-			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elems(_links, Link::write),
 			() -> xml.elem("number", _number),
 			() -> xml.elem("type", _type),
-			() -> { if (_segments != null) for (TrackSegment seg : _segments) seg.write(writer); }
+			() -> xml.elems(_segments, TrackSegment::write)
 		);
 	}
 
@@ -297,7 +295,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(String)a[2],
 			(String)a[3],
 			(List<Link>)a[4],
-			a[5] != null ? UInt.of(Integer.parseInt((String)a[5])) : null,
+			UInt.parse(a[5]),
 			(String)a[6],
 			(List<TrackSegment>)a[7]
 		);

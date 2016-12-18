@@ -20,6 +20,9 @@
 package jpx;
 
 import static java.util.Objects.requireNonNull;
+import static jpx.Parsers.parseString;
+import static jpx.Parsers.parseURI;
+import static jpx.Parsers.parseYear;
 import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -28,6 +31,7 @@ import java.net.URISyntaxException;
 import java.time.Year;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -252,24 +256,16 @@ public final class Copyright implements Serializable {
 	}
 
 	static XMLReader<Copyright> reader() {
+		final Function<Object[], Copyright> creator = a -> Copyright.of(
+			parseString(a[0]), parseYear(a[1]), parseURI(a[2])
+		);
+
 		return XMLReader.of(
-			a -> Copyright.of(
-				(String)a[0],
-				a[1] != null ? Year.of(Integer.parseInt((String)a[1])) : null,
-				uri((String)a[2])
-			),
+			creator,
 			"copyright", attr("author"),
 			XMLReader.of("year"),
 			XMLReader.of("license")
 		);
-	}
-
-	private static URI uri(final String uri) {
-		try {
-			return uri != null ? new URI(uri) : null;
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
 	}
 
 	/* *************************************************************************

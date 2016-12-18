@@ -19,6 +19,7 @@
  */
 package jpx;
 
+import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -72,6 +73,20 @@ public enum Fix {
 			case "pps": return Optional.of(Fix.PPS);
 			default: return Optional.empty();
 		}
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object
+	 */
+	static Fix parse(final Object object) {
+		return object instanceof Fix
+			? (Fix)object
+			: object != null
+				? ofName(object.toString()).orElse(null)
+				: null;
 	}
 
 }

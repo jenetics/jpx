@@ -122,4 +122,20 @@ public final class Speed extends Number implements Serializable {
 		return new Speed(kilometerPerHour/MPS_TO_KMH_FACTOR);
 	}
 
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object
+	 */
+	static Speed parse(final Object object) {
+		return object instanceof Speed
+			? (Speed)object
+			: object instanceof Number
+				? of(((Number) object).doubleValue())
+				: object != null
+					? of(Double.parseDouble(object.toString()))
+					: null;
+	}
+
 }

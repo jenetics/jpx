@@ -20,6 +20,7 @@
 package jpx;
 
 import static java.util.Objects.requireNonNull;
+import static jpx.Parsers.parseString;
 import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -141,8 +142,12 @@ public final class Email implements Serializable {
 	}
 
 	static XMLReader<Email> reader() {
+		final Function<Object[], Email> creator = a -> Email.of(
+			parseString(a[0]), parseString(a[1])
+		);
+
 		return XMLReader.of(
-			a -> Email.of((String)a[0], (String)a[1]),
+			creator,
 			"email", attr("id"), attr("domain")
 		);
 	}

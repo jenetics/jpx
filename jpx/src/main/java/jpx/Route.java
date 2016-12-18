@@ -21,8 +21,8 @@ package jpx;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.Lists.immutable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -93,10 +93,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = links != null ? unmodifiableList(links) : emptyList();
+		_links = immutable(links);
 		_number = number;
 		_type = type;
-		_points = points != null ? unmodifiableList(points) : emptyList();
+		_points = immutable(points);
 	}
 
 	/**
@@ -438,13 +438,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			() -> xml.elem("cmt", _comment),
 			() -> xml.elem("desc", _description),
 			() -> xml.elem("src", _source),
-			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elems(_links,Link::write),
 			() -> xml.elem("number", _number),
 			() -> xml.elem("type", _type),
-			() -> { if (_points != null) for (WayPoint point : _points) point.write("rtept", writer); }
+			() -> xml.elems(_points, (p, w) -> p.write("rtept", w))
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	static XMLReader<Route> reader() {
 		final Function<Object[], Route> create = a -> Route.builder()
 			.name((String)a[0])
@@ -452,7 +453,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			.description((String)a[2])
 			.source((String)a[3])
 			.links((List<Link>)a[4])
-			.number(a[5] != null ? UInt.of(Integer.parseInt((String)a[5])) : null)
+			.number(UInt.parse(a[5]))
 			.type((String)a[6])
 			.points((List<WayPoint>)a[7])
 			.build();

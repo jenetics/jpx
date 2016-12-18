@@ -187,15 +187,13 @@ public final class Bounds implements Serializable {
 	}
 
 	static XMLReader<Bounds> reader() {
-		final Function<Object[], Bounds> create = a -> Bounds.of(
-			Latitude.ofDegrees(Double.parseDouble((String)a[0])),
-			Longitude.ofDegrees(Double.parseDouble((String)a[1])),
-			Latitude.ofDegrees(Double.parseDouble((String)a[2])),
-			Longitude.ofDegrees(Double.parseDouble((String)a[3]))
+		final Function<Object[], Bounds> creator = a -> Bounds.of(
+			Latitude.parse(a[0]), Longitude.parse(a[1]),
+			Latitude.parse(a[2]), Longitude.parse(a[3])
 		);
 
 		return XMLReader.of(
-			create,
+			creator,
 			"bounds",
 			attr("minlat"), attr("minlon"),
 			attr("maxlat"), attr("maxlon")
