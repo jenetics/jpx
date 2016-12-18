@@ -39,7 +39,7 @@ ext {
 
 allprojects {
 	group = 'io.jenetics'
-	version = '0.1'
+	version = '0.1.0'
 
 	repositories {
 		flatDir(dir: "${rootDir}/buildSrc/lib")
