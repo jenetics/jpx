@@ -19,9 +19,12 @@
  */
 package jpx;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.Lists.immutable;
+import static jpx.XMLReader.attr;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,6 +33,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.DataBindingException;
@@ -45,6 +49,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * GPX documents contain a metadata header, followed by way-points, routes, and
@@ -63,6 +69,7 @@ public final class GPX implements Serializable {
 	public static final String VERSION = "1.1";
 
 	private final String _creator;
+	private final String _version;
 	private final Metadata _metadata;
 	private final List<WayPoint> _wayPoints;;
 	private final List<Route> _routes;
@@ -74,25 +81,28 @@ public final class GPX implements Serializable {
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
 	 *        instance document that fails to validate.
+	 * @param version the GPX version
 	 * @param metadata the metadata about the GPS file
 	 * @param wayPoints the way-points
 	 * @param routes the routes
 	 * @param tracks the tracks
-	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
-	 *         {@code routes} or {@code tracks} is {@code null}
+	 * @throws NullPointerException if the {@code creator} or {@code version} is
+	 *         {@code null}
 	 */
 	private GPX(
+		final String version,
 		final String creator,
 		final Metadata metadata,
 		final List<WayPoint> wayPoints,
 		final List<Route> routes,
 		final List<Track> tracks
 	) {
+		_version = requireNonNull(version);
 		_creator = requireNonNull(creator);
 		_metadata = metadata;
-		_wayPoints = unmodifiableList(requireNonNull(wayPoints));
-		_routes = unmodifiableList(requireNonNull(routes));
-		_tracks = unmodifiableList(requireNonNull(tracks));
+		_wayPoints = immutable(wayPoints);
+		_routes = immutable(routes);
+		_tracks = immutable(tracks);
 	}
 
 	/**
@@ -101,7 +111,7 @@ public final class GPX implements Serializable {
 	 * @return the version number of the GPX file
 	 */
 	public String getVersion() {
-		return VERSION;
+		return _version;
 	}
 
 	/**
@@ -154,8 +164,8 @@ public final class GPX implements Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 37;
-		hash += 17*Objects.hashCode(getVersion()) + 31;
 		hash += 17*Objects.hashCode(_creator) + 31;
+		hash += 17*Objects.hashCode(_version) + 31;
 		hash += 17*Objects.hashCode(_metadata) + 31;
 		hash += 17*Objects.hashCode(_wayPoints) + 31;
 		hash += 17*Objects.hashCode(_routes) + 31;
@@ -166,8 +176,8 @@ public final class GPX implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj instanceof GPX &&
-			Objects.equals(((GPX)obj).getVersion(), getVersion()) &&
 			Objects.equals(((GPX)obj)._creator, _creator) &&
+			Objects.equals(((GPX)obj)._version, _version) &&
 			Objects.equals(((GPX)obj)._metadata, _metadata) &&
 			Objects.equals(((GPX)obj)._wayPoints, _wayPoints) &&
 			Objects.equals(((GPX)obj)._routes, _routes) &&
@@ -200,11 +210,87 @@ public final class GPX implements Serializable {
 		final List<Track> tracks
 	) {
 		return new GPX(
+			VERSION,
 			creator,
 			metadata,
 			wayPoints,
 			routes,
 			tracks
+		);
+	}
+
+	/**
+	 * Create a new {@code GPX} object with the given data.
+	 *
+	 * @param creator the name or URL of the software that created your GPX
+	 *        document. This allows others to inform the creator of a GPX
+	 *        instance document that fails to validate.
+	 * @param  version the GPX version
+	 * @param metadata the metadata about the GPS file
+	 * @param wayPoints the way-points
+	 * @param routes the routes
+	 * @param tracks the tracks
+	 * @return a new {@code GPX} object with the given data
+	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
+	 *         {@code routes} or {@code tracks} is {@code null}
+	 */
+	public static GPX of(
+		final String version,
+		final String creator,
+		final Metadata metadata,
+		final List<WayPoint> wayPoints,
+		final List<Route> routes,
+		final List<Track> tracks
+	) {
+		return new GPX(
+			version,
+			creator,
+			metadata,
+			wayPoints,
+			routes,
+			tracks
+		);
+	}
+
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("gpx", asList(xml.attr("version", _version), xml.attr("creator", _creator)),
+			() -> { if (_metadata != null) _metadata.write(writer); },
+			() -> { for (WayPoint wp : _wayPoints) wp.write("wpt", writer);},
+			() -> { for (Route route : _routes) route.write(writer);},
+			() -> { for (Track track : _tracks) track.write(writer);}
+		);
+	}
+
+	static XMLReader<GPX> reader() {
+		final Function<Object[], GPX> creator = a -> GPX.of(
+			(String)a[0],
+			(String)a[1],
+			(Metadata)a[2],
+			(List<WayPoint>)a[3],
+			(List<Route>)a[4],
+			(List<Track>)a[5]
+		);
+
+		return XMLReader.of(
+			creator,
+			"gpx", asList(attr("version"), attr("creator")),
+			Metadata.reader(),
+			XMLReader.ofList(WayPoint.reader("wpt")),
+			XMLReader.ofList(Route.reader()),
+			XMLReader.ofList(Track.reader())
 		);
 	}
 

@@ -21,6 +21,7 @@ package jpx;
 
 import static java.lang.String.format;
 
+import java.util.List;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -63,6 +64,10 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 				: null,
 			TrackSegmentTest.nextTrackSegments(random)
 		);
+	}
+
+	public static List<Track> nextTracks(final Random random) {
+		return nextObjects(() -> nextTrack(random), random);
 	}
 
 }

@@ -22,6 +22,7 @@ package jpx;
 import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.Lists.immutable;
 
 import java.io.Serializable;
 import java.util.Iterator;
@@ -78,8 +79,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *        logically connected in order. To represent a single GPS track
 	 *        where GPS reception was lost, or the GPS receiver was turned off,
 	 *        start a new track-segment for each continuous span of track data.
-	 * @throws NullPointerException if the {@code links} or the {@code segments}
-	 *         sequence is {@code null}
 	 */
 	private Track(
 		final String name,
@@ -95,10 +94,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = unmodifiableList(requireNonNull(links));
+		_links = immutable(links);
 		_number = number;
 		_type = type;
-		_segments = unmodifiableList(requireNonNull(segments));
+		_segments = immutable(segments);
 	}
 
 	/**

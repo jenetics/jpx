@@ -21,6 +21,7 @@ package jpx;
 
 import static java.lang.String.format;
 
+import java.util.List;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -51,6 +52,10 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 			.type(random.nextBoolean() ? format("type_%s", random.nextInt(100)) : null)
 			.points(WayPointTest.nextWayPoints(random))
 			.build();
+	}
+
+	public static List<Route> nextRoutes(final Random random) {
+		return nextObjects(() -> nextRoute(random), random);
 	}
 
 }

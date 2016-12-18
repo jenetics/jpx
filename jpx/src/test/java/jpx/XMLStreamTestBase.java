@@ -21,8 +21,11 @@ package jpx;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -62,6 +65,11 @@ public abstract class XMLStreamTestBase<T> {
 
 	protected abstract Params<T> params(final Random random);
 
+	public static <T> List<T> nextObjects(final Supplier<T> supplier, final Random random) {
+		return Stream.generate(supplier)
+			.limit(random.nextInt(20))
+			.collect(Collectors.toList());
+	}
 
 	@Test(invocationCount = 10)
 	public void marshalling() throws Exception {
@@ -75,6 +83,10 @@ public abstract class XMLStreamTestBase<T> {
 		final byte[] marshaled = toBytes(expected, params.writer);
 		final T actual = fromBytes(marshaled, params.reader);
 
+		assertEquals(actual, expected);
+	}
+
+	void assertEquals(final T actual, final T expected) {
 		Assert.assertEquals(actual, expected);
 	}
 

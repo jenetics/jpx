@@ -19,24 +19,55 @@
  */
 package jpx;
 
+import static java.lang.String.format;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
  */
-public class GPXTest {
+@Test
+public class GPXTest extends XMLStreamTestBase<GPX> {
+
+	@Override
+	protected Params<GPX> params(final Random random) {
+		return new Params<>(
+			() -> nextGPX(random),
+			GPX.reader(),
+			GPX::write
+		);
+	}
+
+//	@Override
+//	void assertEquals(final GPX actual, final GPX expected) {
+//		Assert.assertEquals(actual.getCreator(), expected.getCreator());
+//		Assert.assertEquals(actual.getVersion(), expected.getVersion());
+//	}
+
+	public static GPX nextGPX(final Random random) {
+		return GPX.of(
+			format("creator_%s", random.nextInt(100)),
+			format("version_%s", random.nextInt(100)),
+			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
+			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
+			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
+			random.nextBoolean() ? TrackTest.nextTracks(random) : null
+		);
+	}
 
 	//@Test
+	/*
 	public void loadFromFile() throws IOException {
 		try (InputStream in = getClass().getResourceAsStream("/jpx/Gpx-full-sample.gpx")) {
 			final GPX gpx = GPX.read(in);
 			GPX.write(gpx, System.out);
 		}
 	}
+	*/
 
 }
