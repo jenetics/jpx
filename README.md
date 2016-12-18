@@ -2,6 +2,8 @@
 
 This is a Java library for creating, reading and writing GPS data in [GPX](http://www.topografix.com/GPX) format. It implements version [1.1](http://www.topografix.com/GPX/1/1/) of the GPX format. (*First version will be released soon.*)
 
+Javadoc of the library can be [here](https://jenetics.github.io/jpx/javadoc/jpx/0.1/index.html).
+
 ## Requirements
 
 ### Runtime
