@@ -12,7 +12,7 @@ This is a Java library for creating, reading and writing GPS data in [GPX](http:
 *  **Gradle 3.x**: [Gradle](http://www.gradle.org/) is used for building the library. (Gradle is download automatically, if you are using the Gradle Wrapper script `./gradlew`, located in the base directory, for building the library.)
 *  **TestNG 6.9.13**: JPX uses [TestNG](http://testng.org/doc/index.html) framework for unit tests.
 
-## Build JPX
+## Building JPX
 
 For building the JPX library you have to check out the master branch from Github.
 
@@ -31,51 +31,81 @@ For building the JPX library you have to check out the master branch from Github
 
 **Creating new GPX object with 3 track-points**
 
-    final GPX gpx = GPX.builder()
-        .addTrack(track -> track
-            .addSegment(segment -> segment
-                .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
-                .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
-                .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
-        .build();
+```java
+final GPX gpx = GPX.builder()
+    .addTrack(track -> track
+        .addSegment(segment -> segment
+            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+    .build();
+```
 
 **Writing GPX object to a file**
 
-    // Writing "pretty" GPX file.
-    GPX.write(gpx, "    ", "gpx.xml");
+```java
+// Writing "pretty" GPX file.
+GPX.write(gpx, "    ", "gpx.xml");
+```
 
 *GPX output*
 
-    <?xml version="1.0" encoding="UTF-8"?>
-    <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX - Java GPX library">
-        <trk>
-            <trkseg>
-                <trkpt lat="48.2081743" lon="16.3738189">
-                    <ele>160.0</ele>
-                </trkpt>
-                <trkpt lat="48.2081743" lon="16.3738189">
-                    <ele>161.0</ele>
-                </trkpt>
-                <trkpt lat="48.2081743" lon="16.3738189">
-                    <ele>162.0</ele>
-                </trkpt>
-            </trkseg>
-        </trk>
-    </gpx>
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX - Java GPX library">
+    <trk>
+        <trkseg>
+            <trkpt lat="48.2081743" lon="16.3738189">
+                <ele>160.0</ele>
+            </trkpt>
+            <trkpt lat="48.2081743" lon="16.3738189">
+                <ele>161.0</ele>
+            </trkpt>
+            <trkpt lat="48.2081743" lon="16.3738189">
+                <ele>162.0</ele>
+            </trkpt>
+        </trkseg>
+    </trk>
+</gpx>
+
+```
 
 **Reading GPX object from file**
 
 This example writes a given `GPX` object to a file, reads it again and prints the `WayPoint`s of all tracks and all track-segments to the console.
 
-    GPX.write(gpx, "gpx.xml");
-    GPX.read("gpx.xml".tracks()
-        .flatMap(Track::segments)
-        .flatMap(TrackSegment::points)
-        .forEach(System.out::println);
+```java
+GPX.write(gpx, "gpx.xml");
+GPX.read("gpx.xml".tracks()
+    .flatMap(Track::segments)
+    .flatMap(TrackSegment::points)
+    .forEach(System.out::println);
+
+```
 
 *Console output*
 
-    [lat=48.2081743, lon=48.2081743]
-    [lat=48.2081743, lon=48.2081743]
-    [lat=48.2081743, lon=48.2081743]
+```bash
+[lat=48.2081743, lon=48.2081743]
+[lat=48.2081743, lon=48.2081743]
+[lat=48.2081743, lon=48.2081743]
 
+```
+
+## License
+
+The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
+
+    Copyright 2016 Franz Wilhelmstötter
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
