@@ -156,6 +156,11 @@ public final class GPX implements Serializable {
 		return _wayPoints;
 	}
 
+	/**
+	 * Return a stream with all {@code WayPoint}s of this {@code GPX} object.
+	 *
+	 * @return a stream with all {@code WayPoint}s of this {@code GPX} object
+	 */
 	public Stream<WayPoint> wayPoints() {
 		return _wayPoints.stream();
 	}
@@ -169,6 +174,11 @@ public final class GPX implements Serializable {
 		return _routes;
 	}
 
+	/**
+	 * Return a stream of the {@code GPX} routes.
+	 *
+	 * @return a stream of the {@code GPX} routes.
+	 */
 	public Stream<Route> routes() {
 		return _routes.stream();
 	}
@@ -182,6 +192,11 @@ public final class GPX implements Serializable {
 		return _tracks;
 	}
 
+	/**
+	 * Return a stream of the {@code GPX} tracks.
+	 *
+	 * @return a stream of the {@code GPX} tracks.
+	 */
 	public Stream<Track> tracks() {
 		return _tracks.stream();
 	}
@@ -209,6 +224,21 @@ public final class GPX implements Serializable {
 			Objects.equals(((GPX)obj)._tracks, _tracks);
 	}
 
+
+	/**
+	 * Builder class for creating immutable {@code GPX} objects.
+	 * <p>
+	 * Creating a GPX object with one track-segment and 3 track-points:
+	 * <pre>{@code
+	 * final GPX gpx = GPX.builder()
+	 *     .addTrack(track -> track
+	 *         .addSegment(segment -> segment
+	 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+	 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+	 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+	 *     .build();
+	 * }</pre>
+	 */
 	public static final class Builder {
 		private String _creator;
 		private String _version;
@@ -222,11 +252,31 @@ public final class GPX implements Serializable {
 			_creator = requireNonNull(creator);
 		}
 
+		/**
+		 * Set the GPX metadata.
+		 *
+		 * @param metadata the GPX metadata
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder metadata(final Metadata metadata) {
 			_metadata = metadata;
 			return this;
 		}
 
+		/**
+		 * Allows to set partial metadata without messing up with the
+		 * {@link Metadata.Builder} class.
+		 * <pre>{@code
+		 * final GPX gpx = GPX.builder()
+		 *     .metadata(md -> md.author("Franz Wilhelmstötter"))
+		 *     .addTrack(...)
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @param metadata the metadata consumer
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given argument is {@code null}
+		 */
 		public Builder metadata(final Consumer<Metadata.Builder> metadata) {
 			final Metadata.Builder builder = Metadata.builder();
 			metadata.accept(builder);
@@ -235,31 +285,72 @@ public final class GPX implements Serializable {
 			return this;
 		}
 
+		/**
+		 * Sets the way-points of the {@code GPX} object.
+		 *
+		 * @param wayPoints the {@code GPX} way-points
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
 			_wayPoints = wayPoints;
 			return this;
 		}
 
+		/**
+		 * Add one way-point to the {@code GPX} object.
+		 *
+		 * @param wayPoint the way-point to add
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code wayPoint} is
+		 *         {@code null}
+		 */
 		public Builder addWayPoint(final WayPoint wayPoint) {
 			if (_wayPoints == null) {
 				_wayPoints = new ArrayList<>();
 			}
-			_wayPoints.add(wayPoint);
+			_wayPoints.add(requireNonNull(wayPoint));
 
 			return this;
 		}
 
-		public Builder addWayPoint(final Consumer<WayPoint.Builder> wpb) {
+		/**
+		 * Add a way-point to the {@code GPX} object using a
+		 * {@link WayPoint.Builder}.
+		 * <pre>{@code
+		 * final GPX gpx = GPX.builder()
+		 *     .addWayPoint(wp -> wp.lat(23.6).lon(13.5).ele(50))
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @param wayPoint the way-point to add, configured by the way-point
+		 *        builder
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given argument is {@code null}
+		 */
+		public Builder addWayPoint(final Consumer<WayPoint.Builder> wayPoint) {
 			final WayPoint.Builder builder = WayPoint.builder();
-			wpb.accept(builder);
+			wayPoint.accept(builder);
 			return addWayPoint(builder.build());
 		}
 
+		/**
+		 * Sets the routes of the {@code GPX} object.
+		 *
+		 * @param routes the {@code GPX} routes
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder routes(final List<Route> routes) {
 			_routes = routes;
 			return this;
 		}
 
+		/**
+		 * Add a route the {@code GPX} object.
+		 *
+		 * @param route the route to add
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code route} is {@code null}
+		 */
 		public Builder addRoute(final Route route) {
 			if (_routes == null) {
 				_routes = new ArrayList<>();
@@ -269,17 +360,44 @@ public final class GPX implements Serializable {
 			return this;
 		}
 
+		/**
+		 * Add a route the {@code GPX} object.
+		 * <pre>{@code
+		 * final GPX gpx = GPX.builder()
+		 *     .addRoute(route -> route
+		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161)))
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @param route the route to add, configured by the route builder
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given argument is {@code null}
+		 */
 		public Builder addRoute(final Consumer<Route.Builder> route) {
 			final Route.Builder builder = Route.builder();
 			route.accept(builder);
 			return addRoute(builder.build());
 		}
 
-		private Builder tracks(final List<Track> tracks) {
+		/**
+		 * Sets the tracks of the {@code GPX} object.
+		 *
+		 * @param tracks the {@code GPX} tracks
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder tracks(final List<Track> tracks) {
 			_tracks = tracks;
 			return this;
 		}
 
+		/**
+		 * Add a track the {@code GPX} object.
+		 *
+		 * @param track the track to add
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code track} is {@code null}
+		 */
 		public Builder addTrack(final Track track) {
 			if (_tracks == null) {
 				_tracks = new ArrayList<>();
@@ -289,12 +407,31 @@ public final class GPX implements Serializable {
 			return this;
 		}
 
+		/**
+		 * Add a track the {@code GPX} object.
+		 * <pre>{@code
+		 * final GPX gpx = GPX.builder()
+		 *     .addTrack(track -> track
+		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161)))
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @param track the track to add, configured by the track builder
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given argument is {@code null}
+		 */
 		public Builder addTrack(final Consumer<Track.Builder> track) {
 			final Track.Builder builder = Track.builder();
 			track.accept(builder);
 			return addTrack(builder.build());
 		}
 
+		/**
+		 * Create an immutable {@code GPX} object from the current builder state.
+		 *
+		 * @return an immutable {@code GPX} object from the current builder state
+		 */
 		public GPX build() {
 			return new GPX(
 				_version,
@@ -308,17 +445,38 @@ public final class GPX implements Serializable {
 
 	}
 
+	/**
+	 * Create a new GPX builder with the given GPX version and creator string.
+	 *
+	 * @param version the GPX version string
+	 * @param creator the GPX creator
+	 * @return new GPX builder
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
 	public static Builder builder(final String version, final String creator) {
 		return new Builder(version, creator);
 	}
 
+	/**
+	 * Create a new GPX builder with the given GPX creator string.
+	 *
+	 * @param creator the GPX creator
+	 * @return new GPX builder
+	 * @throws NullPointerException if the given arguments is {@code null}
+	 */
 	public static Builder builder(final String creator) {
 		return builder(VERSION, creator);
 	}
 
+	/**
+	 * Create a new GPX builder.
+	 *
+	 * @return new GPX builder
+	 */
 	public static Builder builder() {
 		return builder(VERSION, CREATOR);
 	}
+
 
 	/* *************************************************************************
 	 *  Static object creation methods
@@ -453,6 +611,15 @@ public final class GPX implements Serializable {
 		write(gpx, null, output);
 	}
 
+	/**
+	 * Writes the given {@code gpx} object (in GPX XML format) to the given
+	 * {@code output} stream.
+	 *
+	 * @param gpx the GPX object to write to the output
+	 * @param path the output path where the GPX object is written to
+	 * @throws IOException if the writing of the GPX object fails
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
 	public static void write(final GPX gpx, final Path path) throws IOException {
 		try (FileOutputStream out = new FileOutputStream(path.toFile());
 			 BufferedOutputStream bout = new BufferedOutputStream(out))
@@ -461,6 +628,15 @@ public final class GPX implements Serializable {
 		}
 	}
 
+	/**
+	 * Writes the given {@code gpx} object (in GPX XML format) to the given
+	 * {@code output} stream.
+	 *
+	 * @param gpx the GPX object to write to the output
+	 * @param path the output path where the GPX object is written to
+	 * @throws IOException if the writing of the GPX object fails
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
 	public static void write(final GPX gpx, final String path) throws IOException {
 		write(gpx, Paths.get(path));
 	}
@@ -497,6 +673,17 @@ public final class GPX implements Serializable {
 		}
 	}
 
+	/**
+	 * Writes the given {@code gpx} object (in GPX XML format) to the given
+	 * {@code output} stream.
+	 *
+	 * @param gpx the GPX object to write to the output
+	 * @param path the output path where the GPX object is written to
+	 * @param indent the indent string for pretty printing. If the string is
+	 *        {@code null}, no pretty printing is performed.
+	 * @throws IOException if the writing of the GPX object fails
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
 	public static void write(final GPX gpx, final String indent, final Path path)
 		throws IOException
 	{
@@ -507,6 +694,17 @@ public final class GPX implements Serializable {
 		}
 	}
 
+	/**
+	 * Writes the given {@code gpx} object (in GPX XML format) to the given
+	 * {@code output} stream.
+	 *
+	 * @param gpx the GPX object to write to the output
+	 * @param path the output path where the GPX object is written to
+	 * @param indent the indent string for pretty printing. If the string is
+	 *        {@code null}, no pretty printing is performed.
+	 * @throws IOException if the writing of the GPX object fails
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
 	public static void write(final GPX gpx, final String indent, final String path)
 		throws IOException
 	{
@@ -539,6 +737,15 @@ public final class GPX implements Serializable {
 		}
 	}
 
+	/**
+	 * Read an GPX object from the given {@code input} stream.
+	 *
+	 * @param path the input path from where the GPX date is read
+	 * @return the GPX object read from the input stream
+	 * @throws IOException if the GPX object can't be read
+	 * @throws NullPointerException if the given {@code input} stream is
+	 *         {@code null}
+	 */
 	public static GPX read(final Path path) throws IOException {
 		try (FileInputStream in = new FileInputStream(path.toFile());
 			 BufferedInputStream bin = new BufferedInputStream(in))
@@ -547,6 +754,15 @@ public final class GPX implements Serializable {
 		}
 	}
 
+	/**
+	 * Read an GPX object from the given {@code input} stream.
+	 *
+	 * @param path the input path from where the GPX date is read
+	 * @return the GPX object read from the input stream
+	 * @throws IOException if the GPX object can't be read
+	 * @throws NullPointerException if the given {@code input} stream is
+	 *         {@code null}
+	 */
 	public static GPX read(final String path) throws IOException {
 		return read(Paths.get(path));
 	}

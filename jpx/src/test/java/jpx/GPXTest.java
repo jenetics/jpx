@@ -65,6 +65,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test
 	public void usage() throws Exception {
 		final GPX gpx = GPX.builder()
+			.addRoute(route -> route
+				.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+				.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161)))
 			.addTrack(track -> track
 				.addSegment(segment -> segment
 					.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
