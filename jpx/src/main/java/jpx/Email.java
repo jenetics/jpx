@@ -26,13 +26,6 @@ import static jpx.XMLReader.attr;
 import java.io.Serializable;
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -44,7 +37,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Email.Model.Adapter.class)
 public final class Email implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -150,42 +142,6 @@ public final class Email implements Serializable {
 			creator,
 			"email", attr("id"), attr("domain")
 		);
-	}
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "email")
-	@XmlType(name = "gpx.Email")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlAttribute(name = "id", required = true)
-		public String id;
-
-		@XmlAttribute(name = "domain", required = true)
-		public String domain;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, Email>
-		{
-			@Override
-			public Model marshal(final Email email) {
-				final Model model = new Model();
-				model.id = email._id;
-				model.domain = email._domain;
-				return model;
-			}
-
-			@Override
-			public Email unmarshal(final Model model) {
-				return Email.of(model.id, model.domain);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-
 	}
 
 }

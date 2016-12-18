@@ -30,15 +30,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -51,7 +43,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Metadata.Model.Adapter.class)
 public final class Metadata implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -303,102 +294,6 @@ public final class Metadata implements Serializable {
 			XMLReader.of("keywords"),
 			Bounds.reader()
 		);
-	}
-
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "metadata")
-	@XmlType(name = "gpx.Metadata")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlElement(name = "name")
-		public String name;
-
-		@XmlElement(name = "desc")
-		public String desc;
-
-		@XmlElement(name = "author")
-		public Person.Model author;
-
-		@XmlElement(name = "copyright")
-		public Copyright.Model copyright;
-
-		@XmlElement(name = "link")
-		public List<Link.Model> link;
-
-		@XmlElement(name = "time")
-		public String time;
-
-		@XmlElement(name = "keywords")
-		public String keywords;
-
-		@XmlElement(name = "bounds")
-		public Bounds.Model bounds;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, Metadata>
-		{
-			private static final DateTimeFormatter
-			DTF = DateTimeFormatter.ISO_INSTANT;
-
-			@Override
-			public Model marshal(final Metadata metadata) {
-				final Model model = new Model();
-				if (metadata != null) {
-					model.name = metadata._name;
-					model.desc = metadata._description;
-					model.author = metadata.getAuthor()
-						.map(Person.Model.ADAPTER::marshal)
-						.orElse(null);
-					model.copyright = metadata.getCopyright()
-						.map(Copyright.Model.ADAPTER::marshal)
-						.orElse(null);
-					model.link = metadata.getLinks().stream()
-						.map(Link.Model.ADAPTER::marshal)
-						.collect(Collectors.toList());
-					model.time = metadata.getTime()
-						.map(DTF::format)
-						.orElse(null);
-					model.keywords = metadata._keywords;
-					model.bounds = metadata.getBounds()
-						.map(Bounds.Model.ADAPTER::marshal)
-						.orElse(null);
-				}
-
-				return model;
-			}
-
-			@Override
-			public Metadata unmarshal(final Model model) {
-				return Metadata.of(
-					model.name,
-					model.desc,
-					Optional.ofNullable(model.author)
-						.map(Person.Model.ADAPTER::unmarshal)
-						.orElse(null),
-					Optional.ofNullable(model.copyright)
-						.map(Copyright.Model.ADAPTER::unmarshal)
-						.orElse(null),
-					model.link.stream()
-						.map(Link.Model.ADAPTER::unmarshal)
-						.collect(Collectors.toList()),
-					Optional.ofNullable(model.time)
-						.map(t -> ZonedDateTime.parse(t, DTF))
-						.orElse(null),
-					model.keywords,
-					Optional.ofNullable(model.bounds)
-						.map(Bounds.Model.ADAPTER::unmarshal)
-						.orElse(null)
-				);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-
 	}
 
 }

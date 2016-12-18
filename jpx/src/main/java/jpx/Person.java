@@ -23,13 +23,6 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -40,7 +33,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Person.Model.Adapter.class)
 public final class Person implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -185,59 +177,6 @@ public final class Person implements Serializable {
 			Email.reader(),
 			Link.reader()
 		);
-	}
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "person")
-	@XmlType(name = "gpx.Person")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlElement(name = "name")
-		public String name;
-
-		@XmlElement(name = "email")
-		public Email.Model email;
-
-		@XmlElement(name = "link")
-		public Link.Model link;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, Person>
-		{
-			@Override
-			public Model marshal(final Person person) {
-				final Model model = new Model();
-				model.name = person.getName().orElse(null);
-				model.email = person.getEmail()
-					.map(Email.Model.ADAPTER::marshal)
-					.orElse(null);
-				model.link = person.getLink()
-					.map(Link.Model.ADAPTER::marshal)
-					.orElse(null);
-
-				return model;
-			}
-
-			@Override
-			public Person unmarshal(final Model model) {
-				return Person.of(
-					model.name,
-					Optional.ofNullable(model.email)
-						.map(Email.Model.ADAPTER::unmarshal)
-						.orElse(null),
-					Optional.ofNullable(model.link)
-						.map(Link.Model.ADAPTER::unmarshal)
-						.orElse(null)
-				);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-
 	}
 
 }

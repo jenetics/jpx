@@ -20,7 +20,6 @@
 package jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 import static jpx.Lists.immutable;
 
 import java.io.Serializable;
@@ -28,13 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -48,7 +40,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(TrackSegment.Model.Adapter.class)
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -157,41 +148,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			"trkseg",
 			XMLReader.ofList(WayPoint.reader("trkpt"))
 		);
-	}
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "trkseg")
-	@XmlType(name = "gpx.TrackSegment")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlElement(name = "trkpt", nillable = true)
-		public List<WayPoint> points;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, TrackSegment>
-		{
-			@Override
-			public Model marshal(final TrackSegment segment) {
-				final Model model = new Model();
-				model.points = segment.getPoints();
-				return model;
-			}
-
-			@Override
-			public TrackSegment unmarshal(final Model model) {
-				return new TrackSegment(
-					model.points != null
-						? model.points
-						: emptyList()
-				);
-			}
-		}
-
-		public static final Adapter ADAPTER = new Adapter();
 	}
 
 }

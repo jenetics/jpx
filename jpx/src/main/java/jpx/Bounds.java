@@ -26,13 +26,6 @@ import static jpx.XMLReader.attr;
 import java.io.Serializable;
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -43,7 +36,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Bounds.Model.Adapter.class)
 public final class Bounds implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -198,55 +190,6 @@ public final class Bounds implements Serializable {
 			attr("minlat"), attr("minlon"),
 			attr("maxlat"), attr("maxlon")
 		);
-	}
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "bounds")
-	@XmlType(name = "gpx.Bounds")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlAttribute(name = "minlat", required = true)
-		public double minlat;
-
-		@XmlAttribute(name = "minlon", required = true)
-		public double minlon;
-
-		@XmlAttribute(name = "maxlat", required = true)
-		public double maxlat;
-
-		@XmlAttribute(name = "maxlon", required = true)
-		public double maxlon;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, Bounds>
-		{
-			@Override
-			public Model marshal(final Bounds bounds) {
-				final Model model = new Model();
-				model.minlat = bounds._minLatitude.toDegrees();
-				model.minlon = bounds._minLongitude.toDegrees();
-				model.maxlat = bounds._maxLatitude.toDegrees();
-				model.maxlon = bounds._maxLongitude.toDegrees();
-				return model;
-			}
-
-			@Override
-			public Bounds unmarshal(final Model model) {
-				return Bounds.of(
-					Latitude.ofDegrees(model.minlat),
-					Longitude.ofDegrees(model.minlon),
-					Latitude.ofDegrees(model.maxlat),
-					Longitude.ofDegrees(model.maxlon)
-				);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-
 	}
 
 }

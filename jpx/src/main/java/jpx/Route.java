@@ -31,16 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -52,7 +44,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Route.Model.Adapter.class)
 public final class Route implements Iterable<WayPoint>, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -472,85 +463,4 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		);
 	}
 
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "rte")
-	@XmlType(name = "gpx.Route")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlElement(name = "name")
-		public String name;
-
-		@XmlElement(name = "cmt")
-		public String cmt;
-
-		@XmlElement(name = "desc")
-		public String desc;
-
-		@XmlElement(name = "src")
-		public String src;
-
-		@XmlElement(name = "link")
-		public List<Link.Model> link;
-
-		@XmlElement(name = "number")
-		public Integer number;
-
-		@XmlElement(name = "type")
-		public String type;
-
-		@XmlElement(name = "rtept")
-		public List<WayPoint.Model> points;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, Route>
-		{
-			@Override
-			public Model marshal(final Route route) {
-				final Model model = new Model();
-				model.name = route._name;
-				model.cmt = route._comment;
-				model.desc = route._description;
-				model.src = route._source;
-				model.link = route.getLinks().stream()
-					.map(Link.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-				model.number = route.getNumber()
-					.map(UInt::intValue)
-					.orElse(null);
-				model.type = route._type;
-				model.points = route.getPoints().stream()
-					.map(WayPoint.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-
-				return model;
-			}
-
-			@Override
-			public Route unmarshal(final Model model) {
-				return new Route(
-					model.name,
-					model.cmt,
-					model.desc,
-					model.src,
-					model.link.stream()
-						.map(Link.Model.ADAPTER::unmarshal)
-						.collect(Collectors.toList()),
-					Optional.ofNullable(model.number)
-						.map(UInt::of)
-						.orElse(null),
-					model.type,
-					model.points.stream()
-						.map(WayPoint.Model.ADAPTER::unmarshal)
-						.collect(Collectors.toList())
-				);
-			}
-		}
-
-		final static Adapter ADAPTER = new Adapter();
-
-	}
 }

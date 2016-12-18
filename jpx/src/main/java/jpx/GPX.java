@@ -20,7 +20,6 @@
 package jpx;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 import static jpx.XMLReader.attr;
@@ -33,19 +32,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import javax.xml.bind.DataBindingException;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -61,7 +48,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(GPX.Model.Adapter.class)
 public final class GPX implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -295,84 +281,6 @@ public final class GPX implements Serializable {
 	}
 
 	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "gpx")
-	@XmlType(name = "gpx.GPX")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlAttribute(name = "version", required = true)
-		public String version;
-
-		@XmlAttribute(name = "creator", required = true)
-		public String creator;
-
-		@XmlElement(name = "metadata", nillable = true)
-		public Metadata metadata;
-
-		@XmlElement(name = "wpt", nillable = true)
-		public List<WayPoint.Model> wayPoints;
-
-		@XmlElement(name = "rte", nillable = true)
-		public List<Route.Model> routes;
-
-		@XmlElement(name = "trk", nillable = true)
-		public List<Track.Model> tracks;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, GPX>
-		{
-			@Override
-			public Model marshal(final GPX gpx) {
-				final Model model = new Model();
-				model.version = gpx.getVersion();
-				model.creator = gpx._creator;
-				model.metadata = gpx._metadata;
-				model.wayPoints = gpx._wayPoints.stream()
-					.map(WayPoint.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-				model.routes = gpx._routes.stream()
-					.map(Route.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-				model.tracks = gpx._tracks.stream()
-					.map(Track.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-
-				return model;
-			}
-
-			@Override
-			public GPX unmarshal(final Model model) {
-				return GPX.of(
-					model.creator,
-					model.metadata,
-					model.wayPoints != null
-						? model.wayPoints.stream()
-							.map(WayPoint.Model.ADAPTER::unmarshal)
-							.collect(Collectors.toList())
-						: emptyList(),
-					model.routes != null
-						? model.routes.stream()
-							.map(Route.Model.ADAPTER::unmarshal)
-							.collect(Collectors.toList())
-						: emptyList(),
-					model.tracks != null
-						? model.tracks.stream()
-							.map(Track.Model.ADAPTER::unmarshal)
-							.collect(Collectors.toList())
-						: emptyList()
-				);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-	}
-
-
-
-	/* *************************************************************************
 	 *  Load GPX from file.
 	 * ************************************************************************/
 
@@ -421,31 +329,6 @@ public final class GPX implements Serializable {
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
-	}
-
-	/**
-	 * Private helper class for lazy instantiation of the JAXBContext.
-	 */
-	private static final class JAXBContextHolder {
-		private static final JAXBContext CONTEXT; static {
-			try {
-				CONTEXT = JAXBContext.newInstance(
-					WayPoint.Model.class,
-					Route.Model.class,
-					Track.Model.class,
-					TrackSegment.Model.class,
-					GPX.Model.class
-				);
-			} catch (JAXBException e) {
-				throw new DataBindingException(
-					"Something went wrong while creating JAXBContext.", e
-				);
-			}
-		}
-	}
-
-	private static JAXBContext context() {
-		return JAXBContextHolder.CONTEXT;
 	}
 
 }

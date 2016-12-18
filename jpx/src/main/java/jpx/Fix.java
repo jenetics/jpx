@@ -19,7 +19,6 @@
  */
 package jpx;
 
-import static java.util.Objects.nonNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;

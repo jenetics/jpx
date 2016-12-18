@@ -23,24 +23,5 @@
  * @version !__version__!
  * @since !__version__!
  */
-
-@XmlSchema(
-	/*
-	namespace = "http://www.topografix.com/GPX/1/0",
-	elementFormDefault = XmlNsForm.UNQUALIFIED,
-	xmlns = {
-		@XmlNs(
-			namespaceURI = "http://www.topografix.com/GPX/1/0",
-			prefix = ""
-		),
-		@XmlNs(
-			namespaceURI = "http://www.topografix.com/GPX/1/1",
-			prefix = ""
-		)
-	}*/
-)
 package jpx;
 
-import javax.xml.bind.annotation.XmlNs;
-import javax.xml.bind.annotation.XmlNsForm;
-import javax.xml.bind.annotation.XmlSchema;

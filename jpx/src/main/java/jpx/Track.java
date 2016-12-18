@@ -28,16 +28,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -48,7 +40,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Track.Model.Adapter.class)
 public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -312,88 +303,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			XMLReader.of("type"),
 			XMLReader.ofList(TrackSegment.reader())
 		);
-	}
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "trk")
-	@XmlType(name = "gpx.Track")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlElement(name = "name")
-		public String name;
-
-		@XmlElement(name = "cmt")
-		public String cmt;
-
-		@XmlElement(name = "desc")
-		public String desc;
-
-		@XmlElement(name = "src")
-		public String src;
-
-		@XmlElement(name = "link")
-		public List<Link.Model> link;
-
-		@XmlElement(name = "number")
-		public Integer number;
-
-		@XmlElement(name = "type")
-		public String type;
-
-		@XmlElement(name = "trkseg", nillable = true)
-		public List<TrackSegment.Model> segments;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, Track>
-		{
-			@Override
-			public Model marshal(final Track track) {
-				final Model model = new Model();
-				model.name = track._name;
-				model.cmt = track._comment;
-				model.desc = track._description;
-				model.src = track._source;
-				model.link = track._links.stream()
-					.map(Link.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-				model.number = Optional.ofNullable(track._number)
-					.map(UInt::intValue)
-					.orElse(null);
-				model.type = track._type;
-				model.segments = track._segments.stream()
-					.map(TrackSegment.Model.ADAPTER::marshal)
-					.collect(Collectors.toList());
-
-				return model;
-			}
-
-			@Override
-			public Track unmarshal(final Model model) {
-				return Track.of(
-					model.name,
-					model.cmt,
-					model.desc,
-					model.src,
-					model.link.stream()
-						.map(Link.Model.ADAPTER::unmarshal)
-						.collect(Collectors.toList()),
-					Optional.ofNullable(model.number)
-						.map(UInt::of)
-						.orElse(null),
-					model.type,
-					model.segments.stream()
-						.map(TrackSegment.Model.ADAPTER::unmarshal)
-						.collect(Collectors.toList())
-				);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-
 	}
 
 }

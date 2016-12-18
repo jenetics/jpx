@@ -33,14 +33,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -53,7 +45,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Copyright.Model.Adapter.class)
 public final class Copyright implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -266,55 +257,6 @@ public final class Copyright implements Serializable {
 			XMLReader.of("year"),
 			XMLReader.of("license")
 		);
-	}
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "copyright")
-	@XmlType(name = "gpx.Copyright")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlAttribute(name = "author", required = true)
-		public String author;
-
-		@XmlElement(name = "year")
-		public Integer year;
-
-		@XmlElement(name = "license")
-		public String license;
-
-		public static final class Adapter
-			extends XmlAdapter<Model, Copyright>
-		{
-			@Override
-			public Model marshal(final Copyright copyright) {
-				final Model model = new Model();
-				model.author = copyright._author;
-				model.year = copyright.getYear()
-					.map(Year::getValue)
-					.orElse(null);
-				model.license = copyright.getLicense()
-					.map(URI::toString)
-					.orElse(null);
-
-				return model;
-			}
-
-			@Override
-			public Copyright unmarshal(final Model model) {
-				return Copyright.of(
-					model.author,
-					Optional.ofNullable(model.year).orElse(null),
-					Optional.ofNullable(model.license).orElse(null)
-				);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-
 	}
 
 }

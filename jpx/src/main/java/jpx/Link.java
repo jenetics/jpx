@@ -31,14 +31,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -50,7 +42,6 @@ import javax.xml.stream.XMLStreamWriter;
  * @version !__version__!
  * @since !__version__!
  */
-@XmlJavaTypeAdapter(Link.Model.Adapter.class)
 public final class Link implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -222,47 +213,5 @@ public final class Link implements Serializable {
 			XMLReader.of("type")
 		);
 	}
-
-
-	/* *************************************************************************
-	 *  JAXB object serialization
-	 * ************************************************************************/
-
-	@XmlRootElement(name = "link")
-	@XmlType(name = "gpx.Link")
-	@XmlAccessorType(XmlAccessType.FIELD)
-	static final class Model {
-
-		@XmlAttribute(name = "href", required = true)
-		public String href;
-
-		@XmlElement(name = "text")
-		public String text;
-
-		@XmlElement(name = "type")
-		public String type;
-
-		public static final class Adapter
-			extends XmlAdapter<Link.Model, Link>
-		{
-			@Override
-			public Link.Model marshal(final Link link) {
-				final Model model = new Model();
-				model.href = link._href.toString();
-				model.text = link._text;
-				model.type = link._type;
-				return model;
-			}
-
-			@Override
-			public Link unmarshal(final Link.Model model) {
-				return Link.of(model.href, model.text, model.type);
-			}
-		}
-
-		static final Adapter ADAPTER = new Adapter();
-
-	}
-
 
 }
