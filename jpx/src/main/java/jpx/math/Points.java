@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx;
+package jpx.math;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.asin;
@@ -28,6 +28,10 @@ import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 
+import jpx.Length;
+import jpx.Point;
+import jpx.WayPoint;
+
 /**
  * Some {@code Point} helper function.
  *
@@ -35,7 +39,7 @@ import static java.lang.Math.tan;
  * @version !__version__!
  * @since !__version__!
  */
-final class Points {
+public final class Points {
 	private Points() {}
 
 	// Major semi-axes of the ellipsoid.
@@ -71,7 +75,7 @@ final class Points {
 	 * @return the distance between {@code start} and {@code end} in meters
 	 * @throws NullPointerException if one of the points is {@code null}
 	 */
-	static Length distance(final Point start, final Point end) {
+	public static Length distance(final Point start, final Point end) {
 		final double lat1 = start.getLatitude().toRadians();
 		final double lon1 = start.getLongitude().toRadians();
 		final double lat2 = end.getLatitude().toRadians();

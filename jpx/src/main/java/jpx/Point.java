@@ -19,6 +19,8 @@
  */
 package jpx;
 
+import jpx.math.Points;
+
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
