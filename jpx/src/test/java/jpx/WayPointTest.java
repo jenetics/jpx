@@ -23,6 +23,8 @@ import static java.lang.String.format;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -64,6 +66,14 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			.ageOfDGPSAge(random.nextBoolean() ? Duration.ofSeconds(random.nextInt(1000)) : null)
 			.dgpsStation(random.nextBoolean() ? DGPSStation.of(random.nextInt(100)) : null)
 			.build(random.nextInt(80), random.nextInt(80));
+	}
+
+	public static List<WayPoint> nextWayPoints(final Random random) {
+		final List<WayPoint> points = new ArrayList<>();
+		for (int i = 0, n = random.nextInt(20); i < n; ++i) {
+			points.add(nextWayPoint(random));
+		}
+		return points;
 	}
 
 }

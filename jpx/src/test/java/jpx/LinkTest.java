@@ -56,10 +56,8 @@ public class LinkTest extends XMLStreamTestBase<Link> {
 
 	public static List<Link> nextLinks(final Random random) {
 		final List<Link> links = new ArrayList<>();
-		for (int i = 0, n = random.nextInt(20); i < 3; ++i) {
-			links.add(
-				LinkTest.nextLink(random)
-			);
+		for (int i = 0, n = random.nextInt(20); i < n; ++i) {
+			links.add(LinkTest.nextLink(random));
 		}
 
 		return links;

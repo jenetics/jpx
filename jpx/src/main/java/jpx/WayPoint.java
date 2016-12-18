@@ -431,7 +431,7 @@ public final class WayPoint implements Point, Serializable {
 		private String _comment;
 		private String _description;
 		private String _source;
-		private List<Link> _links;
+		private final List<Link> _links = new ArrayList<>();
 		private String _symbol;
 		private String _type;
 		private Fix _fix;
@@ -592,7 +592,23 @@ public final class WayPoint implements Point, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			_links = links;
+			_links.clear();
+			if (links != null) {
+				_links.addAll(links);
+			}
+			return this;
+		}
+
+		/**
+		 * Set the links to external information about the way-point.
+		 *
+		 * @param link the links to external information about the way-point.
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder addLink(final Link link) {
+			if (link != null) {
+				_links.add(link);
+			}
 			return this;
 		}
 

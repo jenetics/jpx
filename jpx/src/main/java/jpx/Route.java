@@ -20,6 +20,7 @@
 package jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
@@ -29,6 +30,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,6 +41,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Represents a route - an ordered list of way-points representing a series of
@@ -74,8 +78,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * @param number the GPS route number
 	 * @param type the type (classification) of the route
 	 * @param points the sequence of route points
-	 * @throws NullPointerException if the {@code links} or the {@code points}
-	 *         sequence is {@code null}
 	 */
 	private Route(
 		final String name,
@@ -91,10 +93,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = unmodifiableList(requireNonNull(links));
+		_links = links != null ? unmodifiableList(links) : emptyList();
 		_number = number;
 		_type = type;
-		_points = unmodifiableList(requireNonNull(points));
+		_points = points != null ? unmodifiableList(points) : emptyList();
 	}
 
 	/**
@@ -291,13 +293,30 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
+		 * Set the links to additional information about the route.
+		 *
+		 * @param links the links to additional information about the route
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder links(final List<Link> links) {
+			_links.clear();
+			if (links != null) {
+				_links.addAll(links);
+			}
+			return this;
+		}
+
+		/**
 		 * Set the links to external information about the route.
 		 *
 		 * @param link the links to external information about the route.
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code link} is {@code null}
 		 */
 		public Builder addLink(final Link link) {
-			_links.add(requireNonNull(link));
+			if (link != null) {
+				_links.add(link);
+			}
 			return this;
 		}
 
@@ -345,6 +364,20 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
+		 * Sets the way-points of the route.
+		 *
+		 * @param points the way-points
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder points(final List<WayPoint> points) {
+			_points.clear();
+			if (points != null) {
+				_points.addAll(points);
+			}
+			return this;
+		}
+
+		/**
 		 * Adds a way-point to the route.
 		 *
 		 * @param point the way-point which is added to the route
@@ -377,15 +410,66 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				_comment,
 				_description,
 				_source,
-				new ArrayList<>(_links),
+				_links != null ? new ArrayList<>(_links) : emptyList(),
 				_number,
 				_type,
-				new ArrayList<>(_points)
+				_points != null ? new ArrayList<>(_points) : emptyList()
 			);
 		}
 
 	}
 
+
+	/* *************************************************************************
+	 *  XML stream object serialization
+	 * ************************************************************************/
+
+	/**
+	 * Writes this {@code Link} object to the given XML stream {@code writer}.
+	 *
+	 * @param writer the XML data sink
+	 * @throws XMLStreamException if an error occurs
+	 */
+	void write(final XMLStreamWriter writer) throws XMLStreamException {
+		final XMLWriter xml = new XMLWriter(writer);
+
+		xml.elem("rte",
+			() -> xml.elem("name", _name),
+			() -> xml.elem("cmt", _comment),
+			() -> xml.elem("desc", _description),
+			() -> xml.elem("src", _source),
+			() -> { if (_links != null) for (Link link : _links) link.write(writer); },
+			() -> xml.elem("number", _number),
+			() -> xml.elem("type", _type),
+			() -> { if (_points != null) for (WayPoint point : _points) point.write("rtept", writer); }
+		);
+	}
+
+	static XMLReader<Route> reader() {
+		final Function<Object[], Route> create = a -> Route.builder()
+			.name((String)a[0])
+			.comment((String)a[1])
+			.description((String)a[2])
+			.source((String)a[3])
+			.links((List<Link>)a[4])
+			.number(a[5] != null ? UInt.of(Integer.parseInt((String)a[5])) : null)
+			.type((String)a[6])
+			.points((List<WayPoint>)a[7])
+			.build();
+
+		return XMLReader.of(
+			create,
+			"rte",
+			XMLReader.of("name"),
+			XMLReader.of("cmt"),
+			XMLReader.of("desc"),
+			XMLReader.of("src"),
+			XMLReader.ofList(Link.reader()),
+			XMLReader.of("number"),
+			XMLReader.of("type"),
+			XMLReader.ofList(WayPoint.reader("rtept"))
+		);
+	}
 
 	/* *************************************************************************
 	 *  JAXB object serialization

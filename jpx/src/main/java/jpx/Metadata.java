@@ -19,6 +19,7 @@
  */
 package jpx;
 
+import static java.util.Collections.emptyList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
@@ -100,7 +101,7 @@ public final class Metadata implements Serializable {
 		_description = description;
 		_author = author;
 		_copyright = copyright;
-		_links = unmodifiableList(requireNonNull(links));
+		_links = links != null ? unmodifiableList(links) : emptyList();
 		_time = time;
 		_keywords = keywords;
 		_bounds = bounds;
