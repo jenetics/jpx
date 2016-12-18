@@ -74,6 +74,14 @@ final class XMLWriter {
 		}
 	}
 
+	static final class NS {
+		final String name;
+
+		private NS(final String name) {
+			this.name = requireNonNull(name);
+		}
+	}
+
 	/**
 	 * The element writer.
 	 */
@@ -117,6 +125,10 @@ final class XMLWriter {
 	 */
 	Attr attr(final String name, final Object value) {
 		return new Attr(name, value);
+	}
+
+	NS ns(final String name) {
+		return new NS(name);
 	}
 
 	/* *************************************************************************
@@ -269,6 +281,18 @@ final class XMLWriter {
 		write(name, asList(attr1, attr2), asList(children));
 	}
 
+	void write(
+		final String name,
+		final NS ns,
+		final Attr attr1,
+		final Attr attr2,
+		final ElementWriter... children
+	)
+		throws XMLStreamException
+	{
+		write(name, ns, asList(attr1, attr2), asList(children));
+	}
+
 	/**
 	 * Writes the element with the given name, attributes and its children.
 	 *
@@ -333,11 +357,35 @@ final class XMLWriter {
 	)
 		throws XMLStreamException
 	{
+		write(name, null, attrs, children);
+	}
+
+	/**
+	 * Writes the element with the given name, attributes and its children.
+	 *
+	 * @param name the element name
+	 * @param attrs the element attributes
+	 * @param children the element children
+	 * @throws XMLStreamException if an error occurs while writing
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	private void write(
+		final String name,
+		final NS ns,
+		final List<Attr> attrs,
+		final List<ElementWriter> children
+	)
+		throws XMLStreamException
+	{
 		requireNonNull(name);
 		requireNonNull(attrs);
 		requireNonNull(children);
 
 		_writer.writeStartElement(name);
+		if (ns != null) {
+			_writer.writeDefaultNamespace(ns.name);
+		}
+
 		for (Attr attr : attrs) {
 			_writer.writeAttribute(attr.name, attr.value);
 		}

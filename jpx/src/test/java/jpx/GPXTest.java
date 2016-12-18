@@ -21,6 +21,7 @@ package jpx;
 
 import static java.lang.String.format;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
@@ -91,7 +92,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 					.addPoint(p -> p.lon(12).lat(32).ele(12))))
 			.build();
 
-		GPX.write(gpx, System.out);
+		try (FileOutputStream out = new FileOutputStream("/home/fwilhelm/gpx.xml")) {
+			GPX.write(gpx, out);
+		}
 	}
 
 }
