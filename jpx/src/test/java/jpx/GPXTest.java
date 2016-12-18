@@ -31,7 +31,6 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-@Test
 public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Override
@@ -60,14 +59,12 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
-	//@Test
-	/*
+	@Test
 	public void loadFromFile() throws IOException {
 		try (InputStream in = getClass().getResourceAsStream("/jpx/Gpx-full-sample.gpx")) {
 			final GPX gpx = GPX.read(in);
 			GPX.write(gpx, System.out);
 		}
 	}
-	*/
 
 }

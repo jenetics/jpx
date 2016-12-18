@@ -21,6 +21,7 @@ package jpx;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+import static java.util.Collections.replaceAll;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
@@ -49,7 +50,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
@@ -388,11 +392,11 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final OutputStream output)
 		throws IOException
 	{
+		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 		try {
-			final Marshaller marshaller = context().createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.marshal(Model.ADAPTER.marshal(gpx), output);
-		} catch (Exception e) {
+			final XMLStreamWriter writer = factory.createXMLStreamWriter(output);
+			gpx.write(writer);
+		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
 	}
@@ -409,11 +413,16 @@ public final class GPX implements Serializable {
 	public static GPX read(final InputStream input)
 		throws IOException
 	{
+		final XMLInputFactory factory = XMLInputFactory.newFactory();
 		try {
-			final Unmarshaller unmarshaller = context().createUnmarshaller();
-			final Object object = unmarshaller.unmarshal(input);
-			return Model.ADAPTER.unmarshal((Model)object);
-		} catch (Exception e) {
+			final XMLStreamReader reader = factory.createXMLStreamReader(input);
+			if (reader.hasNext()) {
+				reader.next();
+				return reader().read(reader);
+			} else {
+				throw new IOException("No 'gpx' element found.");
+			}
+		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
 	}
