@@ -266,15 +266,15 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("trk",
-			() -> xml.elem("name", _name),
-			() -> xml.elem("cmt", _comment),
-			() -> xml.elem("desc", _description),
-			() -> xml.elem("src", _source),
-			() -> xml.elems(_links, Link::write),
-			() -> xml.elem("number", _number),
-			() -> xml.elem("type", _type),
-			() -> xml.elems(_segments, TrackSegment::write)
+		xml.write("trk",
+			xml.elem("name", _name),
+			xml.elem("cmt", _comment),
+			xml.elem("desc", _description),
+			xml.elem("src", _source),
+			xml.elems(_links, Link::write),
+			xml.elem("number", _number),
+			xml.elem("type", _type),
+			xml.elems(_segments, TrackSegment::write)
 		);
 	}
 
@@ -291,9 +291,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(List<TrackSegment>)a[7]
 		);
 
-		return XMLReader.of(
-			create,
-			"trk",
+		return XMLReader.of(create, "trk",
 			XMLReader.of("name"),
 			XMLReader.of("cmt"),
 			XMLReader.of("desc"),

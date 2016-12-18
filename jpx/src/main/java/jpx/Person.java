@@ -22,6 +22,7 @@ package jpx;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -162,17 +163,19 @@ public final class Person implements Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("person",
-			() -> xml.elem("name", _name),
-			() -> { if (_email != null) _email.write(writer); },
-			() -> { if (_link != null) _link.write(writer); }
+		xml.write("person",
+			xml.elem("name", _name),
+			xml.elem(_email, Email::write),
+			xml.elem(_link, Link::write)
 		);
 	}
 
 	static XMLReader<Person> reader() {
-		return XMLReader.of(
-			a -> Person.of((String)a[0], (Email)a[1], (Link)a[2]),
-			"person",
+		final Function<Object[], Person> creator = a -> Person.of(
+			(String)a[0], (Email)a[1], (Link)a[2]
+		);
+
+		return XMLReader.of(creator, "person",
 			XMLReader.of("name"),
 			Email.reader(),
 			Link.reader()

@@ -157,6 +157,60 @@ interface XMLReader<T> {
 
 	/**
 	 * Create a new {@code XMLReader} with the given elements.
+	 * <pre>{@code
+	 * XMLReader.of(
+	 *     a -> Link.of((String)a[0], (String)a[1], (String)a[2]), (String)a[3],
+	 *     "link",
+	 *     attr("href"),
+	 *     attr("img"),
+	 *     XMLReader.of("text"),
+	 *     XMLReader.of("type")
+	 * )
+	 * }</pre>
+	 *
+	 * @param creator creates the final object from the read arguments
+	 * @param name the element name
+	 * @param attr1 the first element attribute
+	 * @param attr2 the second element attribute
+	 * @param children the child element readers
+	 * @param <T> the object type
+	 * @return the reader for the given element
+	 */
+	public static <T> XMLReader<T> of(
+		final Function<Object[], T> creator,
+		final String name,
+		final Attr attr1,
+		final Attr attr2,
+		final XMLReader<?>... children
+	) {
+		return of(creator, name, asList(attr1, attr2), children);
+	}
+
+	/**
+	 * Create a new {@code XMLReader} with the given elements.
+	 *
+	 * @param creator creates the final object from the read arguments
+	 * @param name the element name
+	 * @param attr1 the first element attribute
+	 * @param attr2 the second element attribute
+	 * @param attr3 the third element attribute
+	 * @param attr4 the fourth element attribute
+	 * @param <T> the object type
+	 * @return the reader for the given element
+	 */
+	public static <T> XMLReader<T> of(
+		final Function<Object[], T> creator,
+		final String name,
+		final Attr attr1,
+		final Attr attr2,
+		final Attr attr3,
+		final Attr attr4
+	) {
+		return of(creator, name, asList(attr1, attr2, attr3, attr4));
+	}
+
+	/**
+	 * Create a new {@code XMLReader} with the given elements.
 	 *
 	 * @param creator creates the final object from the read arguments
 	 * @param name the element name
@@ -170,23 +224,6 @@ interface XMLReader<T> {
 		final XMLReader<?>... children
 	) {
 		return of(creator, name, emptyList(), children);
-	}
-
-	/**
-	 * Create a new {@code XMLReader} with the given elements.
-	 *
-	 * @param creator creates the final object from the read arguments
-	 * @param name the element name
-	 * @param attrs the element attributes
-	 * @param <T> the object type
-	 * @return the reader for the given element
-	 */
-	public static <T> XMLReader<T> of(
-		final Function<Object[], T> creator,
-		final String name,
-		final Attr... attrs
-	) {
-		return of(creator, name, asList(attrs));
 	}
 
 	/**

@@ -22,9 +22,12 @@ package jpx;
 import static java.lang.String.format;
 import static jpx.Lists.immutable;
 
+import jpx.XMLWriter.Elem;
+
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -136,16 +139,18 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("trkseg",
-			() -> xml.elems(_points, (p, w) -> p.write("trkpt", w))
+		xml.write("trkseg",
+			xml.elems(_points, (p, w) -> p.write("trkpt", w))
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<TrackSegment> reader() {
-		return XMLReader.of(
-			a -> TrackSegment.of((List<WayPoint>)a[0]),
-			"trkseg",
+		final Function<Object[], TrackSegment> creator = a -> TrackSegment.of(
+			(List<WayPoint>)a[0]
+		);
+
+		return XMLReader.of(creator, "trkseg",
 			XMLReader.ofList(WayPoint.reader("trkpt"))
 		);
 	}

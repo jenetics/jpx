@@ -239,10 +239,10 @@ public final class Copyright implements Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("copyright",
+		xml.write("copyright",
 			xml.attr("author", _author),
-			() -> xml.elem("year", _year),
-			() -> xml.elem("license", _license)
+			xml.elem("year", _year),
+			xml.elem("license", _license)
 		);
 	}
 
@@ -251,9 +251,8 @@ public final class Copyright implements Serializable {
 			parseString(a[0]), parseYear(a[1]), parseURI(a[2])
 		);
 
-		return XMLReader.of(
-			creator,
-			"copyright", attr("author"),
+		return XMLReader.of(creator, "copyright",
+			attr("author"),
 			XMLReader.of("year"),
 			XMLReader.of("license")
 		);

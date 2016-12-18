@@ -257,15 +257,15 @@ public final class Metadata implements Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("metadata",
-			() -> xml.elem("name", _name),
-			() -> xml.elem("desc", _description),
-			() -> xml.elem(_author, Person::write),
-			() -> xml.elem(_copyright, Copyright::write),
-			() -> xml.elems(_links, Link::write),
-			() -> xml.elem("time", _time != null ? DTF.format(_time) : null),
-			() -> xml.elem("keywords", _keywords),
-			() -> xml.elem(_bounds, Bounds::write)
+		xml.write("metadata",
+			xml.elem("name", _name),
+			xml.elem("desc", _description),
+			xml.elem(_author, Person::write),
+			xml.elem(_copyright, Copyright::write),
+			xml.elems(_links, Link::write),
+			xml.elem("time", _time != null ? DTF.format(_time) : null),
+			xml.elem("keywords", _keywords),
+			xml.elem(_bounds, Bounds::write)
 		);
 	}
 
@@ -282,9 +282,7 @@ public final class Metadata implements Serializable {
 			(Bounds)a[7]
 		);
 
-		return XMLReader.of(
-			create,
-			"metadata",
+		return XMLReader.of(create, "metadata",
 			XMLReader.of("name"),
 			XMLReader.of("desc"),
 			Person.reader(),

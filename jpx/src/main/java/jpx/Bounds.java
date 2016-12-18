@@ -170,7 +170,7 @@ public final class Bounds implements Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("bounds",
+		xml.write("bounds",
 			xml.attr("minlat", _minLatitude),
 			xml.attr("minlon", _minLongitude),
 			xml.attr("maxlat", _maxLatitude),
@@ -184,9 +184,7 @@ public final class Bounds implements Serializable {
 			Latitude.parse(a[2]), Longitude.parse(a[3])
 		);
 
-		return XMLReader.of(
-			creator,
-			"bounds",
+		return XMLReader.of(creator, "bounds",
 			attr("minlat"), attr("minlon"),
 			attr("maxlat"), attr("maxlon")
 		);

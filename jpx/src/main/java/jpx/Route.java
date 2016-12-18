@@ -424,15 +424,15 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("rte",
-			() -> xml.elem("name", _name),
-			() -> xml.elem("cmt", _comment),
-			() -> xml.elem("desc", _description),
-			() -> xml.elem("src", _source),
-			() -> xml.elems(_links,Link::write),
-			() -> xml.elem("number", _number),
-			() -> xml.elem("type", _type),
-			() -> xml.elems(_points, (p, w) -> p.write("rtept", w))
+		xml.write("rte",
+			xml.elem("name", _name),
+			xml.elem("cmt", _comment),
+			xml.elem("desc", _description),
+			xml.elem("src", _source),
+			xml.elems(_links,Link::write),
+			xml.elem("number", _number),
+			xml.elem("type", _type),
+			xml.elems(_points, (p, w) -> p.write("rtept", w))
 		);
 	}
 
@@ -449,9 +449,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			.points((List<WayPoint>)a[7])
 			.build();
 
-		return XMLReader.of(
-			create,
-			"rte",
+		return XMLReader.of(create, "rte",
 			XMLReader.of("name"),
 			XMLReader.of("cmt"),
 			XMLReader.of("desc"),

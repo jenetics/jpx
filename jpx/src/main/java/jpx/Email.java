@@ -127,7 +127,7 @@ public final class Email implements Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("email",
+		xml.write("email",
 			xml.attr("id", _id),
 			xml.attr("domain", _domain)
 		);
@@ -138,9 +138,9 @@ public final class Email implements Serializable {
 			parseString(a[0]), parseString(a[1])
 		);
 
-		return XMLReader.of(
-			creator,
-			"email", attr("id"), attr("domain")
+		return XMLReader.of(creator, "email",
+			attr("id"),
+			attr("domain")
 		);
 	}
 

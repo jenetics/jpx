@@ -19,7 +19,6 @@
  */
 package jpx;
 
-import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 import static jpx.XMLReader.attr;
@@ -252,14 +251,17 @@ public final class GPX implements Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("gpx", asList(xml.attr("version", _version), xml.attr("creator", _creator)),
-			() -> { if (_metadata != null) _metadata.write(writer); },
-			() -> { for (WayPoint wp : _wayPoints) wp.write("wpt", writer);},
-			() -> { for (Route route : _routes) route.write(writer);},
-			() -> { for (Track track : _tracks) track.write(writer);}
+		xml.write("gpx",
+			xml.attr("version", _version),
+			xml.attr("creator", _creator),
+			xml.elem(_metadata, Metadata::write),
+			xml.elems(_wayPoints, (p, w) -> p.write("wpt", w)),
+			xml.elems(_routes, Route::write),
+			xml.elems(_tracks, Track::write)
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	static XMLReader<GPX> reader() {
 		final Function<Object[], GPX> creator = a -> GPX.of(
 			(String)a[0],
@@ -270,9 +272,9 @@ public final class GPX implements Serializable {
 			(List<Track>)a[5]
 		);
 
-		return XMLReader.of(
-			creator,
-			"gpx", asList(attr("version"), attr("creator")),
+		return XMLReader.of(creator, "gpx",
+			attr("version"),
+			attr("creator"),
 			Metadata.reader(),
 			XMLReader.ofList(WayPoint.reader("wpt")),
 			XMLReader.ofList(Route.reader()),

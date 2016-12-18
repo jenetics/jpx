@@ -195,9 +195,10 @@ public final class Link implements Serializable {
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem("link", xml.attr("href", _href),
-			() -> xml.elem("text", _text),
-			() -> xml.elem("type", _type)
+		xml.write("link",
+			xml.attr("href", _href),
+			xml.elem("text", _text),
+			xml.elem("type", _type)
 		);
 	}
 
@@ -206,9 +207,8 @@ public final class Link implements Serializable {
 			parseString(a[0]), parseString(a[1]), parseString(a[2])
 		);
 
-		return XMLReader.of(
-			creator,
-			"link", attr("href"),
+		return XMLReader.of(creator, "link",
+			attr("href"),
 			XMLReader.of("text"),
 			XMLReader.of("type")
 		);

@@ -81,6 +81,7 @@ public abstract class XMLStreamTestBase<T> {
 
 		final T expected = params.supplier.get();
 		final byte[] marshaled = toBytes(expected, params.writer);
+		//System.out.println(new String(marshaled));
 		final T actual = fromBytes(marshaled, params.reader);
 
 		assertEquals(actual, expected);

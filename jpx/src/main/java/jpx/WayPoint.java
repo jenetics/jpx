@@ -33,7 +33,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -923,28 +922,28 @@ public final class WayPoint implements Point, Serializable {
 	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.elem(name,
+		xml.write(name,
 			xml.attr("lat", _latitude),
 			xml.attr("lon", _longitude),
-			() -> xml.elem("ele", _elevation, Length::doubleValue),
-			() -> xml.elem("speed", _speed ,Speed::doubleValue),
-			() -> xml.elem("time", _time != null ? DTF.format(_time) : null),
-			() -> xml.elem("magvar", _magneticVariation, Degrees::doubleValue),
-			() -> xml.elem("geoidheight", _geoidHeight, Length::doubleValue),
-			() -> xml.elem("name", _name),
-			() -> xml.elem("cmt", _comment),
-			() -> xml.elem("desc", _description),
-			() -> xml.elem("src", _source),
-			() -> xml.elems(_links, Link::write),
-			() -> xml.elem("sym", _symbol),
-			() -> xml.elem("type", _type),
-			() -> xml.elem("fix", _fix, Fix::getValue),
-			() -> xml.elem("sat", _sat),
-			() -> xml.elem("hdop", _hdop),
-			() -> xml.elem("vdop", _vdop),
-			() -> xml.elem("pdop", _pdop),
-			() -> xml.elem("ageofdgpsdata", _ageOfGPSData, Duration::getSeconds),
-			() -> xml.elem("dgpsid", _dgpsID)
+			xml.elem("ele", _elevation, Length::doubleValue),
+			xml.elem("speed", _speed ,Speed::doubleValue),
+			xml.elem("time", _time != null ? DTF.format(_time) : null),
+			xml.elem("magvar", _magneticVariation, Degrees::doubleValue),
+			xml.elem("geoidheight", _geoidHeight, Length::doubleValue),
+			xml.elem("name", _name),
+			xml.elem("cmt", _comment),
+			xml.elem("desc", _description),
+			xml.elem("src", _source),
+			xml.elems(_links, Link::write),
+			xml.elem("sym", _symbol),
+			xml.elem("type", _type),
+			xml.elem("fix", _fix, Fix::getValue),
+			xml.elem("sat", _sat),
+			xml.elem("hdop", _hdop),
+			xml.elem("vdop", _vdop),
+			xml.elem("pdop", _pdop),
+			xml.elem("ageofdgpsdata", _ageOfGPSData, Duration::getSeconds),
+			xml.elem("dgpsid", _dgpsID)
 		);
 	}
 
@@ -972,9 +971,9 @@ public final class WayPoint implements Point, Serializable {
 			.dgpsStation(DGPSStation.parse(a[20]))
 			.build(parseDouble(a[0]), parseDouble(a[1]));
 
-		return XMLReader.of(
-			create,
-			name, Arrays.asList(attr("lat"), attr("lon")),
+		return XMLReader.of(create, name,
+			attr("lat"),
+			attr("lon"),
 			XMLReader.of("ele"),
 			XMLReader.of("speed"),
 			XMLReader.of("time"),
