@@ -42,7 +42,7 @@ import javax.xml.stream.XMLStreamReader;
  * @version !__version__!
  * @since !__version__!
  */
-interface XMLReader<T> {
+abstract class XMLReader<T> {
 
 	/**
 	 * Represents an XML attribute, by its name.
@@ -93,12 +93,38 @@ interface XMLReader<T> {
 		return new Attr(name);
 	}
 
+
+	private final String _name;
+	private final List<Attr> _attrs;
+
+	XMLReader(final String name, final List<Attr> attrs) {
+		_name = requireNonNull(name);
+		_attrs = immutable(attrs);
+	}
+
 	/**
 	 * Return the name of the element processed by this reader.
 	 *
 	 * @return the element name the reader is processing
 	 */
-	public String name();
+	public String name() {
+		return _name;
+	}
+
+	/**
+	 * Return the list of element attributes to read.
+	 *
+	 * @return the list of element attributes to read
+	 */
+	List<Attr> attrs() {
+		return _attrs;
+	}
+
+	@Override
+	public String toString() {
+		return format("XMLReader[%s]", name());
+	}
+
 
 	/**
 	 * Read the given type from the underlying XML stream {@code reader}.
@@ -107,7 +133,7 @@ interface XMLReader<T> {
 	 * @return the read type, maybe {@code null}
 	 * @throws XMLStreamException if an error occurs while reading the value
 	 */
-	public T read(final XMLStreamReader reader) throws XMLStreamException;
+	public abstract T read(final XMLStreamReader reader) throws XMLStreamException;
 
 	/**
 	 * Create a new {@code XMLReader} with the given elements.
@@ -261,42 +287,11 @@ interface XMLReader<T> {
 }
 
 /**
- * Abstract reader implementation.
- *
- * @param <T> the object type
- */
-abstract class AbstractXMLReader<T> implements XMLReader<T> {
-
-	private final String _name;
-	private final List<Attr> _attrs;
-
-	AbstractXMLReader(final String name, final List<Attr> attrs) {
-		_name = requireNonNull(name);
-		_attrs = immutable(attrs);
-	}
-
-	@Override
-	public String name() {
-		return _name;
-	}
-
-	List<Attr> attrs() {
-		return _attrs;
-	}
-
-	@Override
-	public String toString() {
-		return format("XMLReader[%s]", name());
-	}
-
-}
-
-/**
  * The main XML reader implementation.
  *
  * @param <T> the object type
  */
-final class XMLReaderImpl<T> extends AbstractXMLReader<T> {
+final class XMLReaderImpl<T> extends XMLReader<T> {
 
 	private final List<XMLReader<?>> _children;
 	private final Map<String, XMLReader<?>> _childMap = new HashMap<>();
@@ -373,7 +368,7 @@ final class XMLReaderImpl<T> extends AbstractXMLReader<T> {
 /**
  * Special reader implementation for reading text content of leaf nodes.
  */
-final class XMLTextReader extends AbstractXMLReader<String> {
+final class XMLTextReader extends XMLReader<String> {
 
 	XMLTextReader(final String name, final List<Attr> attrs) {
 		super(name, attrs);
@@ -407,21 +402,17 @@ final class XMLTextReader extends AbstractXMLReader<String> {
  *
  * @param <T> the object type.
  */
-final class XMLListReader<T> implements XMLReader<List<T>>  {
+final class XMLListReader<T> extends XMLReader<List<T>>  {
 
 	private final XMLReader<T> _adoptee;
 
 	XMLListReader(final XMLReader<T> adoptee) {
+		super(adoptee.name(), emptyList());
 		_adoptee = requireNonNull(adoptee);
 	}
 
 	XMLReader<T> adoptee() {
 		return _adoptee;
-	}
-
-	@Override
-	public String name() {
-		return _adoptee.name();
 	}
 
 	@Override
