@@ -24,6 +24,7 @@ import static java.lang.String.format;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -64,6 +65,17 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test
 	public void usage() throws Exception {
 		final GPX gpx = GPX.builder()
+			.addTrack(track -> track
+				.addSegment(segment -> segment
+					.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+					.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+					.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+			.build();
+
+		GPX.write(gpx, "    ", System.out);
+
+
+		final GPX gpx2 = GPX.builder()
 			.metadata(m -> m.author("Franz Wilhelmstötter"))
 			.addWayPoint(p -> p.lat(23.6).lon(13.5).ele(50))
 			.addRoute(route -> route.name("route-1")
@@ -95,6 +107,13 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		try (FileOutputStream out = new FileOutputStream("/home/fwilhelm/gpx.xml")) {
 			GPX.write(gpx, out);
 		}
+
+		GPX.write(gpx, "/home/fwilhelm/gpx.xml");
+		final GPX gpx3 = GPX.read("/home/fwilhelm/gpx.xml");
+		gpx3.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.forEach(System.out::println);
 	}
 
 }
