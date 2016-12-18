@@ -76,7 +76,7 @@ This example writes a given `GPX` object to a file, reads it again and prints th
 
 ```java
 GPX.write(gpx, "gpx.xml");
-GPX.read("gpx.xml".tracks()
+GPX.read("gpx.xml").tracks()
     .flatMap(Track::segments)
     .flatMap(TrackSegment::points)
     .forEach(System.out::println);
