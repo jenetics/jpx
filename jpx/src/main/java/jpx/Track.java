@@ -165,6 +165,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		return _segments;
 	}
 
+	public Stream<TrackSegment> segments() {
+		return _segments.stream();
+	}
+
 	@Override
 	public Iterator<TrackSegment> iterator() {
 		return _segments.iterator();

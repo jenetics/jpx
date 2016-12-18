@@ -23,16 +23,23 @@ import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 import static jpx.XMLReader.attr;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -44,6 +51,17 @@ import javax.xml.stream.XMLStreamWriter;
  * GPX documents contain a metadata header, followed by way-points, routes, and
  * tracks. You can add your own elements to the extensions section of the GPX
  * document.
+ * <p>
+ * Creating a GPX object with one track-segment and 3 track-points:
+ * <pre>{@code
+ * final GPX gpx = GPX.builder()
+ *     .addTrack(track -> track
+ *         .addSegment(segment -> segment
+ *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+ *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+ *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+ *     .build();
+ * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -138,6 +156,10 @@ public final class GPX implements Serializable {
 		return _wayPoints;
 	}
 
+	public Stream<WayPoint> wayPoints() {
+		return _wayPoints.stream();
+	}
+
 	/**
 	 * Return an unmodifiable list of the {@code GPX} routes.
 	 *
@@ -147,6 +169,10 @@ public final class GPX implements Serializable {
 		return _routes;
 	}
 
+	public Stream<Route> routes() {
+		return _routes.stream();
+	}
+
 	/**
 	 * Return an unmodifiable list of the {@code GPX} tracks.
 	 *
@@ -154,6 +180,10 @@ public final class GPX implements Serializable {
 	 */
 	public List<Track> getTracks() {
 		return _tracks;
+	}
+
+	public Stream<Track> tracks() {
+		return _tracks.stream();
 	}
 
 	@Override
@@ -420,7 +450,19 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final OutputStream output)
 		throws IOException
 	{
-		write(gpx, output, null);
+		write(gpx, null, output);
+	}
+
+	public static void write(final GPX gpx, final Path path) throws IOException {
+		try (FileOutputStream out = new FileOutputStream(path.toFile());
+			 BufferedOutputStream bout = new BufferedOutputStream(out))
+		{
+			write(gpx, bout);
+		}
+	}
+
+	public static void write(final GPX gpx, final String path) throws IOException {
+		write(gpx, Paths.get(path));
 	}
 
 	/**
@@ -436,8 +478,8 @@ public final class GPX implements Serializable {
 	 */
 	public static void write(
 		final GPX gpx,
-		final OutputStream output,
-		final String indent
+		final String indent,
+		final OutputStream output
 	)
 		throws IOException
 	{
@@ -453,6 +495,22 @@ public final class GPX implements Serializable {
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
+	}
+
+	public static void write(final GPX gpx, final String indent, final Path path)
+		throws IOException
+	{
+		try (FileOutputStream out = new FileOutputStream(path.toFile());
+			 BufferedOutputStream bout = new BufferedOutputStream(out))
+		{
+			write(gpx, indent, bout);
+		}
+	}
+
+	public static void write(final GPX gpx, final String indent, final String path)
+		throws IOException
+	{
+		write(gpx, indent, Paths.get(path));
 	}
 
 	/**
@@ -479,6 +537,18 @@ public final class GPX implements Serializable {
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
+	}
+
+	public static GPX read(final Path path) throws IOException {
+		try (FileInputStream in = new FileInputStream(path.toFile());
+			 BufferedInputStream bin = new BufferedInputStream(in))
+		{
+			return read(bin);
+		}
+	}
+
+	public static GPX read(final String path) throws IOException {
+		return read(Paths.get(path));
 	}
 
 }

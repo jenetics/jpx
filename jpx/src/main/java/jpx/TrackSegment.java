@@ -68,6 +68,10 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return _points;
 	}
 
+	public Stream<WayPoint> points() {
+		return _points.stream();
+	}
+
 	/**
 	 * Return {@code true} if {@code this} track-segment doesn't contain any
 	 * track-point.

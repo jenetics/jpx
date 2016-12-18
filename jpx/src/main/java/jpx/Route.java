@@ -163,6 +163,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		return _points;
 	}
 
+	public Stream<WayPoint> points() {
+		return _points.stream();
+	}
+
 	@Override
 	public Iterator<WayPoint> iterator() {
 		return _points.iterator();
