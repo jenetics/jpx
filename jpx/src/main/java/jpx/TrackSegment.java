@@ -20,11 +20,16 @@
 package jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 
+import jpx.GPX.Builder;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -104,6 +109,43 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	@Override
 	public String toString() {
 		return format("TrackSegment[points=%s]", _points.size());
+	}
+
+
+	public static final class Builder {
+		private List<WayPoint> _points;
+
+		private Builder() {
+		}
+
+		public Builder points(final List<WayPoint> points) {
+			_points = points;
+			return this;
+		}
+
+		public Builder addPoint(final WayPoint point) {
+			if (_points == null) {
+				_points = new ArrayList<>();
+			}
+			_points.add(requireNonNull(point));
+
+			return this;
+		}
+
+		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
+			final WayPoint.Builder builder = WayPoint.builder();
+			point.accept(builder);
+			return addPoint(builder.build());
+		}
+
+		public TrackSegment build() {
+			return new TrackSegment(_points);
+		}
+
+	}
+
+	public static Builder builder() {
+		return new Builder();
 	}
 
 

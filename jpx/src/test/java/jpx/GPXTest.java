@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
 
-import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -59,6 +58,40 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx = GPX.read(in);
 			//GPX.write(gpx, System.out);
 		}
+	}
+
+	@Test
+	public void usage() throws Exception {
+		final GPX gpx = GPX.builder()
+			.metadata(m -> m.author("Franz Wilhelmstötter"))
+			.addWayPoint(p -> p.lat(23.6).lon(13.5).ele(50))
+			.addRoute(route -> route.name("route-1")
+				.addPoint(p -> p.lon(12).lat(32).ele(12))
+				.addPoint(p -> p.lon(12).lat(32).ele(13))
+				.addPoint(p -> p.lon(12).lat(32).ele(14))
+				.addPoint(p -> p.lon(12).lat(32).ele(15))
+				.addPoint(p -> p.lon(12).lat(32).ele(16)))
+			.addTrack(track -> track.name("track-1")
+				.addSegment(segment -> segment
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12)))
+				.addSegment(segment -> segment
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12))))
+			.addTrack(track -> track.name("track-2")
+				.addSegment(segment -> segment
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12)))
+				.addSegment(segment -> segment
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12))
+					.addPoint(p -> p.lon(12).lat(32).ele(12))))
+			.build();
+
+		GPX.write(gpx, System.out);
 	}
 
 }

@@ -19,6 +19,7 @@
  */
 package jpx;
 
+import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 import static jpx.Parsers.parseString;
 
@@ -26,6 +27,7 @@ import java.io.Serializable;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -198,6 +200,105 @@ public final class Metadata implements Serializable {
 			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
 			Objects.equals(((Metadata)obj)._bounds, _bounds);
 	}
+
+	public static final class Builder {
+		private String _name;
+		private String _description;
+		private Person _author;
+		private Copyright _copyright;
+		private List<Link> _links;
+		private ZonedDateTime _time;
+		private String _keywords;
+		private Bounds _bounds;
+
+		private Builder() {
+		}
+
+		public Builder metadata(final Metadata metadata) {
+			_name = metadata._name;
+			_description = metadata._description;
+			_author = metadata._author;
+			_copyright = metadata._copyright;
+			_links = metadata._links;
+			_time = metadata._time;
+			_keywords = metadata._keywords;
+			_bounds = metadata._bounds;
+
+			return this;
+		}
+
+		public Builder name(final String name) {
+			_name = name;
+			return this;
+		}
+
+		public Builder desc(final String description) {
+			_description = description;
+			return this;
+		}
+
+		public Builder author(final Person author) {
+			_author = author;
+			return this;
+		}
+
+		public Builder author(final String name) {
+			_author = Person.of(name);
+			return this;
+		}
+
+		public Builder copyright(final Copyright copyright) {
+			_copyright = copyright;
+			return this;
+		}
+
+		public Builder links(final List<Link> links) {
+			_links = links;
+			return this;
+		}
+
+		public Builder addLink(final Link link) {
+			if (_links == null) {
+				_links = new ArrayList<>();
+			}
+
+			_links.add(requireNonNull(link));
+			return this;
+		}
+
+		public Builder time(final ZonedDateTime time) {
+			_time = time;
+			return this;
+		}
+
+		public Builder keywords(final String keywords) {
+			_keywords = keywords;
+			return this;
+		}
+
+		public Builder bounds(final Bounds bounds) {
+			_bounds = bounds;
+			return this;
+		}
+
+		public Metadata build() {
+			return new Metadata(
+				_name,
+				_description,
+				_author,
+				_copyright,
+				_links,
+				_time,
+				_keywords,
+				_bounds
+			);
+		}
+	}
+
+	public static Builder builder() {
+		return new Builder();
+	}
+
 
 	/* *************************************************************************
 	 *  Static object creation methods

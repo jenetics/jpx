@@ -20,13 +20,18 @@
 package jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 
+import jpx.GPX.Builder;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
@@ -205,6 +210,107 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	@Override
 	public String toString() {
 		return format("Track[name=%s, segments=%s]", _name, _segments);
+	}
+
+
+	public static final class Builder {
+		private String _name;
+		private String _comment;
+		private String _description;
+		private String _source;
+		private List<Link> _links;
+		private UInt _number;
+		private String _type;
+		private List<TrackSegment> _segments;
+
+		private Builder() {
+		}
+
+		public Builder name(final String name) {
+			_name = name;
+			return this;
+		}
+
+		public Builder cmt(final String comment) {
+			_comment = comment;
+			return this;
+		}
+
+		public Builder desc(final String description) {
+			_description = description;
+			return this;
+		}
+
+		public Builder src(final String source) {
+			_source = source;
+			return this;
+		}
+
+		public Builder links(final List<Link> links) {
+			_links = links;
+			return this;
+		}
+
+		public Builder addLink(final Link link) {
+			if (_links == null) {
+				_links = new ArrayList<>();
+			}
+			_links.add(requireNonNull(link));
+
+			return this;
+		}
+
+		public Builder number(final UInt number) {
+			_number = number;
+			return this;
+		}
+
+		public Builder number(final int number) {
+			_number = UInt.of(number);
+			return this;
+		}
+
+		public Builder type(final String type) {
+			_type = type;
+			return this;
+		}
+
+		public Builder segments(final List<TrackSegment> segments) {
+			_segments = segments;
+			return this;
+		}
+
+		public Builder addSegment(final TrackSegment segment) {
+			if (_segments == null) {
+				_segments = new ArrayList<>();
+			}
+			_segments.add(requireNonNull(segment));
+
+			return this;
+		}
+
+		public Builder addSegment(final Consumer<TrackSegment.Builder> segment) {
+			final TrackSegment.Builder builder = TrackSegment.builder();
+			segment.accept(builder);
+			return addSegment(builder.build());
+		}
+
+		public Track build() {
+			return new Track(
+				_name,
+				_comment,
+				_description,
+				_source,
+				_links,
+				_number,
+				_type,
+				_segments
+			);
+		}
+	}
+
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	/* *************************************************************************

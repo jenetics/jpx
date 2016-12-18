@@ -20,9 +20,8 @@
 package jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static jpx.Lists.immutable;
 import static jpx.Parsers.parseDouble;
 import static jpx.Parsers.parseSeconds;
 import static jpx.XMLReader.attr;
@@ -153,7 +152,7 @@ public final class WayPoint implements Point, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = unmodifiableList(requireNonNull(links));
+		_links = immutable(links);
 		_symbol = symbol;
 		_type = type;
 		_fix = fix;
@@ -413,6 +412,9 @@ public final class WayPoint implements Point, Serializable {
 	 * @see  #builder()
 	 */
 	public static final class Builder {
+		private Latitude _latitude;
+		private Longitude _longitude;
+
 		private Length _elevation;
 		private Speed _speed;
 		private ZonedDateTime _time;
@@ -436,13 +438,31 @@ public final class WayPoint implements Point, Serializable {
 		Builder() {
 		}
 
+		public Builder lat(final Latitude latitude) {
+			_latitude = requireNonNull(latitude);
+			return this;
+		}
+
+		public Builder lat(final double degrees) {
+			return lat(Latitude.ofDegrees(degrees));
+		}
+
+		public Builder lon(final Longitude longitude) {
+			_longitude = requireNonNull(longitude);
+			return this;
+		}
+
+		public Builder lon(final double degrees) {
+			return lon(Longitude.ofDegrees(degrees));
+		}
+
 		/**
 		 * Set the elevation  of the point.
 		 *
 		 * @param elevation the elevation of the point
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder elevation(final Length elevation) {
+		public Builder ele(final Length elevation) {
 			_elevation = elevation;
 			return this;
 		}
@@ -453,7 +473,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param meters the elevation of the point, in meters
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder elevation(final double meters) {
+		public Builder ele(final double meters) {
 			_elevation = Length.ofMeters(meters);
 			return this;
 		}
@@ -497,7 +517,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param variation the magnetic variation
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder magneticVariation(final Degrees variation) {
+		public Builder magvar(final Degrees variation) {
 			_magneticVariation = variation;
 			return this;
 		}
@@ -505,13 +525,13 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Set the magnetic variation at the point.
 		 *
-		 * @param variation the magnetic variation
+		 * @param degree the magnetic variation
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws IllegalArgumentException if the give value is not within the
 		 *         range of {@code [0..360]}
 		 */
-		public Builder magneticVariation(final double variation) {
-			_magneticVariation = Degrees.ofDegrees(variation);
+		public Builder magvar(final double degree) {
+			_magneticVariation = Degrees.ofDegrees(degree);
 			return this;
 		}
 
@@ -519,12 +539,12 @@ public final class WayPoint implements Point, Serializable {
 		 * Set the height (in meters) of geoid (mean sea level) above WGS84 earth
 		 * ellipsoid. As defined in NMEA GGA message.
 		 *
-		 * @param geoidHeight the height (in meters) of geoid (mean sea level)
+		 * @param height the height (in meters) of geoid (mean sea level)
 		 *        above WGS84 earth ellipsoid
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder geoidHeight(final Length geoidHeight) {
-			_geoidHeight = geoidHeight;
+		public Builder geoidheight(final Length height) {
+			_geoidHeight = height;
 			return this;
 		}
 
@@ -549,7 +569,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param comment the GPS way-point comment.
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder comment(final String comment) {
+		public Builder cmt(final String comment) {
 			_comment = comment;
 			return this;
 		}
@@ -560,7 +580,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param description the GPS way-point description.
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder description(final String description) {
+		public Builder desc(final String description) {
 			_description = description;
 			return this;
 		}
@@ -571,7 +591,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param source the GPS way-point source.
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder source(final String source) {
+		public Builder src(final String source) {
 			_source = source;
 			return this;
 		}
@@ -611,7 +631,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param symbol the text of GPS symbol name
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder symbol(final String symbol) {
+		public Builder sym(final String symbol) {
 			_symbol = symbol;
 			return this;
 		}
@@ -701,7 +721,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param age the age since last DGPS update
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder ageOfDGPSAge(final Duration age) {
+		public Builder ageofdgpsdata(final Duration age) {
 			_ageOfDGPSData = age;
 			return this;
 		}
@@ -712,7 +732,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param seconds the age since last DGPS update
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder ageOfDGPSAge(final double seconds) {
+		public Builder ageofdgpsdata(final double seconds) {
 			_ageOfDGPSData = Duration.ofMillis((long)(seconds/1000.0));
 			return this;
 		}
@@ -723,7 +743,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @param station the ID of DGPS station used in differential correction
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder dgpsStation(final DGPSStation station) {
+		public Builder dgpsid(final DGPSStation station) {
 			_dgpsID = station;
 			return this;
 		}
@@ -736,7 +756,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @throws IllegalArgumentException if the given station number is not in the
 		 *         range of {@code [0..1023]}
 		 */
-		public Builder dgpsStation(final int station) {
+		public Builder dgpsid(final int station) {
 			_dgpsID = DGPSStation.of(station);
 			return this;
 		}
@@ -749,29 +769,9 @@ public final class WayPoint implements Point, Serializable {
 		 * @return a newly created way-point
 		 */
 		public WayPoint build(final Latitude latitude, final Longitude longitude) {
-			return new WayPoint(
-				latitude,
-				longitude,
-				_elevation,
-				_speed,
-				_time,
-				_magneticVariation,
-				_geoidHeight,
-				_name,
-				_comment,
-				_description,
-				_source,
-				_links != null ? new ArrayList<>(_links) : emptyList(),
-				_symbol,
-				_type,
-				_fix,
-				_sat,
-				_hdop,
-				_vdop,
-				_pdop,
-				_ageOfDGPSData,
-				_dgpsID
-			);
+			lat(latitude);
+			lon(longitude);
+			return build();
 		}
 
 		/**
@@ -783,6 +783,32 @@ public final class WayPoint implements Point, Serializable {
 		 */
 		public WayPoint build(final double latitude, final double longitude) {
 			return build(Latitude.ofDegrees(latitude), Longitude.ofDegrees(longitude));
+		}
+
+		public WayPoint build() {
+			return new WayPoint(
+				_latitude,
+				_longitude,
+				_elevation,
+				_speed,
+				_time,
+				_magneticVariation,
+				_geoidHeight,
+				_name,
+				_comment,
+				_description,
+				_source,
+				_links,
+				_symbol,
+				_type,
+				_fix,
+				_sat,
+				_hdop,
+				_vdop,
+				_pdop,
+				_ageOfDGPSData,
+				_dgpsID
+			);
 		}
 
 	}
@@ -848,7 +874,7 @@ public final class WayPoint implements Point, Serializable {
 		final ZonedDateTime time
 	) {
 		return builder()
-			.elevation(elevation)
+			.ele(elevation)
 			.time(time)
 			.build(latitude, longitude);
 	}
@@ -903,7 +929,7 @@ public final class WayPoint implements Point, Serializable {
 		final ZonedDateTime time
 	) {
 		return builder()
-			.elevation(elevation)
+			.ele(elevation)
 			.time(time)
 			.build(latitude, longitude);
 	}
@@ -950,25 +976,25 @@ public final class WayPoint implements Point, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final String name) {
 		final Function<Object[], WayPoint> create = a -> WayPoint.builder()
-			.elevation(Length.parse(a[2]))
+			.ele(Length.parse(a[2]))
 			.speed(Speed.parse(a[3]))
 			.time(a[4] != null ? ZonedDateTime.parse((String)a[4], DTF) : null)
-			.magneticVariation(Degrees.parse(a[5]))
-			.geoidHeight(Length.parse(a[6]))
+			.magvar(Degrees.parse(a[5]))
+			.geoidheight(Length.parse(a[6]))
 			.name((String)a[7])
-			.comment((String)a[8])
-			.description((String)a[9])
-			.source((String)a[10])
+			.cmt((String)a[8])
+			.desc((String)a[9])
+			.src((String)a[10])
 			.links((List<Link>)a[11])
-			.symbol((String)a[12])
+			.sym((String)a[12])
 			.type((String)a[13])
 			.fix(Fix.parse(a[14]))
 			.sat(UInt.parse(a[15]))
 			.hdop(parseDouble(a[16]))
 			.vdop(parseDouble(a[17]))
 			.pdop(parseDouble(a[18]))
-			.ageOfDGPSAge(parseSeconds(a[19]))
-			.dgpsStation(DGPSStation.parse(a[20]))
+			.ageofdgpsdata(parseSeconds(a[19]))
+			.dgpsid(DGPSStation.parse(a[20]))
 			.build(parseDouble(a[0]), parseDouble(a[1]));
 
 		return XMLReader.of(create, name,

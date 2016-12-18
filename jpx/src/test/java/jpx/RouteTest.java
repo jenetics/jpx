@@ -44,9 +44,9 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 	public static Route nextRoute(final Random random) {
 		return Route.builder()
 			.name(random.nextBoolean() ? format("name_%s", random.nextInt(100)) : null)
-			.comment(random.nextBoolean() ? format("comment_%s", random.nextInt(100)) : null)
-			.description(random.nextBoolean() ? format("description_%s", random.nextInt(100)) : null)
-			.source(random.nextBoolean() ? format("source_%s", random.nextInt(100)) : null)
+			.cmt(random.nextBoolean() ? format("comment_%s", random.nextInt(100)) : null)
+			.desc(random.nextBoolean() ? format("description_%s", random.nextInt(100)) : null)
+			.src(random.nextBoolean() ? format("source_%s", random.nextInt(100)) : null)
 			.links(LinkTest.nextLinks(random))
 			.number(random.nextBoolean() ? UInt.of(random.nextInt(10)) : null)
 			.type(random.nextBoolean() ? format("type_%s", random.nextInt(100)) : null)

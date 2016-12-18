@@ -19,22 +19,61 @@
  */
 package jpx;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
+ * Helper methods for handling lists. All method handles null values correctly.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
 final class Lists {
 
+	private static final Class<?> IMMUTABLE = Collections
+		.unmodifiableList(new LinkedList<Object>())
+		.getClass();
+
+	private static final Class<?> IMMUTABLE_RANDOM_ACCESS = Collections
+		.unmodifiableList(new ArrayList<Object>())
+		.getClass();
+
 	private Lists() {
 	}
 
 	static <T> List<T> immutable(final List<T> list) {
+		List<T> result = list;
+		if (result == null) {
+			result = Collections.emptyList();
+		} else if (list.isEmpty()) {
+			result = Collections.emptyList();
+		} else if (isMutable(list)) {
+			result = Collections.unmodifiableList(new ArrayList<>(list));
+		}
+
+		return result;
+	}
+
+	static boolean isImmutable(final List<?> list) {
+		return
+			list == null ||
+			list.getClass() == IMMUTABLE ||
+			list.getClass() == IMMUTABLE_RANDOM_ACCESS ||
+			list.isEmpty();
+	}
+
+	static boolean isMutable(final List<?> list) {
+		return !isImmutable(list);
+	}
+
+	static <T> List<T> copy(final List<T> list) {
 		return list != null
-			? Collections.unmodifiableList(list)
+			? list.isEmpty()
+				? Collections.emptyList()
+				: new ArrayList<T>(list)
 			: Collections.emptyList();
 	}
 

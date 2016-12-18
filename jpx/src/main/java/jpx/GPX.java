@@ -27,9 +27,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import javax.xml.stream.XMLInputFactory;
@@ -51,7 +53,15 @@ public final class GPX implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * The default version number: 1.1.
+	 */
 	public static final String VERSION = "1.1";
+
+	/**
+	 * The default creator string.
+	 */
+	public static final String CREATOR = "JPX - Java GPX library (1.0)";
 
 	private final String _creator;
 	private final String _version;
@@ -167,6 +177,117 @@ public final class GPX implements Serializable {
 			Objects.equals(((GPX)obj)._wayPoints, _wayPoints) &&
 			Objects.equals(((GPX)obj)._routes, _routes) &&
 			Objects.equals(((GPX)obj)._tracks, _tracks);
+	}
+
+	public static final class Builder {
+		private String _creator;
+		private String _version;
+		private Metadata _metadata;
+		private List<WayPoint> _wayPoints;;
+		private List<Route> _routes;
+		private List<Track> _tracks;
+
+		private Builder(final String version, final String creator) {
+			_version = requireNonNull(version);
+			_creator = requireNonNull(creator);
+		}
+
+		public Builder metadata(final Metadata metadata) {
+			_metadata = metadata;
+			return this;
+		}
+
+		public Builder metadata(final Consumer<Metadata.Builder> metadata) {
+			final Metadata.Builder builder = Metadata.builder();
+			metadata.accept(builder);
+			_metadata = builder.build();
+
+			return this;
+		}
+
+		public Builder wayPoints(final List<WayPoint> wayPoints) {
+			_wayPoints = wayPoints;
+			return this;
+		}
+
+		public Builder addWayPoint(final WayPoint wayPoint) {
+			if (_wayPoints == null) {
+				_wayPoints = new ArrayList<>();
+			}
+			_wayPoints.add(wayPoint);
+
+			return this;
+		}
+
+		public Builder addWayPoint(final Consumer<WayPoint.Builder> wpb) {
+			final WayPoint.Builder builder = WayPoint.builder();
+			wpb.accept(builder);
+			return addWayPoint(builder.build());
+		}
+
+		public Builder routes(final List<Route> routes) {
+			_routes = routes;
+			return this;
+		}
+
+		public Builder addRoute(final Route route) {
+			if (_routes == null) {
+				_routes = new ArrayList<>();
+			}
+			_routes.add(requireNonNull(route));
+
+			return this;
+		}
+
+		public Builder addRoute(final Consumer<Route.Builder> route) {
+			final Route.Builder builder = Route.builder();
+			route.accept(builder);
+			return addRoute(builder.build());
+		}
+
+		private Builder tracks(final List<Track> tracks) {
+			_tracks = tracks;
+			return this;
+		}
+
+		public Builder addTrack(final Track track) {
+			if (_tracks == null) {
+				_tracks = new ArrayList<>();
+			}
+			_tracks.add(requireNonNull(track));
+
+			return this;
+		}
+
+		public Builder addTrack(final Consumer<Track.Builder> track) {
+			final Track.Builder builder = Track.builder();
+			track.accept(builder);
+			return addTrack(builder.build());
+		}
+
+		public GPX build() {
+			return new GPX(
+				_version,
+				_creator,
+				_metadata,
+				_wayPoints,
+				_routes,
+				_tracks
+			);
+		}
+
+	}
+
+	public static Builder builder(final String version, final String creator) {
+		return new Builder(version, creator);
+	}
+
+	public static Builder builder(final String creator) {
+		return builder(VERSION, creator);
+	}
+
+	public static Builder builder() {
+		return builder(VERSION, CREATOR);
 	}
 
 	/* *************************************************************************
