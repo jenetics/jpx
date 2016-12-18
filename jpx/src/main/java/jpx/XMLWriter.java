@@ -21,6 +21,8 @@ package jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
@@ -76,17 +78,32 @@ final class XMLWriter {
 	 * The element writer.
 	 */
 	@FunctionalInterface
-	interface Elem {
+	interface ElementWriter {
 		void write() throws XMLStreamException;
 	}
 
-	interface Writer<T> {
-		void write(final T data, final XMLStreamWriter writer) throws XMLStreamException;
+	/**
+	 * Functional interface for writing a given data object to a given XML
+	 * writer. The implementations have to handle {@code null} data elements
+	 * accordingly.
+	 *
+	 * @param <T> the data type
+	 */
+	@FunctionalInterface
+	interface DataWriter<T> {
+		void write(final T data, final XMLStreamWriter writer)
+			throws XMLStreamException;
 	}
 
 
 	private final XMLStreamWriter _writer;
 
+	/**
+	 * Create a new XML writer instance from the given XML stream writer.
+	 *
+	 * @param writer the underlying XML stream writer
+	 * @throws NullPointerException if the given writer is {@code null}
+	 */
 	XMLWriter(final XMLStreamWriter writer) {
 		_writer = requireNonNull(writer);
 	}
@@ -102,13 +119,18 @@ final class XMLWriter {
 		return new Attr(name, value);
 	}
 
+	/* *************************************************************************
+	 *  ElementWriter creation methods.
+	 * ************************************************************************/
+
 	/**
-	 * Create a new XML element writer.
-	 * @param name
-	 * @param text
-	 * @return
+	 * Create a new XML element writer from the given data.
+	 *
+	 * @param name the element name
+	 * @param text the element content.
+	 * @return a new element writer
 	 */
-	Elem elem(final String name, final Object text) {
+	ElementWriter elem(final String name, final Object text) {
 		requireNonNull(name);
 
 		return () -> {
@@ -121,14 +143,18 @@ final class XMLWriter {
 	}
 
 	/**
+	 * Create a new XML element writer, which allows an additional transformation
+	 * of the data object before writing it to the XML stream.
 	 *
-	 * @param name
-	 * @param object
-	 * @param converter
-	 * @param <T>
-	 * @return
+	 * @param name the element name
+	 * @param object the data object
+	 * @param converter the data converter
+	 * @param <T> the data type
+	 * @return a new element writer
+	 * @throws NullPointerException if the {@code name} or {@code converter} is
+	 *         {@code null}
 	 */
-	<T> Elem elem(
+	<T> ElementWriter elem(
 		final String name,
 		final T object,
 		final Function<T, Object> converter
@@ -147,13 +173,37 @@ final class XMLWriter {
 	}
 
 	/**
+	 * Create a new XML element writer for explicitly writing the given data to
+	 * the given {@code writer}.
 	 *
-	 * @param data
-	 * @param writer
-	 * @param <T>
+	 * @param data the data point
+	 * @param writer the data writer
+	 * @param <T> the data type
+	 * @return a new element writer
+	 * @throws NullPointerException if the {@code writer} is {@code null}
 	 */
-	<T> Elem elems(final Iterable<T> data, final Writer<T> writer) {
+	<T> ElementWriter elem(final T data, final DataWriter<T> writer) {
 		requireNonNull(writer);
+
+		return () -> {
+			if (data != null) {
+				writer.write(data, _writer);
+			}
+		};
+	}
+
+	/**
+	 * Create a element writer for writing a given collection of data.
+	 *
+	 * @param data the data points
+	 * @param writer the writer used for writing one data point
+	 * @param <T> the data type
+	 * @return a new element writer
+	 * @throws NullPointerException if the {@code writer} is {@code null}
+	 */
+	<T> ElementWriter elems(final Iterable<T> data, final DataWriter<T> writer) {
+		requireNonNull(writer);
+
 		return () -> {
 			if (data != null) {
 				for (T d : data) {
@@ -165,78 +215,122 @@ final class XMLWriter {
 		};
 	}
 
-	/**
-	 *
-	 * @param data
-	 * @param writer
-	 * @param <T>
-	 * @return
-	 * @throws XMLStreamException
-	 */
-	<T> Elem elem(final T data, final Writer<T> writer) {
-		requireNonNull(writer);
-		return () -> {
-			if (data != null) {
-				writer.write(data, _writer);
-			}
-		};
-	}
+	/* *************************************************************************
+	 *  XML writer methods.
+	 * ************************************************************************/
 
 	/**
+	 * Writes the element with the given name and its children.
 	 *
-	 * @param name
-	 * @param firstChild
-	 * @param children
-	 * @throws XMLStreamException
+	 * @param name the element name
+	 * @param children the element children
+	 * @throws XMLStreamException if an error occurs while writing
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	void write(final String name, final Elem firstChild, final Elem... children)
+	void write(final String name, final ElementWriter... children)
 		throws XMLStreamException
 	{
-		requireNonNull(name);
-		requireNonNull(children);
-
-		_writer.writeStartElement(name);
-		firstChild.write();
-		for (Elem child : children) {
-			child.write();
-		}
-		_writer.writeEndElement();
+		write(name, emptyList(), asList(children));
 	}
 
 	/**
+	 * Writes the element with the given name, attributes and its children.
 	 *
-	 * @param name
-	 * @param attr
-	 * @param firstChild
-	 * @param children
-	 * @throws XMLStreamException
+	 * @param name the element name
+	 * @param attr the element attribute
+	 * @param children the element children
+	 * @throws XMLStreamException if an error occurs while writing
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	void write(final String name, final Attr attr, final Elem firstChild, final Elem... children)
+	void write(final String name, final Attr attr, final ElementWriter... children)
 		throws XMLStreamException
 	{
-		requireNonNull(name);
-		requireNonNull(attr);
-		requireNonNull(children);
-
-		_writer.writeStartElement(name);
-		if (attr.value != null) {
-			_writer.writeAttribute(attr.name, attr.value);
-		}
-
-		firstChild.write();
-		for (Elem child : children) {
-			child.write();
-		}
-		_writer.writeEndElement();
+		write(name, singletonList(attr), asList(children));
 	}
 
-	void write(final String name, final Attr attr1, final Attr attr2, final Elem firstChild, final Elem... children)
+	/**
+	 * Writes the element with the given name, attributes and its children.
+	 *
+	 * @param name the element name
+	 * @param attr1 the first element attribute
+	 * @param attr2 the second element attribute
+	 * @param children the element children
+	 * @throws XMLStreamException if an error occurs while writing
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	void write(
+		final String name,
+		final Attr attr1,
+		final Attr attr2,
+		final ElementWriter... children
+	)
 		throws XMLStreamException
 	{
-		elem(name, asList(attr1, attr2), firstChild, children);
+		write(name, asList(attr1, attr2), asList(children));
 	}
 
-	void elem(final String name, final List<Attr> attrs, final Elem firstChild, final Elem... children)
+	/**
+	 * Writes the element with the given name, attributes and its children.
+	 *
+	 * @param name the element name
+	 * @param attr1 the first element attribute
+	 * @param attr2 the second element attribute
+	 * @param attr3 the third element attribute
+	 * @param children the element children
+	 * @throws XMLStreamException if an error occurs while writing
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	void write(
+		final String name,
+		final Attr attr1,
+		final Attr attr2,
+		final Attr attr3,
+		final ElementWriter... children
+	)
+		throws XMLStreamException
+	{
+		write(name, asList(attr1, attr2, attr3), asList(children));
+	}
+
+	/**
+	 * Writes the element with the given name, attributes and its children.
+	 *
+	 * @param name the element name
+	 * @param attr1 the first element attribute
+	 * @param attr2 the second element attribute
+	 * @param attr3 the third element attribute
+	 * @param attr4 the fourth element attribute
+	 * @param children the element children
+	 * @throws XMLStreamException if an error occurs while writing
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	void write(
+		final String name,
+		final Attr attr1,
+		final Attr attr2,
+		final Attr attr3,
+		final Attr attr4,
+		final ElementWriter... children
+	)
+		throws XMLStreamException
+	{
+		write(name, asList(attr1, attr2, attr3, attr4), asList(children));
+	}
+
+	/**
+	 * Writes the element with the given name, attributes and its children.
+	 *
+	 * @param name the element name
+	 * @param attrs the element attributes
+	 * @param children the element children
+	 * @throws XMLStreamException if an error occurs while writing
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	private void write(
+		final String name,
+		final List<Attr> attrs,
+		final List<ElementWriter> children
+	)
 		throws XMLStreamException
 	{
 		requireNonNull(name);
@@ -247,23 +341,8 @@ final class XMLWriter {
 		for (Attr attr : attrs) {
 			_writer.writeAttribute(attr.name, attr.value);
 		}
-
-		firstChild.write();
-		for (Elem child : children) {
+		for (ElementWriter child : children) {
 			child.write();
-		}
-		_writer.writeEndElement();
-	}
-
-	void write(final String name, final Attr... attrs)
-		throws XMLStreamException
-	{
-		requireNonNull(name);
-		requireNonNull(attrs);
-
-		_writer.writeStartElement(name);
-		for (Attr attr : attrs) {
-			_writer.writeAttribute(attr.name, attr.value);
 		}
 		_writer.writeEndElement();
 	}

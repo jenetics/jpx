@@ -22,8 +22,6 @@ package jpx;
 import static java.lang.String.format;
 import static jpx.Lists.immutable;
 
-import jpx.XMLWriter.Elem;
-
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.List;
