@@ -114,6 +114,8 @@ public final class WayPoint implements Point, Serializable {
 	 * @param pdop position dilution of precision. (optional)
 	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
 	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
+	 *         is {@code null}
 	 */
 	private WayPoint(
 		final Latitude latitude,
@@ -1091,7 +1093,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param latitudeDegree the latitude of the point
 	 * @param longitudeDegree the longitude of the point
 	 * @param elevationMeter the elevation of the point
-	 * @param time the timestamp of the way-point
+	 * @param timeEpochMilli the timestamp of the way-point
 	 * @return a new {@code WayPoint}
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
@@ -1109,6 +1111,96 @@ public final class WayPoint implements Point, Serializable {
 				Instant.ofEpochMilli(timeEpochMilli),
 				UTC
 			)
+		);
+	}
+
+	/**
+	 * Create a new way-point with the given parameter.
+	 *
+	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
+	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
+	 * @param elevation the elevation (in meters) of the point (optional)
+	 * @param speed the current GPS speed (optional)
+	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 *        8601 specification for date/time representation. Fractional seconds
+	 *        are allowed for millisecond timing in tracklogs. (optional)
+	 * @param magneticVariation the magnetic variation at the point (optional)
+	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
+	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
+	 * @param name the GPS name of the way-point. This field will be transferred
+	 *        to and from the GPS. GPX does not place restrictions on the length
+	 *        of this field or the characters contained in it. It is up to the
+	 *        receiving application to validate the field before sending it to
+	 *        the GPS. (optional)
+	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
+	 * @param description a text description of the element. Holds additional
+	 *        information about the element intended for the user, not the GPS.
+	 *        (optional)
+	 * @param source source of data. Included to give user some idea of
+	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
+	 *        Boston North", e.g. (optional)
+	 * @param links links to additional information about the way-point. May be
+	 *        empty, but not {@code null}.
+	 * @param symbol text of GPS symbol name. For interchange with other
+	 *        programs, use the exact spelling of the symbol as displayed on the
+	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
+	 * @param type type (classification) of the way-point (optional)
+	 * @param fix type of GPX fix (optional)
+	 * @param sat number of satellites used to calculate the GPX fix (optional)
+	 * @param hdop horizontal dilution of precision (optional)
+	 * @param vdop vertical dilution of precision (optional)
+	 * @param pdop position dilution of precision. (optional)
+	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
+	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
+	 *         is {@code null}
+	 * @return a new {@code WayPoint}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Length elevation,
+		final Speed speed,
+		final ZonedDateTime time,
+		final Degrees magneticVariation,
+		final Length geoidHeight,
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final String symbol,
+		final String type,
+		final Fix fix,
+		final UInt sat,
+		final Double hdop,
+		final Double vdop,
+		final Double pdop,
+		final Duration ageOfGPSData,
+		final DGPSStation dgpsID
+	) {
+		return new WayPoint(
+			latitude,
+			longitude,
+			elevation,
+			speed,
+			time,
+			magneticVariation,
+			geoidHeight,
+			name,
+			comment,
+			description,
+			source,
+			links,
+			symbol,
+			type,
+			fix,
+			sat,
+			hdop,
+			vdop,
+			pdop,
+			ageOfGPSData,
+			dgpsID
 		);
 	}
 
