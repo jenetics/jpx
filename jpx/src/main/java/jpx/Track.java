@@ -38,6 +38,22 @@ import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Represents a GPX track - an ordered list of points describing a path.
+ * <p>
+ * Creating a Track object with one track-segment and 3 track-points:
+ * <pre>{@code
+ * final Track track = Track.builder()
+ *     .name("Track 1")
+ *     .description("Mountain bike tour.")
+ *     .addSegment(segment -> segment
+ *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+ *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+ *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+ *     .addSegment(segment -> segment
+ *         .addPoint(p -> p.lat(46.2081743).lon(16.3738189).ele(160))
+ *         .addPoint(p -> p.lat(47.2081743).lon(16.3738189).ele(161))
+ *         .addPoint(p -> p.lat(49.2081743).lon(16.3738189).ele(162))))
+ *     .build();
+ * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -214,7 +230,25 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		return format("Track[name=%s, segments=%s]", _name, _segments);
 	}
 
-
+	/**
+	 * Builder class for creating immutable {@code Builder} objects.
+	 * <p>
+	 * Creating a Track object with one track-segment and 3 track-points:
+	 * <pre>{@code
+	 * final Track track = Track.builder()
+	 *     .name("Track 1")
+	 *     .description("Mountain bike tour.")
+	 *     .addSegment(segment -> segment
+	 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+	 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+	 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+	 *     .addSegment(segment -> segment
+	 *         .addPoint(p -> p.lat(46.2081743).lon(16.3738189).ele(160))
+	 *         .addPoint(p -> p.lat(47.2081743).lon(16.3738189).ele(161))
+	 *         .addPoint(p -> p.lat(49.2081743).lon(16.3738189).ele(162))))
+	 *     .build();
+	 * }</pre>
+	 */
 	public static final class Builder {
 		private String _name;
 		private String _comment;
@@ -228,31 +262,67 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		private Builder() {
 		}
 
+		/**
+		 * Set the name of the track.
+		 *
+		 * @param name the track name
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder name(final String name) {
 			_name = name;
 			return this;
 		}
 
+		/**
+		 * Set the comment of the track.
+		 *
+		 * @param comment the track comment
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder cmt(final String comment) {
 			_comment = comment;
 			return this;
 		}
 
+		/**
+		 * Set the description of the track.
+		 *
+		 * @param description the track description
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder desc(final String description) {
 			_description = description;
 			return this;
 		}
 
+		/**
+		 * Set the source of the track.
+		 *
+		 * @param source the track source
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder src(final String source) {
 			_source = source;
 			return this;
 		}
 
+		/**
+		 * Set the track links
+		 *
+		 * @param links the track links
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder links(final List<Link> links) {
 			_links = links;
 			return this;
 		}
 
+		/**
+		 * Add the given {@code link} to the track
+		 *
+		 * @param link the link to add to the track
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder addLink(final Link link) {
 			if (_links == null) {
 				_links = new ArrayList<>();
@@ -262,26 +332,72 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Add the given {@code link} to the track
+		 *
+		 * @param href the link to add to the track
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code href} is {@code null}
+		 * @throws IllegalArgumentException if the given {@code href} is not a
+		 *         valid URL
+		 */
+		public Builder addLink(final String href) {
+			return addLink(Link.of(href));
+		}
+
+		/**
+		 * Set the track number.
+		 *
+		 * @param number the track number
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder number(final UInt number) {
 			_number = number;
 			return this;
 		}
 
+		/**
+		 * Set the track number.
+		 *
+		 * @param number the track number
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the given {@code value} is smaller
+		 *         than zero
+		 */
 		public Builder number(final int number) {
 			_number = UInt.of(number);
 			return this;
 		}
 
+		/**
+		 * Set the track type.
+		 *
+		 * @param type the track type
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder type(final String type) {
 			_type = type;
 			return this;
 		}
 
+		/**
+		 * Set the track segments of the track.
+		 *
+		 * @param segments the track segments
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder segments(final List<TrackSegment> segments) {
 			_segments = segments;
 			return this;
 		}
 
+		/**
+		 * Add a track segment to the track.
+		 *
+		 * @param segment the track segment added to the track
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given argument is {@code null}
+		 */
 		public Builder addSegment(final TrackSegment segment) {
 			if (_segments == null) {
 				_segments = new ArrayList<>();
@@ -291,12 +407,38 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Add a track segment to the track, via the given builder.
+		 * <pre>{@code
+		 * final Track track = Track.builder()
+		 *     .name("Track 1")
+		 *     .description("Mountain bike tour.")
+		 *     .addSegment(segment -> segment
+		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+		 *     .addSegment(segment -> segment
+		 *         .addPoint(p -> p.lat(46.2081743).lon(16.3738189).ele(160))
+		 *         .addPoint(p -> p.lat(47.2081743).lon(16.3738189).ele(161))
+		 *         .addPoint(p -> p.lat(49.2081743).lon(16.3738189).ele(162))))
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @param segment the track segment
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given argument is {@code null}
+		 */
 		public Builder addSegment(final Consumer<TrackSegment.Builder> segment) {
 			final TrackSegment.Builder builder = TrackSegment.builder();
 			segment.accept(builder);
 			return addSegment(builder.build());
 		}
 
+		/**
+		 * Create a new GPX track from the current builder state.
+		 *
+		 * @return a new GPX track from the current builder state
+		 */
 		public Track build() {
 			return new Track(
 				_name,
