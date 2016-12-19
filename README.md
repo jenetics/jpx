@@ -31,7 +31,7 @@ For building the JPX library you have to check out the master branch from Github
 
 ## Examples
 
-**Creating new GPX object with 3 track-points**
+### Creating new GPX object with 3 track-points
 
 ```java
 final GPX gpx = GPX.builder()
@@ -72,7 +72,7 @@ GPX.write(gpx, "    ", "gpx.xml");
 
 ```
 
-**Reading GPX object from file**
+### Reading GPX object from file
 
 This example writes a given `GPX` object to a file, reads it again and prints the `WayPoint`s of all tracks and all track-segments to the console.
 
@@ -88,11 +88,29 @@ GPX.read("gpx.xml").tracks()
 *Console output*
 
 ```bash
-[lat=48.2081743, lon=48.2081743]
-[lat=48.2081743, lon=48.2081743]
-[lat=48.2081743, lon=48.2081743]
+$ [lat=48.2081743, lon=48.2081743]
+$ [lat=48.2081743, lon=48.2081743]
+$ [lat=48.2081743, lon=48.2081743]
 
 ```
+
+### Geodetic calculations
+
+#### Distance between two points
+
+```java
+final Point start = WayPoint.of(47.2692124, 11.4041024);
+final Point end = WayPoint.of(47.3502, 11.70584);
+final Length distance = Geoid.WGSC_84.distance(start, end);
+System.out.println(distance);
+```
+
+*Console output*
+
+```bash
+$ 24528.356073554987 m
+```
+
 
 ## License
 
