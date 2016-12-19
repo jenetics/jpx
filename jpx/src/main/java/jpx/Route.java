@@ -457,6 +457,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * @param number the GPS route number
 	 * @param type the type (classification) of the route
 	 * @param points the sequence of route points
+	 * @return a new route object with the given parameters
 	 */
 	public static Route of(
 		final String name,
@@ -485,6 +486,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *
 	 * @param name the GPS name of the route
 	 * @param points the sequence of route points
+	 * @return a new route object with the given parameters
 	 */
 	public static Route of(
 		final String name,
@@ -506,6 +508,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * Create a new {@code Route} with the given parameters and way-points.
 	 *
 	 * @param points the sequence of route points
+	 * @return a new route object with the given parameters
 	 */
 	public static Route of(
 		final List<WayPoint> points
