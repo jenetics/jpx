@@ -41,6 +41,14 @@ import javax.xml.stream.XMLStreamWriter;
  * Information about the GPX file, author, and copyright restrictions goes in
  * the metadata section. Providing rich, meaningful information about your GPX
  * files allows others to search for and use your GPS data.
+ * <p>
+ * Creating a GPX object with one track-segment and 3 track-points:
+ * <pre>{@code
+ * final Metadata gpx = Metadata.builder()
+ *     .author("Franz Wilhelmstötter")
+ *     .addLink(Link.of("http://jenetics.io"))
+ *     .build();
+ * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

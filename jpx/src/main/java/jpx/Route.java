@@ -39,6 +39,17 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * Represents a route - an ordered list of way-points representing a series of
  * turn points leading to a destination.
+ * <p>
+ * Create a new route via the builder:
+ * <pre>{@code
+ * final Route route = Route.builder()
+ *     .name("Route 1")
+ *     .description("Fancy mountain-bike tour.")
+ *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+ *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+ *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+ *     .build();
+ * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
