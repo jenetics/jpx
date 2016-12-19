@@ -20,6 +20,7 @@
 package jpx;
 
 import static java.lang.String.format;
+import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 import static jpx.Parsers.parseDouble;
@@ -28,6 +29,8 @@ import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -397,7 +400,10 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public String toString() {
-		return format("[lat=%s, lon=%s]", _latitude, _latitude);
+		return format(
+			"[lat=%s, lon=%s, ele=%s]",
+			_latitude, _latitude, _elevation
+		);
 	}
 
 
@@ -507,6 +513,57 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Set the creation/modification timestamp for the point.
+		 *
+		 * @param instant the instant of the way-point
+		 * @param zone the time-zone
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final Instant instant, final ZoneId zone) {
+			_time = instant != null
+				? ZonedDateTime.ofInstant(instant, zone != null ? zone : UTC)
+				: null;
+			return this;
+		}
+
+		/**
+		 * Set the creation/modification timestamp for the point.
+		 *
+		 * @param millis the instant of the way-point
+		 * @param zone the time-zone
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final long millis, final ZoneId zone) {
+			_time = ZonedDateTime.ofInstant(
+				Instant.ofEpochMilli(millis),
+				zone != null ? zone : UTC
+			);
+			return this;
+		}
+
+		/**
+		 * Set the creation/modification timestamp for the point. The zone is
+		 * set to UTC.
+		 *
+		 * @param instant the instant of the way-point
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final Instant instant) {
+			return time(instant, null);
+		}
+
+		/**
+		 * Set the creation/modification timestamp for the point.
+		 *
+		 * @param millis the instant of the way-point
+		 *        from
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final long millis) {
+			return time(Instant.ofEpochMilli(millis));
+		}
+
+		/**
 		 * Set the magnetic variation at the point.
 		 *
 		 * @param variation the magnetic variation
@@ -540,6 +597,19 @@ public final class WayPoint implements Point, Serializable {
 		 */
 		public Builder geoidheight(final Length height) {
 			_geoidHeight = height;
+			return this;
+		}
+
+		/**
+		 * Set the height (in meters) of geoid (mean sea level) above WGS84 earth
+		 * ellipsoid. As defined in NMEA GGA message.
+		 *
+		 * @param meter the height (in meters) of geoid (mean sea level)
+		 *        above WGS84 earth ellipsoid
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder geoidheight(final double meter) {
+			_geoidHeight = Length.ofMeters(meter);
 			return this;
 		}
 
@@ -619,6 +689,21 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Set the links to external information about the way-point.
+		 *
+		 * @param href the links to external information about the way-point.
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the given {@code href} is not a
+		 *         valid URL
+		 */
+		public Builder addLink(final String href) {
+			if (href != null) {
+				_links.add(Link.of(href));
+			}
+			return this;
+		}
+
+		/**
 		 * Set the text of GPS symbol name. For interchange with other programs,
 		 * use the exact spelling of the symbol as displayed on the GPS. If the
 		 * GPS abbreviates words, spell them out.
@@ -650,6 +735,17 @@ public final class WayPoint implements Point, Serializable {
 		 */
 		public Builder fix(final Fix fix) {
 			_fix = fix;
+			return this;
+		}
+
+		/**
+		 * Set the type of GPX fix.
+		 *
+		 * @param fix the type of GPX fix
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder fix(final String fix) {
+			_fix = Fix.parse(fix);
 			return this;
 		}
 
@@ -728,7 +824,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder ageofdgpsdata(final double seconds) {
-			_ageOfDGPSData = Duration.ofMillis((long)(seconds/1000.0));
+			_ageOfDGPSData = Duration.ofMillis((long)(seconds*1000));
 			return this;
 		}
 
@@ -780,6 +876,11 @@ public final class WayPoint implements Point, Serializable {
 			return build(Latitude.ofDegrees(latitude), Longitude.ofDegrees(longitude));
 		}
 
+		/**
+		 * Build a new way-point from the current builder state.
+		 *
+		 * @return a new way-point from the current builder state
+		 */
 		public WayPoint build() {
 			return new WayPoint(
 				_latitude,
@@ -808,11 +909,6 @@ public final class WayPoint implements Point, Serializable {
 
 	}
 
-
-	/* *************************************************************************
-	 *  Static object creation methods
-	 * ************************************************************************/
-
 	/**
 	 * Return a new {@code WayPoint} builder.
 	 *
@@ -821,6 +917,11 @@ public final class WayPoint implements Point, Serializable {
 	public static Builder builder() {
 		return new Builder();
 	}
+
+
+	/* *************************************************************************
+	 *  Static object creation methods
+	 * ************************************************************************/
 
 	/**
 	 * Create a new {@code WayPoint} with the given {@code latitude} and
@@ -831,8 +932,53 @@ public final class WayPoint implements Point, Serializable {
 	 * @return a new {@code WayPoint}
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
-	public static WayPoint of(final Latitude latitude, final Longitude longitude) {
-		return builder().build(latitude, longitude);
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude
+	) {
+		return new WayPoint(
+			latitude,
+			longitude,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
+	}
+
+	/**
+	 * Create a new {@code WayPoint} with the given {@code latitude} and
+	 * {@code longitude} value.
+	 *
+	 * @param latitudeDegree the latitude of the point
+	 * @param longitudeDegree the longitude of the point
+	 * @return a new {@code WayPoint}
+	 * @throws IllegalArgumentException if the given latitude or longitude is not
+	 *         in the valid range.
+	 */
+	public static WayPoint of(
+		final double latitudeDegree,
+		final double longitudeDegree
+	) {
+		return of(
+			Latitude.ofDegrees(latitudeDegree),
+			Longitude.ofDegrees(longitudeDegree)
+		);
 	}
 
 	/**
@@ -849,7 +995,53 @@ public final class WayPoint implements Point, Serializable {
 		final Longitude longitude,
 		final ZonedDateTime time
 	) {
-		return builder().time(time).build(latitude, longitude);
+		return new WayPoint(
+			latitude,
+			longitude,
+			null,
+			null,
+			time,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
+	}
+
+	/**
+	 * Create a new {@code WayPoint} with the given parameters.
+	 *
+	 * @param latitudeDegree the latitude of the point
+	 * @param longitudeDegree the longitude of the point
+	 * @param timeEpochMilli the timestamp of the way-point
+	 * @return a new {@code WayPoint}
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
+	public static WayPoint of(
+		final double latitudeDegree,
+		final double longitudeDegree,
+		final long timeEpochMilli
+	) {
+		return of(
+			Latitude.ofDegrees(latitudeDegree),
+			Longitude.ofDegrees(longitudeDegree),
+			ZonedDateTime.ofInstant(
+				Instant.ofEpochMilli(timeEpochMilli),
+				UTC
+			)
+		);
 	}
 
 	/**
@@ -868,65 +1060,56 @@ public final class WayPoint implements Point, Serializable {
 		final Length elevation,
 		final ZonedDateTime time
 	) {
-		return builder()
-			.ele(elevation)
-			.time(time)
-			.build(latitude, longitude);
-	}
-
-	/**
-	 * Create a new {@code WayPoint} with the given {@code latitude} and
-	 * {@code longitude} value.
-	 *
-	 * @param latitude the latitude of the point
-	 * @param longitude the longitude of the point
-	 * @return a new {@code WayPoint}
-	 * @throws IllegalArgumentException if the given latitude or longitude is not
-	 *         in the valid range.
-	 */
-	public static WayPoint of(final double latitude, final double longitude) {
-		return builder().build(latitude, longitude);
-	}
-
-	/**
-	 * Create a new {@code WayPoint} with the given parameters.
-	 *
-	 * @param latitude the latitude of the point
-	 * @param longitude the longitude of the point
-	 * @param time the timestamp of the way-point
-	 * @return a new {@code WayPoint}
-	 * @throws IllegalArgumentException if the given latitude or longitude is not
-	 *         in the valid range.
-	 */
-	public static WayPoint of(
-		final double latitude,
-		final double longitude,
-		final ZonedDateTime time
-	) {
-		return builder().time(time).build(latitude, longitude);
+		return new WayPoint(
+			latitude,
+			longitude,
+			elevation,
+			null,
+			time,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
 	}
 
 	/**
 	 * Create a new {@code WayPoint} with the given parameters.
 	 *
-	 * @param latitude the latitude of the point
-	 * @param longitude the longitude of the point
-	 * @param elevation the elevation of the point
+	 * @param latitudeDegree the latitude of the point
+	 * @param longitudeDegree the longitude of the point
+	 * @param elevationMeter the elevation of the point
 	 * @param time the timestamp of the way-point
 	 * @return a new {@code WayPoint}
-	 * @throws IllegalArgumentException if the given latitude or longitude is not
-	 *         in the valid range.
+	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static WayPoint of(
-		final double latitude,
-		final double longitude,
-		final double elevation,
-		final ZonedDateTime time
+		final double latitudeDegree,
+		final double longitudeDegree,
+		final double elevationMeter,
+		final long timeEpochMilli
 	) {
-		return builder()
-			.ele(elevation)
-			.time(time)
-			.build(latitude, longitude);
+		return of(
+			Latitude.ofDegrees(latitudeDegree),
+			Longitude.ofDegrees(longitudeDegree),
+			Length.ofMeters(elevationMeter),
+			ZonedDateTime.ofInstant(
+				Instant.ofEpochMilli(timeEpochMilli),
+				UTC
+			)
+		);
 	}
 
 
