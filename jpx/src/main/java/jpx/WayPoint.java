@@ -28,9 +28,7 @@ import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.time.Duration;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,9 +49,6 @@ import javax.xml.stream.XMLStreamWriter;
 public final class WayPoint implements Point, Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	private static DateTimeFormatter DTF =
-		DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 
 	private final Latitude _latitude;
 	private final Longitude _longitude;
@@ -381,7 +376,7 @@ public final class WayPoint implements Point, Serializable {
 			((WayPoint)obj)._longitude.equals(_longitude) &&
 			Objects.equals(((WayPoint)obj)._elevation, _elevation) &&
 			Objects.equals(((WayPoint)obj)._speed, _speed) &&
-			Objects.equals(((WayPoint)obj)._time, _time) &&
+			ZonedDateTimeFormat.equals(((WayPoint)obj)._time, _time) &&
 			Objects.equals(((WayPoint)obj)._magneticVariation, _magneticVariation) &&
 			Objects.equals(((WayPoint)obj)._geoidHeight, _geoidHeight) &&
 			Objects.equals(((WayPoint)obj)._name, _name) &&
@@ -953,7 +948,7 @@ public final class WayPoint implements Point, Serializable {
 			xml.attr("lon", _longitude),
 			xml.elem("ele", _elevation, Length::doubleValue),
 			xml.elem("speed", _speed ,Speed::doubleValue),
-			xml.elem("time", _time != null ? DTF.format(_time) : null),
+			xml.elem("time", ZonedDateTimeFormat.format(_time)),
 			xml.elem("magvar", _magneticVariation, Degrees::doubleValue),
 			xml.elem("geoidheight", _geoidHeight, Length::doubleValue),
 			xml.elem("name", _name),
@@ -978,7 +973,7 @@ public final class WayPoint implements Point, Serializable {
 		final Function<Object[], WayPoint> create = a -> WayPoint.builder()
 			.ele(Length.parse(a[2]))
 			.speed(Speed.parse(a[3]))
-			.time(a[4] != null ? ZonedDateTime.parse((String)a[4], DTF) : null)
+			.time(ZonedDateTimeFormat.parse((String)a[4]))
 			.magvar(Degrees.parse(a[5]))
 			.geoidheight(Length.parse(a[6]))
 			.name((String)a[7])

@@ -24,9 +24,7 @@ import static jpx.Lists.immutable;
 import static jpx.Parsers.parseString;
 
 import java.io.Serializable;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -49,8 +47,8 @@ public final class Metadata implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static DateTimeFormatter DTF =
-		DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
+	//private static DateTimeFormatter DTF =
+	//	DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
 		//DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 	private final String _name;
@@ -196,7 +194,7 @@ public final class Metadata implements Serializable {
 			Objects.equals(((Metadata)obj)._author, _author) &&
 			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
 			Objects.equals(((Metadata)obj)._links, _links) &&
-			Objects.equals(((Metadata)obj)._time, _time) &&
+			ZonedDateTimeFormat.equals(((Metadata)obj)._time, _time) &&
 			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
 			Objects.equals(((Metadata)obj)._bounds, _bounds);
 	}
@@ -364,7 +362,7 @@ public final class Metadata implements Serializable {
 			xml.elem(_author, Person::write),
 			xml.elem(_copyright, Copyright::write),
 			xml.elems(_links, Link::write),
-			xml.elem("time", _time != null ? DTF.format(_time) : null),
+			xml.elem("time", ZonedDateTimeFormat.format(_time)),
 			xml.elem("keywords", _keywords),
 			xml.elem(_bounds, Bounds::write)
 		);
@@ -378,7 +376,7 @@ public final class Metadata implements Serializable {
 			(Person)a[2],
 			(Copyright)a[3],
 			(List<Link>)a[4],
-			a[5] != null ? ZonedDateTime.parse((String)a[5], DTF) : null,
+			ZonedDateTimeFormat.parse((String)a[5]),
 			(String)a[6],
 			(Bounds)a[7]
 		);

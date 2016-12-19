@@ -38,7 +38,7 @@ public class ZonedDateTimeFormatTest {
 			.findFormat(example)
 			.orElseThrow(NoSuchElementException::new);
 
-		final ZonedDateTime zdt = format.parse(example);
+		final ZonedDateTime zdt = format.formatParse(example);
 		final String zdts = ZonedDateTimeFormat.format(zdt);
 		Assert.assertEquals(
 			ZonedDateTimeFormat
