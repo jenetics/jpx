@@ -230,12 +230,7 @@ public final class Geoid {
 		// Eq. 19
 		final double s = B*a*(sigma - deltasigma);
 
-		// The difference in elevation.
-		final double e =
-			start.getElevation().map(Length::toMeters).orElse(0.0) -
-			end.getElevation().map(Length::toMeters).orElse(0.0);
-
-		return Length.ofMeters(sqrt(s*s + e*e));
+		return Length.ofMeters(s);
 	}
 
 	/**
