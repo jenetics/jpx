@@ -668,6 +668,7 @@ public final class GPX implements Serializable {
 
 			writer.writeStartDocument("UTF-8", "1.0");
 			gpx.write(writer);
+			writer.writeEndDocument();
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
