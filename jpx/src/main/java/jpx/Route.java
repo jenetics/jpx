@@ -227,6 +227,15 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	/**
 	 * Builder class for building {@code Route} objects.
+	 * <pre>{@code
+	 * final Route route = Route.builder()
+	 *     .name("Route 1")
+	 *     .description("Fancy mountain-bike tour.")
+	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+	 *     .build();
+	 * }</pre>
 	 */
 	public static final class Builder {
 
@@ -315,6 +324,25 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
+		 * Set the links to external information about the route.
+		 *
+		 * @param href the links to external information about the route.
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code href} is
+		 *         {@code null}
+		 * @throws IllegalArgumentException if the given {@code href} is not a
+		 *         valid URL
+		 */
+		public Builder addLink(final String href) {
+			if (_links == null) {
+				_links = new ArrayList<>();
+			}
+			_links.add(Link.of(href));
+
+			return this;
+		}
+
+		/**
 		 * Set the GPS route number.
 		 *
 		 * @param number the GPS route number
@@ -374,6 +402,12 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Add a new way-point via the given {@code WayPoint.Builder} class.
+		 *
+		 * @param point the way-point builder
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
@@ -400,6 +434,86 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	}
 
+	/* *************************************************************************
+	 *  Static object creation methods
+	 * ************************************************************************/
+
+	/**
+	 * Create a new {@code Route} with the given parameters and way-points.
+	 *
+	 * @param name the GPS name of the route
+	 * @param comment the GPS comment of the route
+	 * @param description the Text description of route for user. Not sent to GPS.
+	 * @param source the source of data. Included to give user some idea of
+	 *        reliability and accuracy of data.
+	 * @param links the links to external information about the route
+	 * @param number the GPS route number
+	 * @param type the type (classification) of the route
+	 * @param points the sequence of route points
+	 */
+	public static Route of(
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final UInt number,
+		final String type,
+		final List<WayPoint> points
+	) {
+		return new Route(
+			name,
+			comment,
+			description,
+			source,
+			links,
+			number,
+			type,
+			points
+		);
+	}
+
+	/**
+	 * Create a new {@code Route} with the given parameters and way-points.
+	 *
+	 * @param name the GPS name of the route
+	 * @param points the sequence of route points
+	 */
+	public static Route of(
+		final String name,
+		final List<WayPoint> points
+	) {
+		return new Route(
+			name,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			points
+		);
+	}
+
+	/**
+	 * Create a new {@code Route} with the given parameters and way-points.
+	 *
+	 * @param points the sequence of route points
+	 */
+	public static Route of(
+		final List<WayPoint> points
+	) {
+		return new Route(
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			points
+		);
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization
