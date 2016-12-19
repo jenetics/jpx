@@ -50,7 +50,7 @@ public final class Ellipsoid implements Serializable {
 		"WGS-84",
 		6_378_137,
 		6_356_752.314245,
-		1.0/298.257223563
+		298.257223563
 	);
 
 	/**
@@ -63,7 +63,7 @@ public final class Ellipsoid implements Serializable {
 		"IERS-1989",
 		6_378_136,
 		6_356_751.302,
-		1.0/298.257
+		298.257
 	);
 
 	/**
@@ -76,7 +76,7 @@ public final class Ellipsoid implements Serializable {
 		"IERS-2003",
 		6_378_136.6,
 		6_356_751.9,
-		1.0/298.25642
+		298.25642
 	);
 
 	/**
