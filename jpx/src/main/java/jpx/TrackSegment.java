@@ -68,6 +68,11 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return _points;
 	}
 
+	/**
+	 * Return a stream of {@link WayPoint} objects this track-segments contains.
+	 *
+	 * @return a stream of {@link WayPoint} objects this track-segment contains
+	 */
 	public Stream<WayPoint> points() {
 		return _points.stream();
 	}
@@ -88,15 +93,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return _points.iterator();
 	}
 
-	/**
-	 * Return a stream of {@link WayPoint} objects this track-segments contains.
-	 *
-	 * @return a stream of {@link WayPoint} objects this track-segment contains
-	 */
-	public Stream<WayPoint> stream() {
-		return _points.stream();
-	}
-
 	@Override
 	public int hashCode() {
 		return _points.hashCode();
@@ -113,18 +109,42 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return format("TrackSegment[points=%s]", _points.size());
 	}
 
-
+	/**
+	 * Builder class for creating immutable {@code TrackSegment} objects.
+	 * <p>
+	 * Creating a {@code TrackSegment} object with  3 track-points:
+	 * <pre>{@code
+	 * final TrackSegment segment = TrackSegment.builder()
+	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+	 *     .build();
+	 * }</pre>
+	 */
 	public static final class Builder {
 		private List<WayPoint> _points;
 
 		private Builder() {
 		}
 
+		/**
+		 * Set the way-points fo the track segment.
+		 *
+		 * @param points the track-segment points
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder points(final List<WayPoint> points) {
 			_points = points;
 			return this;
 		}
 
+		/**
+		 * Add a way-point to the track-segment.
+		 *
+		 * @param point the segment way-point
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code href} is {@code null}
+		 */
 		public Builder addPoint(final WayPoint point) {
 			if (_points == null) {
 				_points = new ArrayList<>();
@@ -134,18 +154,44 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Add a way-point to the track-segment, via the given way-point builder.
+		 * <p>
+		 * Creating a {@code TrackSegment} object with  3 track-points:
+		 * <pre>{@code
+		 * final TrackSegment segment = TrackSegment.builder()
+		 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+		 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+		 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @param point the segment way-point builder
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code href} is {@code null}
+		 */
 		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
 			return addPoint(builder.build());
 		}
 
+		/**
+		 * Create a new track-segment from the current builder state.
+		 *
+		 * @return a new track-segment from the current builder state
+		 */
 		public TrackSegment build() {
 			return new TrackSegment(_points);
 		}
 
 	}
 
+	/**
+	 * Create a new track-segment builder.
+	 *
+	 * @return a new track-segment builder
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}

@@ -174,6 +174,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		return _points;
 	}
 
+	/**
+	 * Return a stream of {@link WayPoint} objects this route contains.
+	 *
+	 * @return a stream of {@link WayPoint} objects this route contains
+	 */
 	public Stream<WayPoint> points() {
 		return _points.stream();
 	}
@@ -181,15 +186,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	@Override
 	public Iterator<WayPoint> iterator() {
 		return _points.iterator();
-	}
-
-	/**
-	 * Return a stream of {@link WayPoint} objects this route contains.
-	 *
-	 * @return a stream of {@link WayPoint} objects this route contains
-	 */
-	public Stream<WayPoint> stream() {
-		return _points.stream();
 	}
 
 	@Override

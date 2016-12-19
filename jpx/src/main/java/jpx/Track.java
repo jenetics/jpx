@@ -181,6 +181,11 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		return _segments;
 	}
 
+	/**
+	 * Return a stream of {@link TrackSegment} objects this track contains.
+	 *
+	 * @return a stream of {@link TrackSegment} objects this track contains
+	 */
 	public Stream<TrackSegment> segments() {
 		return _segments.stream();
 	}
@@ -190,14 +195,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		return _segments.iterator();
 	}
 
-	/**
-	 * Return a stream of {@link TrackSegment} objects this track contains.
-	 *
-	 * @return a stream of {@link TrackSegment} objects this track contains
-	 */
-	public Stream<TrackSegment> stream() {
-		return _segments.stream();
-	}
 
 	@Override
 	public int hashCode() {
@@ -231,7 +228,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	}
 
 	/**
-	 * Builder class for creating immutable {@code Builder} objects.
+	 * Builder class for creating immutable {@code Track} objects.
 	 * <p>
 	 * Creating a Track object with one track-segment and 3 track-points:
 	 * <pre>{@code
