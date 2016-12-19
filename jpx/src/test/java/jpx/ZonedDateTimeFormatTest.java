@@ -19,10 +19,11 @@
  */
 package jpx;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
-import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.NoSuchElementException;
 
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -31,37 +32,21 @@ import org.testng.annotations.Test;
  */
 public class ZonedDateTimeFormatTest {
 
-	@Test(dataProvider = "formats")
-	public void format(final ZonedDateTimeFormat format) {
-		final ZonedDateTime time = ZonedDateTime.now();
-		System.out.println(format.format(time));
-	}
-
-	@Test(dataProvider = "formats")
-	public void parse(final ZonedDateTimeFormat format) {
-		final ZonedDateTime time = ZonedDateTime.now();
-		final String string = format.format(time);
-
-		format.parse(string);
-	}
-
 	@Test(dataProvider = "validExamples")
 	public void parseExample(final String example) {
-		final Optional<ZonedDateTimeFormat> format = ZonedDateTimeFormat.findFormat(example);
-		format.ifPresent(f -> {
-			final ZonedDateTime time = f.parse(example);
-			System.out.println(example + " -> " + f.format(time));
-		});
-		if (!format.isPresent()) {
-			System.out.println(example + " -> ");
-		}
-	}
+		final ZonedDateTimeFormat format = ZonedDateTimeFormat
+			.findFormat(example)
+			.orElseThrow(NoSuchElementException::new);
 
-	@DataProvider(name = "formats")
-	public Object[][] formats() {
-		return Stream.of(ZonedDateTimeFormat.values())
-			.map(format -> new Object[]{format})
-			.toArray(Object[][]::new);
+		final ZonedDateTime zdt = format.parse(example);
+		final String zdts = ZonedDateTimeFormat.format(zdt);
+		Assert.assertEquals(
+			ZonedDateTimeFormat
+				.parseOptional(zdts)
+				.map(ZonedDateTime::toInstant)
+				.orElse(Instant.MIN),
+			zdt.toInstant()
+		);
 	}
 
 	@DataProvider(name = "validExamples")

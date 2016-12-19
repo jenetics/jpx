@@ -33,6 +33,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 /**
+ * Enumeration of the valid date time formats.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
