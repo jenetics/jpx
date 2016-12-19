@@ -32,6 +32,8 @@ import static java.util.Objects.requireNonNull;
 import jpx.Length;
 import jpx.Point;
 
+import java.util.stream.Collector;
+
 /**
  * Implementation of <em>geodetic</em> functions.
  *
@@ -231,6 +233,47 @@ public final class Geoid {
 		final double s = B*a*(sigma - deltasigma);
 
 		return Length.ofMeters(s);
+	}
+
+	public Collector<Point, ?, Length> toLength() {
+		return Collector.of(
+			Adder::new,
+			Adder::add,
+			Adder::combine,
+			Adder::length
+		);
+	}
+
+	/**
+	 * Helper class for collecting a stream of points to its length.
+	 */
+	private static final class Adder {
+		private double _length = 0;
+		private Point _start;
+		private Point _end;
+
+		void dist() {
+			if (_start != null && _end != null) {
+				_length += _start.distance(_end).doubleValue();
+			}
+		}
+
+		Adder combine(final Adder other) {
+			_length += other._length;
+			_start = null;
+			_end = null;
+			return this;
+		}
+
+		void add(final Point point) {
+			_end = _start;
+			_start = point;
+			dist();
+		}
+
+		Length length() {
+			return Length.ofMeters(_length);
+		}
 	}
 
 	/**
