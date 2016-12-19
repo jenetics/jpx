@@ -19,11 +19,14 @@
  */
 package jpx;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static jpx.Lists.immutable;
 import static jpx.Parsers.parseString;
 
 import java.io.Serializable;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,10 +49,6 @@ import javax.xml.stream.XMLStreamWriter;
 public final class Metadata implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-
-	//private static DateTimeFormatter DTF =
-	//	DateTimeFormatter.ISO_INSTANT.withZone(ZoneId.systemDefault());
-		//DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
 	private final String _name;
 	private final String _description;
@@ -199,6 +198,17 @@ public final class Metadata implements Serializable {
 			Objects.equals(((Metadata)obj)._bounds, _bounds);
 	}
 
+	/**
+	 * Builder class for creating immutable {@code Metadata} objects.
+	 * <p>
+	 * Creating a GPX object with one track-segment and 3 track-points:
+	 * <pre>{@code
+	 * final Metadata gpx = Metadata.builder()
+	 *     .author("Franz Wilhelmstötter")
+	 *     .addLink(Link.of("http://jenetics.io"))
+	 *     .build();
+	 * }</pre>
+	 */
 	public static final class Builder {
 		private String _name;
 		private String _description;
@@ -212,6 +222,12 @@ public final class Metadata implements Serializable {
 		private Builder() {
 		}
 
+		/**
+		 * Adds the content of a given {@code Metadata} object.
+		 *
+		 * @param metadata the metadata content
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder metadata(final Metadata metadata) {
 			_name = metadata._name;
 			_description = metadata._description;
@@ -225,24 +241,47 @@ public final class Metadata implements Serializable {
 			return this;
 		}
 
+		/**
+		 * Set the metadata name.
+		 *
+		 * @param name the metadata name
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder name(final String name) {
 			_name = name;
 			return this;
 		}
 
+		/**
+		 * Set the metadata description.
+		 *
+		 * @param description the metadata description
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder desc(final String description) {
 			_description = description;
 			return this;
 		}
 
+		/**
+		 * Set the metadata author.
+		 *
+		 * @param author the metadata author
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder author(final Person author) {
 			_author = author;
 			return this;
 		}
 
-		public Builder author(final String name) {
-			_author = Person.of(name);
-			return this;
+		/**
+		 * Set the metadata author.
+		 *
+		 * @param author the metadata author
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder author(final String author) {
+			return author != null ? author(Person.of(author)) : null;
 		}
 
 		public Builder copyright(final Copyright copyright) {
@@ -250,11 +289,23 @@ public final class Metadata implements Serializable {
 			return this;
 		}
 
+		/**
+		 * Set the metadata links.
+		 *
+		 * @param links the metadata links
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder links(final List<Link> links) {
 			_links = links;
 			return this;
 		}
 
+		/**
+		 * Add the given {@code link} to the metadata
+		 *
+		 * @param link the link to add to the metadata
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder addLink(final Link link) {
 			if (_links == null) {
 				_links = new ArrayList<>();
@@ -264,21 +315,109 @@ public final class Metadata implements Serializable {
 			return this;
 		}
 
+		/**
+		 * Add the given {@code link} to the metadata
+		 *
+		 * @param href the link to add to the metadata
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given {@code href} is {@code null}
+		 * @throws IllegalArgumentException if the given {@code href} is not a
+		 *         valid URL
+		 */
+		public Builder addLink(final String href) {
+			return addLink(Link.of(href));
+		}
+
+		/**
+		 * Set the time of the metadata
+		 *
+		 * @param time the time of the metadata
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder time(final ZonedDateTime time) {
 			_time = time;
 			return this;
 		}
 
+		/**
+		 * Set the time of the metadata.
+		 *
+		 * @param instant the instant to create the metadata time from
+		 * @param zone the time-zone
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final Instant instant, final ZoneId zone) {
+			_time = instant != null
+				? ZonedDateTime.ofInstant(instant, zone != null ? zone : UTC)
+				: null;
+			return this;
+		}
+
+		/**
+		 * Set the time of the metadata.
+		 *
+		 * @param millis the instant to create the metadata time from
+		 * @param zone the time-zone
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final long millis, final ZoneId zone) {
+			_time = ZonedDateTime.ofInstant(
+				Instant.ofEpochMilli(millis),
+				zone != null ? zone : UTC
+			);
+			return this;
+		}
+
+		/**
+		 * Set the time of the metadata. The zone is set to UTC.
+		 *
+		 * @param instant the instant to create the metadata time from
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final Instant instant) {
+			return time(instant, null);
+		}
+
+		/**
+		 * Set the time of the metadata.
+		 *
+		 * @param millis the instant to create the metadata time
+		 *        from
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder time(final long millis) {
+			return time(Instant.ofEpochMilli(millis));
+		}
+
+		/**
+		 * Set the metadata keywords.
+		 *
+		 * @param keywords the metadata keywords
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder keywords(final String keywords) {
 			_keywords = keywords;
 			return this;
 		}
 
+		/**
+		 * Set the GPX bounds.
+		 *
+		 * @param bounds the GPX bounds
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder bounds(final Bounds bounds) {
 			_bounds = bounds;
 			return this;
 		}
 
+		/**
+		 * Create an immutable {@code Metadata} object from the current builder
+		 * state.
+		 *
+		 * @return an immutable {@code Metadata} object from the current builder
+		 *         state
+		 */
 		public Metadata build() {
 			return new Metadata(
 				_name,
@@ -293,6 +432,11 @@ public final class Metadata implements Serializable {
 		}
 	}
 
+	/**
+	 * Return a new {@code Metadata} builder.
+	 *
+	 * @return a new {@code Metadata} builder
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
