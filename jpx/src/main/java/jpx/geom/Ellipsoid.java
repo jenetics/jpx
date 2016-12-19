@@ -41,6 +41,8 @@ public final class Ellipsoid implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**
+	 * The ellipsoid of the <em>World Geodetic System: WGS 84</em>
+	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
 	 *     WGS-84</a>
 	 */
@@ -52,6 +54,9 @@ public final class Ellipsoid implements Serializable {
 	);
 
 	/**
+	 * The ellipsoid of the <em>International Earth Rotation and Reference
+	 * Systems Service (1989)</em>
+	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
 	 */
 	public static final Ellipsoid IERS_1989 = of(
@@ -61,6 +66,12 @@ public final class Ellipsoid implements Serializable {
 		1.0/298.257
 	);
 
+	/**
+	 * The ellipsoid of the <em>International Earth Rotation and Reference
+	 * Systems Service (2003)</em>
+	 *
+	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
+	 */
 	public static final Ellipsoid IERS_2003 = of(
 		"IERS-2003",
 		6_378_136.6,
@@ -68,8 +79,10 @@ public final class Ellipsoid implements Serializable {
 		1.0/298.25642
 	);
 
+	/**
+	 * The default ellipsoid: WGSC-84
+	 */
 	public static final Ellipsoid DEFAULT = WGSC_84;
-
 
 	private final String _name;
 	private final double _a;

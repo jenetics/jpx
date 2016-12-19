@@ -43,12 +43,33 @@ import jpx.Point;
  */
 public final class Geom {
 
+	/**
+	 * {@link Geom} using of the <em>World Geodetic System: WGS 84</em>
+	 *
+	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
+	 *     WGS-84</a>
+	 */
 	public static final Geom WGSC_84 = of(Ellipsoid.WGSC_84);
 
+	/**
+	 * {@link Geom} using the <em>International Earth Rotation and Reference
+	 * Systems Service (1989)</em>
+	 *
+	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
+	 */
 	public static final Geom IERS_1989 = of(Ellipsoid.IERS_1989);
 
+	/**
+	 * {@link Geom} using the <em>International Earth Rotation and Reference
+	 * Systems Service (2003)</em>
+	 *
+	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
+	 */
 	public static final Geom IERS_2003 = of(Ellipsoid.IERS_2003);
 
+	/**
+	 * {@link Geom} using the {@link Ellipsoid#DEFAULT} ellipsoid.
+	 */
 	public static final Geom DEFAULT = of(Ellipsoid.DEFAULT);
 
 	private final Ellipsoid _ellipsoid;
@@ -83,6 +104,11 @@ public final class Geom {
 		F = 1.0/ellipsoid.F();
 	}
 
+	/**
+	 * Return the ellipsoid the {@code Geom} object is using.
+	 *
+	 * @return the ellipsoid the {@code Geom} object is using
+	 */
 	public Ellipsoid getEllipsoid() {
 		return _ellipsoid;
 	}
