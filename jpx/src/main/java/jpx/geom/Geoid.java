@@ -41,36 +41,36 @@ import jpx.Point;
  * @version !__version__!
  * @since !__version__!
  */
-public final class Geom {
+public final class Geoid {
 
 	/**
-	 * {@link Geom} using of the <em>World Geodetic System: WGS 84</em>
+	 * {@link Geoid} using of the <em>World Geodetic System: WGS 84</em>
 	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
 	 *     WGS-84</a>
 	 */
-	public static final Geom WGSC_84 = of(Ellipsoid.WGSC_84);
+	public static final Geoid WGSC_84 = of(Ellipsoid.WGSC_84);
 
 	/**
-	 * {@link Geom} using the <em>International Earth Rotation and Reference
+	 * {@link Geoid} using the <em>International Earth Rotation and Reference
 	 * Systems Service (1989)</em>
 	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
 	 */
-	public static final Geom IERS_1989 = of(Ellipsoid.IERS_1989);
+	public static final Geoid IERS_1989 = of(Ellipsoid.IERS_1989);
 
 	/**
-	 * {@link Geom} using the <em>International Earth Rotation and Reference
+	 * {@link Geoid} using the <em>International Earth Rotation and Reference
 	 * Systems Service (2003)</em>
 	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
 	 */
-	public static final Geom IERS_2003 = of(Ellipsoid.IERS_2003);
+	public static final Geoid IERS_2003 = of(Ellipsoid.IERS_2003);
 
 	/**
-	 * {@link Geom} using the {@link Ellipsoid#DEFAULT} ellipsoid.
+	 * {@link Geoid} using the {@link Ellipsoid#DEFAULT} ellipsoid.
 	 */
-	public static final Geom DEFAULT = of(Ellipsoid.DEFAULT);
+	public static final Geoid DEFAULT = of(Ellipsoid.DEFAULT);
 
 	private final Ellipsoid _ellipsoid;
 
@@ -93,7 +93,7 @@ public final class Geom {
 	// The epsilon of the result, when to stop iteration.
 	private static final double DISTANCE_ITERATION_EPSILON = 1E-12;
 
-	private Geom(final Ellipsoid ellipsoid) {
+	private Geoid(final Ellipsoid ellipsoid) {
 		_ellipsoid = requireNonNull(ellipsoid);
 
 		A = ellipsoid.A();
@@ -231,8 +231,8 @@ public final class Geom {
 		return Length.ofMeters(sqrt(s*s + e*e));
 	}
 
-	public static Geom of(final Ellipsoid ellipsoid) {
-		return new Geom(ellipsoid);
+	public static Geoid of(final Ellipsoid ellipsoid) {
+		return new Geoid(ellipsoid);
 	}
 
 }

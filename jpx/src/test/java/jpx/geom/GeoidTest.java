@@ -28,9 +28,9 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
-public class GeomTest {
+public class GeoidTest {
 
-	private final static Geom GEOM = Geom.DEFAULT;
+	private final static Geoid GEOID = Geoid.DEFAULT;
 
 	@Test
 	public void distance() {
@@ -38,15 +38,15 @@ public class GeomTest {
 		final Point end = WayPoint.of(47.3502, 11.70584);
 
 		Assert.assertEquals(
-			GEOM.distance(start, end).doubleValue(),
+			GEOID.distance(start, end).doubleValue(),
 			24528.356073554987
 		);
 		Assert.assertEquals(
-			GEOM.distance(end, start).doubleValue(),
+			GEOID.distance(end, start).doubleValue(),
 			24528.356073555155
 		);
 		Assert.assertEquals(
-			GEOM.distance(end, end).doubleValue(),
+			GEOID.distance(end, end).doubleValue(),
 			0.0
 		);
 	}

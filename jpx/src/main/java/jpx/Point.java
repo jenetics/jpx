@@ -19,7 +19,7 @@
  */
 package jpx;
 
-import jpx.geom.Geom;
+import jpx.geom.Geoid;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -79,7 +79,7 @@ public interface Point {
 	 * @throws NullPointerException if the {@code end} point is {@code null}
 	 */
 	public default Length distance(final Point end) {
-		return Geom.DEFAULT.distance(this, end);
+		return Geoid.DEFAULT.distance(this, end);
 	}
 
 }

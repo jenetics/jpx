@@ -30,7 +30,7 @@ import java.io.Serializable;
  * been used as approximations.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Earth_ellipsoid">Earth ellipsoid</a>
- * @see Geom
+ * @see Geoid
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
