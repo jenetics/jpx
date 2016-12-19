@@ -27,6 +27,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+import static java.util.Objects.requireNonNull;
 
 import jpx.Length;
 import jpx.Point;
@@ -40,26 +41,44 @@ import jpx.WayPoint;
  * @since !__version__!
  */
 public final class Points {
-	private Points() {}
+
+	public static final Points DEFAULT = of(Ellipsoid.WGSC84);
+
+	private final Ellipsoid _ellipsoid;
 
 	// Major semi-axes of the ellipsoid.
-	private static final double A = 6378137;
-	private static final double AA = A*A;
+	private final double A;
+	private final double AA;
 
 	// Minor semi-axes of the ellipsoid.
-	private static final double B = 6356752.314245;
-	private static final double BB = B*B;
+	private final double B;
+	private final double BB;
 
-	private static final double AABBBB = (AA - BB)/BB;
+	private final double AABBBB;
 
 	// Flattening (A - B)/A
-	private static final double F = 1.0/298.257223563;
+	private final double F;
 
 	// The maximal iteration of the 'distance'
 	private static final int DISTANCE_ITERATION_MAX = 20;
 
 	// The epsilon of the result, when to stop iteration.
 	private static final double DISTANCE_ITERATION_EPSILON = 1E-12;
+
+	private Points(final Ellipsoid ellipsoid) {
+		_ellipsoid = requireNonNull(ellipsoid);
+
+		A = ellipsoid.A();
+		AA = A*A;
+		B = ellipsoid.B();
+		BB = B*B;
+		AABBBB = (AA - BB)/BB;
+		F = 1.0/ellipsoid.F();
+	}
+
+	public Ellipsoid getEllipsoid() {
+		return _ellipsoid;
+	}
 
 	/**
 	 * Calculate the distance between points on an ellipsoidal earth model.
@@ -75,7 +94,7 @@ public final class Points {
 	 * @return the distance between {@code start} and {@code end} in meters
 	 * @throws NullPointerException if one of the points is {@code null}
 	 */
-	public static Length distance(final Point start, final Point end) {
+	public Length distance(final Point start, final Point end) {
 		final double lat1 = start.getLatitude().toRadians();
 		final double lon1 = start.getLongitude().toRadians();
 		final double lat2 = end.getLatitude().toRadians();
@@ -179,13 +198,8 @@ public final class Points {
 		return Length.ofMeters(sqrt(s*s + e*e));
 	}
 
-	public static void main(final String[] args) {
-		final Point start = WayPoint.of(47.2692124, 11.4041024);
-		final Point end = WayPoint.of(47.3502, 11.70584);
-
-		System.out.println(distance(start, end));
-		System.out.println(distance(end, end));
-		System.out.println(distance(end, start));
+	public static Points of(final Ellipsoid ellipsoid) {
+		return new Points(ellipsoid);
 	}
 
 }

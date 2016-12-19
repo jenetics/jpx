@@ -79,7 +79,7 @@ public interface Point {
 	 * @throws NullPointerException if the {@code end} point is {@code null}
 	 */
 	public default Length distance(final Point end) {
-		return Points.distance(this, end);
+		return Points.DEFAULT.distance(this, end);
 	}
 
 }

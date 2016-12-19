@@ -22,6 +22,9 @@ package jpx.math;
 import java.io.Serializable;
 
 /**
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Earth_ellipsoid">Earth ellipsoid</a>
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
@@ -30,14 +33,32 @@ public final class Ellipsoid implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	public final double A;
-	public final double B;
-	public final double F;
+	public static final Ellipsoid WGSC84 = new Ellipsoid(
+		6378137,
+		6356752.314245,
+		1.0/298.257223563
+	);
+
+	private final double _a;
+	private final double _b;
+	private final double _f;
 
 	private Ellipsoid(final double a, final double b, final double f) {
-		A = a;
-		B = b;
-		F = f;
+		_a = a;
+		_b = b;
+		_f = f;
+	}
+
+	public double A() {
+		return _a;
+	}
+
+	public double B() {
+		return _b;
+	}
+
+	public double F() {
+		return _f;
 	}
 
 	public static Ellipsoid of(final double a, final double b, final double f) {

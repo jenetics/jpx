@@ -30,21 +30,23 @@ import org.testng.annotations.Test;
  */
 public class PointsTest {
 
+	private final static Points POINTS = Points.DEFAULT;
+
 	@Test
 	public void distance() {
 		final Point start = WayPoint.of(47.2692124, 11.4041024);
 		final Point end = WayPoint.of(47.3502, 11.70584);
 
 		Assert.assertEquals(
-			Points.distance(start, end).doubleValue(),
+			POINTS.distance(start, end).doubleValue(),
 			24528.356073554987
 		);
 		Assert.assertEquals(
-			Points.distance(end, start).doubleValue(),
+			POINTS.distance(end, start).doubleValue(),
 			24528.356073555155
 		);
 		Assert.assertEquals(
-			Points.distance(end, end).doubleValue(),
+			POINTS.distance(end, end).doubleValue(),
 			0.0
 		);
 	}
