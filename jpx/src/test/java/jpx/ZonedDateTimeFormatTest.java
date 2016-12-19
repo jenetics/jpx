@@ -29,16 +29,16 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
-public class TimeFormatTest {
+public class ZonedDateTimeFormatTest {
 
 	@Test(dataProvider = "formats")
-	public void format(final TimeFormat format) {
+	public void format(final ZonedDateTimeFormat format) {
 		final ZonedDateTime time = ZonedDateTime.now();
 		System.out.println(format.format(time));
 	}
 
 	@Test(dataProvider = "formats")
-	public void parse(final TimeFormat format) {
+	public void parse(final ZonedDateTimeFormat format) {
 		final ZonedDateTime time = ZonedDateTime.now();
 		final String string = format.format(time);
 
@@ -47,7 +47,7 @@ public class TimeFormatTest {
 
 	@Test(dataProvider = "validExamples")
 	public void parseExample(final String example) {
-		final Optional<TimeFormat> format = TimeFormat.findFormat(example);
+		final Optional<ZonedDateTimeFormat> format = ZonedDateTimeFormat.findFormat(example);
 		format.ifPresent(f -> {
 			final ZonedDateTime time = f.parse(example);
 			System.out.println(example + " -> " + f.format(time));
@@ -59,7 +59,7 @@ public class TimeFormatTest {
 
 	@DataProvider(name = "formats")
 	public Object[][] formats() {
-		return Stream.of(TimeFormat.values())
+		return Stream.of(ZonedDateTimeFormat.values())
 			.map(format -> new Object[]{format})
 			.toArray(Object[][]::new);
 	}

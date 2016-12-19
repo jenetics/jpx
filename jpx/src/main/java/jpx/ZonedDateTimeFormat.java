@@ -37,7 +37,7 @@ import java.util.stream.Stream;
  * @version !__version__!
  * @since !__version__!
  */
-enum  TimeFormat {
+enum ZonedDateTimeFormat {
 
 	// http://books.xmlschemata.org/relaxng/ch19-77049.html
 
@@ -68,7 +68,7 @@ enum  TimeFormat {
 	private final DateTimeFormatter _formatter;
 	private final Pattern[] _patterns;
 
-	private TimeFormat(final DateTimeFormatter formatter, final String... patterns) {
+	private ZonedDateTimeFormat(final DateTimeFormatter formatter, final String... patterns) {
 		_formatter = requireNonNull(formatter);
 		_patterns = Stream.of(patterns)
 			.map(Pattern::compile)
@@ -113,7 +113,7 @@ enum  TimeFormat {
 	 * @return the formatter which fits to the given {@code time} string, or
 	 *         {@code Optional.empty()} of no formatter is found
 	 */
-	static Optional<TimeFormat> findFormat(final String time) {
+	static Optional<ZonedDateTimeFormat> findFormat(final String time) {
 		return Stream.of(values())
 			.filter(tf -> tf.matches(time))
 			.findFirst();
