@@ -35,6 +35,7 @@ import jpx.Point;
 /**
  * Implementation of <em>geodetic</em> functions.
  *
+ * @see <a href="https://en.wikipedia.org/wiki/Geoid">Wikipedia: Geoid</a>
  * @see Ellipsoid
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -93,6 +94,12 @@ public final class Geoid {
 	// The epsilon of the result, when to stop iteration.
 	private static final double DISTANCE_ITERATION_EPSILON = 1E-12;
 
+	/**
+	 * Create a new {@code Geoid} object with the given ellipsoid.
+	 *
+	 * @param ellipsoid the ellipsoid used by the geoid
+	 * @throws NullPointerException if the given {@code ellipsoid} is {@code null}
+	 */
 	private Geoid(final Ellipsoid ellipsoid) {
 		_ellipsoid = requireNonNull(ellipsoid);
 
@@ -231,6 +238,13 @@ public final class Geoid {
 		return Length.ofMeters(sqrt(s*s + e*e));
 	}
 
+	/**
+	 * Create a new {@code Geoid} object with the given ellipsoid.
+	 *
+	 * @param ellipsoid the ellipsoid used by the geoid
+	 * @return a new {@code Geoid} object with the given ellipsoid
+	 * @throws NullPointerException if the given {@code ellipsoid} is {@code null}
+	 */
 	public static Geoid of(final Ellipsoid ellipsoid) {
 		return new Geoid(ellipsoid);
 	}
