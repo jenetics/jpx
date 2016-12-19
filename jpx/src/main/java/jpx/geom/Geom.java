@@ -45,7 +45,11 @@ public final class Geom {
 
 	public static final Geom WGSC_84 = of(Ellipsoid.WGSC_84);
 
-	public static final Geom DEFAULT = WGSC_84;
+	public static final Geom IERS_1989 = of(Ellipsoid.IERS_1989);
+
+	public static final Geom IERS_2003 = of(Ellipsoid.IERS_2003);
+
+	public static final Geom DEFAULT = of(Ellipsoid.DEFAULT);
 
 	private final Ellipsoid _ellipsoid;
 
