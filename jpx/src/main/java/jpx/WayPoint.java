@@ -44,6 +44,13 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
  * feature on a map.
+ * <p>
+ * Creating a {@code WayPoint}:
+ * <pre>{@code
+ * final WayPoint point = WayPoint.builder()
+ *     .lat(48.2081743).lon(16.3738189).ele(160)
+ *     .build();
+ * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -411,6 +418,13 @@ public final class WayPoint implements Point, Serializable {
 
 	/**
 	 * Builder for creating a way-point with different parameters.
+	 * <p>
+	 * Creating a {@code WayPoint}:
+	 * <pre>{@code
+	 * final WayPoint point = WayPoint.builder()
+	 *     .lat(48.2081743).lon(16.3738189).ele(160)
+	 *     .build();
+	 * }</pre>
 	 *
 	 * @see  #builder()
 	 */
