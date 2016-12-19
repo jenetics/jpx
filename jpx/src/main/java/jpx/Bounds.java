@@ -159,10 +159,10 @@ public final class Bounds implements Serializable {
 	/**
 	 * Create a new {@code Bounds} object with the given extent.
 	 *
-	 * @param minLatitude the minimum latitude
-	 * @param minLongitude the minimum longitude
-	 * @param maxLatitude the maximum latitude
-	 * @param maxLongitude the maximum longitude
+	 * @param minLatitudeDegree the minimum latitude
+	 * @param minLongitudeDegree the minimum longitude
+	 * @param maxLatitudeDegree the maximum latitude
+	 * @param maxLongitudeDegree the maximum longitude
 	 * @return a new {@code Bounds} object with the given extent
 	 * @throws IllegalArgumentException if the latitude values are not within
 	 *         the range of {@code [-90..90]}
@@ -170,16 +170,16 @@ public final class Bounds implements Serializable {
 	 *         the range of {@code [-180..180]}
 	 */
 	public static Bounds of(
-		final double minLatitude,
-		final double minLongitude,
-		final double maxLatitude,
-		final double maxLongitude
+		final double minLatitudeDegree,
+		final double minLongitudeDegree,
+		final double maxLatitudeDegree,
+		final double maxLongitudeDegree
 	) {
 		return new Bounds(
-			Latitude.ofDegrees(minLatitude),
-			Longitude.ofDegrees(minLongitude),
-			Latitude.ofDegrees(maxLatitude),
-			Longitude.ofDegrees(maxLongitude)
+			Latitude.ofDegrees(minLatitudeDegree),
+			Longitude.ofDegrees(minLongitudeDegree),
+			Latitude.ofDegrees(maxLatitudeDegree),
+			Longitude.ofDegrees(maxLongitudeDegree)
 		);
 	}
 
