@@ -23,12 +23,10 @@ import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.Objects.requireNonNull;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.chrono.IsoChronology;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.DecimalStyle;
+import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
 import java.util.Optional;
 import java.util.regex.Pattern;
@@ -43,222 +41,81 @@ enum  TimeFormat {
 
 	// http://books.xmlschemata.org/relaxng/ch19-77049.html
 
-	// 2001-10-26T21:32:52
-	ISO_DATE_TIME(
-		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$",
+	ISO_DATE_TIME_UTC(
 		new DateTimeFormatterBuilder()
 			.append(ISO_LOCAL_DATE_TIME)
 			.optionalStart()
 			.appendOffsetId()
 			.toFormatter()
-			.withZone(UTC)
+			.withResolverStyle(ResolverStyle.LENIENT)
+			.withZone(UTC),
+		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})*+Z*+$"
 	),
 
-	// 2001-10-26T21:32:52+02:00
-	ISO_DATE_TIME2(
-		"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{2}:\\d{2})",
+	ISO_DATE_TIME_OFFSET(
 		new DateTimeFormatterBuilder()
 			.append(ISO_LOCAL_DATE_TIME)
 			.optionalStart()
 			.appendOffsetId()
-			.toFormatter()
-	),
-
-	// 2001-10-26T21:32:52Z
-	ISO_DATE_TIME3(
-		"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z",
-			new DateTimeFormatterBuilder()
-			.append(ISO_LOCAL_DATE_TIME)
-			.optionalStart()
-			.appendOffsetId()
-			.toFormatter()
-			.withZone(UTC)
-	),
-
-	// 2001-10-26T21:32:52Z
-	ISO_DATE_TIME4(
-		"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{1,9}",
-			new DateTimeFormatterBuilder()
-			.append(ISO_LOCAL_DATE_TIME)
-			.optionalStart()
-			.appendOffsetId()
-			.toFormatter()
-			.withZone(UTC)
-	)
-
-	;
-
-
-
-	/*
-	ISO_TIMESTAMP_OFFSET(
-		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}([+-]\\d{4})$",
-		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-	),
-
-
-
-	ISO_DATE_TIME2(
-		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{1}$",
-		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.S")
-	),
-
-	ISO_DATE_TIME3(
-		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{2}$",
-		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SS")
-	),
-
-	ISO_DATE_TIME4(
-		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}$",
-		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS")
-	),
-
-	ISO_TIMESTAMP_OFFSET2(
-		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}([+-]\\d{4}\\[*?\\])$",
-		DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+			.toFormatter(),
+		"\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})*+([+-]\\d{2}:\\d{2})"
 	);
-	*/
 
-//	/**
-//	 * ISO-8601 time format: <i>HH:mm:ss.SSSZ</i>
-//	 */
-//	ISO_TIME_OFFSET(
-//		"^\\d{2}:\\d{2}:\\d{2}.\\d{3}([+-]\\d{4}|Z)$",
-//		"HH:mm:ss.SSSZ"
-//	),
-//
-//	/**
-//	 * ISO-8601 date time format: <i>yyyy-MM-dd'T'HH:mm:ss</i>
-//	 */
-//	ISO_DATE_TIME(
-//		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$",
-//		"yyyy-MM-dd'T'HH:mm:ss"
-//	),
-//
-//	/**
-//	 * ISO-8601 date time format: <i>yyyy-MM-dd'T'HH:mm:ssZ</i>
-//	 */
-//	ISO_DATE_TIME_OFFSET(
-//		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}([+-]\\d{4}|Z)$",
-//		"yyyy-MM-dd'T'HH:mm:ssZ"
-//	),
-//
-//	/**
-//	 * ISO-8601 date time format: <i>yyyy-MM-dd'T'HH:mm:ss'Z'</i>
-//	 * UTC (Zulu) Timezone
-//	 */
-//	ISO_DATE_TIME_ZULU(
-//		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}Z$",
-//		"yyyy-MM-dd'T'HH:mm:ss'Z'"
-//	),
-//
-//	/**
-//	 * ISO-8601 timestamp format: <i>yyyy-MM-dd'T'HH:mm:ss.SSS</i>
-//	 */
-//	ISO_TIMESTAMP(
-//		"^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{3}$",
-//		"yyyy-MM-dd'T'HH:mm:ss.SSS"
-//	),
-//
-//	/**
-//	 * Number date format only: <i>yyyMMdd</i>
-//	 */
-//	ISO_NUMERIC_DATE(
-//		"^\\d{8}$",
-//		"yyyyMMdd"
-//	),
-//
-//	/**
-//	 * Number date time format only: <i>yyyMMddHHmmss</i>
-//	 */
-//	ISO_NUMERIC_DATE_TIME(
-//		"^\\d{14}$",
-//		"yyyyMMddHHmmss"
-//	),
-//
-//	JAVASCRIPT_DATE_TIME(
-//		"^[a-zA-Z]{3} [a-zA-Z]{3} \\d{2} \\d{4} \\d{2}:\\d{2}:\\d{2} GMT[+-]{1}\\d{4}$",
-//		"EEE MMM dd yyyy HH:mm:ss 'GMT'Z"
-//	),
-//
-//	/**
-//	 * Custom ISO date time format: <i>yyyy-MM-dd HH:mm:ss</i>
-//	 */
-//	CUSTOM_ISO_DATE_TIME(
-//		"^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$",
-//		"yyyy-MM-dd HH:mm:ss"
-//	),
-//
-//	/**
-//	 * Custom ISO date time format: <i>yyyy-MM-dd HH:mm:ss</i>
-//	 */
-//	CUSTOM_ISO_DATE_TIME_MILLIS(
-//		"^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}.\\d{3}$",
-//		"yyyy-MM-dd HH:mm:ss.SSS"
-//	),
-//
-//	/**
-//	 * Custom ISO date time format with offset and without millis:
-//	 * <i>yyyy-MM-dd HH:mm:ssZ</i>
-//	 */
-//	CUSTOM_ISO_DATE_TIME_OFFSET(
-//		"^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}([+-]\\d{2,4}|Z)$",
-//		"yyyy-MM-dd HH:mm:ssZ"
-//	),
-//
-//	/**
-//	 * Date time format with offset and without millis used in
-//	 * Apache log files. E.g.: 26/Mar/2015:04:39:15 +0100
-//	 * <i>dd/MMM/yyyy:HH:mm:ss Z</i>
-//	 */
-//	APACHE_LOG_DATE_TIME_OFFSET(
-//		"^\\d{2}/[a-z,A-Z]{3}/\\d{4}:\\d{2}:\\d{2}:\\d{2} ([+-]\\d{2,4}|Z)$",
-//		"dd/MMM/yyyy:HH:mm:ss Z"
-//	),
-//
-//	/**
-//	 * Date time format without offset and without time as used in EBAY user report.
-//	 * <i>dd/MM/yyyy</i>
-//	 */
-//	UK_DATE(
-//		"^\\d{2}/\\d{2}/\\d{4}$",
-//		"dd/MM/yyyy"
-//	);
+	// Default formatter used for formatting time strings.
+	private static final DateTimeFormatter FORMATTER =
+		DateTimeFormatter.ISO_DATE_TIME.withZone(UTC);
 
-	private final Pattern _pattern;
 	private final DateTimeFormatter _formatter;
+	private final Pattern[] _patterns;
 
-	private TimeFormat(final Pattern pattern, final DateTimeFormatter formatter) {
-		_pattern = requireNonNull(pattern);
+	private TimeFormat(final DateTimeFormatter formatter, final String... patterns) {
 		_formatter = requireNonNull(formatter);
-	}
-
-	private TimeFormat(final String pattern, final DateTimeFormatter formatter) {
-		this(Pattern.compile(pattern), formatter);
+		_patterns = Stream.of(patterns)
+			.map(Pattern::compile)
+			.toArray(Pattern[]::new);
 	}
 
 	private boolean matches(final String time) {
-		return _pattern.matcher(time).matches();
+		return Stream.of(_patterns)
+			.anyMatch(p -> p.matcher(time).matches());
 	}
 
-	public String format(final ZonedDateTime time) {
-		return _formatter.format(time);
-	}
-
+	/**
+	 * Parses the given time string with the current formatter.
+	 *
+	 * @param time the time string to pare
+	 * @return the parsed zoned date time
+	 *  @throws DateTimeParseException if the text cannot be parsed
+	 */
 	public ZonedDateTime parse(final String time) {
-		return ZonedDateTime.parse(time, _formatter.withZone(ZoneId.systemDefault()));
+		return ZonedDateTime.parse(time, _formatter);
 	}
 
-	public static Optional<TimeFormat> findFormatFor(final String time) {
-		return Stream.of(values())
-			.filter(tf -> tf.matches(time))
-			.findFirst();
+	/**
+	 * Return the default format of the given {@code ZonedDateTime}.
+	 *
+	 * @param time the {@code ZonedDateTime} to format
+	 * @return the time string of the given zoned date time
+	 */
+	public static String format(final ZonedDateTime time) {
+		return FORMATTER.format(time);
 	}
 
-	public static Optional<ZonedDateTime> parseOption(final String time) {
+	public static Optional<ZonedDateTime> parseOptional(final String time) {
+		return findFormat(time)
+			.map(tf -> tf.parse(time));
+	}
+
+	/**
+	 * Finds the formatter which fits the given {@code time} string.
+	 *
+	 * @param time the time string
+	 * @return the formatter which fits to the given {@code time} string, or
+	 *         {@code Optional.empty()} of no formatter is found
+	 */
+	static Optional<TimeFormat> findFormat(final String time) {
 		return Stream.of(values())
 			.filter(tf -> tf.matches(time))
-			.map(tf -> tf.parse(time))
 			.findFirst();
 	}
 
