@@ -39,9 +39,9 @@ import jpx.Point;
  * @version !__version__!
  * @since !__version__!
  */
-public final class Points {
+public final class Geom {
 
-	public static final Points DEFAULT = of(Ellipsoid.WGSC84);
+	public static final Geom DEFAULT = of(Ellipsoid.WGSC84);
 
 	private final Ellipsoid _ellipsoid;
 
@@ -64,7 +64,7 @@ public final class Points {
 	// The epsilon of the result, when to stop iteration.
 	private static final double DISTANCE_ITERATION_EPSILON = 1E-12;
 
-	private Points(final Ellipsoid ellipsoid) {
+	private Geom(final Ellipsoid ellipsoid) {
 		_ellipsoid = requireNonNull(ellipsoid);
 
 		A = ellipsoid.A();
@@ -197,8 +197,8 @@ public final class Points {
 		return Length.ofMeters(sqrt(s*s + e*e));
 	}
 
-	public static Points of(final Ellipsoid ellipsoid) {
-		return new Points(ellipsoid);
+	public static Geom of(final Ellipsoid ellipsoid) {
+		return new Geom(ellipsoid);
 	}
 
 }

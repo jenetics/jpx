@@ -28,9 +28,9 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
-public class PointsTest {
+public class GeomTest {
 
-	private final static Points POINTS = Points.DEFAULT;
+	private final static Geom GEOM = Geom.DEFAULT;
 
 	@Test
 	public void distance() {
@@ -38,15 +38,15 @@ public class PointsTest {
 		final Point end = WayPoint.of(47.3502, 11.70584);
 
 		Assert.assertEquals(
-			POINTS.distance(start, end).doubleValue(),
+			GEOM.distance(start, end).doubleValue(),
 			24528.356073554987
 		);
 		Assert.assertEquals(
-			POINTS.distance(end, start).doubleValue(),
+			GEOM.distance(end, start).doubleValue(),
 			24528.356073555155
 		);
 		Assert.assertEquals(
-			POINTS.distance(end, end).doubleValue(),
+			GEOM.distance(end, end).doubleValue(),
 			0.0
 		);
 	}
