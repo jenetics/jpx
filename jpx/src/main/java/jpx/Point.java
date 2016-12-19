@@ -19,7 +19,7 @@
  */
 package jpx;
 
-import jpx.math.Points;
+import jpx.geom.Points;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;

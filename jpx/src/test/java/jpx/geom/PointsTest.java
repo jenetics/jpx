@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
-package jpx.math;
+package jpx.geom;
 
 import jpx.Point;
 import jpx.WayPoint;

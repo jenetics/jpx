@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx.math;
+package jpx.geom;
 
 import java.io.Serializable;
 
