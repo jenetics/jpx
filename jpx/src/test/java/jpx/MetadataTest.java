@@ -68,4 +68,12 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 		);
 	}
 
+	@Test
+	public void builder() {
+		final Metadata metadata = Metadata.builder()
+			.author("Franz Wilhelmstötter")
+			.addLink(Link.of("http://jenetics.io/jpx"))
+			.build();
+	}
+
 }
