@@ -21,8 +21,15 @@ package jpx.geom;
 
 import jpx.Point;
 import jpx.WayPoint;
+import jpx.WayPointTest;
+
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 /**
@@ -49,6 +56,77 @@ public class GeoidTest {
 			GEOID.distance(end, end).doubleValue(),
 			0.0
 		);
+	}
+
+	@Test(dataProvider = "pointSizes")
+	public void collectPathLength(final int size) {
+		final Random random = new Random(123);
+		final List<WayPoint> points = Stream
+			.generate(() -> WayPointTest.nextWayPoint(random))
+			.limit(size)
+			.collect(Collectors.toList());
+
+		Assert.assertEquals(
+			pathLength(points),
+			points.stream()
+				.collect(GEOID.toPathLength())
+				.doubleValue()
+		);
+	}
+
+	private static double pathLength(final List<WayPoint> points)  {
+		final DoubleAdder length = new DoubleAdder();
+		for (int i = 1; i < points.size(); ++i) {
+			length.add(GEOID.distance(
+				points.get(i - 1),
+				points.get(i)).doubleValue()
+			);
+		}
+
+		return length.doubleValue();
+	}
+
+	@Test(dataProvider = "pointSizes")
+	public void collectTourLength(final int size) {
+		final Random random = new Random(123);
+		final List<WayPoint> points = Stream
+			.generate(() -> WayPointTest.nextWayPoint(random))
+			.limit(size)
+			.collect(Collectors.toList());
+
+		Assert.assertEquals(
+			tourLength(points),
+			points.stream()
+				.collect(GEOID.toTourLength())
+				.doubleValue()
+		);
+	}
+
+	private static double tourLength(final List<WayPoint> points)  {
+		final DoubleAdder length = new DoubleAdder();
+		for (int i = 0; i < points.size(); ++i) {
+			length.add(GEOID.distance(
+				points.get(i),
+				points.get((i + 1)%points.size())).doubleValue()
+			);
+		}
+
+		return length.doubleValue();
+	}
+
+	@DataProvider(name = "pointSizes")
+	public Object[][] pointSizes() {
+		return new Object[][] {
+			{0}, {1}, {2}, {3}, {11}, {27}, {100}, {1000}
+		};
+	}
+
+	@Test(expectedExceptions = UnsupportedOperationException.class)
+	public void parallelPointStream() {
+		Stream.generate(() -> WayPointTest.nextWayPoint(new Random()))
+			.limit(1000)
+			.parallel()
+			.collect(GEOID.toPathLength());
 	}
 
 }

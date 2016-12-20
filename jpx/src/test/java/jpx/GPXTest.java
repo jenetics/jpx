@@ -21,11 +21,14 @@ package jpx;
 
 import static java.lang.String.format;
 
+import jpx.geom.Geoid;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.testng.annotations.Test;
 
@@ -112,11 +115,12 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 
 		GPX.write(gpx, "/home/fwilhelm/gpx.xml");
-		final GPX gpx3 = GPX.read("/home/fwilhelm/gpx.xml");
-		gpx3.tracks()
+		GPX gpx3 = GPX.read("/home/fwilhelm/gpx.xml");
+		final Length length = gpx3.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.forEach(System.out::println);
+			.collect(Geoid.WGSC_84.toPathLength());
+
 	}
 
 }

@@ -235,46 +235,64 @@ public final class Geoid {
 		return Length.ofMeters(s);
 	}
 
-	public Collector<Point, ?, Length> toLength() {
+	/**
+	 * Return a collector which calculates the length of the (open) path which
+	 * is defined by the {@code Point} stream.
+	 *
+	 * <pre>{@code
+	 * final Length length = gpx.tracks()
+	 *     .flatMap(Track::segments)
+	 *     .flatMap(TrackSegment::points)
+	 *     .collect(Geoid.WGSC_84.toPathLength());
+	 * }</pre>
+	 *
+	 * <b>The returned {@code Collector} doesn't work for <em>parallel</em>
+	 * stream. Using it for a <em>parallel</em> point stream will throw an
+	 * {@link UnsupportedOperationException} at runtime.</b>
+	 *
+	 * @see #toTourLength()
+	 *
+	 * @return a new path length collector
+	 */
+	public Collector<Point, ?, Length> toPathLength() {
 		return Collector.of(
-			Adder::new,
-			Adder::add,
-			Adder::combine,
-			Adder::length
+			() -> new LengthCollector(this),
+			LengthCollector::add,
+			LengthCollector::combine,
+			LengthCollector::pathLength
 		);
 	}
 
 	/**
-	 * Helper class for collecting a stream of points to its length.
+	 * Return a collector which calculates the length of the (closed) tour which
+	 * is defined by the {@code Point} stream. The <em>tour</em> length
+	 * additionally adds the distance of the last point back to the first point.
+	 *
+	 * <pre>{@code
+	 * final Length length = gpx.tracks()
+	 *     .flatMap(Track::segments)
+	 *     .flatMap(TrackSegment::points)
+	 *     .collect(Geoid.WGSC_84.toTourLength());
+	 * }</pre>
+	 *
+	 * <b>The returned {@code Collector} doesn't work for <em>parallel</em>
+	 * stream. Using it for a <em>parallel</em> point stream will throw an
+	 * {@link UnsupportedOperationException} at runtime.</b>
+	 *
+	 * @see #toPathLength()
+	 *
+	 * @return a new path length collector
 	 */
-	private static final class Adder {
-		private double _length = 0;
-		private Point _start;
-		private Point _end;
-
-		void dist() {
-			if (_start != null && _end != null) {
-				_length += _start.distance(_end).doubleValue();
-			}
-		}
-
-		Adder combine(final Adder other) {
-			_length += other._length;
-			_start = null;
-			_end = null;
-			return this;
-		}
-
-		void add(final Point point) {
-			_end = _start;
-			_start = point;
-			dist();
-		}
-
-		Length length() {
-			return Length.ofMeters(_length);
-		}
+	public Collector<Point, ?, Length> toTourLength() {
+		return Collector.of(
+			() -> new LengthCollector(this),
+			LengthCollector::add,
+			LengthCollector::combine,
+			LengthCollector::tourLength
+		);
 	}
+
+
 
 	/**
 	 * Create a new {@code Geoid} object with the given ellipsoid.
