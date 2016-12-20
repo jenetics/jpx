@@ -111,6 +111,18 @@ System.out.println(distance);
 $ 24528.356073554987 m
 ```
 
+#### Path length 
+
+Calculate the path length of the first track-segment.
+
+```java
+final Length length = gpx.tracks()
+    .flatMap(Track::segments)
+    .findFirst()
+    .map(TrackSegment::points).orElse(Stream.empty())
+    .collect(Geoid.WGSC_84.toPathLength());
+```
+
 
 ## License
 

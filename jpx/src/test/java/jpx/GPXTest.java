@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.testng.annotations.Test;
 
@@ -119,6 +120,12 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final Length length = gpx3.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
+			.collect(Geoid.WGSC_84.toPathLength());
+
+		gpx3.tracks()
+			.flatMap(Track::segments)
+			.findFirst()
+			.map(TrackSegment::points).orElse(Stream.empty())
 			.collect(Geoid.WGSC_84.toPathLength());
 
 	}
