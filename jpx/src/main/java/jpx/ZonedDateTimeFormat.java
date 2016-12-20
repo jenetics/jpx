@@ -38,8 +38,8 @@ import java.util.stream.Stream;
  * Enumeration of the valid date time formats.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.0
+ * @since 1.0
  */
 enum ZonedDateTimeFormat {
 

@@ -25,8 +25,8 @@ import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.0
+ * @since 1.0
  */
 @Test
 public class BoundsTest extends XMLStreamTestBase<Bounds> {

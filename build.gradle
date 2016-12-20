@@ -21,8 +21,8 @@
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since !__version__!
- * @version !__version__!
+ * @since 1.0
+ * @version 1.0
  */
 
 import java.text.SimpleDateFormat
@@ -39,7 +39,7 @@ ext {
 
 allprojects {
 	group = 'io.jenetics'
-	version = '0.1.0'
+	version = '1.0.0-SNAPSHOT'
 
 	repositories {
 		flatDir(dir: "${rootDir}/buildSrc/lib")

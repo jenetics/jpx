@@ -28,8 +28,8 @@ import jpx.Point;
  * Helper class for collecting a stream of points to its length.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.0
+ * @since 1.0
  */
 final class LengthCollector {
 

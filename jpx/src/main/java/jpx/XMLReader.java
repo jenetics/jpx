@@ -39,8 +39,8 @@ import javax.xml.stream.XMLStreamReader;
  * Simplifies the usage of the {@link XMLStreamReader}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.0
+ * @since 1.0
  */
 abstract class XMLReader<T> {
 

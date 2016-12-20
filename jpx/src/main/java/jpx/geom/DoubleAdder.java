@@ -30,8 +30,8 @@ import static java.util.Objects.requireNonNull;
  * adding double values.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @since !__version__!
- * @version !__version__!
+ * @since 1.0
+ * @version 1.0
  */
 final class DoubleAdder
 	extends Number

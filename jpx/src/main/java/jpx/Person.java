@@ -31,8 +31,8 @@ import javax.xml.stream.XMLStreamWriter;
  * A person or organization.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.0
+ * @since 1.0
  */
 public final class Person implements Serializable {
 

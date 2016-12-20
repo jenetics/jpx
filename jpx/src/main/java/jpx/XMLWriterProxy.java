@@ -27,8 +27,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.0
+ * @since 1.0
  */
 abstract class XMLWriterProxy implements XMLStreamWriter {
 	private final XMLStreamWriter _adoptee;
