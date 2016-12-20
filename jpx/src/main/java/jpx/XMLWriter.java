@@ -382,13 +382,13 @@ final class XMLWriter {
 		requireNonNull(children);
 
 		_writer.writeStartElement(name);
+		for (Attr attr : attrs) {
+			_writer.writeAttribute(attr.name, attr.value);
+		}
 		if (ns != null) {
 			_writer.writeDefaultNamespace(ns.name);
 		}
 
-		for (Attr attr : attrs) {
-			_writer.writeAttribute(attr.name, attr.value);
-		}
 		for (ElementWriter child : children) {
 			child.write();
 		}
