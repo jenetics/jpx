@@ -17,6 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+import org.apache.tools.ant.filters.ReplaceTokens
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -27,6 +28,8 @@
 description = 'JPX - Java GPX Library'
 
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 repositories {
 	mavenCentral()
@@ -53,8 +56,6 @@ javadoc {
 		bottom = "&copy; ${copyrightYear} Franz Wilhelmst&ouml;tter  &nbsp;<i>(${dateformat.format(now.time)})</i>"
 
 		exclude '**/internal/**'
-
-		options.addStringOption('noqualifier', 'org.jenetics.internal.collection')
 	}
 
 	// Copy the doc-files.
@@ -78,4 +79,114 @@ test {
 		parallel = 'tests' // 'methods'
 		threadCount = Math.max(Runtime.runtime.availableProcessors() + 1, 4)
 	}
+}
+
+jar {
+	manifest {
+		attributes(
+			'Implementation-Title': 'JPX - Java GPX library',
+			'Implementation-Version': "${project.name}-${project.version}",
+			'Implementation-URL': 'https://jenetics.github.io/jpx',
+			'Implementation-Vendor': 'jenetics',
+			'ProjectName': project.name,
+			'Version': project.version,
+			'Maintainer': 'Franz Wilhelmstötter'
+		)
+	}
+}
+
+
+/ ******************************************************************************
+ * Artifact publishing code.
+ ******************************************************************************/
+
+afterEvaluate { project ->
+	uploadArchives {
+		repositories {
+			mavenDeployer {
+				beforeDeployment {
+					MavenDeployment deployment -> signing.signPom(deployment)
+				}
+
+				pom.groupId = project.group
+				pom.artifactId = project.name
+				pom.version = project.version
+
+				repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
+					authentication(
+						userName: project.property('nexus_username'),
+						password: project.property('nexus_password')
+					)
+				}
+				snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
+					authentication(
+						userName: project.property('nexus_username'),
+						password: project.property('nexus_password')
+					)
+				}
+
+				pom.project {
+					name 'JPX'
+					packaging 'pom'
+					description 'JPX - Java GPX library'
+					url 'https://jenetics.github.io/jpx'
+					inceptionYear '2016'
+
+					scm {
+						url 'https://github.com/jenetics/jpx'
+						connection 'scm:git:https://github.com/jenetics/jpx.git'
+						developerConnection 'scm:git:https://github.com/jenetics/jpx.git'
+					}
+
+					licenses {
+						license {
+							name 'The Apache Software License, Version 2.0'
+							url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+							distribution 'repo'
+						}
+					}
+
+					developers {
+						developer {
+							id 'jenetics'
+							name 'Franz Wilhelmstötter'
+							email 'franz.wilhelmstoetter@gmail.com'
+						}
+					}
+				}
+			}
+		}
+	}
+
+	task sourcesJar(type: Jar) {
+		classifier = 'sources'
+		from project.sourceSets.main.allSource
+		filter(ReplaceTokens, tokens: [
+			__identifier__: project.name + '-' + project.version,
+			__year__: project.copyrightYear
+		])
+	}
+
+	task javadocJar(type: Jar, dependsOn: javadoc) {
+		classifier = 'javadoc'
+		from project.javadoc
+		filter(ReplaceTokens, tokens: [
+			__identifier__: project.name + '-' + project.version,
+			__year__: project.copyrightYear
+		])
+	}
+
+	signing {
+		required {
+			!project.version.endsWith('SNAPSHOT') &&
+			gradle.taskGraph.hasTask("uploadArchives")
+		}
+		sign configurations.archives
+	}
+
+	artifacts {
+		archives sourcesJar
+		archives javadocJar
+	}
+
 }
