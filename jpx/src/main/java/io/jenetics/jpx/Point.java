@@ -19,10 +19,10 @@
  */
 package io.jenetics.jpx;
 
-import io.jenetics.jpx.geom.Geoid;
-
 import java.time.ZonedDateTime;
 import java.util.Optional;
+
+import io.jenetics.jpx.geom.Geoid;
 
 /**
  * A geographic point with optional elevation and time.

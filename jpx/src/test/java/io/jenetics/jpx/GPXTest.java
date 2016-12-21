@@ -21,17 +21,15 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
-import io.jenetics.jpx.geom.Geoid;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Paths;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.testng.annotations.Test;
+
+import io.jenetics.jpx.geom.Geoid;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

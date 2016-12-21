@@ -19,10 +19,6 @@
  */
 package io.jenetics.jpx.geom;
 
-import io.jenetics.jpx.Point;
-import io.jenetics.jpx.WayPoint;
-import io.jenetics.jpx.WayPointTest;
-
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -31,6 +27,10 @@ import java.util.stream.Stream;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import io.jenetics.jpx.Point;
+import io.jenetics.jpx.WayPoint;
+import io.jenetics.jpx.WayPointTest;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>

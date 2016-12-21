@@ -29,10 +29,10 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 import static java.util.Objects.requireNonNull;
 
+import java.util.stream.Collector;
+
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Point;
-
-import java.util.stream.Collector;
 
 /**
  * Implementation of <em>geodetic</em> functions.

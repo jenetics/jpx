@@ -19,11 +19,11 @@
  */
 package io.jenetics.jpx;
 
+import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Parsers.parseString;
 import static io.jenetics.jpx.Parsers.parseURI;
 import static io.jenetics.jpx.Parsers.parseYear;
 import static io.jenetics.jpx.XMLReader.attr;
-import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 import java.net.URI;

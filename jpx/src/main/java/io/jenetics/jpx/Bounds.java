@@ -19,9 +19,9 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.XMLReader.attr;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.util.function.Function;
