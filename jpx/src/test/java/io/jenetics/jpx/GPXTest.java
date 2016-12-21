@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.geom.Geoid;
@@ -58,10 +59,17 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Test
 	public void loadFromFile() throws IOException {
-		try (InputStream in = getClass().getResourceAsStream("/io/jenetics/jpx/Gpx-full-sample.gpx")) {
-			final GPX gpx = GPX.read(in);
-			//GPX.write(gpx, System.out);
+		final String rsc = "/io/jenetics/jpx/Gpx-full-sample.gpx";
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(rsc)) {
+			gpx = GPX.read(in);
 		}
+
+		final long length = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.count();
+		Assert.assertEquals(length, 2747);
 	}
 
 	@Test
