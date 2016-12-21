@@ -38,7 +38,9 @@ repositories {
 
 dependencies {
 	compile project(':jpx')
+
 	testCompile 'org.testng:testng:6.9.10'
+	testCompile 'mysql:mysql-connector-java:6.0.5'
 }
 
 javadoc {

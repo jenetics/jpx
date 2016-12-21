@@ -19,38 +19,29 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.lang.String.format;
+import java.sql.SQLException;
+
+import org.testng.annotations.Test;
+
+import io.jenetics.jpx.Link;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
-public final class Stored<T> {
+public class LinkDAOTest {
 
-	private final long _id;
-	private final T _value;
+	private final DB db = MySQL.INSTANCE;
 
-	private Stored(final long id, final T value) {
-		_id = id;
-		_value = value;
-	}
+	@Test
+	public void insert() throws SQLException {
+		db.transaction(conn -> {
+			final Stored<Link> link = LinkDAO.of(conn).insert(
+				Link.of("http://jenetics.io/jpx", "Homepage", "Wep")
+			);
 
-	public long getID() {
-		return _id;
-	}
+			System.out.println(link);
+		});
 
-	public T getValue() {
-		return _value;
-	}
-
-	@Override
-	public String toString() {
-		return format("Stored[id=%d, %s]", _id, _value);
-	}
-
-	public static <T> Stored<T> of(final long id, final T value) {
-		return new Stored<T>(id, value);
 	}
 
 }
