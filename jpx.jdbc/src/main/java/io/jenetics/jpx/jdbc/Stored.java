@@ -17,15 +17,12 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx.jdbc;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
  * @version !__version__!
+ * @since !__version__!
  */
-
-// The JPX projects.
-include 'jpx'
-include 'jpx.jdbc'
-
-rootProject.name = 'jpx'
+public class Stored {
+}
