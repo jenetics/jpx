@@ -17,11 +17,11 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx;
+package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
-import static jpx.Lists.immutable;
-import static jpx.XMLReader.attr;
+import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

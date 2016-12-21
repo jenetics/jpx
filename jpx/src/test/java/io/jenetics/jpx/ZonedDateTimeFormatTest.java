@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
-package jpx;
+package io.jenetics.jpx;
 
 import java.time.Instant;
 import java.time.ZonedDateTime;

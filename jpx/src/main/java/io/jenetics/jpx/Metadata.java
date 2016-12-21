@@ -17,12 +17,12 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx;
+package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
-import static jpx.Lists.immutable;
-import static jpx.Parsers.parseString;
+import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Parsers.parseString;
 
 import java.io.Serializable;
 import java.time.Instant;

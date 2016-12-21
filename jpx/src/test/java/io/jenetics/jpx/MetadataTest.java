@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx;
+package io.jenetics.jpx;
 
 import static java.lang.String.format;
 

@@ -17,13 +17,13 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx;
+package io.jenetics.jpx;
 
+import static io.jenetics.jpx.Parsers.parseString;
+import static io.jenetics.jpx.Parsers.parseURI;
+import static io.jenetics.jpx.Parsers.parseYear;
+import static io.jenetics.jpx.XMLReader.attr;
 import static java.util.Objects.requireNonNull;
-import static jpx.Parsers.parseString;
-import static jpx.Parsers.parseURI;
-import static jpx.Parsers.parseYear;
-import static jpx.XMLReader.attr;
 
 import java.io.Serializable;
 import java.net.URI;

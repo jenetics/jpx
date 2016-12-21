@@ -17,9 +17,9 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx;
+package io.jenetics.jpx;
 
-import jpx.geom.Geoid;
+import io.jenetics.jpx.geom.Geoid;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;

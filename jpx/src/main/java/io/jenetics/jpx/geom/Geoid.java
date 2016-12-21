@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx.geom;
+package io.jenetics.jpx.geom;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.asin;
@@ -29,8 +29,8 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 import static java.util.Objects.requireNonNull;
 
-import jpx.Length;
-import jpx.Point;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Point;
 
 import java.util.stream.Collector;
 

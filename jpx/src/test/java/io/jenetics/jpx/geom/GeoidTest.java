@@ -17,11 +17,11 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
  */
-package jpx.geom;
+package io.jenetics.jpx.geom;
 
-import jpx.Point;
-import jpx.WayPoint;
-import jpx.WayPointTest;
+import io.jenetics.jpx.Point;
+import io.jenetics.jpx.WayPoint;
+import io.jenetics.jpx.WayPointTest;
 
 import java.util.List;
 import java.util.Random;

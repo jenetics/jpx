@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx.geom;
+package io.jenetics.jpx.geom;
 
 import static java.lang.Double.isInfinite;
 import static java.lang.Double.isNaN;

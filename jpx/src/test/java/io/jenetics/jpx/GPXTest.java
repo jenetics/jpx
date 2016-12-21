@@ -17,11 +17,11 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package jpx;
+package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
-import jpx.geom.Geoid;
+import io.jenetics.jpx.geom.Geoid;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Test
 	public void loadFromFile() throws IOException {
-		try (InputStream in = getClass().getResourceAsStream("/jpx/Gpx-full-sample.gpx")) {
+		try (InputStream in = getClass().getResourceAsStream("/io/jenetics/jpx/Gpx-full-sample.gpx")) {
 			final GPX gpx = GPX.read(in);
 			//GPX.write(gpx, System.out);
 		}
