@@ -34,7 +34,7 @@ public class IO {
 	private IO() {
 	}
 
-	public static String toText(final InputStream in) throws IOException {
+	public static String toSQLText(final InputStream in) throws IOException {
 		try(Reader r = new InputStreamReader(in);
 			BufferedReader br = new BufferedReader(r))
 		{
@@ -42,8 +42,10 @@ public class IO {
 
 			String line;
 			while ((line = br.readLine()) != null) {
-				builder.append(line);
-				builder.append("\n");
+				if (!line.trim().startsWith("--")) {
+					builder.append(line);
+					builder.append("\n");
+				}
 			}
 
 			return builder.toString();

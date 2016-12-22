@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Parsers.parseString;
 import static io.jenetics.jpx.XMLReader.attr;
@@ -111,6 +112,17 @@ public final class Email implements Serializable {
 	 */
 	public static Email of(final String id, final String domain) {
 		return new Email(id, domain);
+	}
+
+	public static Email of(final String email) {
+		final String[] parts = email.split("@");
+		if (parts.length == 2) {
+			return of(parts[0], parts[1]);
+		} else {
+			throw new IllegalArgumentException(format(
+				"Email '%s' not valid.", email
+			));
+		}
 	}
 
 

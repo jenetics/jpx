@@ -1,12 +1,21 @@
+-- -----------------------------------------------------------------------------
+--
+-- -----------------------------------------------------------------------------
 
+--
+-- Create the `link` table.
+--
 CREATE TABLE link(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	href VARCHAR(255) NOT NULL,
 	text VARCHAR(255),
 	type VARCHAR(255)
 );
-CREATE INDEX i_link_href ON link(href);
+CREATE UNIQUE INDEX i_link_href ON link(href);
 
+--
+-- Create the `person` table.
+--
 CREATE TABLE person(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
@@ -17,6 +26,9 @@ CREATE TABLE person(
 );
 CREATE UNIQUE INDEX i_person_name ON person(name);
 
+--
+-- Create the `copyright` table.
+--
 CREATE TABLE copyright(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	author VARCHAR(255) NOT NULL,

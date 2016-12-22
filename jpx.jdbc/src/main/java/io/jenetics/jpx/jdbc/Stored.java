@@ -22,6 +22,8 @@ package io.jenetics.jpx.jdbc;
 import static java.lang.String.format;
 
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -42,8 +44,18 @@ public final class Stored<T> {
 		return _id;
 	}
 
-	public T getValue() {
-		return _value;
+	public Optional<T> getValue() {
+		return Optional.ofNullable(_value);
+	}
+
+	public <B> Optional<B> map(final Function<T, B> mapper) {
+		return _value != null
+			? Optional.of(mapper.apply(_value))
+			: Optional.empty();
+	}
+
+	public Stored<T> copy(final T value) {
+		return of(_id, value);
 	}
 
 	@Override

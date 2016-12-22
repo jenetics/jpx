@@ -20,7 +20,6 @@
 package io.jenetics.jpx.jdbc;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
@@ -41,25 +40,26 @@ public class LinkDAOTest {
 
 	private final DB db = H2DB.INSTANCE;
 
+	final List<Link> links = LinkTest.nextLinks(new Random());
+
 	@BeforeSuite
 	public void setup() throws IOException, SQLException {
 		final String[] queries = IO.
-			toText(getClass().getResourceAsStream("/model-mysql.sql"))
+			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
 			.split(";");
 
-		for (String query : queries) {
-			db.transaction(conn -> {
+		db.transaction(conn -> {
+			for (String query : queries) {
+
 				try (Statement stmt = conn.createStatement()) {
 					stmt.execute(query);
 				}
-			});
-		}
+			}
+		});
 	}
 
 	@Test
 	public void insert() throws SQLException {
-		final List<Link> links = LinkTest.nextLinks(new Random());
-
 		final List<Stored<Link>> stored = db.transaction(conn -> {
 			return LinkDAO.of(conn).insert(links);
 		});

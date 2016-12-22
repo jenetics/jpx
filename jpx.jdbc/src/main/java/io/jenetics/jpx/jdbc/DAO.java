@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
@@ -35,6 +36,8 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.jenetics.jpx.jdbc.SQL.Supplier;
 
 /**
  * Abstract DAO class
@@ -131,8 +134,19 @@ public abstract class DAO {
 		 *
 		 * @return the parameter value.
 		 */
-		public Object getValue() {
-			return _value;
+		public Object getValue() throws SQLException {
+			Object value = _value;
+			if (value instanceof SQL.Supplier<?>) {
+				value = ((Supplier<?>)value).get();
+			}
+			if (value instanceof SQL.Option<?>) {
+				value = ((SQL.Option<?>)value).orElse(null);
+			}
+			if (value instanceof Optional<?>) {
+				value = ((Optional<?>)value).orElse(null);
+			}
+
+			return value;
 		}
 
 		/**
@@ -146,6 +160,10 @@ public abstract class DAO {
 		 *         {@code null}
 		 */
 		public static Param of(final String name, final Object value) {
+			return new Param(name, value);
+		}
+
+		public static <T> Param of(final String name, final SQL.Supplier<T> value) {
 			return new Param(name, value);
 		}
 	}
@@ -248,7 +266,7 @@ public abstract class DAO {
 		}
 
 		public SQLQuery on(final String name, final Object value) {
-			_params.add(Param.of(name, value));
+			_params.add(Param.of(name, () -> value));
 			return this;
 		}
 
@@ -283,7 +301,7 @@ public abstract class DAO {
 		{
 			final List<Stored<T>> results = new ArrayList<>();
 			try (PreparedStatement stmt = _conn
-				.prepareStatement(_query.getQuery(), Statement.RETURN_GENERATED_KEYS))
+				.prepareStatement(_query.getQuery(), RETURN_GENERATED_KEYS))
 			{
 
 				for (T value : values) {
@@ -298,6 +316,25 @@ public abstract class DAO {
 			return results;
 		}
 
+		public <T> int update(
+			final List<T> values,
+			final Function<T, List<Param>> format
+		)
+			throws SQLException
+		{
+			int count = 0;
+			try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
+				for (T value : values) {
+					final List<Param> params = format.apply(value);
+					_query.fill(stmt, params);
+
+					count += stmt.executeUpdate();
+				}
+			}
+
+			return count;
+		}
+
 	}
 
 	protected final Connection _conn;
@@ -309,6 +346,10 @@ public abstract class DAO {
 	 */
 	protected DAO(final Connection conn) {
 		_conn = conn;
+	}
+
+	public <T> T dao(final Function<Connection, T> create) {
+		return create.apply(_conn);
 	}
 
 	/**
@@ -329,6 +370,23 @@ public abstract class DAO {
 	 */
 	public Batch batch(final String query) {
 		return new Batch(_conn, query);
+	}
+
+	public static <T> Stored<T> insertOrUpdate(
+		final T value,
+		final SQL.Function<T, Optional<Stored<T>>> select,
+		final SQL.Function<T, Stored<T>> insert,
+		final SQL.Consumer<Stored<T>> update
+	)
+		throws SQLException
+	{
+		final Optional<Stored<T>> stored = select.apply(value);
+		if (stored.isPresent()) {
+			update.accept(stored.get());
+			return stored.get().copy(value);
+		} else {
+			return insert.apply(value);
+		}
 	}
 
 	/**
