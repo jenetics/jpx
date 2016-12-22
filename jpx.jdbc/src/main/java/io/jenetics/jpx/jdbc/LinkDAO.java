@@ -20,10 +20,8 @@
 package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,31 +29,44 @@ import java.util.Optional;
 import io.jenetics.jpx.Link;
 
 /**
+ * Link Data Access Object.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class LinkDAO extends DAO<Link> {
+public final class LinkDAO extends DAO {
 
 	public LinkDAO(final Connection connection) {
 		super(connection);
 	}
 
-	@Override
-	public RowParser<Link> parser() {
-		return rs -> Stored.of(
-			rs.getLong("id"),
-			Link.of(
-				rs.getString("href"),
-				rs.getString("text"),
-				rs.getString("type")
-			)
-		);
-	}
+	private final static RowParser<Stored<Link>> RowParser = rs -> Stored.of(
+		rs.getLong("id"),
+		Link.of(
+			rs.getString("href"),
+			rs.getString("text"),
+			rs.getString("type")
+		)
+	);
 
+	/**
+	 * Insert the given link list into the DB.
+	 *
+	 * @param links the links to insert
+	 * @return return the stored links
+	 * @throws SQLException if inserting fails
+	 */
 	public List<Stored<Link>> insert(final List<Link> links) throws SQLException {
-		final String query = "INSERT INTO link(href, text, type) VALUES(?, ?, ?);";
+		final String query = "INSERT INTO link(href, text, type) VALUES({href}, {text}, {type});";
 
+		return batch(query).insert(links, link -> Arrays.asList(
+			Param.of("href", link.getHref()),
+			Param.of("text", link.getText()),
+			Param.of("type", link.getType())
+		));
+
+		/*
 		final List<Stored<Link>> results = new ArrayList<>();
 		try (PreparedStatement stmt = prepareInsert(query)) {
 			for (Link link : links) {
@@ -64,44 +75,74 @@ public final class LinkDAO extends DAO<Link> {
 				stmt.setString(3, link.getType().orElse(null));
 
 				stmt.executeUpdate();
-				results.add(Stored.of(DAO.id(stmt), link));
+				results.add(Stored.of(id(stmt), link));
 			}
 		}
 
 		return results;
+		*/
 	}
 
+	/**
+	 * Insert the given link into the DB.
+	 *
+	 * @param link the link to insert
+	 * @return return the stored link
+	 * @throws SQLException if inserting fails
+	 */
 	public Stored<Link> insert(final Link link)
 		throws SQLException
 	{
 		return insert(Collections.singletonList(link)).get(0);
 	}
 
+	/**
+	 * Select all available links.
+	 *
+	 * @return all stored links
+	 * @throws SQLException if the select fails
+	 */
 	public List<Stored<Link>> select() throws SQLException {
-		final String query = "SELECT id, href, text, type FROM link";
-
-		try (PreparedStatement stmt = _conn.prepareStatement(query)) {
-			try (final ResultSet rs = stmt.executeQuery()) {
-				return toList(rs);
-			}
-		}
+		return sql("SELECT id, href, text, type FROM link")
+			.as(RowParser.list());
 	}
 
+	/**
+	 * Select a link by its DB ID.
+	 *
+	 * @param id the link DB ID
+	 * @return the selected link, if available
+	 * @throws SQLException if the select fails
+	 */
 	public Optional<Stored<Link>> selectByID(final long id)
 		throws SQLException
 	{
-		final String query = "SELECT id, href, text, type FROM link WHERE id = ?;";
-
-		try (PreparedStatement stmt = _conn.prepareStatement(query)) {
-			stmt.setLong(1, id);
-
-			try (final ResultSet rs = stmt.executeQuery()) {
-				return firstOption(rs);
-			}
-		}
+		return sql("SELECT id, href, text, type FROM link WHERE id = {id};")
+			.on("id", id)
+			.as(RowParser.singleOpt());
 	}
 
+	/**
+	 * Select the links by the HREF.
+	 *
+	 * @param href the href to select
+	 * @return the selected links
+	 * @throws SQLException if the select fails
+	 */
+	public List<Stored<Link>> selectByHRef(final String href)
+		throws SQLException
+	{
+		return sql("SELECT id, href, text, type FROM link WHERE href LIKE {href}")
+			.on("href", href)
+			.as(RowParser.list());
+	}
 
+	/**
+	 * Create a new {@code LinkDAO} for the given connection.
+	 *
+	 * @param conn the DB connection
+	 * @return a new DAO object
+	 */
 	public static LinkDAO of(final Connection conn) {
 		return new LinkDAO(conn);
 	}

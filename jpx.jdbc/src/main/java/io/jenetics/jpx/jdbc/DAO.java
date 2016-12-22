@@ -19,58 +19,310 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Objects.requireNonNull;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Stream;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
+ * Abstract DAO class
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public abstract class DAO<T> {
+public abstract class DAO {
 
+	/**
+	 * Converts one row from the given {@link ResultSet} into a data object from
+	 * the given type.
+	 *
+	 * @param <T> the data object type
+	 */
+	@FunctionalInterface
 	public static interface RowParser<T> {
-		public Stored<T> toRow(final ResultSet rs) throws SQLException;
+
+		/**
+		 * Converts the row on the current cursor position into a data object.
+		 *
+		 * @param rs the data source
+		 * @return the stored data object
+		 * @throws SQLException if reading of the current row fails
+		 */
+		public T parse(final ResultSet rs) throws SQLException;
+
+		/**
+		 * Return a new parser which parses a single selection result.
+		 *
+		 * @return a new parser which parses a single selection result
+		 */
+		public default RowParser<Optional<T>> singleOpt() {
+			return rs -> rs.next() ? Optional.of(parse(rs)) : Optional.empty();
+		}
+
+		/**
+		 * Return a new parser witch parses a the whole selection result.
+		 *
+		 * @return a new parser witch parses a the whole selection result
+		 */
+		public default RowParser<List<T>> list() {
+			return rs -> {
+				final List<T> result = new ArrayList<>();
+				while (rs.next()) {
+					result.add(parse(rs));
+				}
+
+				return result;
+			};
+		}
+
+	}
+
+	/**
+	 * Represents a query parameter with <em>name</em> and <em>value</em>.
+	 */
+	public static final class Param {
+
+		private final String _name;
+		private final Object _value;
+
+		private Param(final String name, final Object value) {
+			_name = requireNonNull(name);
+			_value = value;
+		}
+
+		/**
+		 * Return the parameter name.
+		 *
+		 * @return the parameter name
+		 */
+		public String getName() {
+			return _name;
+		}
+
+		/**
+		 * Return the parameter value.
+		 *
+		 * @return the parameter value.
+		 */
+		public Object getValue() {
+			return _value;
+		}
+
+		/**
+		 * Create a new query parameter object from the given {@code name} and
+		 * {@code value}.
+		 *
+		 * @param name the parameter name
+		 * @param value the parameter value
+		 * @return a new query parameter object
+		 * @throws NullPointerException if the given parameter {@code name} is
+		 *         {@code null}
+		 */
+		public static Param of(final String name, final Object value) {
+			return new Param(name, value);
+		}
+	}
+
+	/**
+	 * Represents a SQL query for usage with a {@link PreparedStatement}.
+	 */
+	private static final class PreparedQuery {
+		private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
+
+		private final String _query;
+		private final Map<String, Integer> _params;
+
+		private PreparedQuery(
+			final String query,
+			final Map<String, Integer> params
+		) {
+			_query = requireNonNull(query);
+			_params = requireNonNull(params);
+		}
+
+		void fill(final PreparedStatement stmt, final List<Param> params)
+			throws SQLException
+		{
+			for (Param param : params) {
+				final Integer index = _params.get(param.getName());
+				if (index != null) {
+					stmt.setObject(index, param.getName());
+				}
+			}
+		}
+
+		/**
+		 * Return the prepared statement query.
+		 *
+		 * @return the prepared statement query
+		 */
+		String getQuery() {
+			return _query;
+		}
+
+		@Override
+		public String toString() {
+			return _query;
+		}
+
+		/**
+		 * Parses a query string into a query for prepared statements.
+		 *
+		 * @param query the query string to parse
+		 * @return a query string into a query for prepared statements
+		 */
+		public static PreparedQuery parse(final String query) {
+			final Matcher matcher = PARAM_PATTERN.matcher(query);
+
+			int index = 1;
+			final Map<String, Integer> params = new HashMap<>();
+			final StringBuffer parsedQuery = new StringBuffer();
+			while (matcher.find()) {
+				params.put(matcher.group(1), index++);
+				matcher.appendReplacement(parsedQuery, "?");
+			}
+			matcher.appendTail(parsedQuery);
+
+			return new PreparedQuery(parsedQuery.toString(), params);
+		}
+
+	}
+
+	/**
+	 * Abstract query class.
+	 */
+	static abstract class Query {
+		final Connection _conn;
+		final PreparedQuery _query;
+
+		Query(final Connection conn, final PreparedQuery query) {
+			_conn = requireNonNull(conn);
+			_query = requireNonNull(query);
+		}
+
+		Query(final Connection conn, final String query) {
+			this(conn, PreparedQuery.parse(query));
+		}
+
+	}
+
+	/**
+	 * Represents a select SQL query.
+	 */
+	public static final class SQLQuery extends Query {
+		private final List<Param> _params = new ArrayList<>();
+
+		public SQLQuery(final Connection conn, final PreparedQuery query) {
+			super(conn, query);
+		}
+
+		public SQLQuery(final Connection conn, final String query) {
+			super(conn, query);
+		}
+
+		public SQLQuery on(final String name, final Object value) {
+			_params.add(Param.of(name, value));
+			return this;
+		}
+
+		public <T> T as(final RowParser<T> parser) throws SQLException {
+			try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
+				_query.fill(stmt, _params);
+				try (final ResultSet rs = stmt.executeQuery()) {
+					return parser.parse(rs);
+				}
+			}
+		}
+
+	}
+
+	/**
+	 * Represents batch insert query.
+	 */
+	public static final class Batch {
+		private final Connection _conn;
+		private final PreparedQuery _query;
+
+		public Batch(final Connection conn, final String query) {
+			_conn = conn;
+			_query = PreparedQuery.parse(query);
+		}
+
+		public <T> List<Stored<T>> insert(
+			final List<T> values,
+			final Function<T, List<Param>> format
+		)
+			throws SQLException
+		{
+			final List<Stored<T>> results = new ArrayList<>();
+			try (PreparedStatement stmt = _conn
+				.prepareStatement(_query.getQuery(), Statement.RETURN_GENERATED_KEYS))
+			{
+
+				for (T value : values) {
+					final List<Param> params = format.apply(value);
+					_query.fill(stmt, params);
+
+					stmt.executeUpdate();
+					results.add(Stored.of(id(stmt), value));
+				}
+			}
+
+			return results;
+		}
+
 	}
 
 	protected final Connection _conn;
 
-	public DAO(final Connection conn) {
+	/**
+	 * Create a new DAO object with uses the given connection.
+	 *
+	 * @param conn the DB connection used for the DAO operations
+	 */
+	protected DAO(final Connection conn) {
 		_conn = conn;
 	}
 
-	public abstract RowParser<T> parser();
-
-	public PreparedStatement prepareInsert(final String sql) throws SQLException {
-		return _conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+	/**
+	 * Create a new select query object.
+	 *
+	 * @param query the SQL query
+	 * @return a new select query object
+	 */
+	public SQLQuery sql(final String query) {
+		return new SQLQuery(_conn, query);
 	}
 
-	public Optional<Stored<T>> firstOption(final ResultSet rs) throws SQLException {
-		return rs.next()
-			? Optional.of(parser().toRow(rs))
-			: Optional.empty();
-	}
-
-	public List<Stored<T>> toList(final ResultSet rs) throws SQLException {
-		final List<Stored<T>> result = new ArrayList<>();
-		while (rs.next()) {
-			result.add(parser().toRow(rs));
-		}
-
-		return result;
-	}
-
-	public Stream<Stored<T>> toStream(final ResultSet rs) throws SQLException {
+	/**
+	 * Create a new batch insert query object
+	 *
+	 * @param query the insert SQL query
+	 * @return a new batch insert query object
+	 */
+	public Batch batch(final String query) {
 		return null;
 	}
 
+	/**
+	 * Reads the auto increment id from the previously inserted record.
+	 *
+	 * @param stmt the statement used for inserting the record
+	 * @return the DB id of the inserted record
+	 * @throws SQLException if fetching the ID fails
+	 */
 	public static long id(final Statement stmt) throws SQLException {
 		try (ResultSet keys = stmt.getGeneratedKeys()) {
 			if (keys.next()) {
