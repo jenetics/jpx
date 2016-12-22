@@ -21,6 +21,8 @@ package io.jenetics.jpx.jdbc;
 
 import static java.lang.String.format;
 
+import java.util.Objects;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -42,6 +44,21 @@ public final class Stored<T> {
 
 	public T getValue() {
 		return _value;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 31;
+		hash += 37*Objects.hashCode(_id) + 17;
+		hash += 37*Objects.hashCode(_value) + 17;
+		return hash;
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		return obj instanceof Stored<?> &&
+			Objects.equals(((Stored)obj)._id, _id) &&
+			Objects.equals(((Stored)obj)._value, _value);
 	}
 
 	@Override
