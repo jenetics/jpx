@@ -29,7 +29,7 @@ For building the JPX library you have to check out the master branch from Github
 
     $ ./gradle jar
     
-## Download (soon available)
+## Download
 
 * **Github**: <https://github.com/jenetics/jpx/archive/v1.0.0.zip>
 *  **Maven**: `io.jenetics:jpx:1.0.0` on <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22">Maven Central</a>   
