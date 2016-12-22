@@ -31,6 +31,8 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
+compileTestJava.dependsOn tasks.getByPath(':jpx:compileTestJava')
+
 repositories {
 	mavenCentral()
 	jcenter()
@@ -39,6 +41,7 @@ repositories {
 dependencies {
 	compile project(':jpx')
 
+	testCompile project(':jpx').sourceSets.test.output
 	testCompile 'org.testng:testng:6.9.10'
 	testCompile 'mysql:mysql-connector-java:6.0.5'
 }

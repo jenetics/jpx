@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -61,6 +62,20 @@ public abstract class DAO {
 		 * @throws SQLException if reading of the current row fails
 		 */
 		public T parse(final ResultSet rs) throws SQLException;
+
+		/**
+		 * Return a new parser which expects at least one result.
+		 *
+		 * @return a new parser which expects at least one result
+		 */
+		public default RowParser<T> single() {
+			return rs -> {
+				if (rs.next()) {
+					return parse(rs);
+				}
+				throw new NoSuchElementException();
+			};
+		}
 
 		/**
 		 * Return a new parser which parses a single selection result.
@@ -158,7 +173,7 @@ public abstract class DAO {
 			for (Param param : params) {
 				final Integer index = _params.get(param.getName());
 				if (index != null) {
-					stmt.setObject(index, param.getName());
+					stmt.setObject(index, param.getValue());
 				}
 			}
 		}
@@ -313,7 +328,7 @@ public abstract class DAO {
 	 * @return a new batch insert query object
 	 */
 	public Batch batch(final String query) {
-		return null;
+		return new Batch(_conn, query);
 	}
 
 	/**

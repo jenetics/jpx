@@ -20,10 +20,13 @@
 package io.jenetics.jpx.jdbc;
 
 import java.sql.SQLException;
+import java.util.List;
+import java.util.Random;
 
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Link;
+import io.jenetics.jpx.LinkTest;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
@@ -34,14 +37,11 @@ public class LinkDAOTest {
 
 	@Test
 	public void insert() throws SQLException {
-		db.transaction(conn -> {
-			final Stored<Link> link = LinkDAO.of(conn).insert(
-				Link.of("http://jenetics.io/jpx", "Homepage", "Wep")
-			);
-
-			System.out.println(link);
+		final List<Stored<Link>> links = db.transaction(conn -> {
+			return LinkDAO.of(conn).insert(LinkTest.nextLinks(new Random()));
 		});
 
+		links.forEach(System.out::println);
 	}
 
 }

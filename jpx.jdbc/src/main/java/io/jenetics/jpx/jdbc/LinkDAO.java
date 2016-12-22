@@ -61,26 +61,10 @@ public final class LinkDAO extends DAO {
 		final String query = "INSERT INTO link(href, text, type) VALUES({href}, {text}, {type});";
 
 		return batch(query).insert(links, link -> Arrays.asList(
-			Param.of("href", link.getHref()),
-			Param.of("text", link.getText()),
-			Param.of("type", link.getType())
+			Param.of("href", link.getHref().toString()),
+			Param.of("text", link.getText().orElse(null)),
+			Param.of("type", link.getType().orElse(null))
 		));
-
-		/*
-		final List<Stored<Link>> results = new ArrayList<>();
-		try (PreparedStatement stmt = prepareInsert(query)) {
-			for (Link link : links) {
-				stmt.setString(1, link.getHref().toString());
-				stmt.setString(2, link.getText().orElse(null));
-				stmt.setString(3, link.getType().orElse(null));
-
-				stmt.executeUpdate();
-				results.add(Stored.of(id(stmt), link));
-			}
-		}
-
-		return results;
-		*/
 	}
 
 	/**
