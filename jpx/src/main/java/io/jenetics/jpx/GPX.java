@@ -610,7 +610,7 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final OutputStream output)
 		throws IOException
 	{
-		write(gpx, null, output);
+		write(gpx, output, null);
 	}
 
 	/**
@@ -656,8 +656,8 @@ public final class GPX implements Serializable {
 	 */
 	public static void write(
 		final GPX gpx,
-		final String indent,
-		final OutputStream output
+		final OutputStream output,
+		final String indent
 	)
 		throws IOException
 	{
@@ -687,13 +687,13 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
-	public static void write(final GPX gpx, final String indent, final Path path)
+	public static void write(final GPX gpx, final Path path, final String indent)
 		throws IOException
 	{
 		try (FileOutputStream out = new FileOutputStream(path.toFile());
 			 BufferedOutputStream bout = new BufferedOutputStream(out))
 		{
-			write(gpx, indent, bout);
+			write(gpx, bout, indent);
 		}
 	}
 
@@ -708,10 +708,10 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
-	public static void write(final GPX gpx, final String indent, final String path)
+	public static void write(final GPX gpx, final String path, final String indent)
 		throws IOException
 	{
-		write(gpx, indent, Paths.get(path));
+		write(gpx, Paths.get(path), indent);
 	}
 
 	/**
