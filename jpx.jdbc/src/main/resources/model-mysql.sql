@@ -55,7 +55,8 @@ CREATE TABLE metadata_link(
 	FOREIGN KEY (metadata_id) REFERENCES metadata(id),
 	FOREIGN KEY (link_id) REFERENCES link(id)
 );
-CREATE UNIQUE INDEX i_metadata_id_link_id ON metadata_link(metadata_id, link_id);
+CREATE UNIQUE INDEX i_metadata_link_metadata_id_link_id
+	ON metadata_link(metadata_id, link_id);
 
 CREATE TABLE way_point(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -90,7 +91,8 @@ CREATE TABLE way_point_link(
 	FOREIGN KEY (way_point_id) REFERENCES way_point(id),
 	FOREIGN KEY (link_id) REFERENCES link(id)
 );
-CREATE UNIQUE INDEX i_way_point_link_id_link_id ON way_point_link(way_point_id, link_id);
+CREATE UNIQUE INDEX i_way_point_link_way_point_id_link_id
+	ON way_point_link(way_point_id, link_id);
 
 CREATE TABLE route(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -109,7 +111,8 @@ CREATE TABLE route_link(
 	FOREIGN KEY (route_id) REFERENCES route(id),
 	FOREIGN KEY (link_id) REFERENCES link(id)
 );
-CREATE UNIQUE INDEX i_route_link_id_link_id ON route_link(route_id, link_id);
+CREATE UNIQUE INDEX i_route_link_route_id_link_id
+	ON route_link(route_id, link_id);
 
 CREATE TABLE route_way_point(
 	route_id BIGINT NOT NULL,
@@ -118,7 +121,8 @@ CREATE TABLE route_way_point(
 	FOREIGN KEY (route_id) REFERENCES route(id),
 	FOREIGN KEY (way_point_id) REFERENCES way_point(id)
 );
-CREATE UNIQUE INDEX i_route_way_point_id_link_id ON route_way_point(route_id, way_point_id);
+CREATE UNIQUE INDEX i_route_way_point_route_id_link_id
+	ON route_way_point(route_id, way_point_id);
 
 CREATE TABLE track_segment(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT
@@ -131,7 +135,7 @@ CREATE TABLE track_segment_way_point(
 	FOREIGN KEY (track_segment_id) REFERENCES track_segment(id),
 	FOREIGN KEY (way_point_id) REFERENCES way_point(id)
 );
-CREATE UNIQUE INDEX i_track_segment_way_point_id_link_id
+CREATE UNIQUE INDEX i_track_segment_way_point_track_segment_id_way_point_id
 	ON track_segment_way_point(track_segment_id, way_point_id);
 
 
@@ -144,6 +148,7 @@ CREATE TABLE track(
 	number INT,
 	type VARCHAR(255)
 );
+CREATE INDEX i_track_name ON track(name);
 
 CREATE TABLE track_track_segment(
 	track_id BIGINT NOT NULL,
@@ -152,7 +157,7 @@ CREATE TABLE track_track_segment(
 	FOREIGN KEY (track_id) REFERENCES track(id),
 	FOREIGN KEY (track_segment_id) REFERENCES track_segment(id)
 );
-CREATE UNIQUE INDEX i_track_segment_way_point_id_link_id
+CREATE UNIQUE INDEX i_track_track_segment_track_segment_id_way_point_id
 	ON track_segment_way_point(track_segment_id, way_point_id);
 
 CREATE TABLE track_link(
@@ -162,15 +167,18 @@ CREATE TABLE track_link(
 	FOREIGN KEY (track_id) REFERENCES track(id),
 	FOREIGN KEY (link_id) REFERENCES link(id)
 );
-CREATE UNIQUE INDEX i_track_link_id_link_id ON track_link(track_id, link_id);
+CREATE UNIQUE INDEX i_track_link_track_id_link_id
+	ON track_link(track_id, link_id);
 
 CREATE TABLE gpx(
+	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	version VARCHAR(5) NOT NULL DEFAULT '1.1',
 	creator VARCHAR(255) NOT NULL,
 	metadata_id BIGINT,
 
 	FOREIGN KEY (metadata_id) REFERENCES metadata(id)
 );
+CREATE INDEX i_gpx_creator ON gpx(creator);
 
 CREATE TABLE gpx_way_point(
 	gpx_id BIGINT NOT NULL,
@@ -179,7 +187,8 @@ CREATE TABLE gpx_way_point(
 	FOREIGN KEY (gpx_id) REFERENCES gpx(id),
 	FOREIGN KEY (way_point_id) REFERENCES way_point(id)
 );
-CREATE UNIQUE INDEX i_gpx_way_point_id_link_id ON gpx_way_point(gpx_id, way_point_id);
+CREATE UNIQUE INDEX i_gpx_way_point_gpx_id_way_point_id
+	ON gpx_way_point(gpx_id, way_point_id);
 
 CREATE TABLE gpx_track(
 	gpx_id BIGINT NOT NULL,
@@ -188,7 +197,6 @@ CREATE TABLE gpx_track(
 	FOREIGN KEY (gpx_id) REFERENCES gpx(id),
 	FOREIGN KEY (track_id) REFERENCES track(id)
 );
-CREATE UNIQUE INDEX i_gpx_track_gpx_id_track_id ON gpx_track(gpx_id, track_id);
-
-
+CREATE UNIQUE INDEX i_gpx_track_gpx_id_track_id
+	ON gpx_track(gpx_id, track_id);
 
