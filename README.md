@@ -1,6 +1,8 @@
 # JPX - Java GPX library
 
-This is a Java library for creating, reading and writing GPS data in [GPX](http://www.topografix.com/GPX) format. It implements version [1.1](http://www.topografix.com/GPX/1/1/) of the GPX format. Javadoc of the library can be [here](https://jenetics.github.io/jpx/javadoc/jpx/index.html).
+**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API.
+
+ The comprehensive Javadoc of the library can be [here](https://jenetics.github.io/jpx/javadoc/jpx/index.html).
 
 ## Requirements
 
