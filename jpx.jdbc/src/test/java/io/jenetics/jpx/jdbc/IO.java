@@ -19,42 +19,35 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.io.FileInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Properties;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class MySQL extends DB {
-
-	public final static DB INSTANCE = new MySQL();
-
-	private static final String TEST_DB;
-
-	static {
-		try {
-			final Properties pwd = new Properties();
-			try (final FileInputStream in = new FileInputStream("/home/fwilhelm/pwd.properties")) {
-				pwd.load(in);
-			}
-
-			TEST_DB =
-				"jdbc:mysql://playstation:3306/gpx_test?user=gpx_test&" +
-					"password=" + pwd.getProperty("GPX_TEST_DB_PASSWORD");
-
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+public class IO {
+	private IO() {
 	}
 
-	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(TEST_DB);
+	public static String toText(final InputStream in) throws IOException {
+		try(Reader r = new InputStreamReader(in);
+			BufferedReader br = new BufferedReader(r))
+		{
+			final StringBuilder builder = new StringBuilder();
+
+			String line;
+			while ((line = br.readLine()) != null) {
+				builder.append(line);
+				builder.append("\n");
+			}
+
+			return builder.toString();
+		}
 	}
 
 }

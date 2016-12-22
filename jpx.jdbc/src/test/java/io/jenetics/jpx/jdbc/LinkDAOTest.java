@@ -19,10 +19,14 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Random;
 
+import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Link;
@@ -33,7 +37,22 @@ import io.jenetics.jpx.LinkTest;
  */
 public class LinkDAOTest {
 
-	private final DB db = MySQL.INSTANCE;
+	private final DB db = H2DB.INSTANCE;
+
+	@BeforeSuite
+	public void setup() throws IOException, SQLException {
+		final String[] queries = IO.
+			toText(getClass().getResourceAsStream("/model-mysql.sql"))
+			.split(";");
+
+		for (String query : queries) {
+			db.transaction(conn -> {
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute(query);
+				}
+			});
+		}
+	}
 
 	@Test
 	public void insert() throws SQLException {

@@ -19,42 +19,53 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.io.FileInputStream;
+import static java.util.Objects.requireNonNull;
+
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+
+import javax.sql.DataSource;
+
+import org.h2.jdbcx.JdbcDataSource;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class MySQL extends DB {
+public class H2DB extends DB {
 
-	public final static DB INSTANCE = new MySQL();
+	public static final DB INSTANCE = new H2DB("jdbc:h2:mem:testdb-gpx;MODE=MySQL");
 
-	private static final String TEST_DB;
+	private final DataSource _dataSource;
 
-	static {
-		try {
-			final Properties pwd = new Properties();
-			try (final FileInputStream in = new FileInputStream("/home/fwilhelm/pwd.properties")) {
-				pwd.load(in);
-			}
-
-			TEST_DB =
-				"jdbc:mysql://playstation:3306/gpx_test?user=gpx_test&" +
-					"password=" + pwd.getProperty("GPX_TEST_DB_PASSWORD");
-
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	public H2DB(final DataSource dataSource) {
+		_dataSource = requireNonNull(dataSource);
 	}
 
+	public H2DB(final String url) {
+		this(ds(url));
+	}
+
+	private static DataSource ds(final String url) {
+		final JdbcDataSource ds = new JdbcDataSource();
+		ds.setURL(url);
+		return ds;
+	}
+
+	@Override
 	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(TEST_DB);
+		return _dataSource.getConnection();
+	}
+
+	@Override
+	public <T> T transaction(final Executable<T> executable) throws SQLException {
+		return transaction(getConnection(), executable);
+	}
+
+	@Override
+	public void transaction(final Callable callable) throws SQLException {
+		transaction(getConnection(), c -> {callable.call(c); return null;});
 	}
 
 }

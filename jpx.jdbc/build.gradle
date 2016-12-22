@@ -43,6 +43,7 @@ dependencies {
 
 	testCompile project(':jpx').sourceSets.test.output
 	testCompile 'org.testng:testng:6.9.10'
+	testCompile 'com.h2database:h2:1.4.193'
 	testCompile 'mysql:mysql-connector-java:6.0.5'
 }
 

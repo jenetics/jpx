@@ -22,19 +22,21 @@ package io.jenetics.jpx.jdbc;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import io.jenetics.jpx.Link;
-
 /**
+ * Test DB abstraction.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
 public abstract class DB {
 
+	@FunctionalInterface
 	public interface Executable<T> {
 		public T execute(final Connection conn) throws SQLException;
 	}
 
+	@FunctionalInterface
 	public interface Callable {
 		public void call(final Connection conn) throws SQLException;
 	}
@@ -75,12 +77,6 @@ public abstract class DB {
 		try (Connection conn = getConnection()) {
 			transaction(conn, c -> {callable.call(c); return null;});
 		}
-	}
-
-	public void foo() throws SQLException {
-		final Link link = transaction(conn -> {
-			return Link.of("http://jenetics.io");
-		});
 	}
 
 }
