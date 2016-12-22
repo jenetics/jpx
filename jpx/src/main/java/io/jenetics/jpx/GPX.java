@@ -412,8 +412,10 @@ public final class GPX implements Serializable {
 		 * <pre>{@code
 		 * final GPX gpx = GPX.builder()
 		 *     .addTrack(track -> track
-		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
-		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161)))
+		 *         .addSegment(segment -> segment
+		 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
+		 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
+		 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
 		 *     .build();
 		 * }</pre>
 		 *
