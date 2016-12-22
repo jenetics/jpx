@@ -24,8 +24,10 @@ import java.nio.file.Files;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -56,11 +58,24 @@ public class LinkDAOTest {
 
 	@Test
 	public void insert() throws SQLException {
-		final List<Stored<Link>> links = db.transaction(conn -> {
-			return LinkDAO.of(conn).insert(LinkTest.nextLinks(new Random()));
+		final List<Link> links = LinkTest.nextLinks(new Random());
+
+		final List<Stored<Link>> stored = db.transaction(conn -> {
+			return LinkDAO.of(conn).insert(links);
 		});
 
-		links.forEach(System.out::println);
+		for (Stored<Link> link : stored) {
+			Assert.assertEquals(
+				db.transaction(conn -> {
+					return LinkDAO.of(conn)
+						.selectByID(link.getID())
+						.orElseThrow(NoSuchElementException::new);
+				}),
+				link
+			);
+		}
+
+		stored.forEach(System.out::println);
 	}
 
 }
