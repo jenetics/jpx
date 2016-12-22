@@ -114,14 +114,22 @@ afterEvaluate { project ->
 
 				repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
 					authentication(
-						userName: project.property('nexus_username'),
-						password: project.property('nexus_password')
+						userName: project.hasProperty('nexus_username')
+							? project.property('nexus_username')
+							: 'nexus_username',
+						password: project.hasProperty('nexus_password')
+							? project.property('nexus_password')
+							: 'nexus_password'
 					)
 				}
 				snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
 					authentication(
-						userName: project.property('nexus_username'),
-						password: project.property('nexus_password')
+						userName: project.hasProperty('nexus_username')
+							? project.property('nexus_username')
+							: 'nexus_username',
+						password: project.hasProperty('nexus_password')
+							? project.property('nexus_password')
+							: 'nexus_password'
 					)
 				}
 
