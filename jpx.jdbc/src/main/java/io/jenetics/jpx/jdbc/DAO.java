@@ -20,10 +20,14 @@
 package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
@@ -44,10 +48,27 @@ public abstract class DAO<T> {
 
 	public abstract RowParser<T> parser();
 
+	public PreparedStatement prepareInsert(final String sql) throws SQLException {
+		return _conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+	}
+
 	public Optional<Stored<T>> firstOption(final ResultSet rs) throws SQLException {
 		return rs.next()
 			? Optional.of(parser().toRow(rs))
 			: Optional.empty();
+	}
+
+	public List<Stored<T>> toList(final ResultSet rs) throws SQLException {
+		final List<Stored<T>> result = new ArrayList<>();
+		while (rs.next()) {
+			result.add(parser().toRow(rs));
+		}
+
+		return result;
+	}
+
+	public Stream<Stored<T>> toStream(final ResultSet rs) throws SQLException {
+		return null;
 	}
 
 	public static long id(final Statement stmt) throws SQLException {
