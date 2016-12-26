@@ -32,7 +32,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.stream.Collector;
 
 import io.jenetics.jpx.Length;
-import io.jenetics.jpx.Point;
 
 /**
  * Implementation of <em>geodetic</em> functions.

@@ -17,12 +17,14 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx;
+package io.jenetics.jpx.geom;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import io.jenetics.jpx.geom.Geoid;
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
 
 /**
  * A geographic point with optional elevation and time.
