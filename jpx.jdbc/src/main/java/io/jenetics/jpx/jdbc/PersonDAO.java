@@ -69,9 +69,10 @@ public final class PersonDAO extends DAO {
 			"INSERT INTO person(name, email, link_id) VALUES({name}, {email}, {link_id});";
 
 		batch(query).insert(persons, person -> Arrays.asList(
-			Param.of("name", person.getName()),
-			Param.of("email", person.getEmail().map(Email::toString)),
-			Param.of("link_id", () -> SQL.Option.of(person.getLink()).map(l -> dao(LinkDAO::new).insertOrUpdate(l)))
+			Param.value("name", person.getName()),
+			Param.value("email", person.getEmail().map(Email::toString)),
+			Param.insert("link_id", () -> SQL.Option.of(person.getLink()).map(l -> dao(LinkDAO::new).insertOrUpdate(l))),
+			Param.insert("link_id", () -> dao(LinkDAO::new).insertOrUpdate(person.getLink()))
 		));
 
 		return null;

@@ -66,9 +66,9 @@ public final class LinkDAO extends DAO {
 			"INSERT INTO link(href, text, type) VALUES({href}, {text}, {type});";
 
 		return batch(query).insert(links, link -> Arrays.asList(
-			Param.of("href", link.getHref().toString()),
-			Param.of("text", link.getText()),
-			Param.of("type", link.getType())
+			Param.value("href", link.getHref().toString()),
+			Param.value("text", link.getText()),
+			Param.value("type", link.getType())
 		));
 	}
 
@@ -92,9 +92,9 @@ public final class LinkDAO extends DAO {
 			"UPDATE link SET text = {text}, type = {type} WHERE id = {id}";
 
 		batch(query).update(links, link -> Arrays.asList(
-			Param.of("text", link.map(Link::getText)),
-			Param.of("type", link.map(Link::getType)),
-			Param.of("id", link.getID())
+			Param.value("text", link.map(Link::getText)),
+			Param.value("type", link.map(Link::getType)),
+			Param.value("id", link.getID())
 		));
 
 		return links;

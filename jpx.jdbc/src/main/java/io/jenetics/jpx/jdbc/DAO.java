@@ -159,11 +159,11 @@ public abstract class DAO {
 		 * @throws NullPointerException if the given parameter {@code name} is
 		 *         {@code null}
 		 */
-		public static Param of(final String name, final Object value) {
+		public static Param value(final String name, final Object value) {
 			return new Param(name, value);
 		}
 
-		public static <T> Param of(final String name, final SQL.Supplier<T> value) {
+		public static <T> Param insert(final String name, final SQL.Supplier<T> value) {
 			return new Param(name, value);
 		}
 	}
@@ -266,7 +266,7 @@ public abstract class DAO {
 		}
 
 		public SQLQuery on(final String name, final Object value) {
-			_params.add(Param.of(name, () -> value));
+			_params.add(Param.insert(name, () -> value));
 			return this;
 		}
 
