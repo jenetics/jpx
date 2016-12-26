@@ -22,6 +22,7 @@ package io.jenetics.jpx.geom;
 import static java.util.Objects.requireNonNull;
 
 import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Point;
 
 /**
  * Helper class for collecting a stream of points to its length.

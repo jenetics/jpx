@@ -41,8 +41,6 @@ import java.util.function.Function;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import io.jenetics.jpx.geom.Point;
-
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
  * feature on a map.
