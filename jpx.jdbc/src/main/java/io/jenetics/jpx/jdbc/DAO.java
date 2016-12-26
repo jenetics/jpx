@@ -113,11 +113,11 @@ public abstract class DAO {
 	public static final class Param {
 
 		private final String _name;
-		private final Object _value;
+		private final SQL.Lazy<?> _value;
 
-		private Param(final String name, final Object value) {
+		private Param(final String name, final SQL.Lazy<?> value) {
 			_name = requireNonNull(name);
-			_value = value;
+			_value = requireNonNull(value);
 		}
 
 		/**
@@ -129,21 +129,22 @@ public abstract class DAO {
 			return _name;
 		}
 
+		void eval() throws SQLException {
+			_value.get();
+		}
+
 		/**
 		 * Return the parameter value.
 		 *
 		 * @return the parameter value.
 		 */
 		public Object getValue() throws SQLException {
-			Object value = _value;
-			if (value instanceof SQL.Supplier<?>) {
-				value = ((Supplier<?>)value).get();
-			}
-			if (value instanceof SQL.Option<?>) {
-				value = ((SQL.Option<?>)value).orElse(null);
+			Object value = _value.get();
+			if (value instanceof Optional<?>) {
+				value = ((Optional)value).orElse(null);
 			}
 			if (value instanceof Optional<?>) {
-				value = ((Optional<?>)value).orElse(null);
+				value = ((Optional)value).orElse(null);
 			}
 
 			return value;
@@ -160,11 +161,14 @@ public abstract class DAO {
 		 *         {@code null}
 		 */
 		public static Param value(final String name, final Object value) {
-			return new Param(name, value);
+			return new Param(name, SQL.Lazy.ofValue(value));
 		}
 
-		public static <T> Param insert(final String name, final SQL.Supplier<T> value) {
-			return new Param(name, value);
+		public static <T> Param insert(
+			final String name,
+			final SQL.Supplier<T> value
+		) {
+			return new Param(name, SQL.Lazy.of(value));
 		}
 	}
 
@@ -271,6 +275,10 @@ public abstract class DAO {
 		}
 
 		public <T> T as(final RowParser<T> parser) throws SQLException {
+			for (Param param : _params) {
+				param.eval();
+			}
+
 			try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
 				_query.fill(stmt, _params);
 				try (final ResultSet rs = stmt.executeQuery()) {
@@ -299,11 +307,16 @@ public abstract class DAO {
 		)
 			throws SQLException
 		{
+			for (T value : values) {
+				for (Param param : format.apply(value)) {
+					param.eval();
+				}
+			}
+
 			final List<Stored<T>> results = new ArrayList<>();
 			try (PreparedStatement stmt = _conn
 				.prepareStatement(_query.getQuery(), RETURN_GENERATED_KEYS))
 			{
-
 				for (T value : values) {
 					final List<Param> params = format.apply(value);
 					_query.fill(stmt, params);
@@ -322,6 +335,12 @@ public abstract class DAO {
 		)
 			throws SQLException
 		{
+			for (T value : values) {
+				for (Param param : format.apply(value)) {
+					param.eval();
+				}
+			}
+
 			int count = 0;
 			try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
 				for (T value : values) {

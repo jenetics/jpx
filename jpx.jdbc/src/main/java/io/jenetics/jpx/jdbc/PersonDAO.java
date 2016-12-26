@@ -66,35 +66,36 @@ public final class PersonDAO extends DAO {
 		throws SQLException
 	{
 		final String query =
-			"INSERT INTO person(name, email, link_id) VALUES({name}, {email}, {link_id});";
+			"INSERT INTO person(name, email, link_id) " +
+			"VALUES({name}, {email}, {link_id});";
 
-		batch(query).insert(persons, person -> Arrays.asList(
+		return batch(query).insert(persons, person -> Arrays.asList(
 			Param.value("name", person.getName()),
 			Param.value("email", person.getEmail().map(Email::toString)),
-			Param.insert("link_id", () -> SQL.Option.of(person.getLink()).map(l -> dao(LinkDAO::new).insertOrUpdate(l))),
-			Param.insert("link_id", () -> dao(LinkDAO::new).insertOrUpdate(person.getLink()))
+			Param.insert("link_id", () -> insertOrUpdate(person.getLink()))
 		));
-
-		return null;
-		/*
-		return batch(query).insert(links, link -> Arrays.asList(
-			Param.of("href", link.getHref().toString()),
-			Param.of("text", link.getText().orElse(null)),
-			Param.of("type", link.getType().orElse(null))
-		));
-		*/
 	}
 
-	Optional<Stored<Link>> insertOrUpdate(final Optional<Link> link) {
-		return Optional.empty();
+	private Long insertOrUpdate(final Optional<Link> link) throws SQLException {
+		return link.isPresent()
+			? dao(LinkDAO::of).insertOrUpdate(link.get()).getID()
+			: null;
 	}
 
-	/*
-	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(255),
-	email VARCHAR(255),
-	link_id BIGINT,
-	 */
+
+	public List<Stored<Person>> select() throws SQLException {
+		final String query =
+			"SELECT id, " +
+			"name, " +
+			"email, " +
+			"link.href AS link_href, " +
+			"link.text AS link_text, " +
+			"link.type AS link_type " +
+			"FROM person " +
+			"INNER JOIN link ON (person.link_id = link.id)";
+
+		return sql(query).as(RowParser.list());
+	}
 
 	public static PersonDAO of(final Connection conn) {
 		return new PersonDAO(conn);

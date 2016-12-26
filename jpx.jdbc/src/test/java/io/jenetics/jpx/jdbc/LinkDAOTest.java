@@ -38,9 +38,9 @@ import io.jenetics.jpx.LinkTest;
  */
 public class LinkDAOTest {
 
-	private final DB db = H2DB.INSTANCE;
+	private final DB db = H2DB.newTestInstance();
 
-	final List<Link> links = LinkTest.nextLinks(new Random());
+	private final List<Link> links = LinkTest.nextLinks(new Random(123));
 
 	@BeforeSuite
 	public void setup() throws IOException, SQLException {

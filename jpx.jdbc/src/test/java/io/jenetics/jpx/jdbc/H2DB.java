@@ -19,10 +19,12 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Random;
 
 import javax.sql.DataSource;
 
@@ -66,6 +68,12 @@ public class H2DB extends DB {
 	@Override
 	public void transaction(final Callable callable) throws SQLException {
 		transaction(getConnection(), c -> {callable.call(c); return null;});
+	}
+
+	public static DB newTestInstance() {
+		final String name = format("testdb_%s", Math.abs(new Random().nextLong()));
+		final String url = format("jdbc:h2:mem:%s;MODE=MySQL", name);
+		return new H2DB(url);
 	}
 
 }

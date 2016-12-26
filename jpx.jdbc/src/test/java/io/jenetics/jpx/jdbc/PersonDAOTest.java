@@ -36,9 +36,9 @@ import io.jenetics.jpx.PersonTest;
  */
 public class PersonDAOTest {
 
-	private final DB db = H2DB.INSTANCE;
+	private final DB db = H2DB.newTestInstance();
 
-	private final List<Person> persons = PersonTest.nextPersons(new Random());
+	private final List<Person> persons = PersonTest.nextPersons(new Random(123));
 
 	@BeforeSuite
 	public void setup() throws IOException, SQLException {

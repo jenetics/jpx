@@ -22,7 +22,6 @@ package io.jenetics.jpx.jdbc;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.SQLException;
-import java.util.Optional;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
@@ -48,66 +47,78 @@ public final class SQL {
 		public void accept(final T value) throws SQLException;
 	}
 
-	public static final class Option<T> {
-		private static final Option<?> EMPTY = new Option<>();
+	public static final class Lazy<T> implements Supplier<T> {
+		private final transient Supplier<T> _supplier;
 
-		private final T _value;
+		private T _value;
+		private volatile boolean _evaluated;
 
-		private Option() {
-			_value = null;
+		private Lazy(
+			final T value,
+			final boolean evaluated,
+			final Supplier<T> supplier
+		) {
+			_value = value;
+			_evaluated = evaluated;
+			_supplier = supplier;
 		}
 
-		private Option(final T value) {
-			_value = requireNonNull(value);
+		private Lazy(final Supplier<T> supplier) {
+			this(null, false, requireNonNull(supplier));
 		}
 
-		public boolean isPresent() {
-			return _value != null;
+		@Override
+		public T get() throws SQLException {
+			return _evaluated ? _value : evaluate();
 		}
 
-		public<U> Option<U> map(Function<? super T, ? extends U> mapper)
-			throws SQLException
-		{
-			requireNonNull(mapper);
-			if (!isPresent())
-				return empty();
-			else {
-				return Option.ofNullable(mapper.apply(_value));
+		/**
+		 * Return the evaluation state of the {@code Lazy} variable.
+		 *
+		 * @return {@code true} is the {@code Lazy} variable has been evaluated,
+		 *         {@code false} otherwise
+		 */
+		public synchronized boolean isEvaluated() {
+			return _evaluated;
+		}
+
+		private synchronized T evaluate() throws SQLException {
+			if (!_evaluated) {
+				_value = _supplier.get();
+				_evaluated = true;
 			}
+
+			return _value;
 		}
 
-		public<U> Option<U> flatMap(Function<? super T, Option<U>> mapper)
-			throws SQLException
-		{
-			requireNonNull(mapper);
-			if (!isPresent())
-				return empty();
-			else {
-				return requireNonNull(mapper.apply(_value));
-			}
+		/**
+		 * Create a new lazy value initialization.
+		 *
+		 * @param supplier the lazy value supplier
+		 * @param <T> the value type
+		 * @return a new lazy value initialization
+		 * @throws java.lang.NullPointerException if the given supplier is
+		 *         {@code null}
+		 */
+		public static <T> Lazy<T> of(final Supplier<T> supplier) {
+			return new Lazy<>(supplier);
 		}
 
-		public T orElse(T other) {
-			return _value != null ? _value : other;
+		/**
+		 * Create a new {@code Lazy} object with the given {@code value}. This
+		 * method allows to create a <em>lazy</em> object with the given
+		 * {@code value}.
+		 *
+		 * @since 3.7
+		 *
+		 * @param value the value this {@code Lazy} object is initialized with
+		 * @param <T> the value type
+		 * @return return a new lazy value with the given value
+		 */
+		public static <T> Lazy<T> ofValue(final T value) {
+			return new Lazy<T>(value, true, null);
 		}
 
-		public static <T> Option<T> of(T value) {
-			return new Option<>(value);
-		}
-
-		public static <T> Option<T> of(final Optional<T> value) {
-			return value.isPresent() ? of(value.get()) : empty();
-		}
-
-		public static <T> Option<T> ofNullable(T value) {
-			return value == null ? empty() : of(value);
-		}
-
-		public static <T> Option<T> empty() {
-			@SuppressWarnings("unchecked")
-			final Option<T> t = (Option<T>)EMPTY;
-			return t;
-		}
 	}
 
 }

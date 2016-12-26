@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import org.testng.annotations.Test;
@@ -38,6 +40,15 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 			Person.reader(),
 			Person::write
 		);
+	}
+
+	public static List<Person> nextPersons(final Random random) {
+		final List<Person> persons = new ArrayList<>();
+		for (int i = 0, n = random.nextInt(20); i < n; ++i) {
+			persons.add(PersonTest.nextPerson(random));
+		}
+
+		return persons;
 	}
 
 	public static Person nextPerson(final Random random) {
