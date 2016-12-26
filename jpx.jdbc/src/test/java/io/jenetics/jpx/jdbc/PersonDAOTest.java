@@ -19,10 +19,50 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
+import java.util.Random;
+
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.Test;
+
+import io.jenetics.jpx.Person;
+import io.jenetics.jpx.PersonTest;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
  */
 public class PersonDAOTest {
+
+	private final DB db = H2DB.INSTANCE;
+
+	private final List<Person> persons = PersonTest.nextPersons(new Random());
+
+	@BeforeSuite
+	public void setup() throws IOException, SQLException {
+		final String[] queries = IO.
+			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
+			.split(";");
+
+		db.transaction(conn -> {
+			for (String query : queries) {
+
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute(query);
+				}
+			}
+		});
+	}
+
+	@Test
+	public void insert() throws SQLException {
+		final List<Stored<Person>> stored = db.transaction(conn -> {
+			return PersonDAO.of(conn).insert(persons);
+		});
+
+		stored.forEach(System.out::println);
+	}
+
 }
