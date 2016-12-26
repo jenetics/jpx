@@ -53,15 +53,14 @@ final GPX gpx = GPX.builder()
 **Writing GPX object to a file**
 
 ```java
-// Writing "pretty" GPX file.
-GPX.write(gpx, "    ", "gpx.xml");
+GPX.write(gpx, "gpx.xml");
 ```
 
 *GPX output*
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX - Java GPX library">
+<gpx version="1.1" creator="JPX - Java GPX library" xmlns="http://www.topografix.com/GPX/1/1">
     <trk>
         <trkseg>
             <trkpt lat="48.2081743" lon="16.3738189">
