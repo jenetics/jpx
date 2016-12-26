@@ -216,7 +216,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public String toString() {
-		return format("Rout[name=%s, points=%s]", _name, _points.size());
+		return format("Route[name=%s, points=%s]", _name, _points.size());
 	}
 
 	/* *************************************************************************
