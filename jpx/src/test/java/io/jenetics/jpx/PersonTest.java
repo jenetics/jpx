@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -30,6 +31,11 @@ import org.testng.annotations.Test;
  */
 @Test
 public class PersonTest extends XMLStreamTestBase<Person> {
+
+	@Override
+	public Supplier<Person> factory(Random random) {
+		return () -> nextPerson(random);
+	}
 
 	@Override
 	protected Params<Person> params(final Random random) {

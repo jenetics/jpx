@@ -24,6 +24,7 @@ import static java.lang.String.format;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -32,6 +33,11 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class GPXTest extends XMLStreamTestBase<GPX> {
+
+	@Override
+	public Supplier<GPX> factory(Random random) {
+		return () -> nextGPX(random);
+	}
 
 	@Override
 	protected Params<GPX> params(final Random random) {

@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -34,6 +35,11 @@ import org.testng.annotations.Test;
  */
 @Test
 public class WayPointTest extends XMLStreamTestBase<WayPoint> {
+
+	@Override
+	public Supplier<WayPoint> factory(Random random) {
+		return () -> nextWayPoint(random);
+	}
 
 	@Override
 	protected Params<WayPoint> params(final Random random) {
