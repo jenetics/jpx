@@ -107,7 +107,7 @@ $ [lat=48.2081743, lon=48.2081743, ele=162]
 ```java
 final Point start = WayPoint.of(47.2692124, 11.4041024);
 final Point end = WayPoint.of(47.3502, 11.70584);
-final Length distance = Geoid.WGSC_84.distance(start, end);
+final Length distance = Geoid.WGSC84.distance(start, end);
 System.out.println(distance);
 ```
 
@@ -126,7 +126,7 @@ final Length length = gpx.tracks()
     .flatMap(Track::segments)
     .findFirst()
     .map(TrackSegment::points).orElse(Stream.empty())
-    .collect(Geoid.WGSC_84.toPathLength());
+    .collect(Geoid.WGSC84.toPathLength());
 ```
 
 
