@@ -55,7 +55,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	public static WayPoint nextWayPoint(final Random random) {
 		return WayPoint.builder()
 			.ele(random.nextBoolean() ? Length.ofMeters(random.nextInt(1000)) : null)
-			.speed(random.nextBoolean() ? Speed.of(random.nextDouble()*100) : null)
+			.speed(random.nextBoolean() ? Speed.of(random.nextDouble()*100, Speed.Unit.METERS_PER_SECOND) : null)
 			.time(random.nextBoolean()
 				? ofInstant(ofEpochMilli(random.nextInt(10000)), UTC)
 				: null)

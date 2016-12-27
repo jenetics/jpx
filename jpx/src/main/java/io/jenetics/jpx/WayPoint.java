@@ -41,6 +41,8 @@ import java.util.function.Function;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import io.jenetics.jpx.Speed.Unit;
+
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
  * feature on a map.
@@ -507,13 +509,24 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Set the current GPS speed
+		 *
+		 * @param speed the current speed value
+		 * @param unit the speed unit
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder speed(final double speed, final Speed.Unit unit) {
+			return speed(Speed.of(speed, unit));
+		}
+
+		/**
 		 * Set the current GPS speed.
 		 *
 		 * @param meterPerSecond the current GPS speed in m/s
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder speed(final double meterPerSecond) {
-			_speed = Speed.of(meterPerSecond);
+			_speed = Speed.of(meterPerSecond, Speed.Unit.METERS_PER_SECOND);
 			return this;
 		}
 

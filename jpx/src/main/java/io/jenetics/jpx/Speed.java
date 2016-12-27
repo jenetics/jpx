@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 
@@ -34,7 +35,27 @@ public final class Speed extends Number implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private static final double MPS_TO_KMH_FACTOR = 3.6;
+	public static enum Unit {
+		METERS_PER_SECOND(1.0),
+		KILOMETERS_PER_HOUR(5.0/18.0),
+		MILES_PER_HOUR(1_397.0/3_125.0),
+		KNOTS(463.0/900.0),
+		MACH(331.3);
+
+		private final double _toMetersPerSecond;
+
+		private Unit(final double factor) {
+			_toMetersPerSecond = factor;
+		}
+
+		public double convert(final double speed, final Unit sourceUnit) {
+			requireNonNull(sourceUnit);
+			final double metersPerSecond = speed*sourceUnit._toMetersPerSecond;
+			return metersPerSecond/_toMetersPerSecond;
+		}
+
+	}
+
 
 	private final double _value;
 
@@ -58,12 +79,13 @@ public final class Speed extends Number implements Serializable {
 	}
 
 	/**
-	 * Return the GPS speed value in km/h.
+	 * Return the GPS speed value in the desired unit.
 	 *
-	 * @return the GPS speed value in km/h
+	 * @param unit the speed unit
+	 * @return the GPS speed value in the desired unit
 	 */
-	public double toKmH() {
-		return _value*MPS_TO_KMH_FACTOR;
+	public double to(final Unit unit) {
+		return Unit.METERS_PER_SECOND.convert(_value, unit);
 	}
 
 	@Override
@@ -103,23 +125,14 @@ public final class Speed extends Number implements Serializable {
 	 * ************************************************************************/
 
 	/**
-	 * Create a new GPS {@code Speed} object in m/s.
+	 * Create a new GPS {@code Speed} object.
 	 *
-	 * @param meterPerSecond the GPS speed value in m/s.
+	 * @param speed the GPS speed value
+	 * @param unit the speed unit
 	 * @return a new GPS {@code Speed} object
 	 */
-	public static Speed of(final double meterPerSecond) {
-		return new Speed(meterPerSecond);
-	}
-
-	/**
-	 * Create a new GPS {@code Speed} object in km/h.
-	 *
-	 * @param kilometerPerHour the GPS speed value in km/h.
-	 * @return a new GPS {@code Speed} object
-	 */
-	public static Speed ofKmH(final double kilometerPerHour) {
-		return new Speed(kilometerPerHour/MPS_TO_KMH_FACTOR);
+	public static Speed of(final double speed, final Unit unit) {
+		return new Speed(unit.convert(speed, Unit.METERS_PER_SECOND));
 	}
 
 	/**
@@ -132,9 +145,10 @@ public final class Speed extends Number implements Serializable {
 		return object instanceof Speed
 			? (Speed)object
 			: object instanceof Number
-				? of(((Number) object).doubleValue())
+				? of(((Number)object).doubleValue(), Unit.METERS_PER_SECOND)
 				: object != null
-					? of(Double.parseDouble(object.toString()))
+					? of(Double.parseDouble(object.toString()),
+							Unit.METERS_PER_SECOND)
 					: null;
 	}
 

@@ -22,7 +22,10 @@ package io.jenetics.jpx;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import io.jenetics.jpx.Speed.Unit;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
@@ -32,7 +35,30 @@ public class SpeedTest extends ObjectTester<Speed> {
 
 	@Override
 	Supplier<Speed> factory(final Random random) {
-		return () -> Speed.of(random.nextDouble());
+		return () -> Speed.of(random.nextDouble(), Unit.METERS_PER_SECOND);
+	}
+
+	@Test
+	public void units() {
+		Assert.assertEquals(
+			0.2777777777777778,
+			Unit.METERS_PER_SECOND.convert(1, Unit.KILOMETERS_PER_HOUR)
+		);
+
+		Assert.assertEquals(
+			0.5144444444444445,
+			Unit.METERS_PER_SECOND.convert(1, Unit.KNOTS)
+		);
+
+		Assert.assertEquals(
+			331.3,
+			Unit.METERS_PER_SECOND.convert(1, Unit.MACH)
+		);
+
+		Assert.assertEquals(
+			0.44704,
+			Unit.METERS_PER_SECOND.convert(1, Unit.MILES_PER_HOUR)
+		);
 	}
 
 }
