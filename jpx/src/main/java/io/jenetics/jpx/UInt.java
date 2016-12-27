@@ -23,6 +23,8 @@ import static java.lang.String.format;
 
 import java.io.Serializable;
 
+import io.jenetics.jpx.Length.Unit;
+
 /**
  * Represents an unsigned integer value.
  *
@@ -32,7 +34,12 @@ import java.io.Serializable;
  * @version 1.0
  * @since 1.0
  */
-public final class UInt extends Number implements Serializable {
+public final class UInt
+	extends Number
+	implements
+		Comparable<UInt>,
+		Serializable
+{
 
 	private static final long serialVersionUID = 1L;
 
@@ -79,6 +86,11 @@ public final class UInt extends Number implements Serializable {
 	@Override
 	public double doubleValue() {
 		return _value;
+	}
+
+	@Override
+	public int compareTo(final UInt other) {
+		return Integer.compare(_value, other._value);
 	}
 
 	@Override

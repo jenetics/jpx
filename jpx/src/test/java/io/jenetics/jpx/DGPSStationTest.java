@@ -19,8 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.String.format;
-
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -30,34 +28,11 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
 @Test
-public class PersonTest extends XMLStreamTestBase<Person> {
+public class DGPSStationTest extends ObjectTester<DGPSStation> {
 
 	@Override
-	public Supplier<Person> factory(Random random) {
-		return () -> nextPerson(random);
-	}
-
-	@Override
-	protected Params<Person> params(final Random random) {
-		return new Params<>(
-			() -> nextPerson(random),
-			Person.reader(),
-			Person::write
-		);
-	}
-
-	public static Person nextPerson(final Random random) {
-		return Person.of(
-			random.nextBoolean()
-				? format("name_%s", random.nextInt(100))
-				: null,
-			random.nextBoolean()
-				? EmailTest.nextEmail(random)
-				: null,
-			random.nextBoolean()
-				? LinkTest.nextLink(random)
-				: null
-		);
+	Supplier<DGPSStation> factory(final Random random) {
+		return () -> DGPSStation.of(random.nextInt(1023));
 	}
 
 }

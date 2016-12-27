@@ -22,6 +22,7 @@ package io.jenetics.jpx.geom;
 import static java.util.Objects.requireNonNull;
 
 import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Length.Unit;
 import io.jenetics.jpx.Point;
 
 /**
@@ -63,7 +64,7 @@ final class LengthCollector {
 	}
 
 	Length pathLength() {
-		return Length.ofMeters(_length.doubleValue());
+		return Length.of(_length.doubleValue(), Unit.METER);
 	}
 
 	Length tourLength() {

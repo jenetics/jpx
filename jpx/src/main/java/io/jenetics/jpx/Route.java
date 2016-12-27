@@ -188,6 +188,20 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		return _points.iterator();
 	}
 
+	/**
+	 * Return {@code true} if all route properties are {@code null} or empty.
+	 *
+	 * @return {@code true} if all route properties are {@code null} or empty
+	 */
+	public boolean isEmpty() {
+		return _name == null &&
+			_comment == null &&
+			_source == null &&
+			_links.isEmpty() &&
+			_number == null &&
+			_points.isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 31;
@@ -216,7 +230,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public String toString() {
-		return format("Rout[name=%s, points=%s]", _name, _points.size());
+		return format("Route[name=%s, points=%s]", _name, _points.size());
 	}
 
 	/* *************************************************************************
@@ -543,7 +557,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			xml.elem("cmt", _comment),
 			xml.elem("desc", _description),
 			xml.elem("src", _source),
-			xml.elems(_links,Link::write),
+			xml.elems(_links, Link::write),
 			xml.elem("number", _number),
 			xml.elem("type", _type),
 			xml.elems(_points, (p, w) -> p.write("rtept", w))

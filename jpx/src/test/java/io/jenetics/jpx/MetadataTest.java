@@ -23,6 +23,7 @@ import static java.lang.String.format;
 
 import java.time.ZonedDateTime;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -31,6 +32,11 @@ import org.testng.annotations.Test;
  */
 @Test
 public class MetadataTest extends XMLStreamTestBase<Metadata> {
+
+	@Override
+	public Supplier<Metadata> factory(Random random) {
+		return () -> nextMetadata(random);
+	}
 
 	@Override
 	protected Params<Metadata> params(final Random random) {

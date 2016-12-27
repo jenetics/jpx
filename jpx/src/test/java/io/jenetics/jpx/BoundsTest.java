@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -30,6 +31,11 @@ import org.testng.annotations.Test;
  */
 @Test
 public class BoundsTest extends XMLStreamTestBase<Bounds> {
+
+	@Override
+	public Supplier<Bounds> factory(Random random) {
+		return () -> nextBounds(random);
+	}
 
 	@Override
 	protected Params<Bounds> params(final Random random) {

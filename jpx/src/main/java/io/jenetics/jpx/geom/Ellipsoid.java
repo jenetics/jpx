@@ -46,7 +46,7 @@ public final class Ellipsoid implements Serializable {
 	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
 	 *     WGS-84</a>
 	 */
-	public static final Ellipsoid WGSC_84 = of(
+	public static final Ellipsoid WGS84 = of(
 		"WGS-84",
 		6_378_137,
 		6_356_752.314245,
@@ -82,7 +82,7 @@ public final class Ellipsoid implements Serializable {
 	/**
 	 * The default ellipsoid: WGSC-84
 	 */
-	public static final Ellipsoid DEFAULT = WGSC_84;
+	public static final Ellipsoid DEFAULT = WGS84;
 
 	private final String _name;
 	private final double _a;

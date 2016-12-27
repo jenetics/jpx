@@ -41,6 +41,8 @@ import java.util.function.Function;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import io.jenetics.jpx.Speed.Unit;
+
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
  * feature on a map.
@@ -491,7 +493,19 @@ public final class WayPoint implements Point, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder ele(final double meters) {
-			_elevation = Length.ofMeters(meters);
+			_elevation = Length.of(meters, Length.Unit.METER);
+			return this;
+		}
+
+		/**
+		 * Set the elevation of the point.
+		 *
+		 * @param meters the elevation of the point
+		 * @param unit the length unit
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder ele(final double meters, final Length.Unit unit) {
+			_elevation = Length.of(meters, unit);
 			return this;
 		}
 
@@ -507,13 +521,24 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Set the current GPS speed
+		 *
+		 * @param speed the current speed value
+		 * @param unit the speed unit
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder speed(final double speed, final Speed.Unit unit) {
+			return speed(Speed.of(speed, unit));
+		}
+
+		/**
 		 * Set the current GPS speed.
 		 *
 		 * @param meterPerSecond the current GPS speed in m/s
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder speed(final double meterPerSecond) {
-			_speed = Speed.of(meterPerSecond);
+			_speed = Speed.of(meterPerSecond, Speed.Unit.METERS_PER_SECOND);
 			return this;
 		}
 
@@ -625,7 +650,21 @@ public final class WayPoint implements Point, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder geoidheight(final double meter) {
-			_geoidHeight = Length.ofMeters(meter);
+			_geoidHeight = Length.of(meter, Length.Unit.METER);
+			return this;
+		}
+
+		/**
+		 * Set the height of geoid (mean sea level) above WGS84 earth ellipsoid.
+		 * As defined in NMEA GGA message.
+		 *
+		 * @param length the height of geoid (mean sea level) above WGS84 earth
+		 *        ellipsoid
+		 * @param unit the length unit
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder geoidheight(final double length, Length.Unit unit) {
+			_geoidHeight = Length.of(length, unit);
 			return this;
 		}
 
@@ -1120,7 +1159,7 @@ public final class WayPoint implements Point, Serializable {
 		return of(
 			Latitude.ofDegrees(latitudeDegree),
 			Longitude.ofDegrees(longitudeDegree),
-			Length.ofMeters(elevationMeter),
+			Length.of(elevationMeter, Length.Unit.METER),
 			ZonedDateTime.ofInstant(
 				Instant.ofEpochMilli(timeEpochMilli),
 				UTC

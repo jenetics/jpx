@@ -82,6 +82,17 @@ public final class Person implements Serializable {
 		return Optional.ofNullable(_link);
 	}
 
+	/**
+	 * Return {@code true} if all person properties are {@code null}.
+	 *
+	 * @return {@code true} if all person properties are {@code null}
+	 */
+	public boolean isEmpty() {
+		return _name == null &&
+			_email == null &&
+			_link == null;
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 37;

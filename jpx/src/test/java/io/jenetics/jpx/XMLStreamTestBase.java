@@ -39,7 +39,7 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
-public abstract class XMLStreamTestBase<T> {
+public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
 	public static interface XMLWriter<T> {
 		void write(T value, final XMLStreamWriter writer) throws XMLStreamException;

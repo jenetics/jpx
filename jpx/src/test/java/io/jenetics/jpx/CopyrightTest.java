@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Year;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -33,6 +34,11 @@ import org.testng.annotations.Test;
  */
 @Test
 public class CopyrightTest extends XMLStreamTestBase<Copyright> {
+
+	@Override
+	public Supplier<Copyright> factory(Random random) {
+		return () -> nextCopyright(random);
+	}
 
 	@Override
 	protected Params<Copyright> params(final Random random) {

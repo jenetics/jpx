@@ -23,6 +23,7 @@ import static java.lang.String.format;
 
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -31,6 +32,11 @@ import org.testng.annotations.Test;
  */
 @Test
 public class TrackTest extends XMLStreamTestBase<Track> {
+
+	@Override
+	public Supplier<Track> factory(Random random) {
+		return () -> nextTrack(random);
+	}
 
 	@Override
 	protected Params<Track> params(final Random random) {

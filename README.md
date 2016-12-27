@@ -1,6 +1,8 @@
 # JPX - Java GPX library
 
-This is a Java library for creating, reading and writing GPS data in [GPX](http://www.topografix.com/GPX) format. It implements version [1.1](http://www.topografix.com/GPX/1/1/) of the GPX format. Javadoc of the library can be [here](https://jenetics.github.io/jpx/javadoc/jpx/index.html).
+**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API.
+
+ The comprehensive Javadoc of the library can be [here](https://jenetics.github.io/jpx/javadoc/jpx/index.html).
 
 ## Requirements
 
@@ -29,7 +31,7 @@ For building the JPX library you have to check out the master branch from Github
 
     $ ./gradle jar
     
-## Download (soon available)
+## Download
 
 * **Github**: <https://github.com/jenetics/jpx/archive/v1.0.0.zip>
 *  **Maven**: `io.jenetics:jpx:1.0.0` on <a href="http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22">Maven Central</a>   
@@ -51,15 +53,14 @@ final GPX gpx = GPX.builder()
 **Writing GPX object to a file**
 
 ```java
-// Writing "pretty" GPX file.
-GPX.write(gpx, "    ", "gpx.xml");
+GPX.write(gpx, "gpx.xml");
 ```
 
 *GPX output*
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX - Java GPX library">
+<gpx version="1.1" creator="JPX - Java GPX library" xmlns="http://www.topografix.com/GPX/1/1">
     <trk>
         <trkseg>
             <trkpt lat="48.2081743" lon="16.3738189">
@@ -106,7 +107,7 @@ $ [lat=48.2081743, lon=48.2081743, ele=162]
 ```java
 final Point start = WayPoint.of(47.2692124, 11.4041024);
 final Point end = WayPoint.of(47.3502, 11.70584);
-final Length distance = Geoid.WGSC_84.distance(start, end);
+final Length distance = Geoid.WGSC84.distance(start, end);
 System.out.println(distance);
 ```
 
@@ -125,7 +126,7 @@ final Length length = gpx.tracks()
     .flatMap(Track::segments)
     .findFirst()
     .map(TrackSegment::points).orElse(Stream.empty())
-    .collect(Geoid.WGSC_84.toPathLength());
+    .collect(Geoid.WGSC84.toPathLength());
 ```
 
 

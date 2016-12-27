@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -30,6 +31,11 @@ import org.testng.annotations.Test;
  */
 @Test
 public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
+
+	@Override
+	public Supplier<TrackSegment> factory(Random random) {
+		return () -> nextTrackSegment(random);
+	}
 
 	@Override
 	protected Params<TrackSegment> params(final Random random) {

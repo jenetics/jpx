@@ -19,44 +19,47 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.String.format;
-
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @since !__version__!
  */
 @Test
-public class PersonTest extends XMLStreamTestBase<Person> {
+public class LongitudeTest extends ObjectTester<Longitude> {
 
 	@Override
-	public Supplier<Person> factory(Random random) {
-		return () -> nextPerson(random);
+	Supplier<Longitude> factory(final Random random) {
+		return () -> Longitude.ofRadians(random.nextDouble());
 	}
 
-	@Override
-	protected Params<Person> params(final Random random) {
-		return new Params<>(
-			() -> nextPerson(random),
-			Person.reader(),
-			Person::write
+	@Test
+	public void ofRadians() {
+		Assert.assertEquals(
+			Longitude.ofRadians(1),
+			Longitude.ofDegrees(Math.toDegrees(1))
+		);
+
+		Assert.assertEquals(
+			Longitude.ofRadians(1).toRadians(),
+			Longitude.ofDegrees(Math.toDegrees(1)).toRadians()
 		);
 	}
 
-	public static Person nextPerson(final Random random) {
-		return Person.of(
-			random.nextBoolean()
-				? format("name_%s", random.nextInt(100))
-				: null,
-			random.nextBoolean()
-				? EmailTest.nextEmail(random)
-				: null,
-			random.nextBoolean()
-				? LinkTest.nextLink(random)
-				: null
+	@Test
+	public void ofDegrees() {
+		Assert.assertEquals(
+			Longitude.ofDegrees(1),
+			Longitude.ofRadians(Math.toRadians(1))
+		);
+
+		Assert.assertEquals(
+			Longitude.ofDegrees(1).toDegrees(),
+			Longitude.ofRadians(Math.toRadians(1)).toDegrees()
 		);
 	}
 
