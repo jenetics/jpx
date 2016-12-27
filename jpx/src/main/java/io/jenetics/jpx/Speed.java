@@ -35,11 +35,34 @@ public final class Speed extends Number implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Represents a given speed unit.
+	 */
 	public static enum Unit {
+
+		/**
+		 * Represents the speed unit <em>meters per second</em>: <b>m/s</b>.
+		 */
 		METERS_PER_SECOND(1.0),
+
+		/**
+		 * Represents the speed unit <em>kilometers per hour</em>: <b>km/h</b>.
+		 */
 		KILOMETERS_PER_HOUR(5.0/18.0),
+
+		/**
+		 * Represents the speed unit <em>miles per hour</em>: <b>mi/h</b>.
+		 */
 		MILES_PER_HOUR(1_397.0/3_125.0),
+
+		/**
+		 * Represents the speed unit <em>knots</em>: <b>kt</b>.
+		 */
 		KNOTS(463.0/900.0),
+
+		/**
+		 * Represents the speed unit <em>mach</em>: <b>Ma</b>.
+		 */
 		MACH(331.3);
 
 		private final double _toMetersPerSecond;
@@ -48,6 +71,19 @@ public final class Speed extends Number implements Serializable {
 			_toMetersPerSecond = factor;
 		}
 
+		/**
+		 * Convert the given speed value of the given {@code sourceUnit} into a
+		 * speed value of {@code this} speed unit. The given example converts 3
+		 * knots into kilometers per hour.
+		 *
+		 * <pre>{@code
+		 * final double kilometersPerHour = KILOMETERS_PER_HOUR.convert(3, KNOTS);
+		 * }</pre>
+		 *
+		 * @param speed the speed value
+		 * @param sourceUnit the source speed unit
+		 * @return the speed value of {@code this} speed unit
+		 */
 		public double convert(final double speed, final Unit sourceUnit) {
 			requireNonNull(sourceUnit);
 			final double metersPerSecond = speed*sourceUnit._toMetersPerSecond;
