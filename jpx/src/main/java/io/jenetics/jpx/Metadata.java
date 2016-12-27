@@ -178,6 +178,21 @@ public final class Metadata implements Serializable {
 		return Optional.ofNullable(_bounds);
 	}
 
+	/**
+	 * Return {@code true} if all metadata properties are {@code null} or empty.
+	 *
+	 * @return {@code true} if all metadata properties are {@code null} or empty
+	 */
+	public boolean isEmpty() {
+		return _name == null &&
+			_description == null &&
+			_author == null &&
+			_copyright == null &&
+			_links.isEmpty() &&
+			_time == null &&
+			_keywords == null &&
+			_bounds == null;
+	}
 
 	@Override
 	public int hashCode() {
