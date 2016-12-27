@@ -21,21 +21,27 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Stream;
+import java.util.function.Supplier;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import io.jenetics.jpx.geom.Geoid;
+import io.jenetics.jpx.Length.Unit;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class GPXTest extends XMLStreamTestBase<GPX> {
+
+	@Override
+	public Supplier<GPX> factory(Random random) {
+		return () -> nextGPX(random);
+	}
 
 	@Override
 	protected Params<GPX> params(final Random random) {
@@ -58,7 +64,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
-	public void loadFromFile() throws IOException {
+	public void loadFullSampleFile() throws IOException {
 		final String rsc = "/io/jenetics/jpx/Gpx-full-sample.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(rsc)) {
@@ -70,70 +76,68 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.flatMap(TrackSegment::points)
 			.count();
 		Assert.assertEquals(length, 2747);
+
+		final WayPoint point = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.findFirst()
+			.orElseThrow(NoSuchElementException::new);
+
+		Assert.assertEquals(
+			point.getLatitude(),
+			Latitude.ofDegrees(55.753572)
+		);
+		Assert.assertEquals(
+			point.getLongitude(),
+			Longitude.ofDegrees(37.808250)
+		);
+		Assert.assertEquals(
+			point.getElevation(),
+			Optional.of(Length.of(135, Unit.METER))
+		);
+		Assert.assertEquals(
+			point.getTime(),
+			Optional.of(ZonedDateTimeFormat.parse("2009-05-19T04:00:30Z"))
+		);
+		Assert.assertEquals(
+			point.getFix(),
+			Optional.of(Fix.DIM_2)
+		);
+		Assert.assertEquals(
+			point.getSat(),
+			Optional.of(UInt.of(3))
+		);
+		Assert.assertEquals(
+			point.getHdop(),
+			Optional.of(2.61)
+		);
+		Assert.assertEquals(
+			point.getVdop(),
+			Optional.of(1.0)
+		);
+		Assert.assertEquals(
+			point.getPdop(),
+			Optional.of(2.79)
+		);
 	}
 
 	@Test
-	public void usage() throws Exception {
-		final GPX gpx = GPX.builder()
-			.addRoute(route -> route
-				.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
-				.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161)))
-			.addTrack(track -> track
-				.addSegment(segment -> segment
-					.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
-					.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
-					.addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
-			.build();
-
-		GPX.write(gpx, "    ", System.out);
-
-
-		final GPX gpx2 = GPX.builder()
-			.metadata(m -> m.author("Franz Wilhelmstötter"))
-			.addWayPoint(p -> p.lat(23.6).lon(13.5).ele(50))
-			.addRoute(route -> route.name("route-1")
-				.addPoint(p -> p.lon(12).lat(32).ele(12))
-				.addPoint(p -> p.lon(12).lat(32).ele(13))
-				.addPoint(p -> p.lon(12).lat(32).ele(14))
-				.addPoint(p -> p.lon(12).lat(32).ele(15))
-				.addPoint(p -> p.lon(12).lat(32).ele(16)))
-			.addTrack(track -> track.name("track-1")
-				.addSegment(segment -> segment
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12)))
-				.addSegment(segment -> segment
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12))))
-			.addTrack(track -> track.name("track-2")
-				.addSegment(segment -> segment
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12)))
-				.addSegment(segment -> segment
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12))
-					.addPoint(p -> p.lon(12).lat(32).ele(12))))
-			.build();
-
-		try (FileOutputStream out = new FileOutputStream("/home/fwilhelm/gpx.xml")) {
-			GPX.write(gpx, out);
+	public void loadAustria() throws IOException {
+		final String rsc = "/io/jenetics/jpx/Austria.gpx";
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(rsc)) {
+			gpx = GPX.read(in);
 		}
 
-		GPX.write(gpx, "/home/fwilhelm/gpx.xml");
-		GPX gpx3 = GPX.read("/home/fwilhelm/gpx.xml");
-		final Length length = gpx3.tracks()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points)
-			.collect(Geoid.WGSC_84.toPathLength());
+		Assert.assertEquals(
+			gpx.getCreator(),
+			"Jenetics TSP"
+		);
 
-		gpx3.tracks()
-			.flatMap(Track::segments)
-			.findFirst()
-			.map(TrackSegment::points).orElse(Stream.empty())
-			.collect(Geoid.WGSC_84.toPathLength());
-
+		Assert.assertEquals(
+			gpx.getWayPoints().size(),
+			82
+		);
 	}
 
 }

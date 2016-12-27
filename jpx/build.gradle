@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-	testCompile 'org.testng:testng:6.9.10'
+	testCompile 'org.testng:testng:6.10'
 }
 
 javadoc {
@@ -62,7 +62,7 @@ javadoc {
 	doLast {
 		project.copy {
 			from('src/main/java') {
-				include 'org/**/doc-files/*.*'
+				include 'io/**/doc-files/*.*'
 			}
 			includeEmptyDirs = false
 			into destinationDir.path
@@ -114,14 +114,22 @@ afterEvaluate { project ->
 
 				repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2/') {
 					authentication(
-						userName: project.property('nexus_username'),
-						password: project.property('nexus_password')
+						userName: project.hasProperty('nexus_username')
+							? project.property('nexus_username')
+							: 'nexus_username',
+						password: project.hasProperty('nexus_password')
+							? project.property('nexus_password')
+							: 'nexus_password'
 					)
 				}
 				snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots/') {
 					authentication(
-						userName: project.property('nexus_username'),
-						password: project.property('nexus_password')
+						userName: project.hasProperty('nexus_username')
+							? project.property('nexus_username')
+							: 'nexus_username',
+						password: project.hasProperty('nexus_password')
+							? project.property('nexus_password')
+							: 'nexus_password'
 					)
 				}
 

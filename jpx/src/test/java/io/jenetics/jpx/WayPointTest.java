@@ -20,20 +20,30 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.time.Instant.ofEpochMilli;
+import static java.time.ZoneOffset.UTC;
+import static java.time.ZonedDateTime.ofInstant;
 
 import java.time.Duration;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
+
+import io.jenetics.jpx.Length.Unit;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
 @Test
 public class WayPointTest extends XMLStreamTestBase<WayPoint> {
+
+	@Override
+	public Supplier<WayPoint> factory(Random random) {
+		return () -> nextWayPoint(random);
+	}
 
 	@Override
 	protected Params<WayPoint> params(final Random random) {
@@ -46,11 +56,13 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 	public static WayPoint nextWayPoint(final Random random) {
 		return WayPoint.builder()
-			.ele(random.nextBoolean() ? Length.ofMeters(random.nextInt(1000)) : null)
-			.speed(random.nextBoolean() ? Speed.of(random.nextDouble()*100) : null)
-			.time(random.nextBoolean() ? ZonedDateTime.now() : null)
+			.ele(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
+			.speed(random.nextBoolean() ? Speed.of(random.nextDouble()*100, Speed.Unit.METERS_PER_SECOND) : null)
+			.time(random.nextBoolean()
+				? ofInstant(ofEpochMilli(random.nextInt(10000)), UTC)
+				: null)
 			.magvar(random.nextBoolean() ? Degrees.ofDegrees(random.nextDouble()*10) : null)
-			.geoidheight(random.nextBoolean() ? Length.ofMeters(random.nextInt(1000)) : null)
+			.geoidheight(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
 			.name(random.nextBoolean() ? format("name_%s", random.nextInt(100)) : null)
 			.cmt(random.nextBoolean() ? format("comment_%s", random.nextInt(100)) : null)
 			.desc(random.nextBoolean() ? format("description_%s", random.nextInt(100)) : null)

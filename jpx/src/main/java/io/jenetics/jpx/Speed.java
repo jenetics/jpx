@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 
@@ -30,11 +31,73 @@ import java.io.Serializable;
  * @version 1.0
  * @since 1.0
  */
-public final class Speed extends Number implements Serializable {
+public final class Speed
+	extends Number
+	implements
+		Comparable<Speed>,
+		Serializable
+{
 
 	private static final long serialVersionUID = 1L;
 
-	private static final double MPS_TO_KMH_FACTOR = 3.6;
+	/**
+	 * Represents a given speed unit.
+	 */
+	public static enum Unit {
+
+		/**
+		 * Represents the speed unit <em>meters per second</em>: <b>m/s</b>.
+		 */
+		METERS_PER_SECOND(1.0),
+
+		/**
+		 * Represents the speed unit <em>kilometers per hour</em>: <b>km/h</b>.
+		 */
+		KILOMETERS_PER_HOUR(5.0/18.0),
+
+		/**
+		 * Represents the speed unit <em>miles per hour</em>: <b>mi/h</b>.
+		 */
+		MILES_PER_HOUR(1_397.0/3_125.0),
+
+		/**
+		 * Represents the speed unit <em>knots</em>: <b>kt</b>.
+		 */
+		KNOTS(463.0/900.0),
+
+		/**
+		 * Represents the speed unit <em>mach</em>: <b>Ma</b>.
+		 */
+		MACH(331.3);
+
+		// The conversion factor to the base unit m/s.
+		private final double _factor;
+
+		private Unit(final double factor) {
+			_factor = factor;
+		}
+
+		/**
+		 * Convert the given speed value of the given {@code sourceUnit} into a
+		 * speed value of {@code this} speed unit. The given example converts 3
+		 * knots into kilometers per hour.
+		 *
+		 * <pre>{@code
+		 * final double kilometersPerHour = KILOMETERS_PER_HOUR.convert(3, KNOTS);
+		 * }</pre>
+		 *
+		 * @param speed the speed value
+		 * @param sourceUnit the source speed unit
+		 * @return the speed value of {@code this} speed unit
+		 */
+		public double convert(final double speed, final Unit sourceUnit) {
+			requireNonNull(sourceUnit);
+			final double metersPerSecond = speed*sourceUnit._factor;
+			return metersPerSecond/_factor;
+		}
+
+	}
+
 
 	private final double _value;
 
@@ -58,12 +121,16 @@ public final class Speed extends Number implements Serializable {
 	}
 
 	/**
-	 * Return the GPS speed value in km/h.
+	 * Return the GPS speed value in the desired unit.
 	 *
-	 * @return the GPS speed value in km/h
+	 * @param unit the speed unit
+	 * @return the GPS speed value in the desired unit
+	 * @throws NullPointerException if the given speed {@code unit} is
+	 *         {@code null}
 	 */
-	public double toKmH() {
-		return _value*MPS_TO_KMH_FACTOR;
+	public double to(final Unit unit) {
+		requireNonNull(unit);
+		return unit.convert(_value, Unit.METERS_PER_SECOND);
 	}
 
 	@Override
@@ -79,6 +146,11 @@ public final class Speed extends Number implements Serializable {
 	@Override
 	public float floatValue() {
 		return (float)doubleValue();
+	}
+
+	@Override
+	public int compareTo(final Speed speed) {
+		return Double.compare(_value, speed._value);
 	}
 
 	@Override
@@ -103,23 +175,17 @@ public final class Speed extends Number implements Serializable {
 	 * ************************************************************************/
 
 	/**
-	 * Create a new GPS {@code Speed} object in m/s.
+	 * Create a new GPS {@code Speed} object.
 	 *
-	 * @param meterPerSecond the GPS speed value in m/s.
+	 * @param speed the GPS speed value
+	 * @param unit the speed unit
 	 * @return a new GPS {@code Speed} object
+	 * @throws NullPointerException if the given speed {@code unit} is
+	 *         {@code null}
 	 */
-	public static Speed of(final double meterPerSecond) {
-		return new Speed(meterPerSecond);
-	}
-
-	/**
-	 * Create a new GPS {@code Speed} object in km/h.
-	 *
-	 * @param kilometerPerHour the GPS speed value in km/h.
-	 * @return a new GPS {@code Speed} object
-	 */
-	public static Speed ofKmH(final double kilometerPerHour) {
-		return new Speed(kilometerPerHour/MPS_TO_KMH_FACTOR);
+	public static Speed of(final double speed, final Unit unit) {
+		requireNonNull(unit);
+		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
 
 	/**
@@ -132,9 +198,10 @@ public final class Speed extends Number implements Serializable {
 		return object instanceof Speed
 			? (Speed)object
 			: object instanceof Number
-				? of(((Number) object).doubleValue())
+				? of(((Number)object).doubleValue(), Unit.METERS_PER_SECOND)
 				: object != null
-					? of(Double.parseDouble(object.toString()))
+					? of(Double.parseDouble(object.toString()),
+							Unit.METERS_PER_SECOND)
 					: null;
 	}
 

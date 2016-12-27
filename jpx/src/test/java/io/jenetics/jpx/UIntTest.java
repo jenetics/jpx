@@ -26,33 +26,13 @@ import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version 1.0
- * @since 1.0
  */
 @Test
-public class BoundsTest extends XMLStreamTestBase<Bounds> {
+public class UIntTest extends ObjectTester<UInt> {
 
 	@Override
-	public Supplier<Bounds> factory(Random random) {
-		return () -> nextBounds(random);
-	}
-
-	@Override
-	protected Params<Bounds> params(final Random random) {
-		return new Params<>(
-			() -> nextBounds(random),
-			Bounds.reader(),
-			Bounds::write
-		);
-	}
-
-	public static Bounds nextBounds(final Random random) {
-		return Bounds.of(
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90)),
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90))
-		);
+	Supplier<UInt> factory(final Random random) {
+		return () -> UInt.of(Math.abs(random.nextInt()));
 	}
 
 }

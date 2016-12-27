@@ -32,6 +32,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.stream.Collector;
 
 import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Length.Unit;
 import io.jenetics.jpx.Point;
 
 /**
@@ -52,7 +53,7 @@ public final class Geoid {
 	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
 	 *     WGS-84</a>
 	 */
-	public static final Geoid WGSC_84 = of(Ellipsoid.WGSC_84);
+	public static final Geoid WGS84 = of(Ellipsoid.WGS84);
 
 	/**
 	 * {@link Geoid} using the <em>International Earth Rotation and Reference
@@ -232,7 +233,7 @@ public final class Geoid {
 		// Eq. 19
 		final double s = B*a*(sigma - deltasigma);
 
-		return Length.ofMeters(s);
+		return Length.of(s, Unit.METER);
 	}
 
 	/**

@@ -24,6 +24,7 @@ import static java.lang.String.format;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
@@ -31,7 +32,14 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 @Test
-public class LinkTest extends XMLStreamTestBase<Link> {
+public class LinkTest
+	extends XMLStreamTestBase<Link>
+{
+
+	@Override
+	public Supplier<Link> factory(Random random) {
+		return () -> nextLink(random);
+	}
 
 	@Override
 	protected Params<Link> params(final Random random) {

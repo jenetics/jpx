@@ -66,7 +66,10 @@ public interface Point {
 	}
 
 	/**
-	 * Calculate the distance between points on an ellipsoidal earth model.
+	 * Calculate the distance between points on the default ellipsoidal earth
+	 * model
+	 * <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
+	 * WGS-84</a>.
 	 *
 	 * @see <a href="http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf">DIRECT AND
 	 *               INVERSE SOLUTIONS OF GEODESICS 0 THE ELLIPSOID

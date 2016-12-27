@@ -195,6 +195,21 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		return _segments.iterator();
 	}
 
+	/**
+	 * Return {@code true} if all track properties are {@code null} or empty.
+	 *
+	 * @return {@code true} if all track properties are {@code null} or empty
+	 */
+	public boolean isEmpty() {
+		return _name == null &&
+			_comment == null &&
+			_description == null &&
+			_source == null &&
+			_links.isEmpty() &&
+			_number == null &&
+			(_segments.isEmpty() ||
+				_segments.stream().allMatch(TrackSegment::isEmpty));
+	}
 
 	@Override
 	public int hashCode() {

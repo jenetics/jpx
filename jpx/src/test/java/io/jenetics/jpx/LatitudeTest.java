@@ -22,36 +22,43 @@ package io.jenetics.jpx;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version 1.0
- * @since 1.0
  */
 @Test
-public class BoundsTest extends XMLStreamTestBase<Bounds> {
+public class LatitudeTest extends ObjectTester<Latitude> {
 
 	@Override
-	public Supplier<Bounds> factory(Random random) {
-		return () -> nextBounds(random);
+	Supplier<Latitude> factory(final Random random) {
+		return () -> Latitude.ofRadians(random.nextDouble());
 	}
 
-	@Override
-	protected Params<Bounds> params(final Random random) {
-		return new Params<>(
-			() -> nextBounds(random),
-			Bounds.reader(),
-			Bounds::write
+	@Test
+	public void ofRadians() {
+		Assert.assertEquals(
+			Latitude.ofRadians(1),
+			Latitude.ofDegrees(Math.toDegrees(1))
+		);
+
+		Assert.assertEquals(
+			Latitude.ofRadians(1).toRadians(),
+			Latitude.ofDegrees(Math.toDegrees(1)).toRadians()
 		);
 	}
 
-	public static Bounds nextBounds(final Random random) {
-		return Bounds.of(
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90)),
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90))
+	@Test
+	public void ofDegrees() {
+		Assert.assertEquals(
+			Latitude.ofDegrees(1),
+			Latitude.ofRadians(Math.toRadians(1))
+		);
+
+		Assert.assertEquals(
+			Latitude.ofDegrees(1).toDegrees(),
+			Latitude.ofRadians(Math.toRadians(1)).toDegrees()
 		);
 	}
 
