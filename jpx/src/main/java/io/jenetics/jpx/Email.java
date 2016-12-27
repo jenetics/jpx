@@ -37,7 +37,7 @@ import javax.xml.stream.XMLStreamWriter;
  * @version 1.0
  * @since 1.0
  */
-public final class Email implements Serializable {
+public final class Email implements Comparable<Email>, Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -73,6 +73,16 @@ public final class Email implements Serializable {
 	 */
 	public String getDomain() {
 		return _domain;
+	}
+
+	@Override
+	public int compareTo(final Email other) {
+		int cmp = _domain.compareTo(other._domain);
+		if (cmp == 0) {
+			cmp = _id.compareTo(other._id);
+		}
+
+		return cmp;
 	}
 
 	@Override
