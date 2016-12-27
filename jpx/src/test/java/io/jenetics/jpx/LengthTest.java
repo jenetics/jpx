@@ -25,6 +25,8 @@ import java.util.function.Supplier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.Length.Unit;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
@@ -33,32 +35,32 @@ public class LengthTest extends ObjectTester<Length> {
 
 	@Override
 	Supplier<Length> factory(final Random random) {
-		return () -> Length.ofMeters(random.nextInt(12)*random.nextDouble());
+		return () -> Length.of(random.nextInt(12)*random.nextDouble(),Unit.METER);
 	}
 
 	@Test
 	public void ofMeters() {
 		Assert.assertEquals(
-			Length.ofMeters(123),
-			Length.ofKilometers(0.123)
+			Length.of(123, Unit.METER),
+			Length.of(0.123, Unit.KILOMETER)
 		);
 
 		Assert.assertEquals(
-			Length.ofMeters(123).toMeters(),
-			Length.ofKilometers(0.123).toMeters()
+			Length.of(123, Unit.METER).to(Unit.METER),
+			Length.of(0.123, Unit.KILOMETER).to(Unit.METER)
 		);
 	}
 
 	@Test
 	public void ofKiloMeters() {
 		Assert.assertEquals(
-			Length.ofKilometers(0.123),
-			Length.ofMeters(123)
+			Length.of(0.123, Unit.KILOMETER),
+			Length.of(123, Unit.METER)
 		);
 
 		Assert.assertEquals(
-			Length.ofKilometers(0.123).toKilometer(),
-			Length.ofMeters(123).toKilometer()
+			Length.of(0.123, Unit.KILOMETER).to(Unit.KILOMETER),
+			Length.of(123, Unit.METER).to(Unit.KILOMETER)
 		);
 	}
 

@@ -120,8 +120,11 @@ public final class Speed extends Number implements Serializable {
 	 *
 	 * @param unit the speed unit
 	 * @return the GPS speed value in the desired unit
+	 * @throws NullPointerException if the given speed {@code unit} is
+	 *         {@code null}
 	 */
 	public double to(final Unit unit) {
+		requireNonNull(unit);
 		return unit.convert(_value, Unit.METERS_PER_SECOND);
 	}
 
@@ -167,8 +170,11 @@ public final class Speed extends Number implements Serializable {
 	 * @param speed the GPS speed value
 	 * @param unit the speed unit
 	 * @return a new GPS {@code Speed} object
+	 * @throws NullPointerException if the given speed {@code unit} is
+	 *         {@code null}
 	 */
 	public static Speed of(final double speed, final Unit unit) {
+		requireNonNull(unit);
 		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
 

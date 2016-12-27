@@ -32,6 +32,8 @@ import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.Length.Unit;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
@@ -54,13 +56,13 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 	public static WayPoint nextWayPoint(final Random random) {
 		return WayPoint.builder()
-			.ele(random.nextBoolean() ? Length.ofMeters(random.nextInt(1000)) : null)
+			.ele(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
 			.speed(random.nextBoolean() ? Speed.of(random.nextDouble()*100, Speed.Unit.METERS_PER_SECOND) : null)
 			.time(random.nextBoolean()
 				? ofInstant(ofEpochMilli(random.nextInt(10000)), UTC)
 				: null)
 			.magvar(random.nextBoolean() ? Degrees.ofDegrees(random.nextDouble()*10) : null)
-			.geoidheight(random.nextBoolean() ? Length.ofMeters(random.nextInt(1000)) : null)
+			.geoidheight(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
 			.name(random.nextBoolean() ? format("name_%s", random.nextInt(100)) : null)
 			.cmt(random.nextBoolean() ? format("comment_%s", random.nextInt(100)) : null)
 			.desc(random.nextBoolean() ? format("description_%s", random.nextInt(100)) : null)

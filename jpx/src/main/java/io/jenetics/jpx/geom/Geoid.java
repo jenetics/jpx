@@ -32,6 +32,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.stream.Collector;
 
 import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Length.Unit;
 import io.jenetics.jpx.Point;
 
 /**
@@ -232,7 +233,7 @@ public final class Geoid {
 		// Eq. 19
 		final double s = B*a*(sigma - deltasigma);
 
-		return Length.ofMeters(s);
+		return Length.of(s, Unit.METER);
 	}
 
 	/**

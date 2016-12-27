@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 import java.io.Serializable;
 
@@ -35,6 +36,62 @@ import java.io.Serializable;
 public final class Length extends Number implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+
+	/**
+	 * Represents a given length unit.
+	 */
+	public static enum Unit {
+
+		/**
+		 * Represents a meter.
+		 */
+		METER(1.0),
+
+		/**
+		 * Represents a kilometer.
+		 */
+		KILOMETER(1_000.0),
+
+		/**
+		 * Represents an inch.
+		 */
+		INCH(127.0/5_000.0),
+
+		/**
+		 * Represents a yard.
+		 */
+		YARD(1_143.0/1_250.0),
+
+		/**
+		 * Represents a mile.
+		 */
+		MILE(201_168.0/125.0);
+
+		public final double _factor;
+
+		private Unit(final double factor) {
+			_factor = factor;
+		}
+
+		/**
+		 * Convert the given length value of the given {@code sourceUnit} into a
+		 * length value of {@code this} length unit. The given example converts 3
+		 * inches into yards.
+		 *
+		 * <pre>{@code
+		 * final double yards = YARD.convert(3, INCH);
+		 * }</pre>
+		 *
+		 * @param length the length value
+		 * @param sourceUnit the source length unit
+		 * @return the speed value of {@code this} length unit
+		 */
+		public double convert(final double length, final Unit sourceUnit) {
+			requireNonNull(sourceUnit);
+			final double meters = length*sourceUnit._factor;
+			return meters/_factor;
+		}
+	}
 
 	private final double _value;
 
@@ -58,21 +115,15 @@ public final class Length extends Number implements Serializable {
 	}
 
 	/**
-	 * Return the length in meter.
+	 * Return the length in the desired unit.
 	 *
-	 * @return the length in meter
+	 * @param unit the desired length unit
+	 * @return the length in the desired unit
+	 * @throws NullPointerException if the given length {@code unit} is
+	 *         {@code null}
 	 */
-	public double toMeters() {
-		return _value;
-	}
-
-	/**
-	 * Return the length in kilometers.
-	 *
-	 * @return the length in kilometers
-	 */
-	public double toKilometer() {
-		return _value/1000.0;
+	public double to(final Unit unit) {
+		return unit.convert(_value, Unit.METER);
 	}
 
 	@Override
@@ -112,23 +163,17 @@ public final class Length extends Number implements Serializable {
 	 * ************************************************************************/
 
 	/**
-	 * Create a new {@code Length} object with the given value in meters.
+	 * Create a new {@code Length} object with the given length.
 	 *
-	 * @param meters the length in meters
-	 * @return a new {@code Length} object with the given value in meters.
+	 * @param length the length
+	 * @param unit the length unit
+	 * @return a new {@code Length} object with the given length.
+	 * @throws NullPointerException if the given length {@code unit} is
+	 *         {@code null}
 	 */
-	public static Length ofMeters(final double meters) {
-		return new Length(meters);
-	}
-
-	/**
-	 * Create a new {@code Length} object with the given value in km.
-	 *
-	 * @param km the length in kilometers
-	 * @return a new {@code Length} object with the given value in kilometers.
-	 */
-	public static Length ofKilometers(final double km) {
-		return new Length(km*1000);
+	public static Length of(final double length, final Unit unit) {
+		requireNonNull(unit);
+		return new Length(Unit.METER.convert(length, unit));
 	}
 
 	/**
@@ -141,9 +186,9 @@ public final class Length extends Number implements Serializable {
 		return object instanceof Length
 			? (Length)object
 			: object instanceof Number
-				? ofMeters(((Number) object).doubleValue())
+				? of(((Number)object).doubleValue(), Unit.METER)
 				: object != null
-					? ofMeters(Double.parseDouble(object.toString()))
+					? of(Double.parseDouble(object.toString()), Unit.METER)
 					: null;
 	}
 
