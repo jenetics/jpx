@@ -64,7 +64,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
-	public void loadFromFile() throws IOException {
+	public void loadFullSampleFile() throws IOException {
 		final String rsc = "/io/jenetics/jpx/Gpx-full-sample.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(rsc)) {
@@ -118,6 +118,25 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		Assert.assertEquals(
 			point.getPdop(),
 			Optional.of(2.79)
+		);
+	}
+
+	@Test
+	public void loadAustria() throws IOException {
+		final String rsc = "/io/jenetics/jpx/Austria.gpx";
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(rsc)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertEquals(
+			gpx.getCreator(),
+			"Jenetics TSP"
+		);
+
+		Assert.assertEquals(
+			gpx.getWayPoints().size(),
+			82
 		);
 	}
 
