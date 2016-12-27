@@ -75,6 +75,15 @@ public final class Email implements Comparable<Email>, Serializable {
 		return _domain;
 	}
 
+	/**
+	 * Return the full EMail address: id + "@" + domain.
+	 *
+	 * @return the full EMail address: id + "@" + domain
+	 */
+	public String getAddress() {
+		return _id + "@" + _domain;
+	}
+
 	@Override
 	public int compareTo(final Email other) {
 		int cmp = _domain.compareTo(other._domain);
@@ -102,7 +111,7 @@ public final class Email implements Comparable<Email>, Serializable {
 
 	@Override
 	public String toString() {
-		return _id + "@" + _domain;
+		return getAddress();
 	}
 
 
