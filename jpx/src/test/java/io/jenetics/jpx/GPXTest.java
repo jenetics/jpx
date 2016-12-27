@@ -23,11 +23,15 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import io.jenetics.jpx.Length.Unit;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -72,6 +76,49 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.flatMap(TrackSegment::points)
 			.count();
 		Assert.assertEquals(length, 2747);
+
+		final WayPoint point = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.findFirst()
+			.orElseThrow(NoSuchElementException::new);
+
+		Assert.assertEquals(
+			point.getLatitude(),
+			Latitude.ofDegrees(55.753572)
+		);
+		Assert.assertEquals(
+			point.getLongitude(),
+			Longitude.ofDegrees(37.808250)
+		);
+		Assert.assertEquals(
+			point.getElevation(),
+			Optional.of(Length.of(135, Unit.METER))
+		);
+		Assert.assertEquals(
+			point.getTime(),
+			Optional.of(ZonedDateTimeFormat.parse("2009-05-19T04:00:30Z"))
+		);
+		Assert.assertEquals(
+			point.getFix(),
+			Optional.of(Fix.DIM_2)
+		);
+		Assert.assertEquals(
+			point.getSat(),
+			Optional.of(UInt.of(3))
+		);
+		Assert.assertEquals(
+			point.getHdop(),
+			Optional.of(2.61)
+		);
+		Assert.assertEquals(
+			point.getVdop(),
+			Optional.of(1.0)
+		);
+		Assert.assertEquals(
+			point.getPdop(),
+			Optional.of(2.79)
+		);
 	}
 
 }
