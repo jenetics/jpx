@@ -53,7 +53,7 @@ public final class Geoid {
 	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
 	 *     WGS-84</a>
 	 */
-	public static final Geoid WGSC84 = of(Ellipsoid.WGSC84);
+	public static final Geoid WGS84 = of(Ellipsoid.WGS84);
 
 	/**
 	 * {@link Geoid} using the <em>International Earth Rotation and Reference
