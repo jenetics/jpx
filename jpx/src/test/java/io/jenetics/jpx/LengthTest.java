@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
+ *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx;
 
@@ -23,6 +23,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Length.Unit;
@@ -62,6 +63,23 @@ public class LengthTest extends ObjectTester<Length> {
 			Length.of(0.123, Unit.KILOMETER).to(Unit.KILOMETER),
 			Length.of(123, Unit.METER).to(Unit.KILOMETER)
 		);
+	}
+
+	@Test(dataProvider = "toConversions")
+	public void toMeter(final Unit unit, final double value) {
+		final Length length = Length.of(1, unit);
+		Assert.assertEquals(value, length.to(Unit.METER));
+	}
+
+	@DataProvider(name = "toConversions")
+	public Object[][] toConversions() {
+		return new Object[][] {
+			{Unit.METER, 1},
+			{Unit.KILOMETER, 1000},
+			{Unit.INCH, 0.0254},
+			{Unit.MILE, 1_609.344},
+			{Unit.YARD, 0.9144}
+		};
 	}
 
 }
