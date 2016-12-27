@@ -23,6 +23,7 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Speed.Unit;
@@ -59,6 +60,23 @@ public class SpeedTest extends ObjectTester<Speed> {
 			0.44704,
 			Unit.METERS_PER_SECOND.convert(1, Unit.MILES_PER_HOUR)
 		);
+	}
+
+	@Test(dataProvider = "toConversions")
+	public void toMetersPerSecond(final Speed.Unit unit, final double value) {
+		final Speed speed = Speed.of(1, unit);
+		Assert.assertEquals(value, speed.to(Unit.METERS_PER_SECOND));
+	}
+
+	@DataProvider(name = "toConversions")
+	public Object[][] toConversions() {
+		return new Object[][] {
+			{Unit.METERS_PER_SECOND, 1},
+			{Unit.KILOMETERS_PER_HOUR, 0.2777777777777778},
+			{Unit.KNOTS, 0.5144444444444445},
+			{Unit.MILES_PER_HOUR, 0.44704},
+			{Unit.MACH, 331.3}
+		};
 	}
 
 }

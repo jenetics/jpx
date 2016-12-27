@@ -65,10 +65,11 @@ public final class Speed extends Number implements Serializable {
 		 */
 		MACH(331.3);
 
-		private final double _toMetersPerSecond;
+		// The conversion factor to the base unit m/s.
+		private final double _factor;
 
 		private Unit(final double factor) {
-			_toMetersPerSecond = factor;
+			_factor = factor;
 		}
 
 		/**
@@ -86,8 +87,8 @@ public final class Speed extends Number implements Serializable {
 		 */
 		public double convert(final double speed, final Unit sourceUnit) {
 			requireNonNull(sourceUnit);
-			final double metersPerSecond = speed*sourceUnit._toMetersPerSecond;
-			return metersPerSecond/_toMetersPerSecond;
+			final double metersPerSecond = speed*sourceUnit._factor;
+			return metersPerSecond/_factor;
 		}
 
 	}
@@ -121,7 +122,7 @@ public final class Speed extends Number implements Serializable {
 	 * @return the GPS speed value in the desired unit
 	 */
 	public double to(final Unit unit) {
-		return Unit.METERS_PER_SECOND.convert(_value, unit);
+		return unit.convert(_value, Unit.METERS_PER_SECOND);
 	}
 
 	@Override
@@ -168,7 +169,7 @@ public final class Speed extends Number implements Serializable {
 	 * @return a new GPS {@code Speed} object
 	 */
 	public static Speed of(final double speed, final Unit unit) {
-		return new Speed(unit.convert(speed, Unit.METERS_PER_SECOND));
+		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
 
 	/**
