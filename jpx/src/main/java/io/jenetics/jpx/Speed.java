@@ -31,7 +31,12 @@ import java.io.Serializable;
  * @version 1.0
  * @since 1.0
  */
-public final class Speed extends Number implements Serializable {
+public final class Speed
+	extends Number
+	implements
+		Comparable<Speed>,
+		Serializable
+{
 
 	private static final long serialVersionUID = 1L;
 
@@ -141,6 +146,11 @@ public final class Speed extends Number implements Serializable {
 	@Override
 	public float floatValue() {
 		return (float)doubleValue();
+	}
+
+	@Override
+	public int compareTo(final Speed speed) {
+		return Double.compare(_value, speed._value);
 	}
 
 	@Override
