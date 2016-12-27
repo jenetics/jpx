@@ -557,7 +557,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			xml.elem("cmt", _comment),
 			xml.elem("desc", _description),
 			xml.elem("src", _source),
-			xml.elems(_links,Link::write),
+			xml.elems(_links, Link::write),
 			xml.elem("number", _number),
 			xml.elem("type", _type),
 			xml.elems(_points, (p, w) -> p.write("rtept", w))
