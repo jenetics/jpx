@@ -67,7 +67,7 @@ public final class Length extends Number implements Serializable {
 		 */
 		MILE(201_168.0/125.0);
 
-		public final double _factor;
+		private final double _factor;
 
 		private Unit(final double factor) {
 			_factor = factor;
