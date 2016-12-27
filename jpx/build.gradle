@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-	testCompile 'org.testng:testng:6.9.10'
+	testCompile 'org.testng:testng:6.10'
 }
 
 javadoc {
