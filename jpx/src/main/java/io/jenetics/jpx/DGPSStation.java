@@ -33,7 +33,12 @@ import java.io.Serializable;
  * @version 1.0
  * @since 1.0
  */
-public final class DGPSStation extends Number implements Serializable {
+public final class DGPSStation
+	extends Number
+	implements
+		Comparable<DGPSStation>,
+		Serializable
+{
 
 	private static final long serialVersionUID = 1L;
 
@@ -78,6 +83,11 @@ public final class DGPSStation extends Number implements Serializable {
 	@Override
 	public float floatValue() {
 		return (float)_value;
+	}
+
+	@Override
+	public int compareTo(final DGPSStation other) {
+		return Integer.compare(_value, other._value);
 	}
 
 	@Override
