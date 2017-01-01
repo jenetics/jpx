@@ -23,12 +23,14 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Length.Unit;
@@ -61,6 +63,26 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
 			random.nextBoolean() ? TrackTest.nextTracks(random) : null
 		);
+	}
+
+	@Test(dataProvider = "emptyElementsFiles")
+	public void emptyElements(final String resource, final GPX expected)
+		throws IOException
+	{
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			final GPX gpx = GPX.read(in);
+			Assert.assertEquals(gpx, expected);
+		}
+	}
+
+	@DataProvider(name = "emptyElementsFiles")
+	public Object[][] emptyElementsFiles() {
+		return new Object[][] {
+			{
+				"/io/jenetics/jpx/empty-gpx.xml",
+				GPX.builder("JPX").build()
+			}
+		};
 	}
 
 	@Test
