@@ -43,7 +43,11 @@ public final class LinkDAO extends DAO {
 		super(connection);
 	}
 
-	private final static RowParser<Stored<Link>> RowParser = rs -> Stored.of(
+	/**
+	 * The link row parser which creates a {@link Link} object from a given DB
+	 * row.
+	 */
+	private static final RowParser<Stored<Link>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
 		Link.of(
 			rs.getString("href"),
@@ -85,6 +89,13 @@ public final class LinkDAO extends DAO {
 		return insert(singletonList(link)).get(0);
 	}
 
+	/**
+	 * Updates the given list of already inserted link objects.
+	 *
+	 * @param links the links to update
+	 * @return the updated links
+	 * @throws SQLException if the update fails
+	 */
 	public List<Stored<Link>> update(final List<Stored<Link>> links)
 		throws SQLException
 	{
@@ -100,6 +111,13 @@ public final class LinkDAO extends DAO {
 		return links;
 	}
 
+	/**
+	 * Update the given link.
+	 *
+	 * @param link the link to update
+	 * @return the updated link
+	 * @throws SQLException if the update fails
+	 */
 	public Stored<Link> update(final Stored<Link> link) throws SQLException {
 		return update(singletonList(link)).get(0);
 	}

@@ -48,7 +48,6 @@ public class PersonDAOTest {
 
 		db.transaction(conn -> {
 			for (String query : queries) {
-
 				try (Statement stmt = conn.createStatement()) {
 					stmt.execute(query);
 				}

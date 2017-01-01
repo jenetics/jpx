@@ -71,7 +71,7 @@ public final class PersonDAO extends DAO {
 
 		return batch(query).insert(persons, person -> Arrays.asList(
 			Param.value("name", person.getName()),
-			Param.value("email", person.getEmail().map(Email::toString)),
+			Param.value("email", person.getEmail().map(Email::getAddress)),
 			Param.insert("link_id", () -> insertOrUpdate(person.getLink()))
 		));
 	}
@@ -86,11 +86,11 @@ public final class PersonDAO extends DAO {
 	public List<Stored<Person>> select() throws SQLException {
 		final String query =
 			"SELECT id, " +
-			"name, " +
-			"email, " +
-			"link.href AS link_href, " +
-			"link.text AS link_text, " +
-			"link.type AS link_type " +
+				"name, " +
+				"email, " +
+				"link.href AS link_href, " +
+				"link.text AS link_text, " +
+				"link.type AS link_type " +
 			"FROM person " +
 			"INNER JOIN link ON (person.link_id = link.id)";
 
