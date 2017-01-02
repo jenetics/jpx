@@ -355,4 +355,26 @@ final class Parsers {
 				"Invalid value for '%s': %s.", property, value)))
 			: null;
 	}
+
+	/**
+	 * Try to parse the given object into a {@code Latitude} object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value or the object is {@code null}
+	 */
+	static Latitude toLatitude(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final double value = toMandatoryDouble(object, property);
+		if (value < -90 || value > 90) {
+			throw new XMLStreamException(format(
+				"%f is not in range [-90, 90] for '%s'.", value, property
+			));
+		}
+
+		return Latitude.ofDegrees(value);
+	}
 }

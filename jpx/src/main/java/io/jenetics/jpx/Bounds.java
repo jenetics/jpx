@@ -205,9 +205,9 @@ public final class Bounds implements Serializable {
 
 	static XMLReader<Bounds> reader() {
 		final XML.Function<Object[], Bounds> creator = a -> Bounds.of(
-			Latitude.parse(a[0], "Bounds.minlat"),
+			Parsers.toLatitude(a[0], "Bounds.minlat"),
 			Longitude.parse(a[1], "Bounds.minlon"),
-			Latitude.parse(a[2], "Bounds.maxlat"),
+			Parsers.toLatitude(a[2], "Bounds.maxlat"),
 			Longitude.parse(a[3], "Bounds.maxlon")
 		);
 
