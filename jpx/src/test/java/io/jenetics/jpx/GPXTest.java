@@ -116,6 +116,20 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		};
 	}
 
+	@Test(dataProvider = "invalidGPXFiles", expectedExceptions = {IOException.class})
+	public void invalidGPX(final String resource) throws IOException {
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			GPX.read(in);
+		}
+	}
+
+	@DataProvider(name = "invalidGPXFiles")
+	public Object[][] invalidGPXFiles() {
+		return new Object[][] {
+			{"/io/jenetics/jpx/empty-waypoint.xml"}
+		};
+	}
+
 	@Test
 	public void loadFullSampleFile() throws IOException, XMLStreamException {
 		final String rsc = "/io/jenetics/jpx/Gpx-full-sample.gpx";
