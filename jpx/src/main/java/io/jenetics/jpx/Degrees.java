@@ -20,11 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static io.jenetics.jpx.Parsers.toDouble;
 
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * Used for bearing, heading, course. Base unit is decimal degree. Only values
