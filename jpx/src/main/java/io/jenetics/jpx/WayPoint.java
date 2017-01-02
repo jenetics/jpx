@@ -28,7 +28,9 @@ import static io.jenetics.jpx.Parsers.toDegrees;
 import static io.jenetics.jpx.Parsers.toDouble;
 import static io.jenetics.jpx.Parsers.toDuration;
 import static io.jenetics.jpx.Parsers.toFix;
+import static io.jenetics.jpx.Parsers.toLatitude;
 import static io.jenetics.jpx.Parsers.toLength;
+import static io.jenetics.jpx.Parsers.toLongitude;
 import static io.jenetics.jpx.Parsers.toMandatoryDouble;
 import static io.jenetics.jpx.XMLReader.attr;
 
@@ -1327,8 +1329,8 @@ public final class WayPoint implements Point, Serializable {
 			.ageofdgpsdata(toDuration(a[19], "WayPoint.ageofdgpsdata"))
 			.dgpsid(toDGPSStation(a[20], "WayPoint.dgpsid"))
 			.build(
-				toMandatoryDouble(a[0], "WayPoint.lat"),
-				toMandatoryDouble(a[1], "WayPoint.lon"));
+				toLatitude(a[0], "WayPoint.lat"),
+				toLongitude(a[1], "WayPoint.lon"));
 
 		return XMLReader.of(create, name,
 			attr("lat"),

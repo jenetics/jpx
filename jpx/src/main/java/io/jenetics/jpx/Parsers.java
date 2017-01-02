@@ -395,4 +395,24 @@ final class Parsers {
 		final Double value = toDouble(object, property);
 		return value != null ? Length.of(value, Unit.METER) : null;
 	}
+
+	/**
+	 * Try to parse the given object into a {@code Longitude} object. If the
+	 * given {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object, or {@code null} if the argument is {@code null}
+	 */
+	static Longitude toLongitude(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final double value = toMandatoryDouble(object, property);
+		if (value < -180 || value > 180) {
+			throw new IllegalArgumentException(format(
+				"%f is not in range [-180, 180] for '%s'.", value, property
+			));
+		}
+
+		return Longitude.ofDegrees(value);
+	}
 }

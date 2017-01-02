@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Parsers.toLatitude;
+import static io.jenetics.jpx.Parsers.toLongitude;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -207,9 +208,9 @@ public final class Bounds implements Serializable {
 	static XMLReader<Bounds> reader() {
 		final XML.Function<Object[], Bounds> creator = a -> Bounds.of(
 			toLatitude(a[0], "Bounds.minlat"),
-			Longitude.parse(a[1], "Bounds.minlon"),
+			toLongitude(a[1], "Bounds.minlon"),
 			toLatitude(a[2], "Bounds.maxlat"),
-			Longitude.parse(a[3], "Bounds.maxlon")
+			toLongitude(a[3], "Bounds.maxlon")
 		);
 
 		return XMLReader.of(creator, "bounds",
