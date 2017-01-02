@@ -27,6 +27,7 @@ import static io.jenetics.jpx.Parsers.toDGPSStation;
 import static io.jenetics.jpx.Parsers.toDegrees;
 import static io.jenetics.jpx.Parsers.toDouble;
 import static io.jenetics.jpx.Parsers.toDuration;
+import static io.jenetics.jpx.Parsers.toFix;
 import static io.jenetics.jpx.Parsers.toMandatoryDouble;
 import static io.jenetics.jpx.XMLReader.attr;
 
@@ -803,7 +804,7 @@ public final class WayPoint implements Point, Serializable {
 		 */
 		public Builder fix(final String fix) {
 			try {
-				_fix = Fix.parse(fix, "WayPoint.fix");
+				_fix = toFix(fix, "WayPoint.fix");
 			} catch (XMLStreamException e) {
 				throw new IllegalArgumentException(e);
 			}
@@ -1317,7 +1318,7 @@ public final class WayPoint implements Point, Serializable {
 			.links((List<Link>)a[11])
 			.sym((String)a[12])
 			.type((String)a[13])
-			.fix(Fix.parse(a[14], "WayPoint.fix"))
+			.fix(toFix(a[14], "WayPoint.fix"))
 			.sat(UInt.parse(a[15], "WayPoint.sat"))
 			.hdop(toDouble(a[16], "WayPoint.hdop"))
 			.vdop(toDouble(a[17], "WayPoint.vdop"))

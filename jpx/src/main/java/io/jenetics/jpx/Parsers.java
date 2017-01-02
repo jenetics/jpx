@@ -336,4 +336,23 @@ final class Parsers {
 
 		return station;
 	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value
+	 */
+	static Fix toFix(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final String value = toString(object);
+		return value != null
+			? Fix.ofName(value).orElseThrow(() -> new XMLStreamException(format(
+				"Invalid value for '%s': %s.", property, value)))
+			: null;
+	}
 }
