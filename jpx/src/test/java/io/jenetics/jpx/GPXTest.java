@@ -84,15 +84,33 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 				GPX.builder("JPX").build()
 			},
 			{
+				"/io/jenetics/jpx/empty-metadata.xml",
+				GPX.builder("JPX")
+					.metadata(md -> {})
+					.build()
+			},
+			{
 				"/io/jenetics/jpx/empty-ele.xml",
 				GPX.builder("JPX")
 					.addWayPoint(p -> p.lat(12.12).lon(12.12))
 					.build()
 			},
 			{
-				"/io/jenetics/jpx/empty-metadata.xml",
+				"/io/jenetics/jpx/empty-route.xml",
 				GPX.builder("JPX")
-					.metadata(md -> {})
+					.addRoute(route -> {})
+					.build()
+			},
+			{
+				"/io/jenetics/jpx/empty-track.xml",
+				GPX.builder("JPX")
+					.addTrack(track -> {})
+					.build()
+			},
+			{
+				"/io/jenetics/jpx/empty-track-segment.xml",
+				GPX.builder("JPX")
+					.addTrack(track -> track.addSegment(segment -> {}))
 					.build()
 			}
 		};
