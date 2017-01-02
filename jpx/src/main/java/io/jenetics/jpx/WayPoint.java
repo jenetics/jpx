@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Parsers.toDegrees;
 import static io.jenetics.jpx.Parsers.toDouble;
 import static io.jenetics.jpx.Parsers.toDuration;
 import static io.jenetics.jpx.Parsers.toMandatoryDouble;
@@ -1306,7 +1307,7 @@ public final class WayPoint implements Point, Serializable {
 			.ele(Length.parse(a[2], "WayPoint.ele"))
 			.speed(Speed.parse(a[3], "WayPoint.speed"))
 			.time(ZonedDateTimeFormat.parse((String)a[4]))
-			.magvar(Degrees.parse(a[5], "WayPoint.magvar"))
+			.magvar(toDegrees(a[5], "WayPoint.magvar"))
 			.geoidheight(Length.parse(a[6], "WayPoint.geoidheight"))
 			.name((String)a[7])
 			.cmt((String)a[8])

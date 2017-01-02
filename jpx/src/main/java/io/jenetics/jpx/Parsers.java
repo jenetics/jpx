@@ -41,12 +41,6 @@ final class Parsers {
 	private Parsers() {
 	}
 
-	static <T> T parse(final Object object, final Function<Object, T> parser) {
-		return object != null
-			? parser.apply(object)
-			: null;
-	}
-
 	/**
 	 * Convert the given object to a string. The {@link Object#toString()}
 	 * method is used for converting the string. If the object is {@code null}
@@ -292,4 +286,30 @@ final class Parsers {
 		return uri;
 	}
 
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid Degrees
+	 *         value
+	 */
+	static Degrees toDegrees(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Degrees degrees = null;
+		final Double value = toDouble(object, property);
+		if (value != null) {
+			if (value < 0 || value >= 360) {
+				throw new XMLStreamException(format(
+					"%f not in the range [0, 360) for %s.", value, property
+				));
+			}
+
+			degrees = Degrees.ofDegrees(value);
+		}
+
+		return degrees;
+	}
 }
