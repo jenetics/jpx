@@ -24,7 +24,6 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -205,9 +204,11 @@ public final class Bounds implements Serializable {
 	}
 
 	static XMLReader<Bounds> reader() {
-		final Function<Object[], Bounds> creator = a -> Bounds.of(
-			Latitude.parse(a[0]), Longitude.parse(a[1]),
-			Latitude.parse(a[2]), Longitude.parse(a[3])
+		final XML.Function<Object[], Bounds> creator = a -> Bounds.of(
+			Latitude.parse(a[0], "Bounds.minlat"),
+			Longitude.parse(a[1], "Bounds.minlon"),
+			Latitude.parse(a[2], "Bounds.maxlat"),
+			Longitude.parse(a[3], "Bounds.maxlon")
 		);
 
 		return XMLReader.of(creator, "bounds",

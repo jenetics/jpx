@@ -20,8 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static io.jenetics.jpx.Parsers.toInt;
 
 import java.io.Serializable;
+
+import javax.xml.stream.XMLStreamException;
 
 import io.jenetics.jpx.Length.Unit;
 
@@ -129,17 +132,28 @@ public final class UInt
 	/**
 	 * Parses the given object.
 	 *
-	 * @param object the object to parse
-	 * @return the parsed object
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid int
+	 *         value
 	 */
-	static UInt parse(final Object object) {
-		return object instanceof UInt
-			? (UInt)object
-			: object instanceof Number
-				? of(((Number)object).intValue())
-				: object != null
-					? of(Integer.parseInt(object.toString()))
-					: null;
+	static UInt parse(final Object object, final String property)
+		throws XMLStreamException
+	{
+		UInt uint = null;
+		final Integer value = toInt(object, property);
+		if (value != null) {
+			if (value < 0) {
+				throw new XMLStreamException(
+					format("Invalid value for '%s': %s.", property, object)
+				);
+			}
+
+			uint = UInt.of(value);
+		}
+
+		return uint;
 	}
 
 }

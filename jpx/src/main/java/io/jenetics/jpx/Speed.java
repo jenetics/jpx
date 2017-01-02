@@ -21,8 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Parsers.toDouble;
 
 import java.io.Serializable;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Represents the GPS speed value in m/s.
@@ -191,18 +194,22 @@ public final class Speed
 	/**
 	 * Parses the given object.
 	 *
-	 * @param object the object to parse
-	 * @return the parsed object
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid Speed
+	 *         value
 	 */
-	static Speed parse(final Object object) {
-		return object instanceof Speed
-			? (Speed)object
-			: object instanceof Number
-				? of(((Number)object).doubleValue(), Unit.METERS_PER_SECOND)
-				: object != null
-					? of(Double.parseDouble(object.toString()),
-							Unit.METERS_PER_SECOND)
-					: null;
+	static Speed parse(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Speed speed = null;
+		final Double value = toDouble(object, property);
+		if (value != null) {
+			speed = of(value, Unit.METERS_PER_SECOND);
+		}
+
+		return speed;
 	}
 
 }

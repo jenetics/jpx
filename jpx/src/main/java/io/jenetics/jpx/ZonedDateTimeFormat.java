@@ -34,6 +34,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import javax.xml.stream.XMLStreamException;
+
 /**
  * Enumeration of the valid date time formats.
  *
@@ -105,10 +107,12 @@ enum ZonedDateTimeFormat {
 		return time != null ? FORMATTER.format(time) : null;
 	}
 
-	public static ZonedDateTime parse(final String time) {
+	public static ZonedDateTime parse(final String time)
+		throws XMLStreamException
+	{
 		return time != null
 			? parseOptional(time).orElseThrow(() ->
-				new IllegalArgumentException(
+				new XMLStreamException(
 					String.format("Can't parse time: %s'", time)))
 			: null;
 	}
