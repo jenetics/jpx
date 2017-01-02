@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Parsers.toDGPSStation;
 import static io.jenetics.jpx.Parsers.toDegrees;
 import static io.jenetics.jpx.Parsers.toDouble;
 import static io.jenetics.jpx.Parsers.toDuration;
@@ -1322,7 +1323,7 @@ public final class WayPoint implements Point, Serializable {
 			.vdop(toDouble(a[17], "WayPoint.vdop"))
 			.pdop(toDouble(a[18], "WayPoint.pdop"))
 			.ageofdgpsdata(toDuration(a[19], "WayPoint.ageofdgpsdata"))
-			.dgpsid(DGPSStation.parse(a[20], "WayPoint.dgpsid"))
+			.dgpsid(toDGPSStation(a[20], "WayPoint.dgpsid"))
 			.build(
 				toMandatoryDouble(a[0], "WayPoint.lat"),
 				toMandatoryDouble(a[1], "WayPoint.lon"));

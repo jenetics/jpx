@@ -312,4 +312,28 @@ final class Parsers {
 
 		return degrees;
 	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object
+	 */
+	static DGPSStation toDGPSStation(final Object object, final String property)
+		throws XMLStreamException
+	{
+		DGPSStation station = null;
+		final Integer value = toInt(object, property);
+		if (value != null) {
+			if (value < 0 || value > 1023) {
+				throw new XMLStreamException(format(
+					"%d is out of range [0, 1023] for '%s'.", value, property
+				));
+			}
+
+			station = DGPSStation.of(value);
+		}
+
+		return station;
+	}
 }
