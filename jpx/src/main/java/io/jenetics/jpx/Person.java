@@ -182,7 +182,7 @@ public final class Person implements Serializable {
 
 	static XMLReader<Person> reader() {
 		final XML.Function<Object[], Person> creator = a -> Person.of(
-			(String)a[0], (Email)a[1], (Link)a[2]
+			Parsers.toString(a[0]), (Email)a[1], (Link)a[2]
 		);
 
 		return XMLReader.of(creator, "person",

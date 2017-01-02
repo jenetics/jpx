@@ -542,13 +542,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<Track> reader() {
 		final XML.Function<Object[], Track> create = a -> Track.of(
-			(String)a[0],
-			(String)a[1],
-			(String)a[2],
-			(String)a[3],
+			Parsers.toString(a[0]),
+			Parsers.toString(a[1]),
+			Parsers.toString(a[2]),
+			Parsers.toString(a[3]),
 			(List<Link>)a[4],
 			Parsers.toUInt(a[5], "Track.number"),
-			(String)a[6],
+			Parsers.toString(a[6]),
 			(List<TrackSegment>)a[7]
 		);
 

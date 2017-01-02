@@ -542,7 +542,7 @@ public final class Metadata implements Serializable {
 			(Copyright)a[3],
 			(List<Link>)a[4],
 			Parsers.toZonedDateTime((String)a[5]),
-			(String)a[6],
+			Parsers.toString(a[6]),
 			(Bounds)a[7]
 		);
 
