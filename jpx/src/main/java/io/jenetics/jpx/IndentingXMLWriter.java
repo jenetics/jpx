@@ -26,6 +26,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
+ * {@link XMLStreamWriter} proxy for writing XML indentations.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
