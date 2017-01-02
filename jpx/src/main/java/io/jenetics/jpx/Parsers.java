@@ -65,6 +65,19 @@ final class Parsers {
 		return string;
 	}
 
+	static String toMandatoryString(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final String value = toString(object);
+		if (value == null) {
+			throw new XMLStreamException(
+				format("Empty or null string for '%s'.", property)
+			);
+		}
+
+		return value;
+	}
+
 	/**
 	 * Convert the given {@code object} into a double value. If the
 	 * {@code object} is {@code null}, {@code null} is returned.
@@ -191,7 +204,7 @@ final class Parsers {
 	 * @param object the object to convert
 	 * @param property the property name of the object. Needed for error message.
 	 * @return the converted object
-	 * @throws XMLStreamException if the object doesn't represent a valid int
+	 * @throws XMLStreamException if the object doesn't represent a valid duration
 	 *         value
 	 */
 	static Duration toDuration(final Object object, final String property)
@@ -206,26 +219,77 @@ final class Parsers {
 		return duration;
 	}
 
-	static Year parseYear(final Object object) {
-		return object instanceof Year
-			? (Year)object
-			: object instanceof Number
-				? Year.of(((Number) object).intValue())
-				: object != null
-					? Year.of(Integer.parseInt(object.toString()))
-					: null;
+	/**
+	 * Convert the given {@code object} into a year value. If the
+	 * {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid year
+	 *         value
+	 */
+	static Year parseYear(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Year year = null;
+		final Integer value = toInt(object, property);
+		if (value != null) {
+			year = Year.of(value);
+		}
+
+		return year;
 	}
 
-	static URI parseURI(final Object object) {
-		try {
-			return object instanceof URI
-				? (URI)object
-				: object != null
-					? new URI(object.toString())
-					: null;
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
+	/**
+	 * Convert the given {@code object} into a URI value. If the
+	 * {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid URI
+	 *         value
+	 */
+	static URI toURI(final Object object, final String property)
+		throws XMLStreamException
+	{
+		URI uri = null;
+		final String value = toString(object);
+		if (value != null) {
+			try {
+				uri = new URI(value);
+			} catch (URISyntaxException e) {
+				throw new XMLStreamException(format(
+					"Invalid URI value for '%s': %s.", property, object
+				));
+			}
 		}
+
+		return uri;
+	}
+
+	/**
+	 * Convert the given {@code object} into a URI value. If the
+	 * {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid URI
+	 *         value
+	 */
+	static URI toMandatoryURI(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final URI uri = toURI(object, property);
+		if (uri == null) {
+			throw new XMLStreamException(
+				format("Property '%s' is mandatory.", property)
+			);
+		}
+
+		return uri;
 	}
 
 }

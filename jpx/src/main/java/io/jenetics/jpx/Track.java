@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -542,13 +541,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Track> reader() {
-		final Function<Object[], Track> create = a -> Track.of(
+		final XML.Function<Object[], Track> create = a -> Track.of(
 			(String)a[0],
 			(String)a[1],
 			(String)a[2],
 			(String)a[3],
 			(List<Link>)a[4],
-			UInt.parse(a[5]),
+			UInt.parse(a[5], "Track.number"),
 			(String)a[6],
 			(List<TrackSegment>)a[7]
 		);

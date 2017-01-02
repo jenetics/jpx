@@ -23,7 +23,6 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -152,8 +151,9 @@ public final class Email implements Comparable<Email>, Serializable {
 	}
 
 	static XMLReader<Email> reader() {
-		final Function<Object[], Email> creator = a -> Email.of(
-			Parsers.toString(a[0]), Parsers.toString(a[1])
+		final XML.Function<Object[], Email> creator = a -> Email.of(
+			Parsers.toMandatoryString(a[0], "Email.id"),
+			Parsers.toMandatoryString(a[1], "Email.domain")
 		);
 
 		return XMLReader.of(creator, "email",

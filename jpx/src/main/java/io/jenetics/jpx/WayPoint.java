@@ -1304,9 +1304,9 @@ public final class WayPoint implements Point, Serializable {
 	static XMLReader<WayPoint> reader(final String name) {
 		final XML.Function<Object[], WayPoint> create = a -> WayPoint.builder()
 			.ele(Length.parse(a[2], "WayPoint.ele"))
-			.speed(Speed.parse(a[3]))
+			.speed(Speed.parse(a[3], "WayPoint.speed"))
 			.time(ZonedDateTimeFormat.parse((String)a[4]))
-			.magvar(Degrees.parse(a[5]))
+			.magvar(Degrees.parse(a[5], "WayPoint.magvar"))
 			.geoidheight(Length.parse(a[6], "WayPoint.geoidheight"))
 			.name((String)a[7])
 			.cmt((String)a[8])

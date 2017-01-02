@@ -20,8 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static io.jenetics.jpx.Parsers.toMandatoryDouble;
 
 import java.io.Serializable;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * The longitude of the point. Decimal degrees, WGS84 datum, which must be within
@@ -149,14 +152,17 @@ public class Longitude extends Number implements Serializable {
 	 * @param object the object to parse
 	 * @return the parsed object, or {@code null} if the argument is {@code null}
 	 */
-	static Longitude parse(final Object object) {
-		return object instanceof Longitude
-			? (Longitude) object
-			: object instanceof Double
-				? ofDegrees((Double)object)
-				: object != null
-					? ofDegrees(Double.parseDouble(object.toString()))
-					: null;
+	static Longitude parse(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final double value = toMandatoryDouble(object, property);
+		if (value < -180 || value > 180) {
+			throw new IllegalArgumentException(format(
+				"%f is not in range [-180, 180] for '%s'.", value, property
+			));
+		}
+
+		return ofDegrees(value);
 	}
 
 }

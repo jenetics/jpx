@@ -566,13 +566,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Route> reader() {
-		final Function<Object[], Route> create = a -> Route.builder()
+		final XML.Function<Object[], Route> create = a -> Route.builder()
 			.name((String)a[0])
 			.cmt((String)a[1])
 			.desc((String)a[2])
 			.src((String)a[3])
 			.links((List<Link>)a[4])
-			.number(UInt.parse(a[5]))
+			.number(UInt.parse(a[5], "Route.number"))
 			.type((String)a[6])
 			.points((List<WayPoint>)a[7])
 			.build();

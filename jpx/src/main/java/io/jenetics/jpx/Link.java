@@ -28,7 +28,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -202,8 +201,10 @@ public final class Link implements Serializable {
 	}
 
 	static XMLReader<Link> reader() {
-		final Function<Object[], Link> creator = a -> Link.of(
-			Parsers.toString(a[0]), Parsers.toString(a[1]), Parsers.toString(a[2])
+		final XML.Function<Object[], Link> creator = a -> Link.of(
+			Parsers.toMandatoryURI(a[0], "Link.href"),
+			Parsers.toString(a[1]),
+			Parsers.toString(a[2])
 		);
 
 		return XMLReader.of(creator, "link",

@@ -536,7 +536,7 @@ public final class Metadata implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Metadata> reader() {
-		final Function<Object[], Metadata> create = a -> Metadata.of(
+		final XML.Function<Object[], Metadata> create = a -> Metadata.of(
 			Parsers.toString(a[0]),
 			Parsers.toString(a[1]),
 			(Person)a[2],
