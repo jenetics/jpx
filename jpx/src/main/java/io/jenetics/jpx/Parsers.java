@@ -415,4 +415,25 @@ final class Parsers {
 
 		return Longitude.ofDegrees(value);
 	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid Speed
+	 *         value
+	 */
+	static Speed toSpeed(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Speed speed = null;
+		final Double value = toDouble(object, property);
+		if (value != null) {
+			speed = Speed.of(value, Speed.Unit.METERS_PER_SECOND);
+		}
+
+		return speed;
+	}
 }
