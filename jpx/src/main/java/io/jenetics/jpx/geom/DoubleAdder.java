@@ -29,7 +29,7 @@ import static java.util.Objects.requireNonNull;
  * summation algorithm</a>, which significantly reduces the numerical error when
  * adding double values.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @since 1.0
  * @version 1.0
  */

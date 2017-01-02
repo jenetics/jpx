@@ -34,7 +34,7 @@ import io.jenetics.jpx.Length.Unit;
 /**
  * Some helper methods for parsing GPS values.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
  */

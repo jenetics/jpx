@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 /**
  * Enumeration of the valid date time formats.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
  */
