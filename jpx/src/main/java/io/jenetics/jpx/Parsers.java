@@ -29,6 +29,8 @@ import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 
+import io.jenetics.jpx.Length.Unit;
+
 /**
  * Some helper methods for parsing GPS values.
  *
@@ -376,5 +378,21 @@ final class Parsers {
 		}
 
 		return Latitude.ofDegrees(value);
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value
+	 */
+	static Length toLength(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final Double value = toDouble(object, property);
+		return value != null ? Length.of(value, Unit.METER) : null;
 	}
 }

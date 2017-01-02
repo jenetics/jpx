@@ -21,11 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.toDouble;
 
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * Extent of something along its greatest dimension or the extent of space
@@ -188,21 +185,4 @@ public final class Length
 		requireNonNull(unit);
 		return new Length(Unit.METER.convert(length, unit));
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to convert
-	 * @param property the property name of the object. Needed for error message.
-	 * @return the converted object
-	 * @throws XMLStreamException if the object doesn't represent a valid double
-	 *         value
-	 */
-	static Length parse(final Object object, final String property)
-		throws XMLStreamException
-	{
-		final Double value = toDouble(object, property);
-		return value != null ? Length.of(value, Unit.METER) : null;
-	}
-
 }

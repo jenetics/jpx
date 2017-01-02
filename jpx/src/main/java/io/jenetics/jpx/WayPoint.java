@@ -28,6 +28,7 @@ import static io.jenetics.jpx.Parsers.toDegrees;
 import static io.jenetics.jpx.Parsers.toDouble;
 import static io.jenetics.jpx.Parsers.toDuration;
 import static io.jenetics.jpx.Parsers.toFix;
+import static io.jenetics.jpx.Parsers.toLength;
 import static io.jenetics.jpx.Parsers.toMandatoryDouble;
 import static io.jenetics.jpx.XMLReader.attr;
 
@@ -1306,11 +1307,11 @@ public final class WayPoint implements Point, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final String name) {
 		final XML.Function<Object[], WayPoint> create = a -> WayPoint.builder()
-			.ele(Length.parse(a[2], "WayPoint.ele"))
+			.ele(toLength(a[2], "WayPoint.ele"))
 			.speed(Speed.parse(a[3], "WayPoint.speed"))
 			.time(ZonedDateTimeFormat.parse((String)a[4]))
 			.magvar(toDegrees(a[5], "WayPoint.magvar"))
-			.geoidheight(Length.parse(a[6], "WayPoint.geoidheight"))
+			.geoidheight(toLength(a[6], "WayPoint.geoidheight"))
 			.name((String)a[7])
 			.cmt((String)a[8])
 			.desc((String)a[9])
