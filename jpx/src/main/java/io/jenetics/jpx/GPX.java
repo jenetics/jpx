@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.Parsers.toMandatoryString;
@@ -199,6 +200,14 @@ public final class GPX implements Serializable {
 	 */
 	public Stream<Track> tracks() {
 		return _tracks.stream();
+	}
+
+	@Override
+	public String toString() {
+		return format(
+			"GPX[way-points=%s, routes=%s, tracks=%s]",
+			getWayPoints().size(), getRoutes().size(), getTracks().size()
+		);
 	}
 
 	@Override
