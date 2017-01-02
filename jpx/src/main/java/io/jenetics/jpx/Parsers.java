@@ -19,13 +19,19 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Year;
 import java.util.function.Function;
 
+import javax.xml.stream.XMLStreamException;
+
 /**
+ * Some helper methods for parsing GPS values.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
@@ -41,26 +47,163 @@ final class Parsers {
 			: null;
 	}
 
-	static String parseString(final Object object) {
-		return object != null ? object.toString() : null;
+	/**
+	 * Convert the given object to a string. The {@link Object#toString()}
+	 * method is used for converting the string. If the object is {@code null}
+	 * or the string {@code isEmpty}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @return the given object as string, or {@code null} if the object is
+	 *         {@code null} or the converted string is empty
+	 */
+	static String toString(final Object object) {
+		String string = null;
+		if (object != null && !object.toString().isEmpty()) {
+			string = object.toString();
+		}
+
+		return string;
 	}
 
-	static Double parseDouble(final Object object) {
-		return object instanceof Number
-			? Double.valueOf(((Number)object).doubleValue())
-			: object != null
-				? Double.valueOf(object.toString())
-				: null;
+	/**
+	 * Convert the given {@code object} into a double value. If the
+	 * {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value
+	 */
+	static Double toDouble(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Double value = null;
+		if (object instanceof Number) {
+			value = ((Number)object).doubleValue();
+		} else {
+			final String string = toString(object);
+			if (string != null) {
+				try {
+					value = Double.valueOf(string);
+				} catch (NumberFormatException e) {
+					throw new XMLStreamException(
+						format("Invalid value for '%s': %s.", property, string)
+					);
+				}
+			}
+		}
+
+		return value;
 	}
 
-	static Duration parseSeconds(final Object object) {
-		return object instanceof Duration
-			? (Duration)object
-			: object instanceof Number
-				? Duration.ofSeconds(((Number) object).longValue())
-				: object != null
-					? Duration.ofSeconds(Long.parseLong(object.toString()))
-					: null;
+	/**
+	 * Convert the given {@code object} into a double value. If the
+	 * {@code object} is {@code null} a {@link XMLStreamException} is thrown
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value or the object is {@code null}
+	 */
+	static Double toMandatoryDouble(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final Double value = toDouble(object, property);
+		if (value == null) {
+			throw new XMLStreamException(
+				format("Property '%s' is mandatory.", property)
+			);
+		}
+
+		return value;
+	}
+
+	/**
+	 * Convert the given {@code object} into an int value. If the
+	 * {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid int
+	 *         value
+	 */
+	static Integer toInt(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Integer value = null;
+		if (object instanceof Number) {
+			value = ((Number)object).intValue();
+		} else {
+			final String string = toString(object);
+			if (string != null) {
+				try {
+					value = Integer.valueOf(string);
+				} catch (NumberFormatException e) {
+					throw new XMLStreamException(
+						format("Invalid value for '%s': %s.", property, string)
+					);
+				}
+			}
+		}
+
+		return value;
+	}
+
+	/**
+	 * Convert the given {@code object} into a long value. If the
+	 * {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid long
+	 *         value
+	 */
+	static Long toLong(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Long value = null;
+		if (object instanceof Number) {
+			value = ((Number)object).longValue();
+		} else {
+			final String string = toString(object);
+			if (string != null) {
+				try {
+					value = Long.valueOf(string);
+				} catch (NumberFormatException e) {
+					throw new XMLStreamException(
+						format("Invalid value for '%s': %s.", property, string)
+					);
+				}
+			}
+		}
+
+		return value;
+	}
+
+	/**
+	 * Convert the given {@code object} into a duration value. If the
+	 * {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid int
+	 *         value
+	 */
+	static Duration toDuration(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Duration duration = null;
+		final Long value = toLong(object, property);
+		if (value != null) {
+			duration = Duration.ofSeconds(value);
+		}
+
+		return duration;
 	}
 
 	static Year parseYear(final Object object) {

@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Parsers.parseString;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -538,8 +537,8 @@ public final class Metadata implements Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<Metadata> reader() {
 		final Function<Object[], Metadata> create = a -> Metadata.of(
-			parseString(a[0]),
-			parseString(a[1]),
+			Parsers.toString(a[0]),
+			Parsers.toString(a[1]),
 			(Person)a[2],
 			(Copyright)a[3],
 			(List<Link>)a[4],

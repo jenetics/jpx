@@ -150,6 +150,8 @@ public final class Latitude extends Number implements Serializable {
 	 * @return the parsed object, or {@code null} if the argument is {@code null}
 	 */
 	static Latitude parse(final Object object) {
+
+
 		return object instanceof Latitude
 			? (Latitude) object
 			: object instanceof Double

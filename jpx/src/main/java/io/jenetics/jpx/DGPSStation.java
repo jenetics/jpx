@@ -20,8 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static io.jenetics.jpx.Parsers.toInt;
 
 import java.io.Serializable;
+
+import javax.xml.stream.XMLStreamException;
 
 /**
  * Represents a differential GPS station. This object only holds int values in
@@ -129,14 +132,22 @@ public final class DGPSStation
 	 * @param object the object to parse
 	 * @return the parsed object
 	 */
-	static DGPSStation parse(final Object object) {
-		return object instanceof DGPSStation
-			? (DGPSStation)object
-			: object instanceof Number
-				? of(((Number) object).intValue())
-				: object != null
-					? of(Integer.parseInt(object.toString()))
-					: null;
+	static DGPSStation parse(final Object object, final String property)
+		throws XMLStreamException
+	{
+		DGPSStation station = null;
+		final Integer value = toInt(object, property);
+		if (value != null) {
+			if (value < 0 || value > 1023) {
+				throw new XMLStreamException(format(
+					"%d is out of range [0, 1023] for '%s'.", value, property
+				));
+			}
+
+			station = DGPSStation.of(value);
+		}
+
+		return station;
 	}
 
 }

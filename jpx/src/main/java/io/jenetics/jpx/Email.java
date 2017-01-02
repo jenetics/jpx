@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.parseString;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -154,7 +153,7 @@ public final class Email implements Comparable<Email>, Serializable {
 
 	static XMLReader<Email> reader() {
 		final Function<Object[], Email> creator = a -> Email.of(
-			parseString(a[0]), parseString(a[1])
+			Parsers.toString(a[0]), Parsers.toString(a[1])
 		);
 
 		return XMLReader.of(creator, "email",
