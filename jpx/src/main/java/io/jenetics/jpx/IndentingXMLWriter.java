@@ -85,7 +85,7 @@ final class IndentingXMLWriter extends XMLWriterProxy {
 	}
 
 	private void doIndent() throws XMLStreamException {
-		if(_depth > 0) {
+		if (_depth > 0) {
 			for(int i = 0; i < _depth; ++i) {
 				super.writeCharacters(_indent);
 			}

@@ -1280,7 +1280,9 @@ public final class WayPoint implements Point, Serializable {
 	 * @param writer the XML data sink
 	 * @throws XMLStreamException if an error occurs
 	 */
-	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
+	void write(final String name, final XMLStreamWriter writer)
+		throws XMLStreamException
+	{
 		final XMLWriter xml = new XMLWriter(writer);
 
 		xml.write(name,
