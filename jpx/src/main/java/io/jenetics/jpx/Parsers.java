@@ -26,7 +26,6 @@ import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Year;
 import java.time.ZonedDateTime;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -62,6 +61,14 @@ final class Parsers {
 		return string;
 	}
 
+	/**
+	 * Convert the given object into a non-null string.
+	 *
+	 * @param object the object to convert
+	 * @return the given object as string
+	 * @throws XMLStreamException if the given object is {@code null} or
+	 *         represents an empty string
+	 */
 	static String toMandatoryString(final Object object, final String property)
 		throws XMLStreamException
 	{
@@ -117,7 +124,10 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid double
 	 *         value or the object is {@code null}
 	 */
-	static Double toMandatoryDouble(final Object object, final String property)
+	private static Double toMandatoryDouble(
+		final Object object,
+		final String property
+	)
 		throws XMLStreamException
 	{
 		final Double value = toDouble(object, property);
@@ -140,7 +150,7 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid int
 	 *         value
 	 */
-	static Integer toInt(final Object object, final String property)
+	private static Integer toInteger(final Object object, final String property)
 		throws XMLStreamException
 	{
 		Integer value = null;
@@ -172,7 +182,7 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid long
 	 *         value
 	 */
-	static Long toLong(final Object object, final String property)
+	private static Long toLong(final Object object, final String property)
 		throws XMLStreamException
 	{
 		Long value = null;
@@ -226,11 +236,11 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid year
 	 *         value
 	 */
-	static Year parseYear(final Object object, final String property)
+	static Year toYear(final Object object, final String property)
 		throws XMLStreamException
 	{
 		Year year = null;
-		final Integer value = toInt(object, property);
+		final Integer value = toInteger(object, property);
 		if (value != null) {
 			year = Year.of(value);
 		}
@@ -326,7 +336,7 @@ final class Parsers {
 		throws XMLStreamException
 	{
 		DGPSStation station = null;
-		final Integer value = toInt(object, property);
+		final Integer value = toInteger(object, property);
 		if (value != null) {
 			if (value < 0 || value > 1023) {
 				throw new XMLStreamException(format(
@@ -451,7 +461,7 @@ final class Parsers {
 		throws XMLStreamException
 	{
 		UInt uint = null;
-		final Integer value = toInt(object, property);
+		final Integer value = toInteger(object, property);
 		if (value != null) {
 			if (value < 0) {
 				throw new XMLStreamException(
@@ -465,6 +475,14 @@ final class Parsers {
 		return uint;
 	}
 
+	/**
+	 * Parses the given object to a zoned data time object.
+	 *
+	 * @param time the string to parse
+	 * @return the parsed object
+	 * @throws XMLStreamException if the given string doesn't represent a valid
+	 *         data time object
+	 */
 	static ZonedDateTime toZonedDateTime(final String time)
 		throws XMLStreamException
 	{
