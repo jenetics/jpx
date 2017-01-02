@@ -23,11 +23,12 @@ import static java.lang.String.format;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
+
+import javax.xml.stream.XMLStreamException;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -65,8 +66,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
-	@Test(dataProvider = "emptyElementsFiles")
-	public void emptyElements(final String resource, final GPX expected)
+	@Test(dataProvider = "validEmptyElementsFiles")
+	public void validEmptyElements(final String resource, final GPX expected)
 		throws IOException
 	{
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
@@ -75,18 +76,30 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 	}
 
-	@DataProvider(name = "emptyElementsFiles")
-	public Object[][] emptyElementsFiles() {
+	@DataProvider(name = "validEmptyElementsFiles")
+	public Object[][] validEmptyElementsFiles() {
 		return new Object[][] {
 			{
 				"/io/jenetics/jpx/empty-gpx.xml",
 				GPX.builder("JPX").build()
+			},
+			{
+				"/io/jenetics/jpx/empty-ele.xml",
+				GPX.builder("JPX")
+					.addWayPoint(p -> p.lat(12.12).lon(12.12))
+					.build()
+			},
+			{
+				"/io/jenetics/jpx/empty-metadata.xml",
+				GPX.builder("JPX")
+					.metadata(md -> {})
+					.build()
 			}
 		};
 	}
 
 	@Test
-	public void loadFullSampleFile() throws IOException {
+	public void loadFullSampleFile() throws IOException, XMLStreamException {
 		final String rsc = "/io/jenetics/jpx/Gpx-full-sample.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(rsc)) {
