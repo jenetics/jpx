@@ -20,13 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static io.jenetics.jpx.Parsers.toInt;
 
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamException;
-
-import io.jenetics.jpx.Length.Unit;
 
 /**
  * Represents an unsigned integer value.
@@ -128,32 +123,4 @@ public final class UInt
 	public static UInt of(final int value) {
 		return new UInt(value);
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to convert
-	 * @param property the property name of the object. Needed for error message.
-	 * @return the converted object
-	 * @throws XMLStreamException if the object doesn't represent a valid int
-	 *         value
-	 */
-	static UInt parse(final Object object, final String property)
-		throws XMLStreamException
-	{
-		UInt uint = null;
-		final Integer value = toInt(object, property);
-		if (value != null) {
-			if (value < 0) {
-				throw new XMLStreamException(
-					format("Invalid value for '%s': %s.", property, object)
-				);
-			}
-
-			uint = UInt.of(value);
-		}
-
-		return uint;
-	}
-
 }

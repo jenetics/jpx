@@ -32,6 +32,8 @@ import static io.jenetics.jpx.Parsers.toLatitude;
 import static io.jenetics.jpx.Parsers.toLength;
 import static io.jenetics.jpx.Parsers.toLongitude;
 import static io.jenetics.jpx.Parsers.toSpeed;
+import static io.jenetics.jpx.Parsers.toUInt;
+import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -1311,7 +1313,7 @@ public final class WayPoint implements Point, Serializable {
 		final XML.Function<Object[], WayPoint> create = a -> WayPoint.builder()
 			.ele(toLength(a[2], "WayPoint.ele"))
 			.speed(toSpeed(a[3], "WayPoint.speed"))
-			.time(ZonedDateTimeFormat.parse((String)a[4]))
+			.time(toZonedDateTime((String)a[4]))
 			.magvar(toDegrees(a[5], "WayPoint.magvar"))
 			.geoidheight(toLength(a[6], "WayPoint.geoidheight"))
 			.name((String)a[7])
@@ -1322,7 +1324,7 @@ public final class WayPoint implements Point, Serializable {
 			.sym((String)a[12])
 			.type((String)a[13])
 			.fix(toFix(a[14], "WayPoint.fix"))
-			.sat(UInt.parse(a[15], "WayPoint.sat"))
+			.sat(toUInt(a[15], "WayPoint.sat"))
 			.hdop(toDouble(a[16], "WayPoint.hdop"))
 			.vdop(toDouble(a[17], "WayPoint.vdop"))
 			.pdop(toDouble(a[18], "WayPoint.pdop"))

@@ -25,6 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Year;
+import java.time.ZonedDateTime;
 import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
@@ -435,5 +436,42 @@ final class Parsers {
 		}
 
 		return speed;
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid int
+	 *         value
+	 */
+	static UInt toUInt(final Object object, final String property)
+		throws XMLStreamException
+	{
+		UInt uint = null;
+		final Integer value = toInt(object, property);
+		if (value != null) {
+			if (value < 0) {
+				throw new XMLStreamException(
+					format("Invalid value for '%s': %s.", property, object)
+				);
+			}
+
+			uint = UInt.of(value);
+		}
+
+		return uint;
+	}
+
+	static ZonedDateTime toZonedDateTime(final String time)
+		throws XMLStreamException
+	{
+		return time != null
+			? ZonedDateTimeFormat.parseOptional(time).orElseThrow(() ->
+				new XMLStreamException(
+					format("Can't parse time: %s'", time)))
+			: null;
 	}
 }

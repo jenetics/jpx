@@ -547,7 +547,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(String)a[2],
 			(String)a[3],
 			(List<Link>)a[4],
-			UInt.parse(a[5], "Track.number"),
+			Parsers.toUInt(a[5], "Track.number"),
 			(String)a[6],
 			(List<TrackSegment>)a[7]
 		);
