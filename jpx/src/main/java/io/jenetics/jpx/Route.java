@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -572,7 +571,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			.desc((String)a[2])
 			.src((String)a[3])
 			.links((List<Link>)a[4])
-			.number(UInt.parse(a[5], "Route.number"))
+			.number(Parsers.toUInt(a[5], "Route.number"))
 			.type((String)a[6])
 			.points((List<WayPoint>)a[7])
 			.build();

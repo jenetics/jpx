@@ -19,12 +19,9 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * Type of GPS fix. {@code none} means GPS had no fix. To signify "the fix info
@@ -76,24 +73,4 @@ public enum Fix {
 			default: return Optional.empty();
 		}
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to convert
-	 * @param property the property name of the object. Needed for error message.
-	 * @return the converted object
-	 * @throws XMLStreamException if the object doesn't represent a valid double
-	 *         value
-	 */
-	static Fix parse(final Object object, final String property)
-		throws XMLStreamException
-	{
-		final String value = Parsers.toString(object);
-		return value != null
-			? ofName(value).orElseThrow(() -> new XMLStreamException(format(
-				"Invalid value for '%s': %s.", property, value)))
-			: null;
-	}
-
 }

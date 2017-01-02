@@ -21,7 +21,7 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Parsers.toURI;
-import static io.jenetics.jpx.Parsers.parseYear;
+import static io.jenetics.jpx.Parsers.toYear;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -247,7 +247,7 @@ public final class Copyright implements Serializable {
 	static XMLReader<Copyright> reader() {
 		final XML.Function<Object[], Copyright> creator = a -> Copyright.of(
 			Parsers.toString(a[0]),
-			parseYear(a[1], "Copyright.year"),
+			toYear(a[1], "Copyright.year"),
 			toURI(a[2], "Copyright.license")
 		);
 

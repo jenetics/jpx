@@ -20,11 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static io.jenetics.jpx.Parsers.toDouble;
 
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * Used for bearing, heading, course. Base unit is decimal degree. Only values
@@ -158,32 +155,4 @@ public final class Degrees
 	public static Degrees ofRadians(final double radians) {
 		return new Degrees(Math.toDegrees(radians));
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to convert
-	 * @param property the property name of the object. Needed for error message.
-	 * @return the converted object
-	 * @throws XMLStreamException if the object doesn't represent a valid Degrees
-	 *         value
-	 */
-	static Degrees parse(final Object object, final String property)
-		throws XMLStreamException
-	{
-		Degrees degrees = null;
-		final Double value = toDouble(object, property);
-		if (value != null) {
-			if (value < 0 || value >= 360) {
-				throw new XMLStreamException(format(
-					"%f not in the range [0, 360) for %s.", value, property
-				));
-			}
-
-			degrees = ofDegrees(value);
-		}
-
-		return degrees;
-	}
-
 }

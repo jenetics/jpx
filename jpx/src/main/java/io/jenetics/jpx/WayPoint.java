@@ -23,9 +23,17 @@ import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Parsers.toDGPSStation;
+import static io.jenetics.jpx.Parsers.toDegrees;
 import static io.jenetics.jpx.Parsers.toDouble;
 import static io.jenetics.jpx.Parsers.toDuration;
-import static io.jenetics.jpx.Parsers.toMandatoryDouble;
+import static io.jenetics.jpx.Parsers.toFix;
+import static io.jenetics.jpx.Parsers.toLatitude;
+import static io.jenetics.jpx.Parsers.toLength;
+import static io.jenetics.jpx.Parsers.toLongitude;
+import static io.jenetics.jpx.Parsers.toSpeed;
+import static io.jenetics.jpx.Parsers.toUInt;
+import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -801,7 +809,7 @@ public final class WayPoint implements Point, Serializable {
 		 */
 		public Builder fix(final String fix) {
 			try {
-				_fix = Fix.parse(fix, "WayPoint.fix");
+				_fix = toFix(fix, "WayPoint.fix");
 			} catch (XMLStreamException e) {
 				throw new IllegalArgumentException(e);
 			}
@@ -1303,11 +1311,11 @@ public final class WayPoint implements Point, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final String name) {
 		final XML.Function<Object[], WayPoint> create = a -> WayPoint.builder()
-			.ele(Length.parse(a[2], "WayPoint.ele"))
-			.speed(Speed.parse(a[3], "WayPoint.speed"))
-			.time(ZonedDateTimeFormat.parse((String)a[4]))
-			.magvar(Degrees.parse(a[5], "WayPoint.magvar"))
-			.geoidheight(Length.parse(a[6], "WayPoint.geoidheight"))
+			.ele(toLength(a[2], "WayPoint.ele"))
+			.speed(toSpeed(a[3], "WayPoint.speed"))
+			.time(toZonedDateTime((String)a[4]))
+			.magvar(toDegrees(a[5], "WayPoint.magvar"))
+			.geoidheight(toLength(a[6], "WayPoint.geoidheight"))
 			.name((String)a[7])
 			.cmt((String)a[8])
 			.desc((String)a[9])
@@ -1315,16 +1323,16 @@ public final class WayPoint implements Point, Serializable {
 			.links((List<Link>)a[11])
 			.sym((String)a[12])
 			.type((String)a[13])
-			.fix(Fix.parse(a[14], "WayPoint.fix"))
-			.sat(UInt.parse(a[15], "WayPoint.sat"))
+			.fix(toFix(a[14], "WayPoint.fix"))
+			.sat(toUInt(a[15], "WayPoint.sat"))
 			.hdop(toDouble(a[16], "WayPoint.hdop"))
 			.vdop(toDouble(a[17], "WayPoint.vdop"))
 			.pdop(toDouble(a[18], "WayPoint.pdop"))
 			.ageofdgpsdata(toDuration(a[19], "WayPoint.ageofdgpsdata"))
-			.dgpsid(DGPSStation.parse(a[20], "WayPoint.dgpsid"))
+			.dgpsid(toDGPSStation(a[20], "WayPoint.dgpsid"))
 			.build(
-				toMandatoryDouble(a[0], "WayPoint.lat"),
-				toMandatoryDouble(a[1], "WayPoint.lon"));
+				toLatitude(a[0], "WayPoint.lat"),
+				toLongitude(a[1], "WayPoint.lon"));
 
 		return XMLReader.of(create, name,
 			attr("lat"),

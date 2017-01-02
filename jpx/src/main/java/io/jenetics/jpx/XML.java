@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,14 +15,17 @@
  * limitations under the License.
  *
  * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
+ *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx;
 
 import javax.xml.stream.XMLStreamException;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * Contains specializations of functional interfaces, which throw
+ * {@link XMLStreamException}.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
@@ -31,8 +34,24 @@ final class XML {
 	private XML() {
 	}
 
+	/**
+	 * Represents a function that accepts one argument and produces a result.
+	 *
+	 * @param <T> the input type
+	 * @param <R> the result type
+	 */
+	@FunctionalInterface
 	interface Function<T, R> {
+
+		/**
+		 * Applies this function to the given argument.
+		 *
+		 * @param value the function argument
+		 * @return the function result
+		 * @throws XMLStreamException if an error occurs
+		 */
 		R apply(final T value) throws XMLStreamException;
+
 	}
 
 }

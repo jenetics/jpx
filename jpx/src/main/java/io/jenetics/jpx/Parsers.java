@@ -25,9 +25,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Duration;
 import java.time.Year;
-import java.util.function.Function;
+import java.time.ZonedDateTime;
 
 import javax.xml.stream.XMLStreamException;
+
+import io.jenetics.jpx.Length.Unit;
 
 /**
  * Some helper methods for parsing GPS values.
@@ -39,12 +41,6 @@ import javax.xml.stream.XMLStreamException;
 final class Parsers {
 
 	private Parsers() {
-	}
-
-	static <T> T parse(final Object object, final Function<Object, T> parser) {
-		return object != null
-			? parser.apply(object)
-			: null;
 	}
 
 	/**
@@ -65,6 +61,14 @@ final class Parsers {
 		return string;
 	}
 
+	/**
+	 * Convert the given object into a non-null string.
+	 *
+	 * @param object the object to convert
+	 * @return the given object as string
+	 * @throws XMLStreamException if the given object is {@code null} or
+	 *         represents an empty string
+	 */
 	static String toMandatoryString(final Object object, final String property)
 		throws XMLStreamException
 	{
@@ -120,7 +124,10 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid double
 	 *         value or the object is {@code null}
 	 */
-	static Double toMandatoryDouble(final Object object, final String property)
+	private static Double toMandatoryDouble(
+		final Object object,
+		final String property
+	)
 		throws XMLStreamException
 	{
 		final Double value = toDouble(object, property);
@@ -143,7 +150,7 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid int
 	 *         value
 	 */
-	static Integer toInt(final Object object, final String property)
+	private static Integer toInteger(final Object object, final String property)
 		throws XMLStreamException
 	{
 		Integer value = null;
@@ -175,7 +182,7 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid long
 	 *         value
 	 */
-	static Long toLong(final Object object, final String property)
+	private static Long toLong(final Object object, final String property)
 		throws XMLStreamException
 	{
 		Long value = null;
@@ -229,11 +236,11 @@ final class Parsers {
 	 * @throws XMLStreamException if the object doesn't represent a valid year
 	 *         value
 	 */
-	static Year parseYear(final Object object, final String property)
+	static Year toYear(final Object object, final String property)
 		throws XMLStreamException
 	{
 		Year year = null;
-		final Integer value = toInt(object, property);
+		final Integer value = toInteger(object, property);
 		if (value != null) {
 			year = Year.of(value);
 		}
@@ -292,4 +299,197 @@ final class Parsers {
 		return uri;
 	}
 
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid Degrees
+	 *         value
+	 */
+	static Degrees toDegrees(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Degrees degrees = null;
+		final Double value = toDouble(object, property);
+		if (value != null) {
+			if (value < 0 || value >= 360) {
+				throw new XMLStreamException(format(
+					"%f not in the range [0, 360) for %s.", value, property
+				));
+			}
+
+			degrees = Degrees.ofDegrees(value);
+		}
+
+		return degrees;
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object
+	 */
+	static DGPSStation toDGPSStation(final Object object, final String property)
+		throws XMLStreamException
+	{
+		DGPSStation station = null;
+		final Integer value = toInteger(object, property);
+		if (value != null) {
+			if (value < 0 || value > 1023) {
+				throw new XMLStreamException(format(
+					"%d is out of range [0, 1023] for '%s'.", value, property
+				));
+			}
+
+			station = DGPSStation.of(value);
+		}
+
+		return station;
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value
+	 */
+	static Fix toFix(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final String value = toString(object);
+		return value != null
+			? Fix.ofName(value).orElseThrow(() -> new XMLStreamException(format(
+				"Invalid value for '%s': %s.", property, value)))
+			: null;
+	}
+
+	/**
+	 * Try to parse the given object into a {@code Latitude} object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value or the object is {@code null}
+	 */
+	static Latitude toLatitude(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final double value = toMandatoryDouble(object, property);
+		if (value < -90 || value > 90) {
+			throw new XMLStreamException(format(
+				"%f is not in range [-90, 90] for '%s'.", value, property
+			));
+		}
+
+		return Latitude.ofDegrees(value);
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid double
+	 *         value
+	 */
+	static Length toLength(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final Double value = toDouble(object, property);
+		return value != null ? Length.of(value, Unit.METER) : null;
+	}
+
+	/**
+	 * Try to parse the given object into a {@code Longitude} object. If the
+	 * given {@code object} is {@code null}, {@code null} is returned.
+	 *
+	 * @param object the object to parse
+	 * @return the parsed object, or {@code null} if the argument is {@code null}
+	 */
+	static Longitude toLongitude(final Object object, final String property)
+		throws XMLStreamException
+	{
+		final double value = toMandatoryDouble(object, property);
+		if (value < -180 || value > 180) {
+			throw new IllegalArgumentException(format(
+				"%f is not in range [-180, 180] for '%s'.", value, property
+			));
+		}
+
+		return Longitude.ofDegrees(value);
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid Speed
+	 *         value
+	 */
+	static Speed toSpeed(final Object object, final String property)
+		throws XMLStreamException
+	{
+		Speed speed = null;
+		final Double value = toDouble(object, property);
+		if (value != null) {
+			speed = Speed.of(value, Speed.Unit.METERS_PER_SECOND);
+		}
+
+		return speed;
+	}
+
+	/**
+	 * Parses the given object.
+	 *
+	 * @param object the object to convert
+	 * @param property the property name of the object. Needed for error message.
+	 * @return the converted object
+	 * @throws XMLStreamException if the object doesn't represent a valid int
+	 *         value
+	 */
+	static UInt toUInt(final Object object, final String property)
+		throws XMLStreamException
+	{
+		UInt uint = null;
+		final Integer value = toInteger(object, property);
+		if (value != null) {
+			if (value < 0) {
+				throw new XMLStreamException(
+					format("Invalid value for '%s': %s.", property, object)
+				);
+			}
+
+			uint = UInt.of(value);
+		}
+
+		return uint;
+	}
+
+	/**
+	 * Parses the given object to a zoned data time object.
+	 *
+	 * @param time the string to parse
+	 * @return the parsed object
+	 * @throws XMLStreamException if the given string doesn't represent a valid
+	 *         data time object
+	 */
+	static ZonedDateTime toZonedDateTime(final String time)
+		throws XMLStreamException
+	{
+		return time != null
+			? ZonedDateTimeFormat.parseOptional(time).orElseThrow(() ->
+				new XMLStreamException(
+					format("Can't parse time: %s'", time)))
+			: null;
+	}
 }

@@ -20,11 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static io.jenetics.jpx.Parsers.toMandatoryDouble;
 
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamException;
 
 /**
  * The latitude of the point. Decimal degrees, WGS84 datum, which must be within
@@ -144,27 +141,4 @@ public final class Latitude extends Number implements Serializable {
 	public static Latitude ofRadians(final double radians) {
 		return new Latitude(Math.toDegrees(radians));
 	}
-
-	/**
-	 * Try to parse the given object into a {@code Latitude} object.
-	 *
-	 * @param object the object to convert
-	 * @param property the property name of the object. Needed for error message.
-	 * @return the converted object
-	 * @throws XMLStreamException if the object doesn't represent a valid double
-	 *         value or the object is {@code null}
-	 */
-	static Latitude parse(final Object object, final String property)
-		throws XMLStreamException
-	{
-		final double value = toMandatoryDouble(object, property);
-		if (value < -90 || value > 90) {
-			throw new XMLStreamException(format(
-				"%f is not in range [-90, 90] for '%s'.", value, property
-			));
-		}
-
-		return ofDegrees(value);
-	}
-
 }
