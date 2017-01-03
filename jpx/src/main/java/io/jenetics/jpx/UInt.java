@@ -23,8 +23,6 @@ import static java.lang.String.format;
 
 import java.io.Serializable;
 
-import io.jenetics.jpx.Length.Unit;
-
 /**
  * Represents an unsigned integer value.
  *
@@ -125,21 +123,4 @@ public final class UInt
 	public static UInt of(final int value) {
 		return new UInt(value);
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to parse
-	 * @return the parsed object
-	 */
-	static UInt parse(final Object object) {
-		return object instanceof UInt
-			? (UInt)object
-			: object instanceof Number
-				? of(((Number)object).intValue())
-				: object != null
-					? of(Integer.parseInt(object.toString()))
-					: null;
-	}
-
 }

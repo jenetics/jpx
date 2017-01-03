@@ -185,21 +185,4 @@ public final class Length
 		requireNonNull(unit);
 		return new Length(Unit.METER.convert(length, unit));
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to parse
-	 * @return the parsed object
-	 */
-	static Length parse(final Object object) {
-		return object instanceof Length
-			? (Length)object
-			: object instanceof Number
-				? of(((Number)object).doubleValue(), Unit.METER)
-				: object != null
-					? of(Double.parseDouble(object.toString()), Unit.METER)
-					: null;
-	}
-
 }

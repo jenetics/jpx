@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Parsers.parseString;
 
 import java.io.Serializable;
 import java.time.Instant;
@@ -32,7 +31,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -537,14 +535,14 @@ public final class Metadata implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Metadata> reader() {
-		final Function<Object[], Metadata> create = a -> Metadata.of(
-			parseString(a[0]),
-			parseString(a[1]),
+		final XML.Function<Object[], Metadata> create = a -> Metadata.of(
+			Parsers.toString(a[0]),
+			Parsers.toString(a[1]),
 			(Person)a[2],
 			(Copyright)a[3],
 			(List<Link>)a[4],
-			ZonedDateTimeFormat.parse((String)a[5]),
-			(String)a[6],
+			Parsers.toZonedDateTime((String)a[5]),
+			Parsers.toString(a[6]),
 			(Bounds)a[7]
 		);
 

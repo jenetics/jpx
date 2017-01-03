@@ -37,7 +37,7 @@ import java.util.stream.Stream;
 /**
  * Enumeration of the valid date time formats.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
  */
@@ -103,14 +103,6 @@ enum ZonedDateTimeFormat {
 	 */
 	public static String format(final ZonedDateTime time) {
 		return time != null ? FORMATTER.format(time) : null;
-	}
-
-	public static ZonedDateTime parse(final String time) {
-		return time != null
-			? parseOptional(time).orElseThrow(() ->
-				new IllegalArgumentException(
-					String.format("Can't parse time: %s'", time)))
-			: null;
 	}
 
 	public static Optional<ZonedDateTime> parseOptional(final String time) {

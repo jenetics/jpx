@@ -30,7 +30,7 @@ import java.util.function.Supplier;
 import org.testng.annotations.Test;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 @Test
 public class CopyrightTest extends XMLStreamTestBase<Copyright> {

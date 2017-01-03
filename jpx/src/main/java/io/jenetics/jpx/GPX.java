@@ -19,8 +19,10 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.BufferedInputStream;
@@ -38,7 +40,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
@@ -79,7 +80,7 @@ public final class GPX implements Serializable {
 	/**
 	 * The default creator string.
 	 */
-	public static final String CREATOR = "JPX - Java GPX library (1.0)";
+	public static final String CREATOR = "JPX (https://jenetics.github.io/jpx)";
 
 	private final String _creator;
 	private final String _version;
@@ -199,6 +200,14 @@ public final class GPX implements Serializable {
 	 */
 	public Stream<Track> tracks() {
 		return _tracks.stream();
+	}
+
+	@Override
+	public String toString() {
+		return format(
+			"GPX[way-points=%s, routes=%s, tracks=%s]",
+			getWayPoints().size(), getRoutes().size(), getTracks().size()
+		);
 	}
 
 	@Override
@@ -575,9 +584,9 @@ public final class GPX implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<GPX> reader() {
-		final Function<Object[], GPX> creator = a -> GPX.of(
-			(String)a[0],
-			(String)a[1],
+		final XML.Function<Object[], GPX> creator = a -> GPX.of(
+			toMandatoryString(a[0], "GPX.version"),
+			toMandatoryString(a[1], "GPX.creator"),
 			(Metadata)a[2],
 			(List<WayPoint>)a[3],
 			(List<Route>)a[4],
