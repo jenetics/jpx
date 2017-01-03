@@ -33,7 +33,7 @@ import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.WayPointTest;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class GeoidTest {
 

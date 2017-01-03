@@ -23,8 +23,17 @@ import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Parsers.parseDouble;
-import static io.jenetics.jpx.Parsers.parseSeconds;
+import static io.jenetics.jpx.Parsers.toDGPSStation;
+import static io.jenetics.jpx.Parsers.toDegrees;
+import static io.jenetics.jpx.Parsers.toDouble;
+import static io.jenetics.jpx.Parsers.toDuration;
+import static io.jenetics.jpx.Parsers.toFix;
+import static io.jenetics.jpx.Parsers.toLatitude;
+import static io.jenetics.jpx.Parsers.toLength;
+import static io.jenetics.jpx.Parsers.toLongitude;
+import static io.jenetics.jpx.Parsers.toSpeed;
+import static io.jenetics.jpx.Parsers.toUInt;
+import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -36,12 +45,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import io.jenetics.jpx.Speed.Unit;
 
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
@@ -798,9 +804,15 @@ public final class WayPoint implements Point, Serializable {
 		 *
 		 * @param fix the type of GPX fix
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the fix value is not one of the
+		 *         following values: [none, 2d, 3d, dgps, pps]
 		 */
 		public Builder fix(final String fix) {
-			_fix = Fix.parse(fix);
+			try {
+				_fix = toFix(fix, "WayPoint.fix");
+			} catch (XMLStreamException e) {
+				throw new IllegalArgumentException(e);
+			}
 			return this;
 		}
 
@@ -1268,7 +1280,9 @@ public final class WayPoint implements Point, Serializable {
 	 * @param writer the XML data sink
 	 * @throws XMLStreamException if an error occurs
 	 */
-	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
+	void write(final String name, final XMLStreamWriter writer)
+		throws XMLStreamException
+	{
 		final XMLWriter xml = new XMLWriter(writer);
 
 		xml.write(name,
@@ -1298,27 +1312,29 @@ public final class WayPoint implements Point, Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final String name) {
-		final Function<Object[], WayPoint> create = a -> WayPoint.builder()
-			.ele(Length.parse(a[2]))
-			.speed(Speed.parse(a[3]))
-			.time(ZonedDateTimeFormat.parse((String)a[4]))
-			.magvar(Degrees.parse(a[5]))
-			.geoidheight(Length.parse(a[6]))
-			.name((String)a[7])
-			.cmt((String)a[8])
-			.desc((String)a[9])
-			.src((String)a[10])
+		final XML.Function<Object[], WayPoint> create = a -> WayPoint.builder()
+			.ele(toLength(a[2], "WayPoint.ele"))
+			.speed(toSpeed(a[3], "WayPoint.speed"))
+			.time(toZonedDateTime((String)a[4]))
+			.magvar(toDegrees(a[5], "WayPoint.magvar"))
+			.geoidheight(toLength(a[6], "WayPoint.geoidheight"))
+			.name(Parsers.toString(a[7]))
+			.cmt(Parsers.toString(a[8]))
+			.desc(Parsers.toString(a[9]))
+			.src(Parsers.toString(a[10]))
 			.links((List<Link>)a[11])
-			.sym((String)a[12])
-			.type((String)a[13])
-			.fix(Fix.parse(a[14]))
-			.sat(UInt.parse(a[15]))
-			.hdop(parseDouble(a[16]))
-			.vdop(parseDouble(a[17]))
-			.pdop(parseDouble(a[18]))
-			.ageofdgpsdata(parseSeconds(a[19]))
-			.dgpsid(DGPSStation.parse(a[20]))
-			.build(parseDouble(a[0]), parseDouble(a[1]));
+			.sym(Parsers.toString(a[12]))
+			.type(Parsers.toString(a[13]))
+			.fix(toFix(a[14], "WayPoint.fix"))
+			.sat(toUInt(a[15], "WayPoint.sat"))
+			.hdop(toDouble(a[16], "WayPoint.hdop"))
+			.vdop(toDouble(a[17], "WayPoint.vdop"))
+			.pdop(toDouble(a[18], "WayPoint.pdop"))
+			.ageofdgpsdata(toDuration(a[19], "WayPoint.ageofdgpsdata"))
+			.dgpsid(toDGPSStation(a[20], "WayPoint.dgpsid"))
+			.build(
+				toLatitude(a[0], "WayPoint.lat"),
+				toLongitude(a[1], "WayPoint.lon"));
 
 		return XMLReader.of(create, name,
 			attr("lat"),

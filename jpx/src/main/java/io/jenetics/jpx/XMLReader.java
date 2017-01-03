@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -38,7 +37,7 @@ import javax.xml.stream.XMLStreamReader;
 /**
  * Simplifies the usage of the {@link XMLStreamReader}.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
  */
@@ -146,7 +145,7 @@ abstract class XMLReader<T> {
 	 * @return the reader for the given element
 	 */
 	public static <T> XMLReader<T> of(
-		final Function<Object[], T> creator,
+		final XML.Function<Object[], T> creator,
 		final String name,
 		final List<Attr> attrs,
 		final XMLReader<?>... children
@@ -173,7 +172,7 @@ abstract class XMLReader<T> {
 	 * @return the reader for the given element
 	 */
 	public static <T> XMLReader<T> of(
-		final Function<Object[], T> creator,
+		final XML.Function<Object[], T> creator,
 		final String name,
 		final Attr attr,
 		final XMLReader<?>... children
@@ -203,7 +202,7 @@ abstract class XMLReader<T> {
 	 * @return the reader for the given element
 	 */
 	public static <T> XMLReader<T> of(
-		final Function<Object[], T> creator,
+		final XML.Function<Object[], T> creator,
 		final String name,
 		final Attr attr1,
 		final Attr attr2,
@@ -225,7 +224,7 @@ abstract class XMLReader<T> {
 	 * @return the reader for the given element
 	 */
 	public static <T> XMLReader<T> of(
-		final Function<Object[], T> creator,
+		final XML.Function<Object[], T> creator,
 		final String name,
 		final Attr attr1,
 		final Attr attr2,
@@ -245,7 +244,7 @@ abstract class XMLReader<T> {
 	 * @return the reader for the given element
 	 */
 	public static <T> XMLReader<T> of(
-		final Function<Object[], T> creator,
+		final XML.Function<Object[], T> creator,
 		final String name,
 		final XMLReader<?>... children
 	) {
@@ -295,13 +294,13 @@ final class XMLReaderImpl<T> extends XMLReader<T> {
 
 	private final List<XMLReader<?>> _children;
 	private final Map<String, XMLReader<?>> _childMap = new HashMap<>();
-	private final Function<Object[], T> _creator;
+	private final XML.Function<Object[], T> _creator;
 
 	XMLReaderImpl(
 		final String name,
 		final List<Attr> attrs,
 		final List<XMLReader<?>> children,
-		final Function<Object[], T> creator
+		final XML.Function<Object[], T> creator
 	) {
 		super(name, attrs);
 		_creator = requireNonNull(creator);

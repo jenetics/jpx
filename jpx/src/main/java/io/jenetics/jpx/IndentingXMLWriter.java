@@ -26,7 +26,9 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * {@link XMLStreamWriter} proxy for writing XML indentations.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
  */
@@ -83,7 +85,7 @@ final class IndentingXMLWriter extends XMLWriterProxy {
 	}
 
 	private void doIndent() throws XMLStreamException {
-		if(_depth > 0) {
+		if (_depth > 0) {
 			for(int i = 0; i < _depth; ++i) {
 				super.writeCharacters(_indent);
 			}

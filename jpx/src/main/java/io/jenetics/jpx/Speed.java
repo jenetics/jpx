@@ -187,22 +187,4 @@ public final class Speed
 		requireNonNull(unit);
 		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to parse
-	 * @return the parsed object
-	 */
-	static Speed parse(final Object object) {
-		return object instanceof Speed
-			? (Speed)object
-			: object instanceof Number
-				? of(((Number)object).doubleValue(), Unit.METERS_PER_SECOND)
-				: object != null
-					? of(Double.parseDouble(object.toString()),
-							Unit.METERS_PER_SECOND)
-					: null;
-	}
-
 }
