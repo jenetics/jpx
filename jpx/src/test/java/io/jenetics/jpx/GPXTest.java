@@ -126,8 +126,17 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@DataProvider(name = "invalidGPXFiles")
 	public Object[][] invalidGPXFiles() {
 		return new Object[][] {
-			{"/io/jenetics/jpx/empty-waypoint.xml"}
+			{"/io/jenetics/jpx/empty-waypoint.xml"},
+			{"/io/jenetics/jpx/invalid-latlon.xml"}
 		};
+	}
+
+	@Test
+	public void lenientRead() throws IOException {
+		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			GPX.read(in);
+		}
 	}
 
 	@Test
