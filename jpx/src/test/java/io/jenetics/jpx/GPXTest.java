@@ -135,7 +135,25 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void lenientRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
+			final GPX gpx = GPX.read(in, true);
+
+			Assert.assertTrue(gpx.getMetadata().isPresent());
+			Assert.assertFalse(gpx.getMetadata().get().getBounds().isPresent());
+
+			final int length = (int)gpx.tracks()
+				.flatMap(Track::segments)
+				.flatMap(TrackSegment::points)
+				.count();
+
+			Assert.assertEquals(length, 4);
+		}
+	}
+
+	@Test(expectedExceptions = {IOException.class})
+	public void strictRead() throws IOException {
+		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			GPX.read(in, false);
 		}
 	}
 

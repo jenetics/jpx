@@ -8,6 +8,7 @@
 		<name>track-1</name>
 		<desc>Log every 3 sec, 0 m</desc>
 		<trkseg>
+			<trkpt></trkpt>
 			<trkpt lat="48.199352264" lon="16.403341293">
 				<ele>4325376.000000</ele>
 				<time>2015-10-23T17:07:08Z</time>
