@@ -215,6 +215,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	public boolean isEmpty() {
 		return _name == null &&
 			_comment == null &&
+			_description == null &&
 			_source == null &&
 			_links.isEmpty() &&
 			_number == null &&
