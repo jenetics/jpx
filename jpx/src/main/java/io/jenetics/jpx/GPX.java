@@ -727,12 +727,15 @@ public final class GPX implements Serializable {
 	 * Read an GPX object from the given {@code input} stream.
 	 *
 	 * @param input the input stream from where the GPX date is read
+	 * @param lenient if {@code true}, out-of-range and syntactical errors are
+	 *        ignored. E.g. a {@code WayPoint} with {@code lat} values not in
+	 *        the valid range of [-90..90] are ignored/skipped.
 	 * @return the GPX object read from the input stream
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 */
-	public static GPX read(final InputStream input)
+	public static GPX read(final InputStream input, final boolean lenient)
 		throws IOException
 	{
 		final XMLInputFactory factory = XMLInputFactory.newFactory();
@@ -740,12 +743,47 @@ public final class GPX implements Serializable {
 			final XMLStreamReader reader = factory.createXMLStreamReader(input);
 			if (reader.hasNext()) {
 				reader.next();
-				return reader().read(reader);
+				return reader().read(reader, lenient);
 			} else {
 				throw new IOException("No 'gpx' element found.");
 			}
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
+		}
+	}
+
+	/**
+	 * Read an GPX object from the given {@code input} stream.
+	 *
+	 * @param input the input stream from where the GPX date is read
+	 * @return the GPX object read from the input stream
+	 * @throws IOException if the GPX object can't be read
+	 * @throws NullPointerException if the given {@code input} stream is
+	 *         {@code null}
+	 */
+	public static GPX read(final InputStream input) throws IOException {
+		return read(input, false);
+	}
+
+	/**
+	 * Read an GPX object from the given {@code input} stream.
+	 *
+	 * @param path the input path from where the GPX date is read
+	 * @param lenient if {@code true}, out-of-range and syntactical errors are
+	 *        ignored. E.g. a {@code WayPoint} with {@code lat} values not in
+	 *        the valid range of [-90..90] are ignored/skipped.
+	 * @return the GPX object read from the input stream
+	 * @throws IOException if the GPX object can't be read
+	 * @throws NullPointerException if the given {@code input} stream is
+	 *         {@code null}
+	 */
+	public static GPX read(final Path path, final boolean lenient)
+		throws IOException
+	{
+		try (FileInputStream in = new FileInputStream(path.toFile());
+			 BufferedInputStream bin = new BufferedInputStream(in))
+		{
+			return read(bin, lenient);
 		}
 	}
 
@@ -759,11 +797,25 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		try (FileInputStream in = new FileInputStream(path.toFile());
-			 BufferedInputStream bin = new BufferedInputStream(in))
-		{
-			return read(bin);
-		}
+		return read(path, false);
+	}
+
+	/**
+	 * Read an GPX object from the given {@code input} stream.
+	 *
+	 * @param path the input path from where the GPX date is read
+	 * @param lenient if {@code true}, out-of-range and syntactical errors are
+	 *        ignored. E.g. a {@code WayPoint} with {@code lat} values not in
+	 *        the valid range of [-90..90] are ignored/skipped.
+	 * @return the GPX object read from the input stream
+	 * @throws IOException if the GPX object can't be read
+	 * @throws NullPointerException if the given {@code input} stream is
+	 *         {@code null}
+	 */
+	public static GPX read(final String path, final boolean lenient)
+		throws IOException
+	{
+		return read(Paths.get(path), lenient);
 	}
 
 	/**
@@ -776,7 +828,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final String path) throws IOException {
-		return read(Paths.get(path));
+		return read(Paths.get(path), false);
 	}
 
 }
