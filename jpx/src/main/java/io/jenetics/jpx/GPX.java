@@ -80,7 +80,7 @@ public final class GPX implements Serializable {
 	/**
 	 * The default creator string.
 	 */
-	public static final String CREATOR = "JPX (https://jenetics.github.io/jpx)";
+	public static final String CREATOR = "JPX - https://jenetics.github.io/jpx";
 
 	private final String _creator;
 	private final String _version;
