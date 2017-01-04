@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -234,7 +233,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<TrackSegment> reader() {
-		final Function<Object[], TrackSegment> creator = a -> TrackSegment.of(
+		final XML.Function<Object[], TrackSegment> creator = a -> TrackSegment.of(
 			(List<WayPoint>)a[0]
 		);
 

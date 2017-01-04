@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -182,8 +181,8 @@ public final class Person implements Serializable {
 	}
 
 	static XMLReader<Person> reader() {
-		final Function<Object[], Person> creator = a -> Person.of(
-			(String)a[0], (Email)a[1], (Link)a[2]
+		final XML.Function<Object[], Person> creator = a -> Person.of(
+			Parsers.toString(a[0]), (Email)a[1], (Link)a[2]
 		);
 
 		return XMLReader.of(creator, "person",

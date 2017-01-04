@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -566,14 +565,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Route> reader() {
-		final Function<Object[], Route> create = a -> Route.builder()
-			.name((String)a[0])
-			.cmt((String)a[1])
-			.desc((String)a[2])
-			.src((String)a[3])
+		final XML.Function<Object[], Route> create = a -> Route.builder()
+			.name(Parsers.toString(a[0]))
+			.cmt(Parsers.toString(a[1]))
+			.desc(Parsers.toString(a[2]))
+			.src(Parsers.toString(a[3]))
 			.links((List<Link>)a[4])
-			.number(UInt.parse(a[5]))
-			.type((String)a[6])
+			.number(Parsers.toUInt(a[5], "Route.number"))
+			.type(Parsers.toString(a[6]))
 			.points((List<WayPoint>)a[7])
 			.build();
 

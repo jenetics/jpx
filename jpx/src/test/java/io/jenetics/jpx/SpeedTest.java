@@ -29,7 +29,7 @@ import org.testng.annotations.Test;
 import io.jenetics.jpx.Speed.Unit;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 @Test
 public class SpeedTest extends ObjectTester<Speed> {
