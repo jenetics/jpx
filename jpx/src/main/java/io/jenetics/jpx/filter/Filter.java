@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx.filter;
 
+import static java.util.Collections.unmodifiableList;
+
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Route;
 import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
 /**
@@ -33,18 +36,29 @@ import io.jenetics.jpx.WayPoint;
  * @version !__version__!
  * @since !__version__!
  */
-public class Filter {
+public final class Filter {
 
+	private Filter() {
+	}
 
 	public static GPX filter(final GPX gpx, final Predicate<? super WayPoint> filter) {
 		final List<WayPoint> wayPoints = gpx.wayPoints()
 			.filter(filter)
 			.collect(Collectors.toList());
 
-		final List<Route> routes;
+		final List<Route> routes = gpx.routes()
+			.map(route -> filter(route, filter))
+			.collect(Collectors.toList());
 
+		final List<Track> tracks = gpx.tracks()
+			.map(track -> filter(track, filter))
+			.collect(Collectors.toList());
 
-		return null;
+		return gpx.toBuilder()
+			.wayPoints(unmodifiableList(wayPoints))
+			.routes(unmodifiableList(routes))
+			.tracks(unmodifiableList(tracks))
+			.build();
 	}
 
 	private static Route filter(final Route route, final Predicate<? super WayPoint> filter) {
@@ -53,8 +67,26 @@ public class Filter {
 			.collect(Collectors.toList());
 
 		return route.toBuilder()
-			.points(points)
+			.points(unmodifiableList(points))
 			.build();
+	}
+
+	private static Track filter(final Track track, final Predicate<? super WayPoint> filter) {
+		final List<TrackSegment> segments = track.segments()
+			.map(segment -> filter(segment, filter))
+			.collect(Collectors.toList());
+
+		return track.toBuilder()
+			.segments(unmodifiableList(segments))
+			.build();
+	}
+
+	private static TrackSegment filter(final TrackSegment segment, final Predicate<? super WayPoint> filter) {
+		return TrackSegment.of(unmodifiableList(
+			segment.points()
+				.filter(filter)
+				.collect(Collectors.toList())
+		));
 	}
 
 }

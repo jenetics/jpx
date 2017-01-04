@@ -195,6 +195,26 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	}
 
 	/**
+	 * Convert the <em>immutable</em> track object into a <em>mutable</em>
+	 * builder initialized with the current track values.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return a new track builder initialized with the values of {@code this}
+	 *         track
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.name(_name)
+			.cmt(_comment)
+			.desc(_description)
+			.src(_source)
+			.links(_links)
+			.number(_number)
+			.segments(_segments);
+	}
+
+	/**
 	 * Return {@code true} if all track properties are {@code null} or empty.
 	 *
 	 * @return {@code true} if all track properties are {@code null} or empty

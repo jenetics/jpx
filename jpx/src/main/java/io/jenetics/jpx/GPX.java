@@ -202,6 +202,23 @@ public final class GPX implements Serializable {
 		return _tracks.stream();
 	}
 
+	/**
+	 * Convert the <em>immutable</em> GPX object into a <em>mutable</em>
+	 * builder initialized with the current GPX values.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return a new track builder initialized with the values of {@code this}
+	 *         GPX object
+	 */
+	public Builder toBuilder() {
+		return builder(_creator, _version)
+			.metadata(_metadata)
+			.wayPoints(_wayPoints)
+			.routes(_routes)
+			.tracks(_tracks);
+	}
+
 	@Override
 	public String toString() {
 		return format(
