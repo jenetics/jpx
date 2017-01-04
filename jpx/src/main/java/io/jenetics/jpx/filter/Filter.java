@@ -19,10 +19,42 @@
  */
 package io.jenetics.jpx.filter;
 
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.Route;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.WayPoint;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
 public class Filter {
+
+
+	public static GPX filter(final GPX gpx, final Predicate<? super WayPoint> filter) {
+		final List<WayPoint> wayPoints = gpx.wayPoints()
+			.filter(filter)
+			.collect(Collectors.toList());
+
+		final List<Route> routes;
+
+
+		return null;
+	}
+
+	private static Route filter(final Route route, final Predicate<? super WayPoint> filter) {
+		final List<WayPoint> points = route.points()
+			.filter(filter)
+			.collect(Collectors.toList());
+
+		return route.toBuilder()
+			.points(points)
+			.build();
+	}
+
 }

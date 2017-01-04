@@ -188,6 +188,26 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	}
 
 	/**
+	 * Convert the <em>immutable</em> route object into a <em>mutable</em>
+	 * builder initialized with the current route values.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return a new route builder initialized with the values of {@code this}
+	 *         route
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.name(_name)
+			.cmt(_comment)
+			.desc(_description)
+			.src(_source)
+			.links(_links)
+			.number(_number)
+			.points(_points);
+	}
+
+	/**
 	 * Return {@code true} if all route properties are {@code null} or empty.
 	 *
 	 * @return {@code true} if all route properties are {@code null} or empty
