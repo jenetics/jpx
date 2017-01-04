@@ -26,8 +26,8 @@ import javax.xml.stream.XMLStreamException;
  * {@link XMLStreamException}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.0.1
+ * @since 1.0.1
  */
 final class XML {
 
