@@ -361,6 +361,40 @@ public final class WayPoint implements Point, Serializable {
 		return Optional.ofNullable(_dgpsID);
 	}
 
+	/**
+	 * Convert the <em>immutable</em> way-point object into a <em>mutable</em>
+	 * builder initialized with the current way-point values.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return a new way-point builder initialized with the values of {@code this}
+	 *         way-point
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.lat(_latitude)
+			.lon(_longitude)
+			.ele(_elevation)
+			.speed(_speed)
+			.time(_time)
+			.magvar(_magneticVariation)
+			.geoidheight(_geoidHeight)
+			.name(_name)
+			.cmt(_comment)
+			.desc(_description)
+			.src(_source)
+			.links(_links)
+			.sym(_symbol)
+			.type(_type)
+			.fix(_fix)
+			.sat(_sat)
+			.hdop(_hdop)
+			.vdop(_vdop)
+			.pdop(_pdop)
+			.ageofdgpsdata(_ageOfGPSData)
+			.dgpsid(_dgpsID);
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 37;
