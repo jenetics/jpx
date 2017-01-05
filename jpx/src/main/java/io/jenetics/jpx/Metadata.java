@@ -177,6 +177,27 @@ public final class Metadata implements Serializable {
 	}
 
 	/**
+	 * Convert the <em>immutable</em> metadata object into a <em>mutable</em>
+	 * builder initialized with the current metadata values.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return a new metadata builder initialized with the values of {@code this}
+	 *         metadata
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.name(_name)
+			.desc(_description)
+			.author(_author)
+			.copyright(_copyright)
+			.links(_links)
+			.time(_time)
+			.keywords(_keywords)
+			.bounds(_bounds);
+	}
+
+	/**
 	 * Return {@code true} if all metadata properties are {@code null} or empty.
 	 *
 	 * @return {@code true} if all metadata properties are {@code null} or empty

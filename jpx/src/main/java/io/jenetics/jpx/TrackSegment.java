@@ -76,6 +76,25 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return _points.stream();
 	}
 
+	@Override
+	public Iterator<WayPoint> iterator() {
+		return _points.iterator();
+	}
+
+	/**
+	 * Convert the <em>immutable</em> track-segment object into a
+	 * <em>mutable</em> builder initialized with the current track-segment
+	 * values.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return a new track-segment builder initialized with the values of
+	 *        {@code this} track-segment
+	 */
+	public Builder toBuilder() {
+		return builder().points(_points);
+	}
+
 	/**
 	 * Return {@code true} if {@code this} track-segment doesn't contain any
 	 * track-point.
@@ -85,11 +104,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 */
 	public boolean isEmpty() {
 		return _points.isEmpty();
-	}
-
-	@Override
-	public Iterator<WayPoint> iterator() {
-		return _points.iterator();
 	}
 
 	@Override
