@@ -36,13 +36,13 @@ import java.util.regex.Pattern;
  * @version !__version__!
  * @since !__version__!
  */
-final class PreparedQuery {
+final class PreparedSQL {
 	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
 
 	private final String _query;
 	private final Map<String, Integer> _params;
 
-	private PreparedQuery(
+	private PreparedSQL(
 		final String query,
 		final Map<String, Integer> params
 	) {
@@ -81,7 +81,7 @@ final class PreparedQuery {
 	 * @param query the query string to parse
 	 * @return a query string into a query for prepared statements
 	 */
-	public static PreparedQuery parse(final String query) {
+	public static PreparedSQL parse(final String query) {
 		final Matcher matcher = PARAM_PATTERN.matcher(query);
 
 		int index = 1;
@@ -93,7 +93,7 @@ final class PreparedQuery {
 		}
 		matcher.appendTail(parsedQuery);
 
-		return new PreparedQuery(parsedQuery.toString(), params);
+		return new PreparedSQL(parsedQuery.toString(), params);
 	}
 
 }

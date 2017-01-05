@@ -36,7 +36,7 @@ import java.util.List;
 public final class SQLQuery extends AbstractQuery {
 	private final List<Param> _params = new ArrayList<>();
 
-	public SQLQuery(final Connection conn, final PreparedQuery query) {
+	public SQLQuery(final Connection conn, final PreparedSQL query) {
 		super(conn, query);
 	}
 
