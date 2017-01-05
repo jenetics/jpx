@@ -107,40 +107,6 @@ public abstract class DAO {
 	}
 
 	/**
-	 * Represents a select SQL query.
-	 */
-	public static final class SQLQuery extends AbstractQuery {
-		private final List<Param> _params = new ArrayList<>();
-
-		public SQLQuery(final Connection conn, final PreparedQuery query) {
-			super(conn, query);
-		}
-
-		public SQLQuery(final Connection conn, final String query) {
-			super(conn, query);
-		}
-
-		public SQLQuery on(final String name, final Object value) {
-			_params.add(Param.value(name, value));
-			return this;
-		}
-
-		public <T> T as(final RowParser<T> parser) throws SQLException {
-			for (Param param : _params) {
-				param.eval();
-			}
-
-			try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
-				_query.fill(stmt, _params);
-				try (final ResultSet rs = stmt.executeQuery()) {
-					return parser.parse(rs);
-				}
-			}
-		}
-
-	}
-
-	/**
 	 * Represents batch insert query.
 	 */
 	public static final class Batch {
