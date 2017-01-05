@@ -107,27 +107,9 @@ public abstract class DAO {
 	}
 
 	/**
-	 * Abstract query class.
-	 */
-	static abstract class Query {
-		final Connection _conn;
-		final PreparedQuery _query;
-
-		Query(final Connection conn, final PreparedQuery query) {
-			_conn = requireNonNull(conn);
-			_query = requireNonNull(query);
-		}
-
-		Query(final Connection conn, final String query) {
-			this(conn, PreparedQuery.parse(query));
-		}
-
-	}
-
-	/**
 	 * Represents a select SQL query.
 	 */
-	public static final class SQLQuery extends Query {
+	public static final class SQLQuery extends AbstractQuery {
 		private final List<Param> _params = new ArrayList<>();
 
 		public SQLQuery(final Connection conn, final PreparedQuery query) {
