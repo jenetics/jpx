@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -104,6 +107,14 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 */
 	public boolean isEmpty() {
 		return _points.isEmpty();
+	}
+
+	public TrackSegment filter(final Predicate<? super WayPoint> filter) {
+		return TrackSegment.of(unmodifiableList(
+			points()
+				.filter(filter)
+				.collect(Collectors.toList())
+		));
 	}
 
 	@Override

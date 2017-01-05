@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -228,6 +231,16 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			_number == null &&
 			(_segments.isEmpty() ||
 				_segments.stream().allMatch(TrackSegment::isEmpty));
+	}
+
+	public Track filter(final Predicate<? super WayPoint> filter) {
+		final List<TrackSegment> segments = segments()
+			.map(segment -> segment.filter(filter))
+			.collect(Collectors.toList());
+
+		return toBuilder()
+			.segments(unmodifiableList(segments))
+			.build();
 	}
 
 	@Override
