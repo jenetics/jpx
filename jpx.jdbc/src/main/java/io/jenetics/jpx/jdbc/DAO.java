@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -45,68 +44,6 @@ import java.util.regex.Pattern;
  * @since !__version__!
  */
 public abstract class DAO {
-
-	/**
-	 * Converts one row from the given {@link ResultSet} into a data object from
-	 * the given type.
-	 *
-	 * @param <T> the data object type
-	 */
-	@FunctionalInterface
-	public static interface RowParser<T> {
-
-		/**
-		 * Converts the row on the current cursor position into a data object.
-		 *
-		 * @param rs the data source
-		 * @return the stored data object
-		 * @throws SQLException if reading of the current row fails
-		 */
-		public T parse(final ResultSet rs) throws SQLException;
-
-		/**
-		 * Return a new parser which expects at least one result.
-		 *
-		 * @return a new parser which expects at least one result
-		 */
-		public default RowParser<T> single() {
-			return rs -> {
-				if (rs.next()) {
-					return parse(rs);
-				}
-				throw new NoSuchElementException();
-			};
-		}
-
-		/**
-		 * Return a new parser which parses a single selection result.
-		 *
-		 * @return a new parser which parses a single selection result
-		 */
-		public default RowParser<SQL.Option<T>> singleOpt() {
-			return rs -> rs.next()
-				? SQL.Option.of(parse(rs))
-				: SQL.Option.empty();
-		}
-
-		/**
-		 * Return a new parser witch parses a the whole selection result.
-		 *
-		 * @return a new parser witch parses a the whole selection result
-		 */
-		public default RowParser<List<T>> list() {
-			return rs -> {
-				final List<T> result = new ArrayList<>();
-				while (rs.next()) {
-					result.add(parse(rs));
-				}
-
-				return result;
-			};
-		}
-
-	}
-
 	/**
 	 * Represents a query parameter with <em>name</em> and <em>value</em>.
 	 */
