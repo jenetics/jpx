@@ -28,13 +28,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Abstract DAO class
@@ -108,71 +104,6 @@ public abstract class DAO {
 		) {
 			return new Param(name, SQL.Lazy.of(value));
 		}
-	}
-
-	/**
-	 * Represents a SQL query for usage with a {@link PreparedStatement}.
-	 */
-	private static final class PreparedQuery {
-		private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
-
-		private final String _query;
-		private final Map<String, Integer> _params;
-
-		private PreparedQuery(
-			final String query,
-			final Map<String, Integer> params
-		) {
-			_query = requireNonNull(query);
-			_params = requireNonNull(params);
-		}
-
-		void fill(final PreparedStatement stmt, final List<Param> params)
-			throws SQLException
-		{
-			for (Param param : params) {
-				final Integer index = _params.get(param.getName());
-				if (index != null) {
-					stmt.setObject(index, param.getValue());
-				}
-			}
-		}
-
-		/**
-		 * Return the prepared statement query.
-		 *
-		 * @return the prepared statement query
-		 */
-		String getQuery() {
-			return _query;
-		}
-
-		@Override
-		public String toString() {
-			return _query;
-		}
-
-		/**
-		 * Parses a query string into a query for prepared statements.
-		 *
-		 * @param query the query string to parse
-		 * @return a query string into a query for prepared statements
-		 */
-		public static PreparedQuery parse(final String query) {
-			final Matcher matcher = PARAM_PATTERN.matcher(query);
-
-			int index = 1;
-			final Map<String, Integer> params = new HashMap<>();
-			final StringBuffer parsedQuery = new StringBuffer();
-			while (matcher.find()) {
-				params.put(matcher.group(1), index++);
-				matcher.appendReplacement(parsedQuery, "?");
-			}
-			matcher.appendTail(parsedQuery);
-
-			return new PreparedQuery(parsedQuery.toString(), params);
-		}
-
 	}
 
 	/**
