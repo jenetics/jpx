@@ -37,8 +37,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.jenetics.jpx.jdbc.SQL.Supplier;
-
 /**
  * Abstract DAO class
  *
@@ -85,8 +83,10 @@ public abstract class DAO {
 		 *
 		 * @return a new parser which parses a single selection result
 		 */
-		public default RowParser<Optional<T>> singleOpt() {
-			return rs -> rs.next() ? Optional.of(parse(rs)) : Optional.empty();
+		public default RowParser<SQL.Option<T>> singleOpt() {
+			return rs -> rs.next()
+				? SQL.Option.of(parse(rs))
+				: SQL.Option.empty();
 		}
 
 		/**
@@ -138,6 +138,7 @@ public abstract class DAO {
 		 *
 		 * @return the parameter value.
 		 */
+		@SuppressWarnings({"raw", "unchecked"})
 		public Object getValue() throws SQLException {
 			Object value = _value.get();
 			if (value instanceof Optional<?>) {
@@ -270,7 +271,7 @@ public abstract class DAO {
 		}
 
 		public SQLQuery on(final String name, final Object value) {
-			_params.add(Param.insert(name, () -> value));
+			_params.add(Param.value(name, value));
 			return this;
 		}
 
@@ -391,21 +392,19 @@ public abstract class DAO {
 		return new Batch(_conn, query);
 	}
 
-	public static <T> Stored<T> insertOrUpdate(
+	public static <T> Stored<T> put(
 		final T value,
-		final SQL.Function<T, Optional<Stored<T>>> select,
+		final SQL.Function<T, SQL.Option<Stored<T>>> select,
 		final SQL.Function<T, Stored<T>> insert,
 		final SQL.Consumer<Stored<T>> update
 	)
 		throws SQLException
 	{
-		final Optional<Stored<T>> stored = select.apply(value);
-		if (stored.isPresent()) {
-			update.accept(stored.get());
-			return stored.get().copy(value);
-		} else {
-			return insert.apply(value);
-		}
+		return select.apply(value)
+			.map(stored -> {
+				update.accept(stored);
+				return stored.copy(value); })
+			.orElseGet(() -> insert.apply(value));
 	}
 
 	/**

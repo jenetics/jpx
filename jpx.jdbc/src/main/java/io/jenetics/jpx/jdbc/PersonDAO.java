@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import io.jenetics.jpx.Email;
@@ -78,7 +79,7 @@ public final class PersonDAO extends DAO {
 
 	private Long insertOrUpdate(final Optional<Link> link) throws SQLException {
 		return link.isPresent()
-			? dao(LinkDAO::of).insertOrUpdate(link.get()).getID()
+			? dao(LinkDAO::of).put(link.get()).getID()
 			: null;
 	}
 
