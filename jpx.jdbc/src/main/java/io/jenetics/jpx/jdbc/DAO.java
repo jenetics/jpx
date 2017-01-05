@@ -19,13 +19,10 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.util.Objects.requireNonNull;
-
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -36,71 +33,6 @@ import java.util.function.Function;
  * @since !__version__!
  */
 public abstract class DAO {
-	/**
-	 * Represents a query parameter with <em>name</em> and <em>value</em>.
-	 */
-	public static final class Param {
-
-		private final String _name;
-		private final SQL.Lazy<?> _value;
-
-		private Param(final String name, final SQL.Lazy<?> value) {
-			_name = requireNonNull(name);
-			_value = requireNonNull(value);
-		}
-
-		/**
-		 * Return the parameter name.
-		 *
-		 * @return the parameter name
-		 */
-		public String getName() {
-			return _name;
-		}
-
-		void eval() throws SQLException {
-			_value.get();
-		}
-
-		/**
-		 * Return the parameter value.
-		 *
-		 * @return the parameter value.
-		 */
-		@SuppressWarnings({"raw", "unchecked"})
-		public Object getValue() throws SQLException {
-			Object value = _value.get();
-			if (value instanceof Optional<?>) {
-				value = ((Optional)value).orElse(null);
-			}
-			if (value instanceof Optional<?>) {
-				value = ((Optional)value).orElse(null);
-			}
-
-			return value;
-		}
-
-		/**
-		 * Create a new query parameter object from the given {@code name} and
-		 * {@code value}.
-		 *
-		 * @param name the parameter name
-		 * @param value the parameter value
-		 * @return a new query parameter object
-		 * @throws NullPointerException if the given parameter {@code name} is
-		 *         {@code null}
-		 */
-		public static Param value(final String name, final Object value) {
-			return new Param(name, SQL.Lazy.ofValue(value));
-		}
-
-		public static <T> Param insert(
-			final String name,
-			final SQL.Supplier<T> value
-		) {
-			return new Param(name, SQL.Lazy.of(value));
-		}
-	}
 
 	protected final Connection _conn;
 

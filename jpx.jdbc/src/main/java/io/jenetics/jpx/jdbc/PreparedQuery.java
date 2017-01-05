@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.jenetics.jpx.jdbc.DAO.Param;
-
 /**
  * Represents a SQL query for usage with a {@link PreparedStatement}.
  *

@@ -28,8 +28,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-import io.jenetics.jpx.jdbc.DAO.Param;
-
 /**
  * Represents batch insert query.
  *
