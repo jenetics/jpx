@@ -19,16 +19,12 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -106,73 +102,6 @@ public abstract class DAO {
 		}
 	}
 
-	/**
-	 * Represents batch insert query.
-	 */
-	public static final class Batch {
-		private final Connection _conn;
-		private final PreparedQuery _query;
-
-		public Batch(final Connection conn, final String query) {
-			_conn = conn;
-			_query = PreparedQuery.parse(query);
-		}
-
-		public <T> List<Stored<T>> insert(
-			final List<T> values,
-			final Function<T, List<Param>> format
-		)
-			throws SQLException
-		{
-			for (T value : values) {
-				for (Param param : format.apply(value)) {
-					param.eval();
-				}
-			}
-
-			final List<Stored<T>> results = new ArrayList<>();
-			try (PreparedStatement stmt = _conn
-				.prepareStatement(_query.getQuery(), RETURN_GENERATED_KEYS))
-			{
-				for (T value : values) {
-					final List<Param> params = format.apply(value);
-					_query.fill(stmt, params);
-
-					stmt.executeUpdate();
-					results.add(Stored.of(id(stmt), value));
-				}
-			}
-
-			return results;
-		}
-
-		public <T> int update(
-			final List<T> values,
-			final Function<T, List<Param>> format
-		)
-			throws SQLException
-		{
-			for (T value : values) {
-				for (Param param : format.apply(value)) {
-					param.eval();
-				}
-			}
-
-			int count = 0;
-			try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
-				for (T value : values) {
-					final List<Param> params = format.apply(value);
-					_query.fill(stmt, params);
-
-					count += stmt.executeUpdate();
-				}
-			}
-
-			return count;
-		}
-
-	}
-
 	protected final Connection _conn;
 
 	/**
@@ -204,8 +133,8 @@ public abstract class DAO {
 	 * @param query the insert SQL query
 	 * @return a new batch insert query object
 	 */
-	public Batch batch(final String query) {
-		return new Batch(_conn, query);
+	public BatchQuery batch(final String query) {
+		return new BatchQuery(_conn, query);
 	}
 
 	public static <T> Stored<T> put(
