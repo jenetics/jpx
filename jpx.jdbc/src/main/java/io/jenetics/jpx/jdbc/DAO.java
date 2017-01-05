@@ -55,7 +55,7 @@ public abstract class DAO {
 	 * @param query the SQL query
 	 * @return a new select query object
 	 */
-	public SQLQuery sql(final String query) {
+	public SQLQuery SQL(final String query) {
 		return new SQLQuery(_conn, query);
 	}
 
@@ -65,7 +65,7 @@ public abstract class DAO {
 	 * @param query the insert SQL query
 	 * @return a new batch insert query object
 	 */
-	public BatchQuery batch(final String query) {
+	public BatchQuery Batch(final String query) {
 		return new BatchQuery(_conn, query);
 	}
 

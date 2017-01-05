@@ -69,7 +69,7 @@ public final class PersonDAO extends DAO {
 			"INSERT INTO person(name, email, link_id) " +
 			"VALUES({name}, {email}, {link_id});";
 
-		return batch(query).insert(persons, person -> Arrays.asList(
+		return Batch(query).insert(persons, person -> Arrays.asList(
 			Param.value("name", person.getName()),
 			Param.value("email", person.getEmail().map(Email::getAddress)),
 			Param.insert("link_id", () -> insertOrUpdate(person.getLink()))
@@ -94,7 +94,7 @@ public final class PersonDAO extends DAO {
 			"FROM person " +
 			"INNER JOIN link ON (person.link_id = link.id)";
 
-		return sql(query).as(RowParser.list());
+		return SQL(query).as(RowParser.list());
 	}
 
 	public static PersonDAO of(final Connection conn) {

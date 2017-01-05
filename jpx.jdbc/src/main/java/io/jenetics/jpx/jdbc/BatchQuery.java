@@ -35,13 +35,10 @@ import java.util.function.Function;
  * @version !__version__!
  * @since !__version__!
  */
-public final class BatchQuery {
-	private final Connection _conn;
-	private final PreparedQuery _query;
+public final class BatchQuery extends AbstractQuery {
 
 	public BatchQuery(final Connection conn, final String query) {
-		_conn = conn;
-		_query = PreparedQuery.parse(query);
+		super(conn, query);
 	}
 
 	public <T> List<Stored<T>> insert(

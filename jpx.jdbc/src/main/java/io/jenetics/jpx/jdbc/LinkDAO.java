@@ -19,7 +19,6 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
@@ -56,8 +55,9 @@ public final class LinkDAO extends DAO {
 		)
 	);
 
-	static final class Href {}
-	static final class ID {}
+	/* *************************************************************************
+	 * INSERT queries
+	 **************************************************************************/
 
 	/**
 	 * Insert the given link list into the DB.
@@ -73,7 +73,7 @@ public final class LinkDAO extends DAO {
 			"INSERT INTO link(href, text, type) " +
 			"VALUES({href}, {text}, {type});";
 
-		return batch(query).insert(links, link -> asList(
+		return Batch(query).insert(links, link -> asList(
 			Param.value("href", link.getHref().toString()),
 			Param.value("text", link.getText()),
 			Param.value("type", link.getType())
@@ -93,6 +93,10 @@ public final class LinkDAO extends DAO {
 		return insert(singletonList(link)).get(0);
 	}
 
+	/* *************************************************************************
+	 * UPDATE queries
+	 **************************************************************************/
+
 	/**
 	 * Updates the given list of already inserted link objects.
 	 *
@@ -107,7 +111,7 @@ public final class LinkDAO extends DAO {
 			"UPDATE link SET text = {text}, type = {type} " +
 			"WHERE id = {id}";
 
-		batch(query).update(links, link -> asList(
+		Batch(query).update(links, link -> asList(
 			Param.value("text", link.map(Link::getText)),
 			Param.value("type", link.map(Link::getType)),
 			Param.value("id", link.getID())
@@ -136,6 +140,10 @@ public final class LinkDAO extends DAO {
 		);
 	}
 
+	/* *************************************************************************
+	 * SELECT queries
+	 **************************************************************************/
+
 	/**
 	 * Select all available links.
 	 *
@@ -143,15 +151,15 @@ public final class LinkDAO extends DAO {
 	 * @throws SQLException if the select fails
 	 */
 	public List<Stored<Link>> select() throws SQLException {
-		return sql("SELECT id, href, text, type FROM link")
+		return SQL("SELECT id, href, text, type FROM link")
 			.as(RowParser.list());
 	}
 
-	public SQL.Option<Stored<Link>> selectBy(final Href href) throws SQLException {
+	public List<Stored<Link>> selectByID(final long... ids) throws SQLException {
 		final String query =
-			"SELECT id, href, text, type " +
-			"FROM link " +
-			"WHERE href = {href}";
+			"SELECT id, href, text, type FROM link WHERE id IN ({ids})";
+
+
 
 		return null;
 	}
@@ -166,7 +174,10 @@ public final class LinkDAO extends DAO {
 	public SQL.Option<Stored<Link>> selectByID(final long id)
 		throws SQLException
 	{
-		return sql("SELECT id, href, text, type FROM link WHERE id = {id};")
+		final String query =
+			"SELECT id, href, text, type FROM link WHERE id = {id};";
+
+		return SQL(query)
 			.on("id", id)
 			.as(RowParser.singleOpt());
 	}
@@ -181,7 +192,7 @@ public final class LinkDAO extends DAO {
 	public SQL.Option<Stored<Link>> selectByHref(final URI href)
 		throws SQLException
 	{
-		return sql("SELECT id, href, text, type FROM link WHERE href = {href}")
+		return SQL("SELECT id, href, text, type FROM link WHERE href = {href}")
 			.on("href", href.toString())
 			.as(RowParser.singleOpt());
 	}
