@@ -31,6 +31,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -68,6 +69,11 @@ public class LinkDAOTest {
 				}
 			}
 		});
+	}
+
+	@AfterSuite
+	public void shutdown() throws SQLException {
+		db.close();
 	}
 
 	@Test

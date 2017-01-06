@@ -79,4 +79,7 @@ public abstract class DB {
 		}
 	}
 
+	public void close() throws SQLException {
+	}
+
 }

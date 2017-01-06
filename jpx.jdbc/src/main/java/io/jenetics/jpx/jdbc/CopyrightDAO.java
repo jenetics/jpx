@@ -87,7 +87,7 @@ final class CopyrightDAO extends DAO {
 	{
 		final String query =
 			"INSERT INTO copyright(author, year, license) " +
-			"VALUES({author}, {year}, {license});";
+			"VALUES({author}, {year}, {license})";
 
 		return Batch(query).insert(copyrights, copyright -> asList(
 			Param.value("author", copyright.getAuthor()),

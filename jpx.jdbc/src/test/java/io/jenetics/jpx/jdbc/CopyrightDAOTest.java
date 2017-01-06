@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
@@ -62,6 +63,11 @@ public class CopyrightDAOTest {
 				}
 			}
 		});
+	}
+
+	@AfterSuite
+	public void shutdown() throws SQLException {
+		db.close();
 	}
 
 	@Test
@@ -111,7 +117,9 @@ public class CopyrightDAOTest {
 			dao.put(copyrights);
 
 			Assert.assertEquals(
-				DAO.map(dao.select(), Stored::value),
+				dao.select().stream()
+					.map(Stored::value)
+					.collect(Collectors.toSet()),
 				copyrights.stream()
 					.collect(Collectors.toSet())
 			);

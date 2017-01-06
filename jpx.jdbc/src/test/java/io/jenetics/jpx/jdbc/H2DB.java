@@ -40,6 +40,7 @@ public class H2DB extends DB {
 	public static final DB INSTANCE = new H2DB("jdbc:h2:mem:testdb-gpx;MODE=MySQL");
 
 	private final DataSource _dataSource;
+	private Connection _connection;
 
 	public H2DB(final DataSource dataSource) {
 		_dataSource = requireNonNull(dataSource);
@@ -57,7 +58,11 @@ public class H2DB extends DB {
 
 	@Override
 	public Connection getConnection() throws SQLException {
-		return _dataSource.getConnection();
+		if (_connection == null) {
+			_connection = _dataSource.getConnection();
+		}
+
+		return _connection;
 	}
 
 	@Override
@@ -74,6 +79,13 @@ public class H2DB extends DB {
 		final String name = format("testdb_%s", Math.abs(new Random().nextLong()));
 		final String url = format("jdbc:h2:mem:%s;MODE=MySQL", name);
 		return new H2DB(url);
+	}
+
+	@Override
+	public void close() throws SQLException {
+		if (_connection != null) {
+			_connection.close();
+		}
 	}
 
 }
