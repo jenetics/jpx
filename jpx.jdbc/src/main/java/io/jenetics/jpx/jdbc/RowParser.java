@@ -24,8 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
-
-import io.jenetics.jpx.jdbc.SQL.Option;
+import java.util.Optional;
 
 /**
  * Converts one row from the given {@link ResultSet} into a data object from
@@ -38,7 +37,7 @@ import io.jenetics.jpx.jdbc.SQL.Option;
  * @since !__version__!
  */
 @FunctionalInterface
-public interface RowParser<T> {
+interface RowParser<T> {
 
 	/**
 	 * Converts the row on the current cursor position into a data object.
@@ -47,14 +46,14 @@ public interface RowParser<T> {
 	 * @return the stored data object
 	 * @throws SQLException if reading of the current row fails
 	 */
-	public T parse(final ResultSet rs) throws SQLException;
+	T parse(final ResultSet rs) throws SQLException;
 
 	/**
 	 * Return a new parser which expects at least one result.
 	 *
 	 * @return a new parser which expects at least one result
 	 */
-	public default RowParser<T> single() {
+	default RowParser<T> single() {
 		return rs -> {
 			if (rs.next()) {
 				return parse(rs);
@@ -68,10 +67,10 @@ public interface RowParser<T> {
 	 *
 	 * @return a new parser which parses a single selection result
 	 */
-	public default RowParser<Option<T>> singleOpt() {
+	default RowParser<Optional<T>> singleOpt() {
 		return rs -> rs.next()
-			? Option.of(parse(rs))
-			: Option.empty();
+			? Optional.ofNullable(parse(rs))
+			: Optional.empty();
 	}
 
 	/**
@@ -79,7 +78,7 @@ public interface RowParser<T> {
 	 *
 	 * @return a new parser witch parses a the whole selection result
 	 */
-	public default RowParser<List<T>> list() {
+	default RowParser<List<T>> list() {
 		return rs -> {
 			final List<T> result = new ArrayList<>();
 			while (rs.next()) {

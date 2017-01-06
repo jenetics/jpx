@@ -24,7 +24,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -55,6 +54,11 @@ final class Param {
 		return _name;
 	}
 
+	/**
+	 * Return the parameter values.
+	 *
+	 * @return the parameter values
+	 */
 	Collection<? extends Object> values() {
 		return _values;
 	}
@@ -78,6 +82,13 @@ final class Param {
 		return new Param(name, singletonList(value));
 	}
 
+	/**
+	 * Create a new parameter object with the given name and values.
+	 *
+	 * @param name the parameter name
+	 * @param values the parameter values
+	 * @return a new parameter object
+	 */
 	public static Param values(
 		final String name,
 		final Collection<? extends Object> values
@@ -85,6 +96,13 @@ final class Param {
 		return new Param(name, values);
 	}
 
+	/**
+	 * Return a new parameter object with the given name and long values.
+	 *
+	 * @param name the parameter name
+	 * @param values the parameter values
+	 * @return a new parameter object
+	 */
 	public static Param values(final String name, final long... values) {
 		return new Param(
 			name,

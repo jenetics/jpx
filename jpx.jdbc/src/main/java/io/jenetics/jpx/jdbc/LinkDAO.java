@@ -27,6 +27,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Link;
@@ -191,7 +192,7 @@ public final class LinkDAO extends DAO {
 	 * @return the selected link, if available
 	 * @throws SQLException if the select fails
 	 */
-	public SQL.Option<Stored<Link>> selectByID(final long id)
+	public Optional<Stored<Link>> selectByID(final long id)
 		throws SQLException
 	{
 		final String query =

@@ -39,20 +39,20 @@ import java.util.function.Function;
  * @version !__version__!
  * @since !__version__!
  */
-public abstract class DAO {
+abstract class DAO {
 
-	protected final Connection _conn;
+	final Connection _conn;
 
 	/**
 	 * Create a new DAO object with uses the given connection.
 	 *
 	 * @param conn the DB connection used for the DAO operations
 	 */
-	protected DAO(final Connection conn) {
+	DAO(final Connection conn) {
 		_conn = conn;
 	}
 
-	public <T> T dao(final Function<Connection, T> create) {
+	<T> T dao(final Function<Connection, T> create) {
 		return create.apply(_conn);
 	}
 
@@ -62,7 +62,7 @@ public abstract class DAO {
 	 * @param query the SQL query
 	 * @return a new select query object
 	 */
-	public SQLQuery SQL(final String query) {
+	SQLQuery SQL(final String query) {
 		return new SQLQuery(_conn, query);
 	}
 
@@ -72,7 +72,7 @@ public abstract class DAO {
 	 * @param query the insert SQL query
 	 * @return a new batch insert query object
 	 */
-	public BatchQuery Batch(final String query) {
+	BatchQuery Batch(final String query) {
 		return new BatchQuery(_conn, query);
 	}
 
@@ -122,7 +122,7 @@ public abstract class DAO {
 	 * @return the DB id of the inserted record
 	 * @throws SQLException if fetching the ID fails
 	 */
-	public static long id(final Statement stmt) throws SQLException {
+	static long id(final Statement stmt) throws SQLException {
 		try (ResultSet keys = stmt.getGeneratedKeys()) {
 			if (keys.next()) {
 				return keys.getLong(1);
