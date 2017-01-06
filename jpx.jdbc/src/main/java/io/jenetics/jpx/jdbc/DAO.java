@@ -87,7 +87,7 @@ public abstract class DAO {
 	{
 		final Map<K, Stored<T>> existing = select.apply(values).stream()
 			.collect(toMap(
-				value -> key.apply(value.optional().orElse(null)),
+				value -> key.apply(value.value()),
 				value -> value,
 				(a, b) -> b));
 
