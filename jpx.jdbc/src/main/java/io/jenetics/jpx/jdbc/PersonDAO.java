@@ -49,7 +49,9 @@ public final class PersonDAO extends DAO {
 		rs.getLong("id"),
 		Person.of(
 			rs.getString("name"),
-			Email.of(rs.getString("email")),
+			rs.getString("email") != null
+				? Email.of(rs.getString("email"))
+				: null,
 			rs.getString("link_href") != null
 				? Link.of(
 						rs.getString("link_href"),
@@ -98,7 +100,7 @@ public final class PersonDAO extends DAO {
 		);
 
 		return links.stream()
-			.collect(toMap(Stored::value, Stored::id, (a, b) -> b));
+			.collect(toMap(Stored::value, Stored::id, (a, b) -> a));
 	}
 
 	/**
@@ -192,14 +194,14 @@ public final class PersonDAO extends DAO {
 
 	public List<Stored<Person>> select() throws SQLException {
 		final String query =
-			"SELECT id, " +
+			"SELECT person.id, " +
 				"name, " +
 				"email, " +
 				"link.href AS link_href, " +
 				"link.text AS link_text, " +
 				"link.type AS link_type " +
 			"FROM person " +
-			"OUTER JOIN link ON (person.link_id = link.id)";
+			"LEFT OUTER JOIN link ON (person.link_id = link.id)";
 
 		return SQL(query).as(RowParser.list());
 	}
@@ -215,14 +217,14 @@ public final class PersonDAO extends DAO {
 		throws SQLException
 	{
 		final String query =
-			"SELECT id, " +
+			"SELECT person.id, " +
 				"name, " +
 				"email, " +
 				"link.href AS link_href, " +
 				"link.text AS link_text, " +
 				"link.type AS link_type " +
-				"FROM person " +
-				"OUTER JOIN link ON (person.link_id = link.id)" +
+			"FROM person " +
+			"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
 			"WHERE name IN ({names})";
 
 		return SQL(query)

@@ -95,17 +95,22 @@ public abstract class DAO {
 			.collect(toMap(key, value -> value, (a, b) -> b));
 
 		final Diff<K, Stored<T>, T> diff = Diff.of(existing, actual);
+
 		final List<T> missing = diff.missing();
+
 		final List<Stored<T>> updated = diff
-			.updated((e, a) -> Objects.equals(e.optional().orElse(null), a))
+			.updated((e, a) -> Objects.equals(e.value(), a))
 			.entrySet().stream()
 				.map(entry -> entry.getKey().map(m -> entry.getValue()))
 				.collect(toList());
 
+		final List<Stored<T>> unchanged = diff
+			.unchanged((e, a) -> Objects.equals(e.value(), a));
 
 		final List<Stored<T>> result = new ArrayList<>();
 		result.addAll(insert.apply(missing));
 		result.addAll(update.apply(updated));
+		result.addAll(unchanged);
 
 		return result;
 	}

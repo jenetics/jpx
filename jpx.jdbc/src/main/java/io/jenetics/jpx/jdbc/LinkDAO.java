@@ -25,6 +25,7 @@ import static java.util.Collections.singletonList;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -143,17 +144,19 @@ public final class LinkDAO extends DAO {
 	 * @throws SQLException if the insert/update fails
 	 */
 	public List<Stored<Link>> put(final List<Link> links) throws SQLException {
-		return DAO.put(
-			links,
-			Link::getHref,
-			list -> selectByHrefs(
-				list.stream()
-					.map(Link::getHref)
-					.collect(Collectors.toList())
-			),
-			this::insert,
-			this::update
-		);
+		return links.isEmpty()
+			? Collections.emptyList()
+			: DAO.put(
+				links,
+				Link::getHref,
+				list -> selectByHrefs(
+					list.stream()
+						.map(Link::getHref)
+						.collect(Collectors.toList())
+				),
+				this::insert,
+				this::update
+			);
 	}
 
 

@@ -94,6 +94,13 @@ final class Diff<K, E, A> {
 			.collect(toMap(_existing::get, _actual::get, (a, b) -> b));
 	}
 
+	List<E> unchanged(final BiPredicate<E, A> equals) {
+		return _intersection.stream()
+			.filter(key -> equals.test(_existing.get(key), _actual.get(key)))
+			.map(_existing::get)
+			.collect(toList());
+	}
+
 	/**
 	 * Create a new {@code Diff} object with the given existing and actual values.
 	 *

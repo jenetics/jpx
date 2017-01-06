@@ -97,7 +97,7 @@ public class LinkDAOTest {
 
 		Assert.assertEquals(
 			existing.stream()
-				.map(l -> l.optional().orElse(null))
+				.map(Stored::value)
 				.collect(Collectors.toSet()),
 			links.stream()
 				.collect(Collectors.toSet())
@@ -143,7 +143,7 @@ public class LinkDAOTest {
 
 			Assert.assertEquals(
 				dao.select().stream()
-					.map(l -> l.optional().orElse(null))
+					.map(Stored::value)
 					.collect(Collectors.toSet()),
 				links.stream()
 					.collect(Collectors.toSet())
