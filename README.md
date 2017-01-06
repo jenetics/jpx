@@ -154,6 +154,7 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 #### Bug fixes
 * [#5](https://github.com/jenetics/jpx/issues/5): Fix exception handling for empty XML elements: e.g. `<ele/>`.
+* [#15](https://github.com/jenetics/jpx/issues/15): Fix NPE when creating `Copyright` object with `null` license string.
 
 #### Improvements
 * [#6](https://github.com/jenetics/jpx/issues/6): Improve error handling for invalid GPX files.
