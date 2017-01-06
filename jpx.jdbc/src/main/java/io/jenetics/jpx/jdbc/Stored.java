@@ -26,6 +26,19 @@ import java.util.Optional;
 import java.util.function.Function;
 
 /**
+ * Represents a DB `value` with its database ID. Together with the implicit
+ * conversion functions, the properties of the underlying `Stored` object can
+ * be <em>directly</em> accessed.
+ *
+ * <pre>{@code
+ *     final case class MyDataObject(name: String, score: Double)
+ *     val storedDataObject: Stored[MyDataObject] = select(...)
+ *
+ *     // "Direct" access of the MyDataObject properties (implicit conversion).
+ *     println("NAME: " + storedDataObject.name)
+ *     println("SCORE: " + storedDataObject.score)
+ * }</pre>
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
@@ -35,17 +48,43 @@ public final class Stored<T> {
 	private final long _id;
 	private final T _value;
 
+	/**
+	 * Create a new {@code Stored} object with the given <em>id</em> and
+	 * <em>value</em>.
+	 *
+	 * @param id the DB id
+	 * @param value the DB value
+	 */
 	private Stored(final long id, final T value) {
 		_id = id;
 		_value = value;
 	}
 
-	public long getID() {
+	/**
+	 * Return the DB id.
+	 *
+	 * @return the DB id
+	 */
+	public long id() {
 		return _id;
 	}
 
-	public Optional<T> getValue() {
+	/**
+	 * Return the DB value as {@link Optional}.
+	 *
+	 * @return the DB value as {@link Optional}
+	 */
+	public Optional<T> optional() {
 		return Optional.ofNullable(_value);
+	}
+
+	/**
+	 * Return the DB value.
+	 *
+	 * @return the DB value
+	 */
+	public T value() {
+		return _value;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,6 +94,12 @@ public final class Stored<T> {
 			: (Stored<B>)this;
 	}
 
+	/**
+	 * Return a new stored object with the new value.
+	 *
+	 * @param value the new value
+	 * @return a new stored object
+	 */
 	public Stored<T> copy(final T value) {
 		return of(_id, value);
 	}
@@ -79,6 +124,14 @@ public final class Stored<T> {
 		return format("Stored[id=%d, %s]", _id, _value);
 	}
 
+	/**
+	 * Create a new {@code Stored} object with the given <em>id</em> and
+	 * <em>value</em>.
+	 *
+	 * @param id the DB id
+	 * @param value the DB value
+	 * @return a new stored object
+	 */
 	public static <T> Stored<T> of(final long id, final T value) {
 		return new Stored<T>(id, value);
 	}
