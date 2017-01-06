@@ -27,8 +27,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Link;
 
@@ -150,11 +148,7 @@ public final class LinkDAO extends DAO {
 			: DAO.put(
 				links,
 				Link::getHref,
-				list -> selectByHrefs(
-					list.stream()
-						.map(Link::getHref)
-						.collect(Collectors.toList())
-				),
+				list -> selectByHrefs(map(list, Link::getHref)),
 				this::insert,
 				this::update
 			);
@@ -176,33 +170,6 @@ public final class LinkDAO extends DAO {
 			.as(RowParser.list());
 	}
 
-	public List<Stored<Link>> selectByIDs(final long... ids) throws SQLException {
-		final String query =
-			"SELECT id, href, text, type FROM link WHERE id IN ({ids})";
-
-		return SQL(query)
-			.on(Param.values("ids", ids))
-			.as(RowParser.list());
-	}
-
-	/**
-	 * Select a link by its DB ID.
-	 *
-	 * @param id the link DB ID
-	 * @return the selected link, if available
-	 * @throws SQLException if the select fails
-	 */
-	public Optional<Stored<Link>> selectByID(final long id)
-		throws SQLException
-	{
-		final String query =
-			"SELECT id, href, text, type FROM link WHERE id = {id};";
-
-		return SQL(query)
-			.on("id", id)
-			.as(RowParser.singleOpt());
-	}
-
 	/**
 	 * Selects the links by its hrefs.
 	 *
@@ -213,7 +180,10 @@ public final class LinkDAO extends DAO {
 	public List<Stored<Link>> selectByHrefs(final List<URI> hrefs)
 		throws SQLException
 	{
-		return SQL("SELECT id, href, text, type FROM link WHERE href IN ({hrefs})")
+		final String query =
+			"SELECT id, href, text, type FROM link WHERE href IN ({hrefs})";
+
+		return SQL(query)
 			.on(Param.values("hrefs", hrefs))
 			.as(RowParser.list());
 	}

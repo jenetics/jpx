@@ -28,6 +28,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,9 @@ final class PreparedSQL {
 		}
 		if (result instanceof URL) {
 			result = result.toString();
+		}
+		if (result instanceof Year) {
+			result = ((Year)result).getValue();
 		}
 
 		return result;

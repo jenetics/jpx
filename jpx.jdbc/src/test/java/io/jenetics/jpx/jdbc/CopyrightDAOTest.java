@@ -20,39 +20,33 @@
 package io.jenetics.jpx.jdbc;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.LinkTest;
+import io.jenetics.jpx.Copyright;
+import io.jenetics.jpx.CopyrightTest;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class LinkDAOTest {
+public class CopyrightDAOTest {
 
 	private final DB db = H2DB.newTestInstance();
 
-	private final List<Link> links = nextLinks(new Random(123), 20);
+	private final List<Copyright> copyrights = nextCopyrights(new Random(123), 20);
 
-	private static List<Link> nextLinks(final Random random, final int count) {
-		final List<Link> links = new ArrayList<>();
-		for (int i = 0; i < count; ++i) {
-			links.add(LinkTest.nextLink(random));
-		}
-
-		return links;
+	private static List<Copyright> nextCopyrights(final Random random, final int count) {
+		return Stream.generate(() -> CopyrightTest.nextCopyright(random))
+			.limit(count)
+			.collect(Collectors.toList());
 	}
 
 	@BeforeSuite
@@ -73,50 +67,37 @@ public class LinkDAOTest {
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			LinkDAO.of(conn).insert(links);
+			CopyrightDAO.of(conn).insert(copyrights);
 		});
 	}
 
 	@Test(dependsOnMethods = "insert")
 	public void select() throws SQLException {
-		final List<Stored<Link>> existing = db.transaction(conn -> {
-			return LinkDAO.of(conn).select();
+		final List<Stored<Copyright>> existing = db.transaction(conn -> {
+			return CopyrightDAO.of(conn).select();
 		});
 
 		Assert.assertEquals(
 			existing.stream()
 				.map(Stored::value)
 				.collect(Collectors.toSet()),
-			links.stream()
+			copyrights.stream()
 				.collect(Collectors.toSet())
 		);
 	}
 
-	@Test
-	public void selectByHrefs() throws SQLException {
-		db.transaction(conn -> {
-			final LinkDAO dao = LinkDAO.of(conn);
-
-			try {
-				dao.selectByHrefs(Arrays.asList(new URI("http://foo.bar")));
-			} catch (URISyntaxException e) {
-				throw new RuntimeException(e);
-			}
-		});
-	}
-
 	@Test(dependsOnMethods = "select")
 	public void update() throws SQLException {
-		final List<Stored<Link>> existing = db.transaction(conn -> {
-			return LinkDAO.of(conn).select();
+		final List<Stored<Copyright>> existing = db.transaction(conn -> {
+			return CopyrightDAO.of(conn).select();
 		});
 
 		db.transaction(conn -> {
-			final Stored<Link> updated = existing.get(0)
-				.map(l -> Link.of(l.getHref(), "Other text", null));
+			final Stored<Copyright> updated = existing.get(0)
+				.map(l -> Copyright.of(l.getAuthor(), 2000, (String)null));
 
 			Assert.assertEquals(
-				LinkDAO.of(conn).update(updated),
+				CopyrightDAO.of(conn).update(updated),
 				updated
 			);
 		});
@@ -125,15 +106,13 @@ public class LinkDAOTest {
 	@Test(dependsOnMethods = "update")
 	public void put() throws SQLException {
 		db.transaction(conn -> {
-			final LinkDAO dao = LinkDAO.of(conn);
+			final CopyrightDAO dao = CopyrightDAO.of(conn);
 
-			dao.put(links);
+			dao.put(copyrights);
 
 			Assert.assertEquals(
-				dao.select().stream()
-					.map(Stored::value)
-					.collect(Collectors.toSet()),
-				links.stream()
+				DAO.map(dao.select(), Stored::value),
+				copyrights.stream()
 					.collect(Collectors.toSet())
 			);
 		});

@@ -27,8 +27,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import io.jenetics.jpx.Email;
 import io.jenetics.jpx.Link;
@@ -41,7 +39,7 @@ import io.jenetics.jpx.Person;
  */
 public final class PersonDAO extends DAO {
 
-	private PersonDAO(final Connection conn) {
+	public PersonDAO(final Connection conn) {
 		super(conn);
 	}
 
@@ -93,11 +91,8 @@ public final class PersonDAO extends DAO {
 	private Map<Link, Long> putLinks(final List<Person> persons)
 		throws SQLException
 	{
-		final List<Stored<Link>> links = dao(LinkDAO::new).put(
-			persons.stream()
-				.flatMap(p -> p.getLink().map(Stream::of).orElse(Stream.empty()))
-				.collect(Collectors.toList())
-		);
+		final List<Stored<Link>> links = dao(LinkDAO::new)
+			.put(flatMap(persons, Person::getLink));
 
 		return links.stream()
 			.collect(toMap(Stored::value, Stored::id, (a, b) -> a));
@@ -129,11 +124,7 @@ public final class PersonDAO extends DAO {
 	public List<Stored<Person>> update(final List<Stored<Person>> persons)
 		throws SQLException
 	{
-		final Map<Link, Long> links = putLinks(
-			persons.stream()
-				.map(Stored::value)
-				.collect(Collectors.toList())
-		);
+		final Map<Link, Long> links = putLinks(map(persons, Stored::value));
 
 		final String query =
 			"UPDATE person " +
@@ -177,12 +168,7 @@ public final class PersonDAO extends DAO {
 		return DAO.put(
 			persons,
 			Person::getName,
-			list -> selectByNames(
-				list.stream()
-					.flatMap(p -> p.getName()
-						.map(Stream::of).orElse(Stream.empty()))
-					.collect(Collectors.toList())
-			),
+			list -> selectByNames(flatMap(list, Person::getName)),
 			this::insert,
 			this::update
 		);

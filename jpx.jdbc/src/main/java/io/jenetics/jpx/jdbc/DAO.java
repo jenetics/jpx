@@ -30,7 +30,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Abstract DAO class
@@ -130,6 +133,21 @@ abstract class DAO {
 				throw new SQLException("Can't fetch generation ID.");
 			}
 		}
+	}
+
+	static <A, B> List<B> map(final List<A> values, final Function<A, B> mapper) {
+		return values.stream()
+			.map(mapper)
+			.collect(Collectors.toList());
+	}
+
+	static <A, B> List<B> flatMap(
+		final List<A> values,
+		final Function<A, Optional<B>> mapper
+	) {
+		return values.stream()
+			.flatMap(v -> mapper.apply(v).map(Stream::of).orElse(Stream.empty()))
+			.collect(Collectors.toList());
 	}
 
 }
