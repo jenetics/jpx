@@ -169,11 +169,14 @@ public final class Copyright implements Serializable {
 		final int year,
 		final String license
 	) {
+		final URI uri;
 		try {
-			return new Copyright(author, Year.of(year), new URI(license));
+			uri = license != null ? new URI(license) : null;
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e);
 		}
+
+		return new Copyright(author, Year.of(year), uri);
 	}
 
 	/**
