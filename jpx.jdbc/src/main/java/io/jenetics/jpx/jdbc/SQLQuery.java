@@ -50,10 +50,10 @@ public final class SQLQuery extends AbstractQuery {
 	}
 
 	public <T> T as(final RowParser<T> parser) throws SQLException {
-		try (PreparedStatement stmt = PreparedSQL.prepare(_sql, _params, _conn)) {
-			try (final ResultSet rs = stmt.executeQuery()) {
-				return parser.parse(rs);
-			}
+		try (PreparedStatement stmt = PreparedSQL.prepare(_sql, _params, _conn);
+			ResultSet rs = stmt.executeQuery())
+		{
+			return parser.parse(rs);
 		}
 	}
 
