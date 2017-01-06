@@ -32,15 +32,11 @@ import java.sql.Connection;
  */
 abstract class AbstractQuery {
 	final Connection _conn;
-	final PreparedSQL _query;
+	final String _sql;
 
-	AbstractQuery(final Connection conn, final PreparedSQL query) {
+	AbstractQuery(final Connection conn, final String sql) {
 		_conn = requireNonNull(conn);
-		_query = requireNonNull(query);
-	}
-
-	AbstractQuery(final Connection conn, final String query) {
-		this(conn, PreparedSQL.parse(query));
+		_sql = requireNonNull(sql);
 	}
 
 }

@@ -19,26 +19,31 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 /**
- * Represents a query parameter with <em>name</em> and <em>value</em>.
+ * Represents a query parameter with <em>name</em> and <em>value</em>. Tbe
+ * parameter value is evaluated lazily.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class Param {
+final class Param {
 
 	private final String _name;
-	private final SQL.Lazy<?> _value;
+	private final List<Object> _values;
 
-	private Param(final String name, final SQL.Lazy<?> value) {
+	private Param(final String name, final List<Object> values) {
 		_name = requireNonNull(name);
-		_value = requireNonNull(value);
+		_values = requireNonNull(values);
 	}
 
 	/**
@@ -46,30 +51,12 @@ public final class Param {
 	 *
 	 * @return the parameter name
 	 */
-	public String getName() {
+	String name() {
 		return _name;
 	}
 
-	void eval() throws SQLException {
-		_value.get();
-	}
-
-	/**
-	 * Return the parameter value.
-	 *
-	 * @return the parameter value.
-	 */
-	@SuppressWarnings({"raw", "unchecked"})
-	public Object getValue() throws SQLException {
-		Object value = _value.get();
-		if (value instanceof Optional<?>) {
-			value = ((Optional)value).orElse(null);
-		}
-		if (value instanceof Optional<?>) {
-			value = ((Optional)value).orElse(null);
-		}
-
-		return value;
+	List<Object> values() {
+		return _values;
 	}
 
 	/**
@@ -83,13 +70,23 @@ public final class Param {
 	 *         {@code null}
 	 */
 	public static Param value(final String name, final Object value) {
-		return new Param(name, SQL.Lazy.ofValue(value));
+		return new Param(name, singletonList(value));
 	}
 
+	public static Param values(final String name, final Object... values) {
+		return new Param(name, asList(values));
+	}
+
+	public static Param values(final String name, final List<Object> values) {
+		return new Param(name, values);
+	}
+
+	/*
 	public static <T> Param insert(
 		final String name,
 		final SQL.Supplier<T> value
 	) {
 		return new Param(name, SQL.Lazy.of(value));
 	}
+	*/
 }

@@ -19,15 +19,19 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.lang.String.format;
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Objects.requireNonNull;
 
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Represents a SQL query for usage with a {@link PreparedStatement}.
@@ -40,23 +44,49 @@ final class PreparedSQL {
 	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
 
 	private final String _query;
-	private final Map<String, Integer> _params;
+	private final List<String> _names;
 
 	private PreparedSQL(
 		final String query,
-		final Map<String, Integer> params
+		final List<String> names
 	) {
 		_query = requireNonNull(query);
-		_params = requireNonNull(params);
+		_names = requireNonNull(names);
 	}
 
+	PreparedStatement prepare(final Connection conn)
+		throws SQLException
+	{
+		requireNonNull(conn);
+		return conn.prepareStatement(_query, RETURN_GENERATED_KEYS);
+	}
+
+	/**
+	 * Fills the given prepared statement with the parameter values.
+	 *
+	 * @param stmt the prepared statement
+	 * @throws SQLException if the statement preparation fails
+	 */
 	void fill(final PreparedStatement stmt, final List<Param> params)
 		throws SQLException
 	{
-		for (Param param : params) {
-			final Integer index = _params.get(param.getName());
-			if (index != null) {
-				stmt.setObject(index, param.getValue());
+		final Map<String, List<Param>> paramsMap = params.stream()
+			.collect(Collectors.groupingBy(Param::name));
+
+		for (String name : _names) {
+			if (!paramsMap.containsKey(name)) {
+				throw new IllegalArgumentException(format(
+					"Param '%s' not found.", name
+				));
+			}
+
+			final List<Object> values = paramsMap.get(name).stream()
+				.flatMap(p -> p.values().stream())
+				.collect(Collectors.toList());
+
+			int index = 1;
+			for (Object value : values) {
+				stmt.setObject(index++, value);
 			}
 		}
 	}
@@ -78,22 +108,48 @@ final class PreparedSQL {
 	/**
 	 * Parses a query string into a query for prepared statements.
 	 *
-	 * @param query the query string to parse
+	 * @param sql the query string to parse
 	 * @return a query string into a query for prepared statements
 	 */
-	public static PreparedSQL parse(final String query) {
-		final Matcher matcher = PARAM_PATTERN.matcher(query);
+	static PreparedSQL parse(final String sql, final List<Param> params) {
+		final Map<String, List<Param>> paramsMap = params.stream()
+			.collect(Collectors.groupingBy(Param::name));
 
-		int index = 1;
-		final Map<String, Integer> params = new HashMap<>();
+		final List<String> names = new ArrayList<>();
 		final StringBuffer parsedQuery = new StringBuffer();
+		final Matcher matcher = PARAM_PATTERN.matcher(sql);
 		while (matcher.find()) {
-			params.put(matcher.group(1), index++);
-			matcher.appendReplacement(parsedQuery, "?");
+			final String name = matcher.group(1);
+			if (!paramsMap.containsKey(name)) {
+				throw new IllegalArgumentException(format(
+					"Param '%s' not found.", name
+				));
+			}
+
+			final String placeHolder = paramsMap.get(name).stream()
+				.flatMap(p -> p.values().stream())
+				.map(p -> "?")
+				.collect(Collectors.joining(","));
+
+			matcher.appendReplacement(parsedQuery, placeHolder);
 		}
 		matcher.appendTail(parsedQuery);
 
-		return new PreparedSQL(parsedQuery.toString(), params);
+		return new PreparedSQL(parsedQuery.toString(), names);
+	}
+
+	static PreparedStatement prepare(
+		final String sql,
+		final List<Param> params,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		final PreparedSQL preparedSQL = parse(sql, params);
+		final PreparedStatement stmt = preparedSQL.prepare(conn);
+		preparedSQL.fill(stmt, params);
+
+		return stmt;
 	}
 
 }

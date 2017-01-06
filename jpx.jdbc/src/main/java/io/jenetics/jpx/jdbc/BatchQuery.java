@@ -19,8 +19,6 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.sql.Statement.RETURN_GENERATED_KEYS;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -47,22 +45,20 @@ public final class BatchQuery extends AbstractQuery {
 	)
 		throws SQLException
 	{
-		for (T value : values) {
-			for (Param param : format.apply(value)) {
-				param.eval();
-			}
-		}
-
 		final List<Stored<T>> results = new ArrayList<>();
-		try (PreparedStatement stmt = _conn
-			.prepareStatement(_query.getQuery(), RETURN_GENERATED_KEYS))
-		{
-			for (T value : values) {
-				final List<Param> params = format.apply(value);
-				_query.fill(stmt, params);
 
-				stmt.executeUpdate();
-				results.add(Stored.of(DAO.id(stmt), value));
+		if (!values.isEmpty()) {
+			final PreparedSQL preparedSQL = PreparedSQL
+				.parse(_sql, format.apply(values.get(0)));
+
+			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
+				for (T value : values) {
+					final List<Param> params = format.apply(value);
+					preparedSQL.fill(stmt, params);
+
+					stmt.executeUpdate();
+					results.add(Stored.of(DAO.id(stmt), value));
+				}
 			}
 		}
 
@@ -75,19 +71,18 @@ public final class BatchQuery extends AbstractQuery {
 	)
 		throws SQLException
 	{
-		for (T value : values) {
-			for (Param param : format.apply(value)) {
-				param.eval();
-			}
-		}
-
 		int count = 0;
-		try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
-			for (T value : values) {
-				final List<Param> params = format.apply(value);
-				_query.fill(stmt, params);
+		if (!values.isEmpty()) {
+			final PreparedSQL preparedSQL = PreparedSQL
+				.parse(_sql, format.apply(values.get(0)));
 
-				count += stmt.executeUpdate();
+			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
+				for (T value : values) {
+					final List<Param> params = format.apply(value);
+					preparedSQL.fill(stmt, params);
+
+					count += stmt.executeUpdate();
+				}
 			}
 		}
 

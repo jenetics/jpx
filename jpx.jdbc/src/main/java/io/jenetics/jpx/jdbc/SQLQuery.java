@@ -36,12 +36,8 @@ import java.util.List;
 public final class SQLQuery extends AbstractQuery {
 	private final List<Param> _params = new ArrayList<>();
 
-	public SQLQuery(final Connection conn, final PreparedSQL query) {
-		super(conn, query);
-	}
-
-	public SQLQuery(final Connection conn, final String query) {
-		super(conn, query);
+	public SQLQuery(final Connection conn, final String sql) {
+		super(conn, sql);
 	}
 
 	public SQLQuery on(final String name, final Object value) {
@@ -50,12 +46,7 @@ public final class SQLQuery extends AbstractQuery {
 	}
 
 	public <T> T as(final RowParser<T> parser) throws SQLException {
-		for (Param param : _params) {
-			param.eval();
-		}
-
-		try (PreparedStatement stmt = _conn.prepareStatement(_query.getQuery())) {
-			_query.fill(stmt, _params);
+		try (PreparedStatement stmt = PreparedSQL.prepare(_sql, _params, _conn)) {
 			try (final ResultSet rs = stmt.executeQuery()) {
 				return parser.parse(rs);
 			}

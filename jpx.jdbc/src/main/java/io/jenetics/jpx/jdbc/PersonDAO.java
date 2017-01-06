@@ -71,8 +71,8 @@ public final class PersonDAO extends DAO {
 
 		return Batch(query).insert(persons, person -> Arrays.asList(
 			Param.value("name", person.getName()),
-			Param.value("email", person.getEmail().map(Email::getAddress)),
-			Param.insert("link_id", () -> insertOrUpdate(person.getLink()))
+			Param.value("email", person.getEmail().map(Email::getAddress))
+			//Param.insert("link_id", () -> insertOrUpdate(person.getLink()))
 		));
 	}
 
