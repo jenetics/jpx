@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.parseString;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -29,7 +28,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -203,8 +201,10 @@ public final class Link implements Serializable {
 	}
 
 	static XMLReader<Link> reader() {
-		final Function<Object[], Link> creator = a -> Link.of(
-			parseString(a[0]), parseString(a[1]), parseString(a[2])
+		final XML.Function<Object[], Link> creator = a -> Link.of(
+			Parsers.toMandatoryURI(a[0], "Link.href"),
+			Parsers.toString(a[1]),
+			Parsers.toString(a[2])
 		);
 
 		return XMLReader.of(creator, "link",

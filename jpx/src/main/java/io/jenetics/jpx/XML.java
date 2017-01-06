@@ -19,38 +19,39 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.String.format;
-
-import java.util.Random;
-import java.util.function.Supplier;
-
-import org.testng.annotations.Test;
+import javax.xml.stream.XMLStreamException;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * Contains specializations of functional interfaces, which throw
+ * {@link XMLStreamException}.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail">Franz Wilhelmstötter</a>
+ * @version 1.0.1
+ * @since 1.0.1
  */
-@Test
-public class EmailTest extends XMLStreamTestBase<Email> {
+final class XML {
 
-	@Override
-	public Supplier<Email> factory(Random random) {
-		return () -> nextEmail(random);
+	private XML() {
 	}
 
-	@Override
-	protected Params<Email> params(final Random random) {
-		return new Params<>(
-			() -> nextEmail(random),
-			Email.reader(),
-			Email::write
-		);
-	}
+	/**
+	 * Represents a function that accepts one argument and produces a result.
+	 *
+	 * @param <T> the input type
+	 * @param <R> the result type
+	 */
+	@FunctionalInterface
+	interface Function<T, R> {
 
-	public static Email nextEmail(final Random random) {
-		return Email.of(
-			format("id_%s", random.nextInt(100)),
-			format("domain_%s", random.nextInt(100))
-		);
+		/**
+		 * Applies this function to the given argument.
+		 *
+		 * @param value the function argument
+		 * @return the function result
+		 * @throws XMLStreamException if an error occurs
+		 */
+		R apply(final T value) throws XMLStreamException;
+
 	}
 
 }
