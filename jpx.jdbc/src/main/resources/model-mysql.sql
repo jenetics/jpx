@@ -1,10 +1,12 @@
 -- -----------------------------------------------------------------------------
---
+-- -----------------------------------------------------------------------------
+-- GPX data-model
+-- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------
 
---
+-- -----------------------------------------------------------------------------
 -- Create the `link` table.
---
+-- -----------------------------------------------------------------------------
 CREATE TABLE link(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	href VARCHAR(255) NOT NULL,
@@ -13,9 +15,9 @@ CREATE TABLE link(
 );
 CREATE UNIQUE INDEX i_link_href ON link(href);
 
---
+-- -----------------------------------------------------------------------------
 -- Create the `person` table.
---
+-- -----------------------------------------------------------------------------
 CREATE TABLE person(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
@@ -26,9 +28,9 @@ CREATE TABLE person(
 );
 CREATE UNIQUE INDEX i_person_name ON person(name);
 
---
+-- -----------------------------------------------------------------------------
 -- Create the `copyright` table.
---
+-- -----------------------------------------------------------------------------
 CREATE TABLE copyright(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	author VARCHAR(255) NOT NULL,
@@ -37,6 +39,9 @@ CREATE TABLE copyright(
 );
 CREATE UNIQUE INDEX i_copyright_author ON copyright(author);
 
+-- -----------------------------------------------------------------------------
+-- Create the `bounce` table.
+-- -----------------------------------------------------------------------------
 CREATE TABLE bounds(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	minlat DOUBLE PRECISION NOT NULL,
@@ -45,6 +50,9 @@ CREATE TABLE bounds(
 	maxlon DOUBLE PRECISION NOT NULL
 );
 
+-- -----------------------------------------------------------------------------
+-- Create the `metadata` table.
+-- -----------------------------------------------------------------------------
 CREATE TABLE metadata(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
@@ -58,7 +66,7 @@ CREATE TABLE metadata(
 	FOREIGN KEY (person_id) REFERENCES person(id),
 	FOREIGN KEY (bounds_id) REFERENCES bounds(id)
 );
-CREATE UNIQUE INDEX i_metadata_name ON metadata(name);
+CREATE INDEX i_metadata_name ON metadata(name);
 
 CREATE TABLE metadata_link(
 	metadata_id BIGINT NOT NULL,
@@ -70,6 +78,9 @@ CREATE TABLE metadata_link(
 CREATE UNIQUE INDEX i_metadata_link_metadata_id_link_id
 	ON metadata_link(metadata_id, link_id);
 
+-- -----------------------------------------------------------------------------
+-- Create the `way_point` table.
+-- -----------------------------------------------------------------------------
 CREATE TABLE way_point(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	lat DOUBLE PRECISION NOT NULL,
@@ -106,6 +117,9 @@ CREATE TABLE way_point_link(
 CREATE UNIQUE INDEX i_way_point_link_way_point_id_link_id
 	ON way_point_link(way_point_id, link_id);
 
+-- -----------------------------------------------------------------------------
+-- Create the `route` table.
+-- -----------------------------------------------------------------------------
 CREATE TABLE route(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
@@ -136,6 +150,9 @@ CREATE TABLE route_way_point(
 CREATE UNIQUE INDEX i_route_way_point_route_id_link_id
 	ON route_way_point(route_id, way_point_id);
 
+-- -----------------------------------------------------------------------------
+-- Create the `track_segment` table.
+-- -----------------------------------------------------------------------------
 CREATE TABLE track_segment(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT
 );
@@ -150,7 +167,9 @@ CREATE TABLE track_segment_way_point(
 CREATE UNIQUE INDEX i_track_segment_way_point_track_segment_id_way_point_id
 	ON track_segment_way_point(track_segment_id, way_point_id);
 
-
+-- -----------------------------------------------------------------------------
+-- Create the `track` table.
+-- -----------------------------------------------------------------------------
 CREATE TABLE track(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
@@ -182,6 +201,9 @@ CREATE TABLE track_link(
 CREATE UNIQUE INDEX i_track_link_track_id_link_id
 	ON track_link(track_id, link_id);
 
+-- -----------------------------------------------------------------------------
+-- Create the `gpx` table.
+-- -----------------------------------------------------------------------------
 CREATE TABLE gpx(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	version VARCHAR(5) NOT NULL DEFAULT '1.1',
