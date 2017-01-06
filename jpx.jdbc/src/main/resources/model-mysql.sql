@@ -18,7 +18,7 @@ CREATE UNIQUE INDEX i_link_href ON link(href);
 --
 CREATE TABLE person(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(255),
+	name VARCHAR(255) NOT NULL,
 	email VARCHAR(255),
 	link_id BIGINT,
 
