@@ -25,8 +25,6 @@ import static java.util.Collections.singletonList;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +55,7 @@ public final class LinkDAO extends DAO {
 			rs.getString("type")
 		)
 	);
+
 
 	/* *************************************************************************
 	 * INSERT queries
@@ -96,6 +95,7 @@ public final class LinkDAO extends DAO {
 		return insert(singletonList(link)).get(0);
 	}
 
+
 	/* *************************************************************************
 	 * UPDATE queries
 	 **************************************************************************/
@@ -115,9 +115,9 @@ public final class LinkDAO extends DAO {
 			"WHERE id = {id}";
 
 		Batch(query).update(links, link -> asList(
-			Param.value("id", link.getID()),
-			Param.value("text", link.getValue().map(Link::getText)),
-			Param.value("type", link.getValue().map(Link::getType))
+			Param.value("id", link.id()),
+			Param.value("text", link.value().getText()),
+			Param.value("type", link.value().getType())
 		));
 
 		return links;
@@ -134,12 +134,20 @@ public final class LinkDAO extends DAO {
 		return update(singletonList(link)).get(0);
 	}
 
+	/**
+	 * Inserts the given links into the DB. If the DB already contains the given
+	 * link, the link is updated.
+	 *
+	 * @param links the links to insert or update
+	 * @return the inserted or updated links
+	 * @throws SQLException if the insert/update fails
+	 */
 	public List<Stored<Link>> put(final List<Link> links) throws SQLException {
 		return DAO.put(
 			links,
 			Link::getHref,
-			ll -> selectByHrefs(
-				ll.stream()
+			list -> selectByHrefs(
+				list.stream()
 					.map(Link::getHref)
 					.collect(Collectors.toList())
 			),
@@ -147,6 +155,7 @@ public final class LinkDAO extends DAO {
 			this::update
 		);
 	}
+
 
 	/* *************************************************************************
 	 * SELECT queries
@@ -190,28 +199,19 @@ public final class LinkDAO extends DAO {
 			.as(RowParser.singleOpt());
 	}
 
-
+	/**
+	 * Selects the links by its hrefs.
+	 *
+	 * @param hrefs the hrefs
+	 * @return the link with the given hrefs currently in the DB
+	 * @throws SQLException if the select fails
+	 */
 	public List<Stored<Link>> selectByHrefs(final List<URI> hrefs)
 		throws SQLException
 	{
 		return SQL("SELECT id, href, text, type FROM link WHERE href IN ({hrefs})")
 			.on(Param.values("hrefs", hrefs))
 			.as(RowParser.list());
-	}
-
-	/**
-	 * Select the links by the HREF.
-	 *
-	 * @param href the href to select
-	 * @return the selected links
-	 * @throws SQLException if the select fails
-	 */
-	public SQL.Option<Stored<Link>> selectByHref(final URI href)
-		throws SQLException
-	{
-		return SQL("SELECT id, href, text, type FROM link WHERE href = {href}")
-			.on("href", href)
-			.as(RowParser.singleOpt());
 	}
 
 	/**

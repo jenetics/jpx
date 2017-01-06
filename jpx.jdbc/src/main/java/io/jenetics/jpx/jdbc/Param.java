@@ -20,14 +20,11 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
-import java.sql.SQLException;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -42,9 +39,9 @@ import java.util.stream.LongStream;
 final class Param {
 
 	private final String _name;
-	private final List<? extends Object> _values;
+	private final Collection<? extends Object> _values;
 
-	private Param(final String name, final List<? extends Object> values) {
+	private Param(final String name, final Collection<? extends Object> values) {
 		_name = requireNonNull(name);
 		_values = requireNonNull(values);
 	}
@@ -58,7 +55,7 @@ final class Param {
 		return _name;
 	}
 
-	List<? extends Object> values() {
+	Collection<? extends Object> values() {
 		return _values;
 	}
 
@@ -81,7 +78,10 @@ final class Param {
 		return new Param(name, singletonList(value));
 	}
 
-	public static Param values(final String name, final List<? extends Object> values) {
+	public static Param values(
+		final String name,
+		final Collection<? extends Object> values
+	) {
 		return new Param(name, values);
 	}
 
@@ -94,12 +94,4 @@ final class Param {
 		);
 	}
 
-	/*
-	public static <T> Param insert(
-		final String name,
-		final SQL.Supplier<T> value
-	) {
-		return new Param(name, SQL.Lazy.of(value));
-	}
-	*/
 }

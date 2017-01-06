@@ -39,7 +39,7 @@ import io.jenetics.jpx.Link;
 import io.jenetics.jpx.LinkTest;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class LinkDAOTest {
 
@@ -81,14 +81,12 @@ public class LinkDAOTest {
 			Assert.assertEquals(
 				db.transaction(conn -> {
 					return LinkDAO.of(conn)
-						.selectByID(link.getID())
+						.selectByID(link.id())
 						.orElseThrow(NoSuchElementException::new);
 				}),
 				link
 			);
 		}
-
-		stored.forEach(System.out::println);
 	}
 
 	@Test(dependsOnMethods = "insert")
@@ -99,7 +97,7 @@ public class LinkDAOTest {
 
 		Assert.assertEquals(
 			existing.stream()
-				.map(l -> l.getValue().orElse(null))
+				.map(l -> l.optional().orElse(null))
 				.collect(Collectors.toSet()),
 			links.stream()
 				.collect(Collectors.toSet())
@@ -145,7 +143,7 @@ public class LinkDAOTest {
 
 			Assert.assertEquals(
 				dao.select().stream()
-					.map(l -> l.getValue().orElse(null))
+					.map(l -> l.optional().orElse(null))
 					.collect(Collectors.toSet()),
 				links.stream()
 					.collect(Collectors.toSet())

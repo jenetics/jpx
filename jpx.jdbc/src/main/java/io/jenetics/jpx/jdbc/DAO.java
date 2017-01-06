@@ -30,10 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * Abstract DAO class
@@ -90,7 +87,7 @@ public abstract class DAO {
 	{
 		final Map<K, Stored<T>> existing = select.apply(values).stream()
 			.collect(toMap(
-				value -> key.apply(value.getValue().orElse(null)),
+				value -> key.apply(value.optional().orElse(null)),
 				value -> value,
 				(a, b) -> b));
 
@@ -100,7 +97,7 @@ public abstract class DAO {
 		final Diff<K, Stored<T>, T> diff = Diff.of(existing, actual);
 		final List<T> missing = diff.missing();
 		final List<Stored<T>> updated = diff
-			.updated((e, a) -> Objects.equals(e.getValue().orElse(null), a))
+			.updated((e, a) -> Objects.equals(e.optional().orElse(null), a))
 			.entrySet().stream()
 				.map(entry -> entry.getKey().map(m -> entry.getValue()))
 				.collect(toList());
@@ -112,23 +109,6 @@ public abstract class DAO {
 
 		return result;
 	}
-
-	/*
-	public static <T> Stored<T> put(
-		final T value,
-		final SQL.Function<T, SQL.Option<Stored<T>>> select,
-		final SQL.Function<T, Stored<T>> insert,
-		final SQL.Consumer<Stored<T>> update
-	)
-		throws SQLException
-	{
-		return select.apply(value)
-			.map(stored -> {
-				update.accept(stored);
-				return stored.copy(value); })
-			.orElseGet(() -> insert.apply(value));
-	}
-	*/
 
 	/**
 	 * Reads the auto increment id from the previously inserted record.

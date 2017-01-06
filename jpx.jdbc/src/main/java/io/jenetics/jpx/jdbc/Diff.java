@@ -94,13 +94,6 @@ final class Diff<K, E, A> {
 			.collect(toMap(_existing::get, _actual::get, (a, b) -> b));
 	}
 
-	/*
--    def updated( doesEqual: (E,A) => Boolean ): Iterable[A] = {
- -        intersection.filter{ key: K => !doesEqual( existing(key), actual(key) ) }
- -        .map{ key:K => actual(key)  }
- -    }
-	 */
-
 	/**
 	 * Create a new {@code Diff} object with the given existing and actual values.
 	 *
