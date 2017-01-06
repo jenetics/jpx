@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
@@ -27,6 +28,8 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 /**
  * Represents a query parameter with <em>name</em> and <em>value</em>. Tbe
@@ -39,9 +42,9 @@ import java.util.Optional;
 final class Param {
 
 	private final String _name;
-	private final List<Object> _values;
+	private final List<? extends Object> _values;
 
-	private Param(final String name, final List<Object> values) {
+	private Param(final String name, final List<? extends Object> values) {
 		_name = requireNonNull(name);
 		_values = requireNonNull(values);
 	}
@@ -55,8 +58,13 @@ final class Param {
 		return _name;
 	}
 
-	List<Object> values() {
+	List<? extends Object> values() {
 		return _values;
+	}
+
+	@Override
+	public String toString() {
+		return format("%s -> %s", _name, _values);
 	}
 
 	/**
@@ -73,12 +81,17 @@ final class Param {
 		return new Param(name, singletonList(value));
 	}
 
-	public static Param values(final String name, final Object... values) {
-		return new Param(name, asList(values));
+	public static Param values(final String name, final List<? extends Object> values) {
+		return new Param(name, values);
 	}
 
-	public static Param values(final String name, final List<Object> values) {
-		return new Param(name, values);
+	public static Param values(final String name, final long... values) {
+		return new Param(
+			name,
+			LongStream.of(values)
+				.mapToObj(Long::valueOf)
+				.collect(Collectors.toList())
+		);
 	}
 
 	/*

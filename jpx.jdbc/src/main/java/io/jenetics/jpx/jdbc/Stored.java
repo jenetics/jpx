@@ -48,10 +48,11 @@ public final class Stored<T> {
 		return Optional.ofNullable(_value);
 	}
 
-	public <B> Optional<B> map(final Function<T, B> mapper) {
+	@SuppressWarnings("unchecked")
+	public <B> Stored<B> map(final Function<T, B> mapper) {
 		return _value != null
-			? Optional.of(mapper.apply(_value))
-			: Optional.empty();
+			? Stored.of(_id, mapper.apply(_value))
+			: (Stored<B>)this;
 	}
 
 	public Stored<T> copy(final T value) {

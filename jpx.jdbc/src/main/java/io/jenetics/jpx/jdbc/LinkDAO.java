@@ -25,7 +25,10 @@ import static java.util.Collections.singletonList;
 import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Link;
 
@@ -74,7 +77,7 @@ public final class LinkDAO extends DAO {
 			"VALUES({href}, {text}, {type});";
 
 		return Batch(query).insert(links, link -> asList(
-			Param.value("href", link.getHref().toString()),
+			Param.value("href", link.getHref()),
 			Param.value("text", link.getText()),
 			Param.value("type", link.getType())
 		));
@@ -113,8 +116,8 @@ public final class LinkDAO extends DAO {
 
 		Batch(query).update(links, link -> asList(
 			Param.value("id", link.getID()),
-			Param.value("text", link.map(Link::getText)),
-			Param.value("type", link.map(Link::getType))
+			Param.value("text", link.getValue().map(Link::getText)),
+			Param.value("type", link.getValue().map(Link::getType))
 		));
 
 		return links;
@@ -131,10 +134,15 @@ public final class LinkDAO extends DAO {
 		return update(singletonList(link)).get(0);
 	}
 
-	public Stored<Link> put(final Link link) throws SQLException {
+	public List<Stored<Link>> put(final List<Link> links) throws SQLException {
 		return DAO.put(
-			link,
-			l -> selectByHref(l.getHref()),
+			links,
+			Link::getHref,
+			ll -> selectByHrefs(
+				ll.stream()
+					.map(Link::getHref)
+					.collect(Collectors.toList())
+			),
 			this::insert,
 			this::update
 		);
@@ -155,12 +163,12 @@ public final class LinkDAO extends DAO {
 			.as(RowParser.list());
 	}
 
-	public List<Stored<Link>> selectByID(final long... ids) throws SQLException {
+	public List<Stored<Link>> selectByIDs(final long... ids) throws SQLException {
 		final String query =
-			"SELECT id, href, text, type FROM link WHERE id IN ({id})";
+			"SELECT id, href, text, type FROM link WHERE id IN ({ids})";
 
 		return SQL(query)
-			.on("id*", ids)
+			.on(Param.values("ids", ids))
 			.as(RowParser.list());
 	}
 
@@ -183,9 +191,12 @@ public final class LinkDAO extends DAO {
 	}
 
 
-	public List<Stored<Link>> selectByHrefs(final List<URI> hrefs) throws SQLException {
-
-		return null;
+	public List<Stored<Link>> selectByHrefs(final List<URI> hrefs)
+		throws SQLException
+	{
+		return SQL("SELECT id, href, text, type FROM link WHERE href IN ({hrefs})")
+			.on(Param.values("hrefs", hrefs))
+			.as(RowParser.list());
 	}
 
 	/**
@@ -199,7 +210,7 @@ public final class LinkDAO extends DAO {
 		throws SQLException
 	{
 		return SQL("SELECT id, href, text, type FROM link WHERE href = {href}")
-			.on("href", href.toString())
+			.on("href", href)
 			.as(RowParser.singleOpt());
 	}
 

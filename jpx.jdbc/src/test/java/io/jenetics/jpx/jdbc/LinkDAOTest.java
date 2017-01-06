@@ -20,11 +20,16 @@
 package io.jenetics.jpx.jdbc;
 
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.testng.Assert;
 import org.testng.annotations.BeforeSuite;
@@ -40,7 +45,16 @@ public class LinkDAOTest {
 
 	private final DB db = H2DB.newTestInstance();
 
-	private final List<Link> links = LinkTest.nextLinks(new Random(123));
+	private final List<Link> links = nextLinks(new Random(123), 20);
+
+	private static List<Link> nextLinks(final Random random, final int count) {
+		final List<Link> links = new ArrayList<>();
+		for (int i = 0; i < count; ++i) {
+			links.add(LinkTest.nextLink(random));
+		}
+
+		return links;
+	}
 
 	@BeforeSuite
 	public void setup() throws IOException, SQLException {
@@ -50,7 +64,6 @@ public class LinkDAOTest {
 
 		db.transaction(conn -> {
 			for (String query : queries) {
-
 				try (Statement stmt = conn.createStatement()) {
 					stmt.execute(query);
 				}
@@ -77,5 +90,68 @@ public class LinkDAOTest {
 
 		stored.forEach(System.out::println);
 	}
+
+	@Test(dependsOnMethods = "insert")
+	public void select() throws SQLException {
+		final List<Stored<Link>> existing = db.transaction(conn -> {
+			return LinkDAO.of(conn).select();
+		});
+
+		Assert.assertEquals(
+			existing.stream()
+				.map(l -> l.getValue().orElse(null))
+				.collect(Collectors.toSet()),
+			links.stream()
+				.collect(Collectors.toSet())
+		);
+	}
+
+	@Test
+	public void selectByHrefs() throws SQLException {
+		db.transaction(conn -> {
+			final LinkDAO dao = LinkDAO.of(conn);
+
+			try {
+				dao.selectByHrefs(Arrays.asList(new URI("http://foo.bar")));
+			} catch (URISyntaxException e) {
+				throw new RuntimeException(e);
+			}
+		});
+	}
+
+	@Test(dependsOnMethods = "select")
+	public void update() throws SQLException {
+		final List<Stored<Link>> existing = db.transaction(conn -> {
+			return LinkDAO.of(conn).select();
+		});
+
+		db.transaction(conn -> {
+			final Stored<Link> updated = existing.get(0)
+				.map(l -> Link.of(l.getHref(), "Other text", null));
+
+			Assert.assertEquals(
+				LinkDAO.of(conn).update(updated),
+				updated
+			);
+		});
+	}
+
+	@Test(dependsOnMethods = "update")
+	public void put() throws SQLException {
+		db.transaction(conn -> {
+			final LinkDAO dao = LinkDAO.of(conn);
+
+			dao.put(links);
+
+			Assert.assertEquals(
+				dao.select().stream()
+					.map(l -> l.getValue().orElse(null))
+					.collect(Collectors.toSet()),
+				links.stream()
+					.collect(Collectors.toSet())
+			);
+		});
+	}
+
 
 }

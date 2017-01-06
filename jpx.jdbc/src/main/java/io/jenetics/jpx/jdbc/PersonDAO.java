@@ -76,11 +76,13 @@ public final class PersonDAO extends DAO {
 		));
 	}
 
+	/*
 	private Long insertOrUpdate(final Optional<Link> link) throws SQLException {
 		return link.isPresent()
 			? dao(LinkDAO::of).put(link.get()).getID()
 			: null;
 	}
+	*/
 
 
 	public List<Stored<Person>> select() throws SQLException {

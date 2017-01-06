@@ -23,12 +23,15 @@ import static java.lang.String.format;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Objects.requireNonNull;
 
+import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -73,6 +76,7 @@ final class PreparedSQL {
 		final Map<String, List<Param>> paramsMap = params.stream()
 			.collect(Collectors.groupingBy(Param::name));
 
+		int index = 1;
 		for (String name : _names) {
 			if (!paramsMap.containsKey(name)) {
 				throw new IllegalArgumentException(format(
@@ -82,13 +86,28 @@ final class PreparedSQL {
 
 			final List<Object> values = paramsMap.get(name).stream()
 				.flatMap(p -> p.values().stream())
+				.map(PreparedSQL::toSQLValue)
 				.collect(Collectors.toList());
 
-			int index = 1;
 			for (Object value : values) {
 				stmt.setObject(index++, value);
 			}
 		}
+	}
+
+	private static Object toSQLValue(final Object value) {
+		Object result = value;
+		while (result instanceof Optional<?>) {
+			result = ((Optional<?>)result).orElse(null);
+		}
+		if (result instanceof URI) {
+			result = result.toString();
+		}
+		if (result instanceof URL) {
+			result = result.toString();
+		}
+
+		return result;
 	}
 
 	/**
@@ -125,6 +144,8 @@ final class PreparedSQL {
 					"Param '%s' not found.", name
 				));
 			}
+
+			names.add(name);
 
 			final String placeHolder = paramsMap.get(name).stream()
 				.flatMap(p -> p.values().stream())

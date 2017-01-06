@@ -40,7 +40,7 @@ public class PersonDAOTest {
 
 	private final List<Person> persons = PersonTest.nextPersons(new Random(123));
 
-	@BeforeSuite
+	//@BeforeSuite
 	public void setup() throws IOException, SQLException {
 		final String[] queries = IO.
 			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
@@ -55,7 +55,7 @@ public class PersonDAOTest {
 		});
 	}
 
-	@Test
+	//@Test
 	public void insert() throws SQLException {
 		final List<Stored<Person>> stored = db.transaction(conn -> {
 			return PersonDAO.of(conn).insert(persons);

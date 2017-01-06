@@ -40,9 +40,13 @@ public final class SQLQuery extends AbstractQuery {
 		super(conn, sql);
 	}
 
-	public SQLQuery on(final String name, final Object value) {
-		_params.add(Param.value(name, value));
+	public SQLQuery on(final Param param) {
+		_params.add(param);
 		return this;
+	}
+
+	public SQLQuery on(final String name, final Object value) {
+		return on(Param.value(name, value));
 	}
 
 	public <T> T as(final RowParser<T> parser) throws SQLException {

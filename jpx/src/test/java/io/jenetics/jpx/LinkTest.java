@@ -52,12 +52,12 @@ public class LinkTest
 
 	public static Link nextLink(final Random random) {
 		return Link.of(
-			format("http://link_%d", random.nextInt(100)),
+			format("http://link_%d", Math.abs(random.nextLong())),
 			random.nextBoolean()
-				? format("text_%s", random.nextInt(100))
+				? format("text_%s", Math.abs(random.nextLong()))
 				: null,
 			random.nextBoolean()
-				? format("type_%s", random.nextInt(100))
+				? format("type_%s", Math.abs(random.nextLong()))
 				: null
 		);
 	}
