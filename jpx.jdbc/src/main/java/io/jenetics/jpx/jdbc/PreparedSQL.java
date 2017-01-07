@@ -28,7 +28,9 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Year;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -103,12 +105,12 @@ final class PreparedSQL {
 		}
 		if (result instanceof URI) {
 			result = result.toString();
-		}
-		if (result instanceof URL) {
+		} else if (result instanceof URL) {
 			result = result.toString();
-		}
-		if (result instanceof Year) {
+		} else if (result instanceof Year) {
 			result = ((Year)result).getValue();
+		} else if (result instanceof ZonedDateTime) {
+			result = Timestamp.from(((ZonedDateTime)result).toInstant());
 		}
 
 		return result;

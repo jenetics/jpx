@@ -21,7 +21,6 @@ package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
-import static java.util.stream.Collectors.toMap;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -75,7 +74,8 @@ public final class PersonDAO extends DAO {
 	public List<Stored<Person>> insert(final List<Person> persons)
 		throws SQLException
 	{
-		final Map<Link, Long> links = putLinks(persons);
+		final Map<Link, Long> links = DAO
+			.set(persons, Person::getLink, with(LinkDAO::new)::put);
 
 		final String query =
 			"INSERT INTO person(name, email, link_id) " +
@@ -86,16 +86,6 @@ public final class PersonDAO extends DAO {
 			Param.value("email", person.getEmail().map(Email::getAddress)),
 			Param.value("link_id", person.getLink().map(links::get))
 		));
-	}
-
-	private Map<Link, Long> putLinks(final List<Person> persons)
-		throws SQLException
-	{
-		final List<Stored<Link>> links = dao(LinkDAO::new)
-			.put(flatMap(persons, Person::getLink));
-
-		return links.stream()
-			.collect(toMap(Stored::value, Stored::id, (a, b) -> a));
 	}
 
 	/**
@@ -124,7 +114,11 @@ public final class PersonDAO extends DAO {
 	public List<Stored<Person>> update(final List<Stored<Person>> persons)
 		throws SQLException
 	{
-		final Map<Link, Long> links = putLinks(map(persons, Stored::value));
+		final Map<Link, Long> links = DAO.set(
+			persons,
+			(Stored<Person> p) -> p.value().getLink(),
+			with(LinkDAO::new)::put
+		);
 
 		final String query =
 			"UPDATE person " +
@@ -168,10 +162,14 @@ public final class PersonDAO extends DAO {
 		return DAO.put(
 			persons,
 			Person::getName,
-			list -> selectByNames(flatMap(list, Person::getName)),
+			list -> selectByNames(flatMapOption(list, Person::getName)),
 			this::insert,
 			this::update
 		);
+	}
+
+	public Stored<Person> put(final Person person) throws SQLException {
+		return put(singletonList(person)).get(0);
 	}
 
 	/* *************************************************************************

@@ -27,6 +27,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Link;
 
@@ -148,12 +150,26 @@ public final class LinkDAO extends DAO {
 			: DAO.put(
 				links,
 				Link::getHref,
-				list -> selectByHrefs(map(list, Link::getHref)),
+				//list -> selectByHrefs(map(list, Link::getHref)),
+				values -> select(values, Link::getHref, this::selectByHrefs),
 				this::insert,
 				this::update
 			);
 	}
 
+	private <A, B> List<Stored<B>> select(
+		final List<B> values,
+		final Function<B, A> mapper,
+		final SQL.Function<List<A>, List<Stored<B>>> select
+	)
+		throws SQLException
+	{
+		final List<A> keys = values.stream()
+			.map(mapper)
+			.collect(Collectors.toList());
+
+		return select.apply(keys);
+	}
 
 	/* *************************************************************************
 	 * SELECT queries

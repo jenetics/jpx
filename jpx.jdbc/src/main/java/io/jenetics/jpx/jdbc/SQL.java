@@ -19,7 +19,12 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Collections.emptyList;
+
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Contains implementations of existing functional classes, which allow to throw
@@ -71,6 +76,23 @@ public final class SQL {
 	@FunctionalInterface
 	public static interface Consumer<T> {
 		public void accept(final T value) throws SQLException;
+	}
+
+	@FunctionalInterface
+	public static interface OptionMapper<T, R>
+		extends java.util.function.Function<T, Optional<R>>
+	{
+		public default ListMapper<T, R> toListMapper() {
+			return t -> apply(t)
+				.map(Collections::singletonList)
+				.orElse(emptyList());
+		}
+	}
+
+	@FunctionalInterface
+	public static interface ListMapper<T, R>
+		extends java.util.function.Function<T, List<R>>
+	{
 	}
 
 }

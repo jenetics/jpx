@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 
 import java.io.InputStream;
@@ -41,6 +42,8 @@ import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -56,6 +59,26 @@ final class Results implements ResultSet {
 	private Results(final ResultSet rs) {
 		_rs = requireNonNull(rs);
 	}
+
+
+	public <T> T get(final Class<T> type, final String columnName)
+		throws SQLException
+	{
+		return type.cast(getObject(columnName));
+	}
+
+	public ZonedDateTime getZonedDateTime(final String columnName)
+		throws SQLException
+	{
+		final Timestamp ts = getTimestamp(columnName);
+		return ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts.getTime()), UTC);
+	}
+
+
+
+	/* *************************************************************************
+	 * ResultSet delegate methods.
+	 **************************************************************************/
 
 	@Override
 	public boolean next() throws SQLException {
@@ -1369,6 +1392,10 @@ final class Results implements ResultSet {
 	@Override
 	public boolean isWrapperFor(final Class<?> iface) throws SQLException {
 		return _rs.isWrapperFor(iface);
+	}
+
+	static Results of(final ResultSet rs) {
+		return new Results(rs);
 	}
 
 }

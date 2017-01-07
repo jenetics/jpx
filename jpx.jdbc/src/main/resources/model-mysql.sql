@@ -57,7 +57,7 @@ CREATE TABLE bounds(
 CREATE TABLE metadata(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
-	description TEXT,
+	`desc` TEXT,
 	person_id BIGINT REFERENCES person(id),
 	copyright_id BIGINT,
 	time TIMESTAMP,

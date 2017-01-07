@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -34,6 +35,9 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.jenetics.jpx.jdbc.SQL.ListMapper;
+import io.jenetics.jpx.jdbc.SQL.OptionMapper;
 
 /**
  * Abstract DAO class
@@ -55,7 +59,7 @@ abstract class DAO {
 		_conn = conn;
 	}
 
-	<T> T dao(final Function<Connection, T> create) {
+	<T> T with(final Function<Connection, T> create) {
 		return create.apply(_conn);
 	}
 
@@ -118,6 +122,31 @@ abstract class DAO {
 		return result;
 	}
 
+	static <A, B> Map<B, Long> set(
+		final List<A> values,
+		final ListMapper<A, B> mapper,
+		final SQL.Function<List<B>, List<Stored<B>>> set
+	)
+		throws SQLException
+	{
+		final List<B> mapped = values.stream()
+			.flatMap(v -> mapper.apply(v).stream())
+			.collect(Collectors.toList());
+
+		return set.apply(mapped).stream()
+			.collect(toMap(Stored::value, Stored::id, (a, b) -> b));
+	}
+
+	static <A, B> Map<B, Long> set(
+		final List<A> values,
+		final OptionMapper<A, B> mapper,
+		final SQL.Function<List<B>, List<Stored<B>>> set
+	)
+		throws SQLException
+	{
+		return set(values, mapper.toListMapper(), set);
+	}
+
 	/**
 	 * Reads the auto increment id from the previously inserted record.
 	 *
@@ -143,11 +172,20 @@ abstract class DAO {
 
 	static <A, B> List<B> flatMap(
 		final List<A> values,
+		final Function<A, List<B>> mapper
+	) {
+		return values.stream()
+			.flatMap(v -> mapper.apply(v).stream())
+			.collect(toList());
+	}
+
+	static <A, B> List<B> flatMapOption(
+		final List<A> values,
 		final Function<A, Optional<B>> mapper
 	) {
 		return values.stream()
 			.flatMap(v -> mapper.apply(v).map(Stream::of).orElse(Stream.empty()))
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 }

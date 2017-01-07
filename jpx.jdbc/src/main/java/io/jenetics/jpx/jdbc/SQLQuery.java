@@ -53,7 +53,7 @@ public final class SQLQuery extends AbstractQuery {
 		try (PreparedStatement stmt = PreparedSQL.prepare(_sql, _params, _conn);
 			ResultSet rs = stmt.executeQuery())
 		{
-			return parser.parse(rs);
+			return parser.parse(Results.of(rs));
 		}
 	}
 

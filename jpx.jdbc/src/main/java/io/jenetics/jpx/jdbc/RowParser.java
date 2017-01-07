@@ -46,7 +46,7 @@ interface RowParser<T> {
 	 * @return the stored data object
 	 * @throws SQLException if reading of the current row fails
 	 */
-	T parse(final ResultSet rs) throws SQLException;
+	T parse(final Results rs) throws SQLException;
 
 	/**
 	 * Return a new parser which expects at least one result.
