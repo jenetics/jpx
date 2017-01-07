@@ -11,9 +11,10 @@ CREATE TABLE link(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	href VARCHAR(255) NOT NULL,
 	text VARCHAR(255),
-	type VARCHAR(255)
+	type VARCHAR(255),
+
+	CONSTRAINT c_link_href UNIQUE (href)
 );
-CREATE UNIQUE INDEX i_link_href ON link(href);
 
 -- -----------------------------------------------------------------------------
 -- Create the `person` table.
@@ -22,11 +23,10 @@ CREATE TABLE person(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
 	email VARCHAR(255),
-	link_id BIGINT,
+	link_id BIGINT REFERENCES link(id),
 
-	FOREIGN KEY (link_id) REFERENCES link(id)
+	CONSTRAINT c_person_name UNIQUE (name)
 );
-CREATE UNIQUE INDEX i_person_name ON person(name);
 
 -- -----------------------------------------------------------------------------
 -- Create the `copyright` table.
@@ -35,9 +35,10 @@ CREATE TABLE copyright(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	author VARCHAR(255) NOT NULL,
 	year INT,
-	license VARCHAR(255)
+	license VARCHAR(255),
+
+	CONSTRAINT c_copyright_author UNIQUE (author)
 );
-CREATE UNIQUE INDEX i_copyright_author ON copyright(author);
 
 -- -----------------------------------------------------------------------------
 -- Create the `bounce` table.
@@ -57,26 +58,21 @@ CREATE TABLE metadata(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
 	description TEXT,
-	person_id BIGINT,
+	person_id BIGINT REFERENCES person(id),
 	copyright_id BIGINT,
 	time TIMESTAMP,
 	keywords VARCHAR(255),
-	bounds_id BIGINT,
-
-	FOREIGN KEY (person_id) REFERENCES person(id),
-	FOREIGN KEY (bounds_id) REFERENCES bounds(id)
+	bounds_id BIGINT REFERENCES bounds(id)
 );
 CREATE INDEX i_metadata_name ON metadata(name);
+CREATE INDEX i_metadata_keywords ON metadata(keywords);
 
 CREATE TABLE metadata_link(
-	metadata_id BIGINT NOT NULL,
-	link_id BIGINT NOT NULL,
+	metadata_id BIGINT NOT NULL REFERENCES metadata(id) ON DELETE CASCADE,
+	link_id BIGINT NOT NULL REFERENCES link(id),
 
-	FOREIGN KEY (metadata_id) REFERENCES metadata(id),
-	FOREIGN KEY (link_id) REFERENCES link(id)
+	CONSTRAINT c_metadata_link_metadata_id_link_id UNIQUE (metadata_id, link_id)
 );
-CREATE UNIQUE INDEX i_metadata_link_metadata_id_link_id
-	ON metadata_link(metadata_id, link_id);
 
 -- -----------------------------------------------------------------------------
 -- Create the `way_point` table.
@@ -108,14 +104,11 @@ CREATE INDEX i_way_point_lat ON way_point(lat);
 CREATE INDEX i_way_point_lon ON way_point(lon);
 
 CREATE TABLE way_point_link(
-	way_point_id BIGINT NOT NULL,
-	link_id BIGINT NOT NULL,
+	way_point_id BIGINT NOT NULL REFERENCES way_point(id),
+	link_id BIGINT NOT NULL REFERENCES link(id),
 
-	FOREIGN KEY (way_point_id) REFERENCES way_point(id),
-	FOREIGN KEY (link_id) REFERENCES link(id)
+	CONSTRAINT c_way_point_link_way_point_id_link_id UNIQUE (way_point_id, link_id)
 );
-CREATE UNIQUE INDEX i_way_point_link_way_point_id_link_id
-	ON way_point_link(way_point_id, link_id);
 
 -- -----------------------------------------------------------------------------
 -- Create the `route` table.
@@ -131,24 +124,18 @@ CREATE TABLE route(
 );
 
 CREATE TABLE route_link(
-	route_id BIGINT NOT NULL,
-	link_id BIGINT NOT NULL,
+	route_id BIGINT NOT NULL REFERENCES route(id),
+	link_id BIGINT NOT NULL REFERENCES link(id),
 
-	FOREIGN KEY (route_id) REFERENCES route(id),
-	FOREIGN KEY (link_id) REFERENCES link(id)
+	CONSTRAINT c_route_link_route_id_link_id UNIQUE (route_id, link_id)
 );
-CREATE UNIQUE INDEX i_route_link_route_id_link_id
-	ON route_link(route_id, link_id);
 
 CREATE TABLE route_way_point(
-	route_id BIGINT NOT NULL,
-	way_point_id BIGINT NOT NULL,
+	route_id BIGINT NOT NULL REFERENCES route(id),
+	way_point_id BIGINT NOT NULL REFERENCES way_point(id),
 
-	FOREIGN KEY (route_id) REFERENCES route(id),
-	FOREIGN KEY (way_point_id) REFERENCES way_point(id)
+	CONSTRAINT c_route_way_point_route_id_link_id UNIQUE (route_id, way_point_id)
 );
-CREATE UNIQUE INDEX i_route_way_point_route_id_link_id
-	ON route_way_point(route_id, way_point_id);
 
 -- -----------------------------------------------------------------------------
 -- Create the `track_segment` table.
@@ -158,14 +145,12 @@ CREATE TABLE track_segment(
 );
 
 CREATE TABLE track_segment_way_point(
-	track_segment_id BIGINT NOT NULL,
-	way_point_id BIGINT NOT NULL,
+	track_segment_id BIGINT NOT NULL REFERENCES track_segment(id) ON DELETE CASCADE,
+	way_point_id BIGINT NOT NULL REFERENCES way_point(id) ON DELETE CASCADE,
 
-	FOREIGN KEY (track_segment_id) REFERENCES track_segment(id),
-	FOREIGN KEY (way_point_id) REFERENCES way_point(id)
+	CONSTRAINT c_track_segment_way_point_track_segment_id_way_point_id
+		UNIQUE (track_segment_id, way_point_id)
 );
-CREATE UNIQUE INDEX i_track_segment_way_point_track_segment_id_way_point_id
-	ON track_segment_way_point(track_segment_id, way_point_id);
 
 -- -----------------------------------------------------------------------------
 -- Create the `track` table.
@@ -182,24 +167,19 @@ CREATE TABLE track(
 CREATE INDEX i_track_name ON track(name);
 
 CREATE TABLE track_track_segment(
-	track_id BIGINT NOT NULL,
-	track_segment_id BIGINT NOT NULL,
+	track_id BIGINT NOT NULL REFERENCES track(id),
+	track_segment_id BIGINT NOT NULL REFERENCES track_segment(id),
 
-	FOREIGN KEY (track_id) REFERENCES track(id),
-	FOREIGN KEY (track_segment_id) REFERENCES track_segment(id)
+	CONSTRAINT c_track_track_segment_track_id_track_segment_id
+		UNIQUE (track_segment_id, track_segment_id)
 );
-CREATE UNIQUE INDEX i_track_track_segment_track_segment_id_way_point_id
-	ON track_segment_way_point(track_segment_id, way_point_id);
 
 CREATE TABLE track_link(
-	track_id BIGINT NOT NULL,
-	link_id BIGINT NOT NULL,
+	track_id BIGINT NOT NULL REFERENCES track(id),
+	link_id BIGINT NOT NULL REFERENCES link(id),
 
-	FOREIGN KEY (track_id) REFERENCES track(id),
-	FOREIGN KEY (link_id) REFERENCES link(id)
+	CONSTRAINT c_track_link_track_id_link_id UNIQUE (track_id, link_id)
 );
-CREATE UNIQUE INDEX i_track_link_track_id_link_id
-	ON track_link(track_id, link_id);
 
 -- -----------------------------------------------------------------------------
 -- Create the `gpx` table.
@@ -208,29 +188,21 @@ CREATE TABLE gpx(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	version VARCHAR(5) NOT NULL DEFAULT '1.1',
 	creator VARCHAR(255) NOT NULL,
-	metadata_id BIGINT,
-
-	FOREIGN KEY (metadata_id) REFERENCES metadata(id)
+	metadata_id BIGINT REFERENCES metadata(id)
 );
 CREATE INDEX i_gpx_creator ON gpx(creator);
 
 CREATE TABLE gpx_way_point(
-	gpx_id BIGINT NOT NULL,
-	way_point_id BIGINT NOT NULL,
+	gpx_id BIGINT NOT NULL REFERENCES gpx(id),
+	way_point_id BIGINT NOT NULL REFERENCES way_point(id),
 
-	FOREIGN KEY (gpx_id) REFERENCES gpx(id),
-	FOREIGN KEY (way_point_id) REFERENCES way_point(id)
+	CONSTRAINT c_gpx_way_point_gpx_id_way_point_id UNIQUE (gpx_id, way_point_id)
 );
-CREATE UNIQUE INDEX i_gpx_way_point_gpx_id_way_point_id
-	ON gpx_way_point(gpx_id, way_point_id);
 
 CREATE TABLE gpx_track(
-	gpx_id BIGINT NOT NULL,
-	track_id BIGINT NOT NULL,
+	gpx_id BIGINT NOT NULL REFERENCES gpx(id),
+	track_id BIGINT NOT NULL REFERENCES track(id),
 
-	FOREIGN KEY (gpx_id) REFERENCES gpx(id),
-	FOREIGN KEY (track_id) REFERENCES track(id)
+	CONSTRAINT c_gpx_track_gpx_id_track_id UNIQUE (gpx_id, track_id)
 );
-CREATE UNIQUE INDEX i_gpx_track_gpx_id_track_id
-	ON gpx_track(gpx_id, track_id);
 
