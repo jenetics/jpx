@@ -69,4 +69,9 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 		);
 	}
 
+	@Test
+	public void nullURIString() {
+		Copyright.of("author", 23, (String)null);
+	}
+
 }

@@ -64,8 +64,8 @@ final class XMLWriter {
 		@Override
 		public boolean equals(final Object object) {
 			return object instanceof Attr &&
-				((Attr) object).name.equals(name) &&
-				((Attr) object).value.equals(value);
+				((Attr)object).name.equals(name) &&
+				((Attr)object).value.equals(value);
 		}
 
 		@Override
