@@ -28,6 +28,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -92,32 +93,38 @@ abstract class DAO {
 	)
 		throws SQLException
 	{
-		final Map<K, Stored<T>> existing = select.apply(values).stream()
-			.collect(toMap(
-				value -> key.apply(value.value()),
-				value -> value,
-				(a, b) -> b));
+		final List<Stored<T>> result;
 
-		final Map<K, T> actual = values.stream()
-			.collect(toMap(key, value -> value, (a, b) -> b));
+		if (!values.isEmpty()) {
+			final Map<K, Stored<T>> existing = select.apply(values).stream()
+				.collect(toMap(
+					value -> key.apply(value.value()),
+					value -> value,
+					(a, b) -> b));
 
-		final Diff<K, Stored<T>, T> diff = Diff.of(existing, actual);
+			final Map<K, T> actual = values.stream()
+				.collect(toMap(key, value -> value, (a, b) -> b));
 
-		final List<T> missing = diff.missing();
+			final Diff<K, Stored<T>, T> diff = Diff.of(existing, actual);
 
-		final List<Stored<T>> updated = diff
-			.updated((e, a) -> Objects.equals(e.value(), a))
-			.entrySet().stream()
+			final List<T> missing = diff.missing();
+
+			final List<Stored<T>> updated = diff
+				.updated((e, a) -> Objects.equals(e.value(), a))
+				.entrySet().stream()
 				.map(entry -> entry.getKey().map(m -> entry.getValue()))
 				.collect(toList());
 
-		final List<Stored<T>> unchanged = diff
-			.unchanged((e, a) -> Objects.equals(e.value(), a));
+			final List<Stored<T>> unchanged = diff
+				.unchanged((e, a) -> Objects.equals(e.value(), a));
 
-		final List<Stored<T>> result = new ArrayList<>();
-		result.addAll(insert.apply(missing));
-		result.addAll(update.apply(updated));
-		result.addAll(unchanged);
+			result = new ArrayList<>();
+			result.addAll(insert.apply(missing));
+			result.addAll(update.apply(updated));
+			result.addAll(unchanged);
+		} else {
+			result = Collections.emptyList();
+		}
 
 		return result;
 	}

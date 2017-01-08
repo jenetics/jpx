@@ -22,13 +22,9 @@ package io.jenetics.jpx.jdbc;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Link;
 
@@ -57,6 +53,34 @@ public final class LinkDAO extends DAO {
 			rs.getString("type")
 		)
 	);
+
+
+	/* *************************************************************************
+	 * SELECT queries
+	 **************************************************************************/
+
+	/**
+	 * Select all available links.
+	 *
+	 * @return all stored links
+	 * @throws SQLException if the select fails
+	 */
+	public List<Stored<Link>> select() throws SQLException {
+		return SQL("SELECT id, href, text, type FROM link")
+			.as(RowParser.list());
+	}
+
+	public List<Stored<Link>> select(final List<Link> links)
+		throws SQLException
+	{
+		final String query =
+			"SELECT id, href, text, type " +
+			"FROM link WHERE href IN ({hrefs})";
+
+		return SQL(query)
+			.on(Param.values("hrefs", links, Link::getHref))
+			.as(RowParser.list());
+	}
 
 
 	/* *************************************************************************
@@ -145,73 +169,24 @@ public final class LinkDAO extends DAO {
 	 * @throws SQLException if the insert/update fails
 	 */
 	public List<Stored<Link>> put(final List<Link> links) throws SQLException {
-		return links.isEmpty()
-			? Collections.emptyList()
-			: DAO.put(
-				links,
-				Link::getHref,
-				//list -> selectByHrefs(map(list, Link::getHref)),
-				values -> select(values, Link::getHref, this::selectByHrefs),
-				this::insert,
-				this::update
-			);
+		return DAO.put(
+			links,
+			Link::getHref,
+			this::select,
+			this::insert,
+			this::update
+		);
 	}
 
-	private <A, B> List<Stored<B>> select(
-		final List<B> values,
-		final Function<B, A> mapper,
-		final SQL.Function<List<A>, List<Stored<B>>> select
-	)
-		throws SQLException
-	{
-		final List<A> keys = values.stream()
-			.map(mapper)
-			.collect(Collectors.toList());
-
-		return select.apply(keys);
-	}
 
 	/* *************************************************************************
-	 * SELECT queries
+	 * DELETE queries
 	 **************************************************************************/
 
-	/**
-	 * Select all available links.
-	 *
-	 * @return all stored links
-	 * @throws SQLException if the select fails
-	 */
-	public List<Stored<Link>> select() throws SQLException {
-		return SQL("SELECT id, href, text, type FROM link")
-			.as(RowParser.list());
-	}
-
-	/**
-	 * Selects the links by its hrefs.
-	 *
-	 * @param hrefs the hrefs
-	 * @return the link with the given hrefs currently in the DB
-	 * @throws SQLException if the select fails
-	 */
-	public List<Stored<Link>> selectByHrefs(final List<URI> hrefs)
+	public List<Link> delete(final List<Stored<Link>> links)
 		throws SQLException
 	{
-		final String query =
-			"SELECT id, href, text, type FROM link WHERE href IN ({hrefs})";
-
-		return SQL(query)
-			.on(Param.values("hrefs", hrefs))
-			.as(RowParser.list());
-	}
-
-	/**
-	 * Create a new {@code LinkDAO} for the given connection.
-	 *
-	 * @param conn the DB connection
-	 * @return a new DAO object
-	 */
-	public static LinkDAO of(final Connection conn) {
-		return new LinkDAO(conn);
+		return null;
 	}
 
 }

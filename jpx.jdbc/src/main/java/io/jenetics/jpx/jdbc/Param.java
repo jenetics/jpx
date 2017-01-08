@@ -24,6 +24,8 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
@@ -89,11 +91,23 @@ final class Param {
 	 * @param values the parameter values
 	 * @return a new parameter object
 	 */
-	public static Param values(
+	public static <T> Param values(
 		final String name,
-		final Collection<? extends Object> values
+		final Collection<T> values
 	) {
 		return new Param(name, values);
+	}
+
+	public static <A, B> Param values(
+		final String name,
+		final Collection<A> values,
+		final Function<A, B> mapper
+	) {
+		final List<B> converted = values.stream()
+			.map(mapper)
+			.collect(Collectors.toList());
+
+		return new Param(name, converted);
 	}
 
 	/**
