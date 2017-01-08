@@ -20,9 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.parseString;
-import static io.jenetics.jpx.Parsers.parseURI;
-import static io.jenetics.jpx.Parsers.parseYear;
+import static io.jenetics.jpx.Parsers.toURI;
+import static io.jenetics.jpx.Parsers.toYear;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
@@ -31,7 +30,6 @@ import java.net.URISyntaxException;
 import java.time.Year;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -171,11 +169,14 @@ public final class Copyright implements Serializable {
 		final int year,
 		final String license
 	) {
+		final URI uri;
 		try {
-			return new Copyright(author, Year.of(year), new URI(license));
+			uri = license != null ? new URI(license) : null;
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(e);
 		}
+
+		return new Copyright(author, Year.of(year), uri);
 	}
 
 	/**
@@ -247,8 +248,10 @@ public final class Copyright implements Serializable {
 	}
 
 	static XMLReader<Copyright> reader() {
-		final Function<Object[], Copyright> creator = a -> Copyright.of(
-			parseString(a[0]), parseYear(a[1]), parseURI(a[2])
+		final XML.Function<Object[], Copyright> creator = a -> Copyright.of(
+			Parsers.toString(a[0]),
+			toYear(a[1], "Copyright.year"),
+			toURI(a[2], "Copyright.license")
 		);
 
 		return XMLReader.of(creator, "copyright",

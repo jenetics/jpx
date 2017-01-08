@@ -122,21 +122,4 @@ public final class DGPSStation
 	public static DGPSStation of(final int value) {
 		return new DGPSStation(value);
 	}
-
-	/**
-	 * Parses the given object.
-	 *
-	 * @param object the object to parse
-	 * @return the parsed object
-	 */
-	static DGPSStation parse(final Object object) {
-		return object instanceof DGPSStation
-			? (DGPSStation)object
-			: object instanceof Number
-				? of(((Number) object).intValue())
-				: object != null
-					? of(Integer.parseInt(object.toString()))
-					: null;
-	}
-
 }

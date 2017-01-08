@@ -141,22 +141,4 @@ public final class Latitude extends Number implements Serializable {
 	public static Latitude ofRadians(final double radians) {
 		return new Latitude(Math.toDegrees(radians));
 	}
-
-	/**
-	 * Try to parse the given object into a {@code Latitude} object. If the
-	 * given {@code object} is {@code null}, {@code null} is returned.
-	 *
-	 * @param object the object to parse
-	 * @return the parsed object, or {@code null} if the argument is {@code null}
-	 */
-	static Latitude parse(final Object object) {
-		return object instanceof Latitude
-			? (Latitude) object
-			: object instanceof Double
-				? ofDegrees((Double)object)
-				: object != null
-					? ofDegrees(Double.parseDouble(object.toString()))
-					: null;
-	}
-
 }

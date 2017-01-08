@@ -35,7 +35,7 @@ import javax.xml.stream.XMLStreamWriter;
 /**
  * Helper class for simplifying XML stream writing.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.0
  * @since 1.0
  */
@@ -64,8 +64,8 @@ final class XMLWriter {
 		@Override
 		public boolean equals(final Object object) {
 			return object instanceof Attr &&
-				((Attr) object).name.equals(name) &&
-				((Attr) object).value.equals(value);
+				((Attr)object).name.equals(name) &&
+				((Attr)object).value.equals(value);
 		}
 
 		@Override
