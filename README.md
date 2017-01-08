@@ -18,7 +18,7 @@
 
 [![Build Status](https://travis-ci.org/jenetics/jpx.svg?branch=master)](https://travis-ci.org/jenetics/jpx)
 
-For building the JPX library you have to check out the master branch from Github.
+For  building the JPX library you have to check out the master branch from Github.
 
     $ git clone https://github.com/jenetics/jpx.git
     
