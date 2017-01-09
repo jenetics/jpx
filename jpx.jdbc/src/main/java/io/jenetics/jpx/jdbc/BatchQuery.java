@@ -65,6 +65,27 @@ public final class BatchQuery extends AbstractQuery {
 		return results;
 	}
 
+	public <T> void set(
+		final List<T> values,
+		final Function<T, List<Param>> format
+	)
+		throws SQLException
+	{
+		if (!values.isEmpty()) {
+			final PreparedSQL preparedSQL = PreparedSQL
+				.parse(_sql, format.apply(values.get(0)));
+
+			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
+				for (T value : values) {
+					final List<Param> params = format.apply(value);
+					preparedSQL.fill(stmt, params);
+
+					stmt.executeUpdate();
+				}
+			}
+		}
+	}
+
 	public <T> int update(
 		final List<T> values,
 		final Function<T, List<Param>> format

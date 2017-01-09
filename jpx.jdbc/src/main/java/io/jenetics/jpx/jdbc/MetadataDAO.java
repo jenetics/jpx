@@ -20,13 +20,13 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.toMap;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Bounds;
 import io.jenetics.jpx.Copyright;
@@ -117,6 +117,10 @@ CREATE TABLE metadata_link(
 	 */
 
 	/* *************************************************************************
+	 * SELECT queries
+	 **************************************************************************/
+
+	/* *************************************************************************
 	 * INSERT queries
 	 **************************************************************************/
 
@@ -157,8 +161,22 @@ CREATE TABLE metadata_link(
 		final Map<Link, Long> links = DAO
 			.set(metadata, Metadata::getLinks, with(LinkDAO::new)::put);
 
-		return null;
+		final List<Pair<Long, Long>> metadataLinks = inserted.stream()
+			.flatMap(md -> md.value().getLinks().stream()
+				.map(l -> Pair.of(md.id(), links.get(l))))
+			.collect(Collectors.toList());;
+
+		Batch(
+			"INSERT INTO metadata_link(metadata_id, link_id) " +
+			"VALUES({metadata_id}, {link_id});"
+		).set(metadataLinks, mdl -> asList(
+			Param.value("metadata_id", mdl._1),
+			Param.value("link_id", mdl._2)
+		));
+
+		return inserted;
 	}
+
 
 	/* *************************************************************************
 	 * SELECT queries
