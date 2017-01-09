@@ -104,7 +104,7 @@ CREATE INDEX i_way_point_lat ON way_point(lat);
 CREATE INDEX i_way_point_lon ON way_point(lon);
 
 CREATE TABLE way_point_link(
-	way_point_id BIGINT NOT NULL REFERENCES way_point(id),
+	way_point_id BIGINT NOT NULL REFERENCES way_point(id) ON DELETE CASCADE,
 	link_id BIGINT NOT NULL REFERENCES link(id),
 
 	CONSTRAINT c_way_point_link_way_point_id_link_id UNIQUE (way_point_id, link_id)
