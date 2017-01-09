@@ -207,4 +207,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
+	@Test(expectedExceptions = IllegalStateException.class)
+	public void emptyWayPointException() {
+		WayPoint.builder().build();
+	}
+
 }
