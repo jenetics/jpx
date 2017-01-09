@@ -947,8 +947,18 @@ public final class WayPoint implements Point, Serializable {
 		 * Build a new way-point from the current builder state.
 		 *
 		 * @return a new way-point from the current builder state
+		 * @throws IllegalStateException if the {@link WayPoint#getLatitude()}
+		 *         or {@link WayPoint#getLongitude()} is {@code null} or has
+		 *         not been set, respectively.
 		 */
 		public WayPoint build() {
+			if (_latitude == null || _latitude == null) {
+				throw new IllegalStateException(
+					"Latitude and longitude value must be set " +
+					"for creating a new 'WayPoint'."
+				);
+			}
+
 			return new WayPoint(
 				_latitude,
 				_longitude,
