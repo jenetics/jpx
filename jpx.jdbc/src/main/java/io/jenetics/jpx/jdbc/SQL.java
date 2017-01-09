@@ -77,21 +77,4 @@ public final class SQL {
 	public static interface Consumer<T> {
 		public void accept(final T value) throws SQLException;
 	}
-
-	@FunctionalInterface
-	public static interface OptionMapper<T, R> {
-		public Optional<R> apply(final T value);
-
-		public default ListMapper<T, R> toListMapper() {
-			return t -> apply(t)
-				.map(Collections::singletonList)
-				.orElse(emptyList());
-		}
-	}
-
-	@FunctionalInterface
-	public static interface ListMapper<T, R> {
-		public List<R> apply(final T value);
-	}
-
 }

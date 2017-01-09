@@ -19,7 +19,6 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -32,13 +31,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import io.jenetics.jpx.jdbc.SQL.ListMapper;
-import io.jenetics.jpx.jdbc.SQL.OptionMapper;
 
 /**
  * Abstract DAO class

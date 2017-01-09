@@ -36,7 +36,6 @@ import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Metadata;
 import io.jenetics.jpx.Person;
-import io.jenetics.jpx.jdbc.SQL.OptionMapper;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

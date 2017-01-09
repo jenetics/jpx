@@ -19,40 +19,22 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import static java.util.Collections.emptyList;
+
+import java.util.Collections;
+import java.util.Optional;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-final class Lists {
-
-	private Lists() {
+@FunctionalInterface
+public interface OptionMapper<T, R> {
+	public Optional<R> apply(final T value);
+	public default ListMapper<T, R> toListMapper() {
+		return t -> apply(t)
+			.map(Collections::singletonList)
+			.orElse(emptyList());
 	}
-
-	static <A, B> List<B> map(final List<A> values, final Function<A, B> mapper) {
-		return values.stream()
-			.map(mapper)
-			.collect(Collectors.toList());
-	}
-
-	static <A, B> List<B> flatMap(
-		final List<A> values,
-		final OptionMapper<A, B> mapper
-	) {
-		return flatMap(values, mapper.toListMapper());
-	}
-
-	static <A, B> List<B> flatMap(
-		final List<A> values,
-		final ListMapper<A, B> mapper
-	) {
-		return values.stream()
-			.flatMap(value -> mapper.apply(value).stream())
-			.collect(Collectors.toList());
-	}
-
 }

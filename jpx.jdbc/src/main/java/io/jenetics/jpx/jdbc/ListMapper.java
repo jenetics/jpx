@@ -20,39 +20,13 @@
 package io.jenetics.jpx.jdbc;
 
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-final class Lists {
-
-	private Lists() {
-	}
-
-	static <A, B> List<B> map(final List<A> values, final Function<A, B> mapper) {
-		return values.stream()
-			.map(mapper)
-			.collect(Collectors.toList());
-	}
-
-	static <A, B> List<B> flatMap(
-		final List<A> values,
-		final OptionMapper<A, B> mapper
-	) {
-		return flatMap(values, mapper.toListMapper());
-	}
-
-	static <A, B> List<B> flatMap(
-		final List<A> values,
-		final ListMapper<A, B> mapper
-	) {
-		return values.stream()
-			.flatMap(value -> mapper.apply(value).stream())
-			.collect(Collectors.toList());
-	}
-
+@FunctionalInterface
+public interface ListMapper<T, R> {
+	public List<R> apply(final T value);
 }
