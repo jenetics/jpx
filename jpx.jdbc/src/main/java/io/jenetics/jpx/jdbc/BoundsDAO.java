@@ -53,15 +53,23 @@ public final class BoundsDAO extends DAO {
 		)
 	);
 
-/*
-	CREATE TABLE bounds(
-	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	minlat DOUBLE PRECISION NOT NULL,
-	minlon DOUBLE PRECISION NOT NULL,
-	maxlat DOUBLE PRECISION NOT NULL,
-	maxlon DOUBLE PRECISION NOT NULL
-);
+
+	/* *************************************************************************
+	 * SELECT queries
+	 **************************************************************************/
+
+	/**
+	 * Select all available copyrights.
+	 *
+	 * @return all stored copyrights
+	 * @throws SQLException if the select fails
 	 */
+	public List<Stored<Bounds>> select() throws SQLException {
+		final String query =
+			"SELECT id, minlat, minlon, maxlat, maxlon FROM bounds;";
+
+		return SQL(query).as(RowParser.list());
+	}
 
 
 	/* *************************************************************************
@@ -101,24 +109,6 @@ public final class BoundsDAO extends DAO {
 		throws SQLException
 	{
 		return insert(singletonList(bounds)).get(0);
-	}
-
-
-	/* *************************************************************************
-	 * SELECT queries
-	 **************************************************************************/
-
-	/**
-	 * Select all available copyrights.
-	 *
-	 * @return all stored copyrights
-	 * @throws SQLException if the select fails
-	 */
-	public List<Stored<Bounds>> select() throws SQLException {
-		final String query =
-			"SELECT id, minlat, minlon, maxlat, maxlon FROM bounds;";
-
-		return SQL(query).as(RowParser.list());
 	}
 
 

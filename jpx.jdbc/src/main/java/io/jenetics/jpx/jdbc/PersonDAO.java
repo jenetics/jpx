@@ -59,6 +59,50 @@ public final class PersonDAO extends DAO {
 		)
 	);
 
+	/* *************************************************************************
+	 * SELECT queries
+	 **************************************************************************/
+
+	public List<Stored<Person>> select() throws SQLException {
+		final String query =
+			"SELECT person.id, " +
+				"name, " +
+				"email, " +
+				"link.href AS link_href, " +
+				"link.text AS link_text, " +
+				"link.type AS link_type " +
+				"FROM person " +
+				"LEFT OUTER JOIN link ON (person.link_id = link.id)";
+
+		return SQL(query).as(RowParser.list());
+	}
+
+	/**
+	 * Selects the links by its hrefs.
+	 *
+	 * @param persons the person names
+	 * @return the link with the given hrefs currently in the DB
+	 * @throws SQLException if the select fails
+	 */
+	public List<Stored<Person>> select(final List<Person> persons)
+		throws SQLException
+	{
+		final String query =
+			"SELECT person.id, " +
+				"name, " +
+				"email, " +
+				"link.href AS link_href, " +
+				"link.text AS link_text, " +
+				"link.type AS link_type " +
+				"FROM person " +
+				"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
+				"WHERE name IN ({names})";
+
+		return SQL(query)
+			.on(Param.values("names", persons, Person::getName))
+			.as(RowParser.list());
+	}
+
 
 	/* *************************************************************************
 	 * INSERT queries
@@ -162,7 +206,7 @@ public final class PersonDAO extends DAO {
 		return DAO.put(
 			persons,
 			Person::getName,
-			list -> selectByNames(flatMapOption(list, Person::getName)),
+			this::select,
 			this::insert,
 			this::update
 		);
@@ -172,49 +216,6 @@ public final class PersonDAO extends DAO {
 		return put(singletonList(person)).get(0);
 	}
 
-	/* *************************************************************************
-	 * SELECT queries
-	 **************************************************************************/
-
-	public List<Stored<Person>> select() throws SQLException {
-		final String query =
-			"SELECT person.id, " +
-				"name, " +
-				"email, " +
-				"link.href AS link_href, " +
-				"link.text AS link_text, " +
-				"link.type AS link_type " +
-			"FROM person " +
-			"LEFT OUTER JOIN link ON (person.link_id = link.id)";
-
-		return SQL(query).as(RowParser.list());
-	}
-
-	/**
-	 * Selects the links by its hrefs.
-	 *
-	 * @param names the person names
-	 * @return the link with the given hrefs currently in the DB
-	 * @throws SQLException if the select fails
-	 */
-	public List<Stored<Person>> selectByNames(final List<String> names)
-		throws SQLException
-	{
-		final String query =
-			"SELECT person.id, " +
-				"name, " +
-				"email, " +
-				"link.href AS link_href, " +
-				"link.text AS link_text, " +
-				"link.type AS link_type " +
-			"FROM person " +
-			"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
-			"WHERE name IN ({names})";
-
-		return SQL(query)
-			.on(Param.values("names", names))
-			.as(RowParser.list());
-	}
 
 	public static PersonDAO of(final Connection conn) {
 		return new PersonDAO(conn);

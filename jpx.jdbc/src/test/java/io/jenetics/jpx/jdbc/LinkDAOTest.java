@@ -20,12 +20,9 @@
 package io.jenetics.jpx.jdbc;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -79,14 +76,14 @@ public class LinkDAOTest {
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			LinkDAO.of(conn).insert(links);
+			new LinkDAO(conn).insert(links);
 		});
 	}
 
 	@Test(dependsOnMethods = "insert")
 	public void select() throws SQLException {
 		final List<Stored<Link>> existing = db.transaction(conn -> {
-			return LinkDAO.of(conn).select();
+			return new LinkDAO(conn).select();
 		});
 
 		Assert.assertEquals(
@@ -98,23 +95,10 @@ public class LinkDAOTest {
 		);
 	}
 
-	@Test
-	public void selectByHrefs() throws SQLException {
-		db.transaction(conn -> {
-			final LinkDAO dao = LinkDAO.of(conn);
-
-			try {
-				dao.selectByHrefs(Arrays.asList(new URI("http://foo.bar")));
-			} catch (URISyntaxException e) {
-				throw new RuntimeException(e);
-			}
-		});
-	}
-
 	@Test(dependsOnMethods = "select")
 	public void update() throws SQLException {
 		final List<Stored<Link>> existing = db.transaction(conn -> {
-			return LinkDAO.of(conn).select();
+			return new LinkDAO(conn).select();
 		});
 
 		db.transaction(conn -> {
@@ -122,7 +106,7 @@ public class LinkDAOTest {
 				.map(l -> Link.of(l.getHref(), "Other text", null));
 
 			Assert.assertEquals(
-				LinkDAO.of(conn).update(updated),
+				new LinkDAO(conn).update(updated),
 				updated
 			);
 		});
@@ -131,7 +115,7 @@ public class LinkDAOTest {
 	@Test(dependsOnMethods = "update")
 	public void put() throws SQLException {
 		db.transaction(conn -> {
-			final LinkDAO dao = LinkDAO.of(conn);
+			final LinkDAO dao = new LinkDAO(conn);
 
 			dao.put(links);
 

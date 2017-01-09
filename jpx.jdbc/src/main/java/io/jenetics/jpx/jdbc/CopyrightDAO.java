@@ -70,6 +70,43 @@ final class CopyrightDAO extends DAO {
 		return uri;
 	}
 
+	/* *************************************************************************
+	 * SELECT queries
+	 **************************************************************************/
+
+	/**
+	 * Select all available copyrights.
+	 *
+	 * @return all stored copyrights
+	 * @throws SQLException if the select fails
+	 */
+	public List<Stored<Copyright>> select() throws SQLException {
+		final String query =
+			"SELECT id, author, year, license FROM copyright;";
+
+		return SQL(query).as(RowParser.list());
+	}
+
+	/**
+	 * Selects the copyright by its authors
+	 *
+	 * @param copyrights the author list
+	 * @return the copyrights with the given authors currently in the DB
+	 * @throws SQLException if the select fails
+	 */
+	public List<Stored<Copyright>> select(final List<Copyright> copyrights)
+		throws SQLException
+	{
+		final String query =
+			"SELECT id, author, year, license " +
+				"FROM copyright " +
+				"WHERE author IN ({authors});";
+
+		return SQL(query)
+			.on(Param.values("authors", copyrights, Copyright::getAuthor))
+			.as(RowParser.list());
+	}
+
 
 	/* *************************************************************************
 	 * INSERT queries
@@ -166,47 +203,10 @@ final class CopyrightDAO extends DAO {
 			: DAO.put(
 				copyrights,
 				Copyright::getAuthor,
-				list -> selectByAuthors(map(list, Copyright::getAuthor)),
+				this::select,
 				this::insert,
 				this::update
 			);
-	}
-
-	/* *************************************************************************
-	 * SELECT queries
-	 **************************************************************************/
-
-	/**
-	 * Select all available copyrights.
-	 *
-	 * @return all stored copyrights
-	 * @throws SQLException if the select fails
-	 */
-	public List<Stored<Copyright>> select() throws SQLException {
-		final String query =
-			"SELECT id, author, year, license FROM copyright;";
-
-		return SQL(query).as(RowParser.list());
-	}
-
-	/**
-	 * Selects the copyright by its authors
-	 *
-	 * @param authors the author list
-	 * @return the copyrights with the given authors currently in the DB
-	 * @throws SQLException if the select fails
-	 */
-	public List<Stored<Copyright>> selectByAuthors(final List<String> authors)
-		throws SQLException
-	{
-		final String query =
-			"SELECT id, author, year, license " +
-			"FROM copyright " +
-			"WHERE author IN ({authors});";
-
-		return SQL(query)
-			.on(Param.values("authors", authors))
-			.as(RowParser.list());
 	}
 
 	static CopyrightDAO of(final Connection conn) {
