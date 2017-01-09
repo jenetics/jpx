@@ -19,12 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.util.Collections.emptyList;
-
 import java.sql.SQLException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Contains implementations of existing functional classes, which allow to throw
