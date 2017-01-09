@@ -94,12 +94,31 @@ public final class PersonDAO extends DAO {
 				"link.href AS link_href, " +
 				"link.text AS link_text, " +
 				"link.type AS link_type " +
-				"FROM person " +
-				"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
-				"WHERE name IN ({names})";
+			"FROM person " +
+			"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
+			"WHERE name IN ({names})";
 
 		return SQL(query)
 			.on(Param.values("names", persons, Person::getName))
+			.as(RowParser.list());
+	}
+
+	public <T> List<Stored<Person>> selectByID(final List<Long> ids)
+		throws SQLException
+	{
+		final String query =
+			"SELECT person.id, " +
+				"name, " +
+				"email, " +
+				"link.href AS link_href, " +
+				"link.text AS link_text, " +
+				"link.type AS link_type " +
+			"FROM person " +
+			"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
+			"WHERE person.id IN ({ids})";
+
+		return SQL(query)
+			.on(Param.values("ids", ids))
 			.as(RowParser.list());
 	}
 

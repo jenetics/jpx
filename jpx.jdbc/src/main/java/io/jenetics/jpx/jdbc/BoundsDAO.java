@@ -71,6 +71,17 @@ public final class BoundsDAO extends DAO {
 		return SQL(query).as(RowParser.list());
 	}
 
+	public List<Stored<Bounds>> selectByID(final List<Long> ids)
+		throws SQLException
+	{
+		final String query =
+			"SELECT id, minlat, minlon, maxlat, maxlon " +
+			"FROM bounds " +
+			"WHERE id IN({ids})";
+
+		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
+	}
+
 
 	/* *************************************************************************
 	 * INSERT queries
@@ -112,8 +123,14 @@ public final class BoundsDAO extends DAO {
 	}
 
 
-	public static BoundsDAO of(final Connection conn) {
-		return new BoundsDAO(conn);
+	/* *************************************************************************
+	 * DELETE queries
+	 **************************************************************************/
+
+	public int deleteByID(final List<Long> ids) throws SQLException {
+		return SQL("DELETE FROM bounds WHERE id IN ({ids})")
+			.on(Param.values("ids", ids))
+			.execute();
 	}
 
 }

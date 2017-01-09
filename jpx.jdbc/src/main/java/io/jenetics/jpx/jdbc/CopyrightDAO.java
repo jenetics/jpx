@@ -99,12 +99,23 @@ final class CopyrightDAO extends DAO {
 	{
 		final String query =
 			"SELECT id, author, year, license " +
-				"FROM copyright " +
-				"WHERE author IN ({authors});";
+			"FROM copyright " +
+			"WHERE author IN ({authors});";
 
 		return SQL(query)
 			.on(Param.values("authors", copyrights, Copyright::getAuthor))
 			.as(RowParser.list());
+	}
+
+	public List<Stored<Copyright>> selectByID(final List<Long> ids)
+		throws SQLException
+	{
+		final String query =
+			"SELECT id, author, year, license " +
+			"FROM copyright " +
+			"WHERE id IN ({ids});";
+
+		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
 	}
 
 

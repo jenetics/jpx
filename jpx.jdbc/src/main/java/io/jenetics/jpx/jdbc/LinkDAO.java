@@ -82,6 +82,16 @@ public final class LinkDAO extends DAO {
 			.as(RowParser.list());
 	}
 
+	public List<Stored<Link>> selectByID(final List<Long> ids)
+		throws SQLException
+	{
+		final String query =
+			"SELECT id, href, text, type " +
+			"FROM link WHERE id IN ({ids})";
+
+		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
+	}
+
 
 	/* *************************************************************************
 	 * INSERT queries

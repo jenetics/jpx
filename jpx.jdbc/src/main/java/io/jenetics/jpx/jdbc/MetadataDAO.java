@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,17 +15,20 @@
  * limitations under the License.
  *
  * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
+ *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
+import static io.jenetics.jpx.jdbc.Lists.flatMap;
+import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Bounds;
@@ -33,9 +36,10 @@ import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Metadata;
 import io.jenetics.jpx.Person;
+import io.jenetics.jpx.jdbc.SQL.OptionMapper;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
@@ -94,31 +98,82 @@ public class MetadataDAO extends DAO {
 		)
 	);
 
-	/*
-CREATE TABLE metadata(
-	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-	name VARCHAR(255),
-	`desc` TEXT,
-	person_id BIGINT REFERENCES person(id),
-	copyright_id BIGINT,
-	time TIMESTAMP,
-	keywords VARCHAR(255),
-	bounds_id BIGINT REFERENCES bounds(id)
-);
-CREATE INDEX i_metadata_name ON metadata(name);
-CREATE INDEX i_metadata_keywords ON metadata(keywords);
-
-CREATE TABLE metadata_link(
-	metadata_id BIGINT NOT NULL REFERENCES metadata(id) ON DELETE CASCADE,
-	link_id BIGINT NOT NULL REFERENCES link(id),
-
-	CONSTRAINT c_metadata_link_metadata_id_link_id UNIQUE (metadata_id, link_id)
-);
-	 */
-
 	/* *************************************************************************
 	 * SELECT queries
 	 **************************************************************************/
+
+	public List<Stored<Metadata>> select() throws SQLException {
+		final String query =
+			"SELECT id, " +
+				"name, " +
+				"desc, " +
+				"person_id, " +
+				"copyright_id, " +
+				"time, " +
+				"keywords, " +
+				"bound_id " +
+			"FROM metadata";
+
+		final List<Stored<Row>> rows = SQL(query).as(RowParser.list());
+		return toMetadata(rows);
+	}
+
+	private List<Stored<Metadata>> toMetadata(final List<Stored<Row>> rows)
+		throws SQLException
+	{
+		final Map<Long, Person> persons = with(PersonDAO::new)
+			.selectByID(map(rows, r -> r.value().personID)).stream()
+			.collect(Collectors.toMap(Stored::id, Stored::value, (a, b) -> b));
+
+		final Map<Long, Copyright> copyrights = with(CopyrightDAO::new)
+			.selectByID(map(rows, r -> r.value().copyrightID)).stream()
+			.collect(Collectors.toMap(Stored::id, Stored::value, (a, b) -> b));
+
+		final Map<Long, Bounds> bounds = with(BoundsDAO::new)
+			.selectByID(map(rows, r -> r.value().boundsID)).stream()
+			.collect(Collectors.toMap(Stored::id, Stored::value, (a, b) -> b));
+
+		final Map<Long, List<Link>> links = with(MetadataLinkDAO::new)
+			.selectLinksByMetadataID(map(rows, Stored::id));
+
+		return rows.stream()
+			.map(row -> Stored.of(
+				row.id(),
+				Metadata.of(
+					row.value().name,
+					row.value().description,
+					persons.get(row.value().personID),
+					copyrights.get(row.value().copyrightID),
+					links.get(row.id()),
+					row.value().time,
+					row.value().keywords,
+					bounds.get(row.value().boundsID)
+				)
+			))
+			.collect(Collectors.toList());
+	}
+
+	public List<Stored<Metadata>> selectByID(final List<Long> ids)
+		throws SQLException
+	{
+		final String query =
+			"SELECT id, " +
+				"name, " +
+				"desc, " +
+				"person_id, " +
+				"copyright_id, " +
+				"time, " +
+				"keywords, " +
+				"bound_id " +
+			"FROM metadata " +
+			"WHERE id IN ({ids})";
+
+		final List<Stored<Row>> rows = SQL(query)
+			.on(Param.values("ids", ids))
+			.as(RowParser.list());
+
+		return toMetadata(rows);
+	}
 
 	/* *************************************************************************
 	 * INSERT queries
@@ -164,45 +219,45 @@ CREATE TABLE metadata_link(
 		final List<Pair<Long, Long>> metadataLinks = inserted.stream()
 			.flatMap(md -> md.value().getLinks().stream()
 				.map(l -> Pair.of(md.id(), links.get(l))))
-			.collect(Collectors.toList());;
+			.collect(Collectors.toList());
 
-		Batch(
-			"INSERT INTO metadata_link(metadata_id, link_id) " +
-			"VALUES({metadata_id}, {link_id});"
-		).set(metadataLinks, mdl -> asList(
-			Param.value("metadata_id", mdl._1),
-			Param.value("link_id", mdl._2)
-		));
+		with(MetadataLinkDAO::new).insert(metadataLinks);
 
 		return inserted;
 	}
 
-
 	/* *************************************************************************
-	 * SELECT queries
+	 * DELETE queries
 	 **************************************************************************/
 
-	/**
-	 * Select all available copyrights.
-	 *
-	 * @return all stored copyrights
-	 * @throws SQLException if the select fails
-	 */
-	/*
-	public List<Stored<Metadata>> select() throws SQLException {
+	public int deleteByID(final List<Long> ids) throws SQLException {
 		final String query =
 			"SELECT id, " +
 				"name, " +
-				"description, " +
-				"person.name AS person_name, " +
-				"person.email AS person_email, " +
-				"link.href AS link_href, " +
-				"link.text AS link_text, " +
-				"link.type AS link_type " +
-				"person.";
+				"desc, " +
+				"person_id, " +
+				"copyright_id, " +
+				"time, " +
+				"keywords, " +
+				"bound_id " +
+				"FROM metadata " +
+				"WHERE id IN ({ids})";
 
-		return SQL(query).as(RowParser.list());
+		final List<Stored<Row>> rows = SQL(query)
+			.on(Param.values("ids", ids))
+			.as(RowParser.list());
+
+		final int deleted = SQL("DELETE FROM metadata WHER id IN ({ids})")
+			.on(Param.values("ids", ids))
+			.execute();
+
+		with(BoundsDAO::new).deleteByID(
+			flatMap(rows,
+				(OptionMapper<Stored<Row>, Long>)
+					row -> Optional.ofNullable(row.value().boundsID))
+		);
+
+		return deleted;
 	}
-	*/
 
 }

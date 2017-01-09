@@ -79,9 +79,9 @@ public final class SQL {
 	}
 
 	@FunctionalInterface
-	public static interface OptionMapper<T, R>
-		extends java.util.function.Function<T, Optional<R>>
-	{
+	public static interface OptionMapper<T, R> {
+		public Optional<R> apply(final T value);
+
 		public default ListMapper<T, R> toListMapper() {
 			return t -> apply(t)
 				.map(Collections::singletonList)
@@ -90,9 +90,8 @@ public final class SQL {
 	}
 
 	@FunctionalInterface
-	public static interface ListMapper<T, R>
-		extends java.util.function.Function<T, List<R>>
-	{
+	public static interface ListMapper<T, R> {
+		public List<R> apply(final T value);
 	}
 
 }

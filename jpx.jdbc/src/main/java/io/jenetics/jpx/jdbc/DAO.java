@@ -171,28 +171,4 @@ abstract class DAO {
 		}
 	}
 
-	static <A, B> List<B> map(final List<A> values, final Function<A, B> mapper) {
-		return values.stream()
-			.map(mapper)
-			.collect(Collectors.toList());
-	}
-
-	static <A, B> List<B> flatMap(
-		final List<A> values,
-		final Function<A, List<B>> mapper
-	) {
-		return values.stream()
-			.flatMap(v -> mapper.apply(v).stream())
-			.collect(toList());
-	}
-
-	static <A, B> List<B> flatMapOption(
-		final List<A> values,
-		final Function<A, Optional<B>> mapper
-	) {
-		return values.stream()
-			.flatMap(v -> mapper.apply(v).map(Stream::of).orElse(Stream.empty()))
-			.collect(toList());
-	}
-
 }

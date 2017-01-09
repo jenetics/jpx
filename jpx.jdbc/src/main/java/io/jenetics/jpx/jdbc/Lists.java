@@ -19,48 +19,45 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import javax.swing.text.html.Option;
+
+import io.jenetics.jpx.jdbc.SQL.ListMapper;
+import io.jenetics.jpx.jdbc.SQL.OptionMapper;
 
 /**
- * Represents a select SQL query.
- *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class SQLQuery extends AbstractQuery {
-	private final List<Param> _params = new ArrayList<>();
+final class Lists {
 
-	public SQLQuery(final Connection conn, final String sql) {
-		super(conn, sql);
+	private Lists() {
 	}
 
-	public SQLQuery on(final Param param) {
-		_params.add(param);
-		return this;
+	static <A, B> List<B> map(final List<A> values, final Function<A, B> mapper) {
+		return values.stream()
+			.map(mapper)
+			.collect(Collectors.toList());
 	}
 
-	public SQLQuery on(final String name, final Object value) {
-		return on(Param.value(name, value));
+	static <A, B> List<B> flatMap(
+		final List<A> values,
+		final OptionMapper<A, B> mapper
+	) {
+		return flatMap(values, mapper.toListMapper());
 	}
 
-	public int execute() throws SQLException {
-		try (PreparedStatement stmt = PreparedSQL.prepare(_sql, _params, _conn)) {
-			return stmt.executeUpdate();
-		}
-	}
-
-	public <T> T as(final RowParser<T> parser) throws SQLException {
-		try (PreparedStatement stmt = PreparedSQL.prepare(_sql, _params, _conn);
-			ResultSet rs = stmt.executeQuery())
-		{
-			return parser.parse(Results.of(rs));
-		}
+	static <A, B> List<B> flatMap(
+		final List<A> values,
+		final ListMapper<A, B> mapper
+	) {
+		return values.stream()
+			.flatMap(value -> mapper.apply(value).stream())
+			.collect(Collectors.toList());
 	}
 
 }
