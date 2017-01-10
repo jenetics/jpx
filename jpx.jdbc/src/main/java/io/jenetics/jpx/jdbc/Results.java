@@ -42,10 +42,20 @@ import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Map;
+
+import io.jenetics.jpx.DGPSStation;
+import io.jenetics.jpx.Degrees;
+import io.jenetics.jpx.Fix;
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
+import io.jenetics.jpx.Speed;
+import io.jenetics.jpx.UInt;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
@@ -74,6 +84,50 @@ final class Results implements ResultSet {
 		return ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts.getTime()), UTC);
 	}
 
+	public Latitude getLatitude(final String columnName) throws SQLException {
+		final Double value = get(Double.class, columnName);
+		return value != null ? Latitude.ofDegrees(value) : null;
+	}
+
+	public Longitude getLongitude(final String columnName) throws SQLException {
+		final Double value = get(Double.class, columnName);
+		return value != null ? Longitude.ofRadians(value) : null;
+	}
+
+	public Length getLength(final String columnName) throws SQLException {
+		final Double value = get(Double.class, columnName);
+		return value != null ? Length.of(value, Length.Unit.METER) : null;
+	}
+
+	public Speed getSpeed(final String columnName) throws SQLException {
+		final Double value = get(Double.class, columnName);
+		return value != null ? Speed.of(value, Speed.Unit.METERS_PER_SECOND) : null;
+	}
+
+	public Degrees getDegrees(final String columnName) throws SQLException {
+		final Double value = get(Double.class, columnName);
+		return value != null ? Degrees.ofDegrees(value) : null;
+	}
+
+	public Fix getFix(final String columnName) throws SQLException {
+		final String value = getString(columnName);
+		return value != null ? Fix.ofName(value).orElse(null) : null;
+	}
+
+	public UInt getUInt(final String columnName) throws SQLException {
+		final Integer value = get(Integer.class, columnName);
+		return value != null ? UInt.of(value) : null;
+	}
+
+	public Duration getDuration(final String columnName) throws SQLException {
+		final Integer value = get(Integer.class, columnName);
+		return value != null ? Duration.ofSeconds(value) : null;
+	}
+
+	public DGPSStation getDGPSStation(final String columnName) throws SQLException {
+		final Integer value = get(Integer.class, columnName);
+		return value != null ? DGPSStation.of(value) : null;
+	}
 
 
 	/* *************************************************************************

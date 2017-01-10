@@ -85,7 +85,7 @@ CREATE TABLE way_point(
 	speed DOUBLE PRECISION,
 	time TIMESTAMP,
 	magvar DOUBLE PRECISION,
-	geohight DOUBLE PRECISION,
+	geoidheight DOUBLE PRECISION,
 	name VARCHAR(255),
 	cmt VARCHAR(255),
 	`desc` TEXT,
@@ -102,6 +102,8 @@ CREATE TABLE way_point(
 );
 CREATE INDEX i_way_point_lat ON way_point(lat);
 CREATE INDEX i_way_point_lon ON way_point(lon);
+CREATE INDEX i_way_point_ele ON way_point(ele);
+CREATE INDEX i_way_point_time ON way_point(time);
 
 CREATE TABLE way_point_link(
 	way_point_id BIGINT NOT NULL REFERENCES way_point(id) ON DELETE CASCADE,

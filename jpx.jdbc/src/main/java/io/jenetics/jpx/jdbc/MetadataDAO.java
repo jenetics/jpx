@@ -155,6 +155,12 @@ public class MetadataDAO extends DAO {
 	public List<Stored<Metadata>> selectByID(final List<Long> ids)
 		throws SQLException
 	{
+		return toMetadata(selectRowsByID(ids));
+	}
+
+	private List<Stored<Row>> selectRowsByID(final List<Long> ids)
+		throws SQLException
+	{
 		final String query =
 			"SELECT id, " +
 				"name, " +
@@ -164,14 +170,10 @@ public class MetadataDAO extends DAO {
 				"time, " +
 				"keywords, " +
 				"bound_id " +
-			"FROM metadata " +
+				"FROM metadata " +
 			"WHERE id IN ({ids})";
 
-		final List<Stored<Row>> rows = SQL(query)
-			.on(Param.values("ids", ids))
-			.as(RowParser.list());
-
-		return toMetadata(rows);
+		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
 	}
 
 	/* *************************************************************************
@@ -230,23 +232,9 @@ public class MetadataDAO extends DAO {
 	 **************************************************************************/
 
 	public int deleteByID(final List<Long> ids) throws SQLException {
-		final String query =
-			"SELECT id, " +
-				"name, " +
-				"desc, " +
-				"person_id, " +
-				"copyright_id, " +
-				"time, " +
-				"keywords, " +
-				"bound_id " +
-				"FROM metadata " +
-				"WHERE id IN ({ids})";
+		final List<Stored<Row>> rows = selectRowsByID(ids);
 
-		final List<Stored<Row>> rows = SQL(query)
-			.on(Param.values("ids", ids))
-			.as(RowParser.list());
-
-		final int deleted = SQL("DELETE FROM metadata WHER id IN ({ids})")
+		final int deleted = SQL("DELETE FROM metadata WHERE id IN ({ids})")
 			.on(Param.values("ids", ids))
 			.execute();
 

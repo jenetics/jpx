@@ -29,6 +29,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Duration;
 import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -38,6 +39,15 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import io.jenetics.jpx.DGPSStation;
+import io.jenetics.jpx.Degrees;
+import io.jenetics.jpx.Fix;
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
+import io.jenetics.jpx.Speed;
+import io.jenetics.jpx.UInt;
 
 /**
  * Represents a SQL query for usage with a {@link PreparedStatement}.
@@ -111,6 +121,24 @@ final class PreparedSQL {
 			result = ((Year)result).getValue();
 		} else if (result instanceof ZonedDateTime) {
 			result = Timestamp.from(((ZonedDateTime)result).toInstant());
+		} else if (result instanceof Latitude) {
+			result = ((Latitude)result).doubleValue();
+		} else if (result instanceof Longitude) {
+			result = ((Longitude)result).doubleValue();
+		} else if (result instanceof Length) {
+			result = ((Length)result).doubleValue();
+		} else if (result instanceof Speed) {
+			result = ((Speed)result).doubleValue();
+		} else if (result instanceof Degrees) {
+			result = ((Degrees)result).toDegrees();
+		} else if (result instanceof Fix) {
+			result = ((Fix)result).getValue();
+		} else if (result instanceof UInt) {
+			result = ((UInt)result).intValue();
+		} else if (result instanceof Duration) {
+			result = (int)((Duration) result).getSeconds();
+		} else if (result instanceof DGPSStation) {
+			result = ((DGPSStation)result).intValue();
 		}
 
 		return result;
