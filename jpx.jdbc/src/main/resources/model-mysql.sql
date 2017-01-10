@@ -126,17 +126,17 @@ CREATE TABLE route(
 );
 
 CREATE TABLE route_link(
-	route_id BIGINT NOT NULL REFERENCES route(id),
+	route_id BIGINT NOT NULL REFERENCES route(id) ON DELETE CASCADE,
 	link_id BIGINT NOT NULL REFERENCES link(id),
 
 	CONSTRAINT c_route_link_route_id_link_id UNIQUE (route_id, link_id)
 );
 
 CREATE TABLE route_way_point(
-	route_id BIGINT NOT NULL REFERENCES route(id),
+	route_id BIGINT NOT NULL REFERENCES route(id) ON DELETE CASCADE,
 	way_point_id BIGINT NOT NULL REFERENCES way_point(id),
 
-	CONSTRAINT c_route_way_point_route_id_link_id UNIQUE (route_id, way_point_id)
+	CONSTRAINT c_route_way_point_way_point_id UNIQUE (way_point_id)
 );
 
 -- -----------------------------------------------------------------------------

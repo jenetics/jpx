@@ -38,22 +38,22 @@ import io.jenetics.jpx.Link;
  * @version !__version__!
  * @since !__version__!
  */
-public class WayPointLinkDAO extends DAO {
+public class RouteLinkDAO extends DAO {
 
 	/**
-	 * Represents a row in the "metadata_link" table.
+	 * Represents a row in the "route_link" table.
 	 */
 	private static final class Row {
-		final Long wayPointID;
+		final Long routeID;
 		final Long linkID;
 
-		Row(final Long wayPointID, final Long linkID) {
-			this.wayPointID = wayPointID;
+		Row(final Long routeID, final Long linkID) {
+			this.routeID = routeID;
 			this.linkID = linkID;
 		}
 
-		Long wayPointID() {
-			return wayPointID;
+		Long routeID() {
+			return routeID;
 		}
 
 		Long linkID() {
@@ -61,12 +61,12 @@ public class WayPointLinkDAO extends DAO {
 		}
 	}
 
-	public WayPointLinkDAO(final Connection conn) {
+	public RouteLinkDAO(final Connection conn) {
 		super(conn);
 	}
 
 	private static final RowParser<Row> RowParser = rs -> new Row(
-		rs.getLong("way_point_id"),
+		rs.getLong("route_id"),
 		rs.getLong("link_id")
 	);
 
@@ -74,13 +74,13 @@ public class WayPointLinkDAO extends DAO {
 	 * SELECT queries
 	 **************************************************************************/
 
-	public Map<Long, List<Link>> selectLinksByWayPointID(final List<Long> ids)
+	public Map<Long, List<Link>> selectLinksByRouteID(final List<Long> ids)
 		throws SQLException
 	{
 		final String query =
-			"SELECT way_point_id, link_id " +
-			"FROM way_point_link " +
-			"WHERE way_point_id IN ({ids})";
+			"SELECT route_id, link_id " +
+			"FROM route_link " +
+			"WHERE route_id IN ({ids})";
 
 		final List<Row> rows = SQL(query)
 			.on(Param.values("ids", ids))
@@ -91,7 +91,7 @@ public class WayPointLinkDAO extends DAO {
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()
-			.map(row -> Pair.of(row.wayPointID, links.get(row.linkID)))
+			.map(row -> Pair.of(row.routeID, links.get(row.linkID)))
 			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
 	}
 
@@ -99,19 +99,19 @@ public class WayPointLinkDAO extends DAO {
 	 * INSERT queries
 	 **************************************************************************/
 
-	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> wayPointLinks)
+	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> routeLinks)
 		throws SQLException
 	{
 		final String query =
-			"INSERT INTO way_point_link(way_point_id, link_id) " +
-			"VALUES({way_point_id}, {link_id});";
+			"INSERT INTO route_link(route_id, link_id) " +
+			"VALUES({route_id}, {link_id});";
 
-		Batch(query).set(wayPointLinks, mdl -> asList(
-			Param.value("way_point_id", mdl._1),
+		Batch(query).set(routeLinks, mdl -> asList(
+			Param.value("route_id", mdl._1),
 			Param.value("link_id", mdl._2)
 		));
 
-		return wayPointLinks;
+		return routeLinks;
 	}
 
 }
