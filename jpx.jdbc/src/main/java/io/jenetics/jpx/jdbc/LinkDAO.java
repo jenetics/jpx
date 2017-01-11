@@ -24,14 +24,15 @@ import static java.util.Collections.singletonList;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 import io.jenetics.jpx.Link;
 
 /**
- * Link Data Access Object.
+ * DAO for the {@code Link} data class.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
@@ -63,33 +64,76 @@ public final class LinkDAO extends DAO {
 	 * Select all available links.
 	 *
 	 * @return all stored links
-	 * @throws SQLException if the select fails
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public List<Stored<Link>> select() throws SQLException {
 		return SQL("SELECT id, href, text, type FROM link")
 			.as(RowParser.list());
 	}
 
-	public List<Stored<Link>> select(final List<Link> links)
+	/**
+	 * Selects the all stored link objects with the given column values.
+	 *
+	 * @param column the column to select
+	 * @param values the value list
+	 * @return the selected stored links
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public <T, C> List<Stored<Link>> selectBy(
+		final Column<T, C> column,
+		final List<T> values
+	)
 		throws SQLException
 	{
-		final String query =
-			"SELECT id, href, text, type " +
-			"FROM link WHERE href IN ({hrefs})";
+		final List<Stored<Link>> links;
+		if (!values.isEmpty()) {
+			final String query =
+				"SELECT id, href, text, type " +
+				"FROM link WHERE "+column.name()+" IN ({values})";
 
-		return SQL(query)
-			.on(Param.values("hrefs", links, Link::getHref))
-			.as(RowParser.list());
+			links = SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.as(RowParser.list());
+		} else {
+			links = Collections.emptyList();
+		}
+
+		return links;
 	}
 
-	public List<Stored<Link>> selectByID(final List<Long> ids)
+	/**
+	 * Selects the all stored link objects with the given column value.
+	 *
+	 * @param column the column to select
+	 * @param value the selection value
+	 * @return the selected stored links
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public <T, C> List<Stored<Link>> selectBy(
+		final Column<T, C> column,
+		final T value
+	)
 		throws SQLException
 	{
-		final String query =
-			"SELECT id, href, text, type " +
-			"FROM link WHERE id IN ({ids})";
+		return selectBy(column, singletonList(value));
+	}
 
-		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
+	/**
+	 * Selects the all stored link objects with the given column value.
+	 *
+	 * @param column the column to select
+	 * @param value the selection value
+	 * @return the selected stored links
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public <T> List<Stored<Link>> selectBy(final String column, final T value)
+		throws SQLException
+	{
+		return selectBy(Column.of(column), value);
 	}
 
 
@@ -102,7 +146,8 @@ public final class LinkDAO extends DAO {
 	 *
 	 * @param links the links to insert
 	 * @return return the stored links
-	 * @throws SQLException if inserting fails
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public List<Stored<Link>> insert(final List<Link> links)
 		throws SQLException
@@ -123,7 +168,8 @@ public final class LinkDAO extends DAO {
 	 *
 	 * @param link the link to insert
 	 * @return return the stored link
-	 * @throws SQLException if inserting fails
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public Stored<Link> insert(final Link link)
 		throws SQLException
@@ -141,7 +187,8 @@ public final class LinkDAO extends DAO {
 	 *
 	 * @param links the links to update
 	 * @return the updated links
-	 * @throws SQLException if the update fails
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public List<Stored<Link>> update(final List<Stored<Link>> links)
 		throws SQLException
@@ -164,7 +211,8 @@ public final class LinkDAO extends DAO {
 	 *
 	 * @param link the link to update
 	 * @return the updated link
-	 * @throws SQLException if the update fails
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public Stored<Link> update(final Stored<Link> link) throws SQLException {
 		return update(singletonList(link)).get(0);
@@ -176,16 +224,19 @@ public final class LinkDAO extends DAO {
 	 *
 	 * @param links the links to insert or update
 	 * @return the inserted or updated links
-	 * @throws SQLException if the insert/update fails
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public List<Stored<Link>> put(final List<Link> links) throws SQLException {
-		return DAO.put(
-			links,
-			Link::getHref,
-			this::select,
-			this::insert,
-			this::update
-		);
+		return links.isEmpty()
+			? Collections.emptyList()
+			: DAO.put(
+				links,
+				Link::getHref,
+				values -> selectBy(Column.of("href", Link::getHref), links),
+				this::insert,
+				this::update
+			);
 	}
 
 
@@ -193,10 +244,37 @@ public final class LinkDAO extends DAO {
 	 * DELETE queries
 	 **************************************************************************/
 
-	public List<Link> delete(final List<Stored<Link>> links)
+	/**
+	 * Delete links by the given column values.
+	 *
+	 * @param column the column which specifies the deleted rows
+	 * @param values the rows to delete
+	 * @param <T> the value type
+	 * @param <C> the column type
+	 * @return the number of deleted rows
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public <T, C> int deleteBy(
+		final Column<T, C> column,
+		final List<T> values
+	)
 		throws SQLException
 	{
-		return null;
+		final int count;
+		if (!values.isEmpty()) {
+			final String query =
+				"DELETE FROM link WHERE "+column.name()+" IN ({values})";
+
+			count = SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.execute();
+
+		} else {
+			count = 0;
+		}
+
+		return count;
 	}
 
 }
