@@ -143,12 +143,14 @@ CREATE TABLE route_way_point(
 -- Create the `track_segment` table.
 -- -----------------------------------------------------------------------------
 CREATE TABLE track_segment(
-	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT
+	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	number INT NOT NULL
 );
+CREATE INDEX i_track_segment_number ON track_segment(number);
 
 CREATE TABLE track_segment_way_point(
 	track_segment_id BIGINT NOT NULL REFERENCES track_segment(id) ON DELETE CASCADE,
-	way_point_id BIGINT NOT NULL REFERENCES way_point(id) ON DELETE CASCADE,
+	way_point_id BIGINT NOT NULL REFERENCES way_point(id),
 
 	CONSTRAINT c_track_segment_way_point_track_segment_id_way_point_id
 		UNIQUE (track_segment_id, way_point_id)
@@ -199,6 +201,13 @@ CREATE TABLE gpx_way_point(
 	way_point_id BIGINT NOT NULL REFERENCES way_point(id),
 
 	CONSTRAINT c_gpx_way_point_gpx_id_way_point_id UNIQUE (gpx_id, way_point_id)
+);
+
+CREATE TABLE gpx_route(
+	gpx_id BIGINT NOT NULL REFERENCES gpx(id),
+	route_id BIGINT NOT NULL REFERENCES route(id),
+
+	CONSTRAINT c_gpx_track_gpx_id_route_id UNIQUE (gpx_id, route_id)
 );
 
 CREATE TABLE gpx_track(

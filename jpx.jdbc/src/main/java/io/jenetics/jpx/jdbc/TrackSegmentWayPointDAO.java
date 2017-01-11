@@ -28,9 +28,11 @@ import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import io.jenetics.jpx.Link;
 import io.jenetics.jpx.WayPoint;
 
 /**
@@ -38,22 +40,22 @@ import io.jenetics.jpx.WayPoint;
  * @version !__version__!
  * @since !__version__!
  */
-public class RouteWayPointDAO extends DAO {
+public class TrackSegmentWayPointDAO extends DAO {
 
 	/**
 	 * Represents a row in the "route_way_point" table.
 	 */
 	private static final class Row {
-		final Long routeID;
+		final Long trackSegmentID;
 		final Long wayPointID;
 
-		Row(final Long routeID, final Long wayPointID) {
-			this.routeID = routeID;
+		Row(final Long trackSegmentID, final Long wayPointID) {
+			this.trackSegmentID = trackSegmentID;
 			this.wayPointID = wayPointID;
 		}
 
-		Long routeID() {
-			return routeID;
+		Long trackSegmentID() {
+			return trackSegmentID;
 		}
 
 		Long wayPointID() {
@@ -61,12 +63,12 @@ public class RouteWayPointDAO extends DAO {
 		}
 	}
 
-	public RouteWayPointDAO(final Connection conn) {
+	public TrackSegmentWayPointDAO(final Connection conn) {
 		super(conn);
 	}
 
 	private static final RowParser<Row> RowParser = rs -> new Row(
-		rs.getLong("route_id"),
+		rs.getLong("track_segment_id"),
 		rs.getLong("way_point_id")
 	);
 
@@ -74,13 +76,13 @@ public class RouteWayPointDAO extends DAO {
 	 * SELECT queries
 	 **************************************************************************/
 
-	public Map<Long, List<WayPoint>> selectWayPointsByRouteID(final List<Long> ids)
+	public Map<Long, List<WayPoint>> selectWayPointsByTrackSegmentID(final Collection<Long> ids)
 		throws SQLException
 	{
 		final String query =
-			"SELECT route_id, way_point_id " +
-			"FROM route_way_point " +
-			"WHERE route_id IN ({ids})";
+			"SELECT track_segment_id, way_point_id " +
+			"FROM track_segment_way_point " +
+			"WHERE track_segment_id IN ({ids})";
 
 		final List<Row> rows = SQL(query)
 			.on(Param.values("ids", ids))
@@ -91,24 +93,7 @@ public class RouteWayPointDAO extends DAO {
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()
-			.map(row -> Pair.of(row.routeID, points.get(row.wayPointID)))
-			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
-	}
-
-	public Map<Long, List<Long>> selectWayPointIDsByRouteID(final List<Long> ids)
-		throws SQLException
-	{
-		final String query =
-			"SELECT route_id, way_point_id " +
-			"FROM route_way_point " +
-			"WHERE route_id IN ({ids})";
-
-		final List<Row> rows = SQL(query)
-			.on(Param.values("ids", ids))
-			.as(RowParser.list());
-
-		return rows.stream()
-			.map(row -> Pair.of(row.routeID, row.wayPointID))
+			.map(row -> Pair.of(row.trackSegmentID, points.get(row.wayPointID)))
 			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
 	}
 
@@ -116,19 +101,19 @@ public class RouteWayPointDAO extends DAO {
 	 * INSERT queries
 	 **************************************************************************/
 
-	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> routeWayPoints)
+	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> trackSegmentWayPoints)
 		throws SQLException
 	{
 		final String query =
-			"INSERT INTO route_way_point(route_id, way_point_id) " +
-			"VALUES({route_id}, {way_point_id});";
+			"INSERT INTO track_segment_way_point(track_segment_id, way_point_id) " +
+			"VALUES({track_segment_id}, {way_point_id});";
 
-		Batch(query).set(routeWayPoints, mdl -> asList(
-			Param.value("route_id", mdl._1),
-			Param.value("way_point_id", mdl._2)
+		Batch(query).set(trackSegmentWayPoints, point -> asList(
+			Param.value("track_segment_id", point._1),
+			Param.value("way_point_id", point._2)
 		));
 
-		return routeWayPoints;
+		return trackSegmentWayPoints;
 	}
 
 }
