@@ -20,12 +20,15 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.toMap;
 import static io.jenetics.jpx.jdbc.Lists.flatMap;
 import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -122,15 +125,15 @@ public class MetadataDAO extends DAO {
 	{
 		final Map<Long, Person> persons = with(PersonDAO::new)
 			.selectByID(map(rows, r -> r.value().personID)).stream()
-			.collect(Collectors.toMap(Stored::id, Stored::value, (a, b) -> b));
+			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Copyright> copyrights = with(CopyrightDAO::new)
 			.selectByID(map(rows, r -> r.value().copyrightID)).stream()
-			.collect(Collectors.toMap(Stored::id, Stored::value, (a, b) -> b));
+			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Bounds> bounds = with(BoundsDAO::new)
 			.selectByID(map(rows, r -> r.value().boundsID)).stream()
-			.collect(Collectors.toMap(Stored::id, Stored::value, (a, b) -> b));
+			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, List<Link>> links = with(MetadataLinkDAO::new)
 			.selectLinksByMetadataID(map(rows, Stored::id));
@@ -152,10 +155,18 @@ public class MetadataDAO extends DAO {
 			.collect(Collectors.toList());
 	}
 
-	public List<Stored<Metadata>> selectByID(final List<Long> ids)
+	/**
+	 * Select the {@link Metadata} with the given DB IDs.
+	 *
+	 * @param ids the metadata DB IDs.
+	 * @return the selected metadata which maps the DB ID to the given metadata
+	 * @throws SQLException if the DB operation fails
+	 */
+	public Map<Long, Metadata> selectByID(final List<Long> ids)
 		throws SQLException
 	{
-		return toMetadata(selectRowsByID(ids));
+		return toMetadata(selectRowsByID(ids)).stream()
+			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 	}
 
 	private List<Stored<Row>> selectRowsByID(final List<Long> ids)
@@ -170,7 +181,7 @@ public class MetadataDAO extends DAO {
 				"time, " +
 				"keywords, " +
 				"bound_id " +
-				"FROM metadata " +
+			"FROM metadata " +
 			"WHERE id IN ({ids})";
 
 		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
@@ -201,7 +212,7 @@ public class MetadataDAO extends DAO {
 
 		final String query =
 			"INSERT INTO person(name, email, link_id) " +
-				"VALUES({name}, {email}, {link_id});";
+			"VALUES({name}, {email}, {link_id});";
 
 		final List<Stored<Metadata>> inserted =
 			Batch(query).insert(metadata, md -> asList(
@@ -225,6 +236,10 @@ public class MetadataDAO extends DAO {
 		with(MetadataLinkDAO::new).insert(metadataLinks);
 
 		return inserted;
+	}
+
+	public Stored<Metadata> insert(final Metadata metadata) throws SQLException {
+		return insert(singletonList(metadata)).get(0);
 	}
 
 	/* *************************************************************************
