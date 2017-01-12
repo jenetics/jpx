@@ -34,13 +34,30 @@ import java.util.function.Function;
  * @version !__version__!
  * @since !__version__!
  */
-public final class BatchQuery extends AbstractQuery {
+final class BatchQuery extends AbstractQuery {
 
-	public BatchQuery(final Connection conn, final String query) {
-		super(conn, query);
+	/**
+	 * Create a new batch query object with the given connection and SQL string.
+	 *
+	 * @param conn the DB connection used by this query object
+	 * @param sql the SQL query string
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	BatchQuery(final Connection conn, final String sql) {
+		super(conn, sql);
 	}
 
-	public <T> List<Stored<T>> insert(
+	/**
+	 * Inserts the given {@code values} into the DB.
+	 *
+	 * @param values the values which will be inserted into the DB
+	 * @param format creates the needed parameters for inserting one object
+	 *        value
+	 * @param <T> the value type
+	 * @return the inserted objects
+	 * @throws SQLException if the insertion fails
+	 */
+	<T> List<Stored<T>> insert(
 		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
@@ -50,15 +67,15 @@ public final class BatchQuery extends AbstractQuery {
 
 		if (!values.isEmpty()) {
 			final PreparedSQL preparedSQL = PreparedSQL
-				.parse(_sql, format.apply(values.iterator().next()));
+				.parse(_sql, format.apply(head(values)));
 
-			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
+			try (PreparedStatement ps = preparedSQL.prepare(_conn)) {
 				for (T value : values) {
 					final List<Param> params = format.apply(value);
-					preparedSQL.fill(stmt, params);
+					preparedSQL.fill(ps, params);
 
-					stmt.executeUpdate();
-					results.add(Stored.of(DAO.id(stmt), value));
+					ps.executeUpdate();
+					results.add(Stored.of(DAO.readID(ps), value));
 				}
 			}
 		}
@@ -66,7 +83,20 @@ public final class BatchQuery extends AbstractQuery {
 		return results;
 	}
 
-	public <T> void set(
+	private static <T> T head(final Collection<T> values) {
+		return values.iterator().next();
+	}
+
+	/**
+	 * Executes the query with the given (batch) values.
+	 *
+	 * @param values the object value
+	 * @param format creates the needed parameters for executing the query with
+	 *        one value
+	 * @param <T> the value type
+	 * @throws SQLException if the execution fails
+	 */
+	<T> void execute(
 		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
@@ -74,7 +104,7 @@ public final class BatchQuery extends AbstractQuery {
 	{
 		if (!values.isEmpty()) {
 			final PreparedSQL preparedSQL = PreparedSQL
-				.parse(_sql, format.apply(values.iterator().next()));
+				.parse(_sql, format.apply(head(values)));
 
 			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
 				for (T value : values) {
@@ -87,7 +117,17 @@ public final class BatchQuery extends AbstractQuery {
 		}
 	}
 
-	public <T> int update(
+	/**
+	 * Updates the given {@code values}.
+	 *
+	 * @param values the values which will be inserted into the DB
+	 * @param format creates the needed parameters for inserting one object
+	 *        value
+	 * @param <T> the value type
+	 * @return the number of affected rows
+	 * @throws SQLException if the update fails
+	 */
+	<T> int update(
 		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
@@ -96,7 +136,7 @@ public final class BatchQuery extends AbstractQuery {
 		int count = 0;
 		if (!values.isEmpty()) {
 			final PreparedSQL preparedSQL = PreparedSQL
-				.parse(_sql, format.apply(values.iterator().next()));
+				.parse(_sql, format.apply(head(values)));
 
 			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
 				for (T value : values) {

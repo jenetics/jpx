@@ -17,7 +17,6 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-import org.apache.tools.ant.filters.ReplaceTokens
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -56,7 +55,8 @@ javadoc {
 		charSet = 'UTF-8'
 		linkSource = true
 		links = [
-			'https://docs.oracle.com/javase/8/docs/api'
+			'https://docs.oracle.com/javase/8/docs/api',
+			'https://jenetics.github.io/jpx/javadoc/jpx'
 		]
 		windowTitle = "JPX ${project.version}"
 		docTitle = "<h1>JPX ${project.version}</h1>"

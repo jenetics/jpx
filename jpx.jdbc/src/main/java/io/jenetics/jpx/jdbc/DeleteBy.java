@@ -42,7 +42,7 @@ public interface DeleteBy<T> {
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public <V, C> int deleteBy(
+	public <V, C> int deleteByVals(
 		final Column<V, C> column,
 		final Collection<V> values
 	)
@@ -66,7 +66,7 @@ public interface DeleteBy<T> {
 	)
 		throws SQLException
 	{
-		return deleteBy(column, singletonList(value));
+		return deleteByVals(column, singletonList(value));
 	}
 
 	/**
@@ -79,13 +79,13 @@ public interface DeleteBy<T> {
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public default <V> int deleteBy(
+	public default <V> int deleteByVals(
 		final String column,
 		final Collection<V> values
 	)
 		throws SQLException
 	{
-		return deleteBy(Column.<V>of(column), values);
+		return deleteByVals(Column.<V>of(column), values);
 	}
 
 	/**

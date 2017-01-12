@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * Interface for common update functions.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!

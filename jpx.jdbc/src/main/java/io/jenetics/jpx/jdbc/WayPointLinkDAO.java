@@ -105,7 +105,7 @@ public class WayPointLinkDAO extends DAO {
 			"INSERT INTO way_point_link(way_point_id, link_id) " +
 			"VALUES({way_point_id}, {link_id});";
 
-		Batch(query).set(wayPointLinks, mdl -> asList(
+		Batch(query).execute(wayPointLinks, mdl -> asList(
 			Param.value("way_point_id", mdl._1),
 			Param.value("link_id", mdl._2)
 		));

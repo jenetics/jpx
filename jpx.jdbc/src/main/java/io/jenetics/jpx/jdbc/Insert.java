@@ -26,6 +26,10 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * This interface defines insertion methods for a given row type.
+ *
+ * @param <T> the row type
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!

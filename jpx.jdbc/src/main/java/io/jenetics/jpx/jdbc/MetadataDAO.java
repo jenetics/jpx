@@ -202,13 +202,13 @@ public class MetadataDAO extends DAO {
 		throws SQLException
 	{
 		final Map<Person, Long> persons = DAO
-			.set(metadata, Metadata::getAuthor, with(PersonDAO::new)::put);
+			.write(metadata, Metadata::getAuthor, with(PersonDAO::new)::put);
 
 		final Map<Copyright, Long> copyrights = DAO
-			.set(metadata, Metadata::getCopyright, with(CopyrightDAO::new)::put);
+			.write(metadata, Metadata::getCopyright, with(CopyrightDAO::new)::put);
 
 		final Map<Bounds, Long> bounds = DAO
-			.set(metadata, Metadata::getBounds, with(BoundsDAO::new)::insert);
+			.write(metadata, Metadata::getBounds, with(BoundsDAO::new)::insert);
 
 		final String query =
 			"INSERT INTO person(name, email, link_id) " +
@@ -226,7 +226,7 @@ public class MetadataDAO extends DAO {
 			));
 
 		final Map<Link, Long> links = DAO
-			.set(metadata, Metadata::getLinks, with(LinkDAO::new)::put);
+			.write(metadata, Metadata::getLinks, with(LinkDAO::new)::put);
 
 		final List<Pair<Long, Long>> metadataLinks = inserted.stream()
 			.flatMap(md -> md.value().getLinks().stream()

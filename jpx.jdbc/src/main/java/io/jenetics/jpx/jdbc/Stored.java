@@ -130,6 +130,7 @@ public final class Stored<T> {
 	 *
 	 * @param id the DB id
 	 * @param value the DB value
+	 * @param <T> the stored value type
 	 * @return a new stored object
 	 */
 	public static <T> Stored<T> of(final long id, final T value) {

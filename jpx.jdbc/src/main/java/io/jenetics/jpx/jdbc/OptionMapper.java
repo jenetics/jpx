@@ -25,16 +25,24 @@ import java.util.Collections;
 import java.util.Optional;
 
 /**
+ * Maps a given value to an optional value.
+ *
+ * @param <T> the argument type
+ * @param <R> the optional return type
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
 @FunctionalInterface
 public interface OptionMapper<T, R> {
+
 	public Optional<R> apply(final T value);
+
 	public default ListMapper<T, R> toListMapper() {
 		return t -> apply(t)
 			.map(Collections::singletonList)
 			.orElse(emptyList());
 	}
+
 }

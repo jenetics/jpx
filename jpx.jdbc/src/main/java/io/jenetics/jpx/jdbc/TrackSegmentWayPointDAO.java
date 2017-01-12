@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import io.jenetics.jpx.Link;
 import io.jenetics.jpx.WayPoint;
 
 /**
@@ -108,7 +107,7 @@ public class TrackSegmentWayPointDAO extends DAO {
 			"INSERT INTO track_segment_way_point(track_segment_id, way_point_id) " +
 			"VALUES({track_segment_id}, {way_point_id});";
 
-		Batch(query).set(trackSegmentWayPoints, point -> asList(
+		Batch(query).execute(trackSegmentWayPoints, point -> asList(
 			Param.value("track_segment_id", point._1),
 			Param.value("way_point_id", point._2)
 		));

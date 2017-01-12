@@ -123,7 +123,7 @@ public class RouteWayPointDAO extends DAO {
 			"INSERT INTO route_way_point(route_id, way_point_id) " +
 			"VALUES({route_id}, {way_point_id});";
 
-		Batch(query).set(routeWayPoints, mdl -> asList(
+		Batch(query).execute(routeWayPoints, mdl -> asList(
 			Param.value("route_id", mdl._1),
 			Param.value("way_point_id", mdl._2)
 		));

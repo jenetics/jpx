@@ -70,6 +70,14 @@ final class PreparedSQL {
 		_names = requireNonNull(names);
 	}
 
+	/**
+	 * Create a new {@link PreparedStatement} from the given connection.
+	 *
+	 * @param conn the DB connection
+	 * @return a new prepared statement
+	 * @throws SQLException if the preparing fails
+	 * @throws NullPointerException if the connection is {@code null}
+	 */
 	PreparedStatement prepare(final Connection conn)
 		throws SQLException
 	{
@@ -82,10 +90,14 @@ final class PreparedSQL {
 	 *
 	 * @param stmt the prepared statement
 	 * @throws SQLException if the statement preparation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	void fill(final PreparedStatement stmt, final List<Param> params)
 		throws SQLException
 	{
+		requireNonNull(stmt);
+		requireNonNull(params);
+
 		final Map<String, List<Param>> paramsMap = params.stream()
 			.collect(Collectors.groupingBy(Param::name));
 
@@ -163,6 +175,7 @@ final class PreparedSQL {
 	 *
 	 * @param sql the query string to parse
 	 * @return a query string into a query for prepared statements
+	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	static PreparedSQL parse(final String sql, final List<Param> params) {
 		final Map<String, List<Param>> paramsMap = params.stream()
@@ -193,6 +206,17 @@ final class PreparedSQL {
 		return new PreparedSQL(parsedQuery.toString(), names);
 	}
 
+	/**
+	 * Creates a new {@link PreparedStatement} from the given query and fills
+	 * the parameters in one step.
+	 *
+	 * @param sql the SLQ query
+	 * @param params the query parameters
+	 * @param conn the DB connection
+	 * @return the newly prepared statement
+	 * @throws SQLException if the preparation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
 	static PreparedStatement prepare(
 		final String sql,
 		final List<Param> params,

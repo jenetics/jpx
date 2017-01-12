@@ -89,6 +89,7 @@ final class Param {
 	 *
 	 * @param name the parameter name
 	 * @param values the parameter values
+	 * @param <T> the values type
 	 * @return a new parameter object
 	 */
 	public static <T> Param values(
@@ -98,6 +99,16 @@ final class Param {
 		return new Param(name, values);
 	}
 
+	/**
+	 * Create a ne parameter object with the given name and values.
+	 *
+	 * @param name the parameter name
+	 * @param values the raw parameter values
+	 * @param mapper the parameter mapper
+	 * @param <A> the raw-type
+	 * @param <B> the mapped type
+	 * @return a new parameter object
+	 */
 	public static <A, B> Param values(
 		final String name,
 		final Collection<A> values,

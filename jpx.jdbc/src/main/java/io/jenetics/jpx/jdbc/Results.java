@@ -58,6 +58,8 @@ import io.jenetics.jpx.Speed;
 import io.jenetics.jpx.UInt;
 
 /**
+ * Extends the JDBC {@link ResultSet} with additional useful access methods.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!

@@ -74,7 +74,6 @@ public interface SelectBy<T> {
 	 * @param column the column to select
 	 * @param values the selection values
 	 * @param <V> the value type
-	 * @param <C> the column type
 	 * @return the selected stored objects
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}

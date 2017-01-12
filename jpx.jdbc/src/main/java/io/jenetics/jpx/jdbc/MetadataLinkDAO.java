@@ -106,7 +106,7 @@ public final class MetadataLinkDAO extends DAO {
 			"INSERT INTO metadata_link(metadata_id, link_id) " +
 			"VALUES({metadata_id}, {link_id});";
 
-		Batch(query).set(metadataLinks, mdl -> asList(
+		Batch(query).execute(metadataLinks, mdl -> asList(
 			Param.value("metadata_id", mdl._1),
 			Param.value("link_id", mdl._2)
 		));

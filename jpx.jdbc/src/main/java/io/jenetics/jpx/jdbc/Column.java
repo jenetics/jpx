@@ -19,11 +19,16 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.function.Function;
 
 /**
  * Represents a table column with a name and a mapping function, which converts
  * a given value to the needed column type.
+ *
+ * @param <T> raw object type
+ * @param <C> column object type
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -31,13 +36,37 @@ import java.util.function.Function;
  */
 public interface Column<T, C> {
 
+	/**
+	 * Return the column name.
+	 *
+	 * @return the column name
+	 */
 	public String name();
 
+	/**
+	 * Return the mapper function with maps the raw type {@code T} to the column
+	 * type which is insert into the DB.
+	 *
+	 * @return raw-type to column-type mapper
+	 */
 	public Function<T, C> mapper();
 
 
+	/**
+	 * Create a column object with the given values.
+	 *
+	 * @param name the column name
+	 * @param mapper the raw-type to column-type mapper
+	 * @param <T> raw object type
+	 * @param <C> column object type
+	 * @return a new column object
+	 * @throws NullPointerException if one of the parameters is {@code null}
+	 */
 	public static <T, C> Column<T, C>
 	of(final String name, final Function<T, C> mapper) {
+		requireNonNull(name);
+		requireNonNull(mapper);
+
 		return new Column<T, C>() {
 			@Override
 			public String name() {
@@ -51,6 +80,13 @@ public interface Column<T, C> {
 		};
 	}
 
+	/**
+	 * Create a column objects with the given name.
+	 *
+	 * @param name the column name
+	 * @param <T> the raw-object and column-type
+	 * @return a new column object
+	 */
 	public static <T> Column<T, T> of (final String name) {
 		return of(name, Function.identity());
 	}

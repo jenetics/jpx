@@ -201,7 +201,7 @@ public class RouteDAO extends DAO {
 
 		// Insert route links.
 		final Map<Link, Long> links = DAO
-			.set(routes, Route::getLinks, with(LinkDAO::new)::put);
+			.write(routes, Route::getLinks, with(LinkDAO::new)::put);
 
 		final List<Pair<Long, Long>> routeLinks = inserted.stream()
 			.flatMap(md -> md.value().getLinks().stream()
@@ -212,7 +212,7 @@ public class RouteDAO extends DAO {
 
 		// Insert route way-points.
 		final Map<WayPoint, Long> points = DAO
-			.set(routes, Route::getPoints, with(WayPointDAO::new)::insert);
+			.write(routes, Route::getPoints, with(WayPointDAO::new)::insert);
 
 		final List<Pair<Long, Long>> routePoints = inserted.stream()
 			.flatMap(md -> md.value().getPoints().stream()

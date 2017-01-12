@@ -105,7 +105,7 @@ public class TrackLinkDAO extends DAO {
 			"INSERT INTO track_link(track_id, link_id) " +
 			"VALUES({track_id}, {link_id});";
 
-		Batch(query).set(trackLinks, mdl -> asList(
+		Batch(query).execute(trackLinks, mdl -> asList(
 			Param.value("track_id", mdl._1),
 			Param.value("link_id", mdl._2)
 		));

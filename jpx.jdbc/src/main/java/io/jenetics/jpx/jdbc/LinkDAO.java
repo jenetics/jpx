@@ -169,7 +169,7 @@ public final class LinkDAO
 	 **************************************************************************/
 
 	@Override
-	public <T, C> int deleteBy(
+	public <T, C> int deleteByVals(
 		final Column<T, C> column,
 		final Collection<T> values
 	)

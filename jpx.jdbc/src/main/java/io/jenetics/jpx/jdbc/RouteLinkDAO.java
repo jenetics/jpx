@@ -105,7 +105,7 @@ public class RouteLinkDAO extends DAO {
 			"INSERT INTO route_link(route_id, link_id) " +
 			"VALUES({route_id}, {link_id});";
 
-		Batch(query).set(routeLinks, mdl -> asList(
+		Batch(query).execute(routeLinks, mdl -> asList(
 			Param.value("route_id", mdl._1),
 			Param.value("link_id", mdl._2)
 		));

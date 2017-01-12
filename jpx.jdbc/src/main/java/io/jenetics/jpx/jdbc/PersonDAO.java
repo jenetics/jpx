@@ -124,7 +124,7 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 		throws SQLException
 	{
 		final Map<Link, Long> links = DAO
-			.set(persons, Person::getLink, with(LinkDAO::new)::put);
+			.write(persons, Person::getLink, with(LinkDAO::new)::put);
 
 		final String query =
 			"INSERT INTO person(name, email, link_id) " +
@@ -163,7 +163,7 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 	public List<Stored<Person>> update(final Collection<Stored<Person>> persons)
 		throws SQLException
 	{
-		final Map<Link, Long> links = DAO.set(
+		final Map<Link, Long> links = DAO.write(
 			persons,
 			(Stored<Person> p) -> p.value().getLink(),
 			with(LinkDAO::new)::put

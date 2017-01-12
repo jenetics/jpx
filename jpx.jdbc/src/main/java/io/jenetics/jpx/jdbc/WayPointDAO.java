@@ -345,7 +345,7 @@ public class WayPointDAO extends DAO {
 			));
 
 		final Map<Link, Long> links = DAO
-			.set(wayPoints, WayPoint::getLinks, with(LinkDAO::new)::put);
+			.write(wayPoints, WayPoint::getLinks, with(LinkDAO::new)::put);
 
 		final List<Pair<Long, Long>> wayPointLinks = inserted.stream()
 			.flatMap(md -> md.value().getLinks().stream()

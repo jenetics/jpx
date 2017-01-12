@@ -24,12 +24,25 @@ import static java.lang.String.format;
 import java.util.Objects;
 
 /**
+ * Pair of two objects.
+ *
+ * @param <A> first type
+ * @param <B> second type
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
 final class Pair<A, B> {
+
+	/**
+	 * The fist value.
+	 */
 	final A _1;
+
+	/**
+	 * The second value.
+	 */
 	final B _2;
 
 	private Pair(final A a, final B b) {
@@ -37,10 +50,20 @@ final class Pair<A, B> {
 		_2 = b;
 	}
 
+	/**
+	 * Return the first value.
+	 *
+	 * @return the first value
+	 */
 	A _1() {
 		return _1;
 	}
 
+	/**
+	 * return the second value.
+	 *
+	 * @return the second value
+	 */
 	B _2() {
 		return _2;
 	}
@@ -66,6 +89,15 @@ final class Pair<A, B> {
 		return format("Pair[%s, %s]", _1, _2);
 	}
 
+	/**
+	 * Create a new pair with the given values.
+	 *
+	 * @param a the first value
+	 * @param b the second value
+	 * @param <A> the first type
+	 * @param <B> the second type
+	 * @return a new pair with the given values
+	 */
 	public static <A, B> Pair<A, B> of(final A a, final B b) {
 		return new Pair<A, B>(a, b);
 	}

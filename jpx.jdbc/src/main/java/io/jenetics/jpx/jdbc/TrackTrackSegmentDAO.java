@@ -21,17 +21,13 @@ package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-import io.jenetics.jpx.Link;
 import io.jenetics.jpx.TrackSegment;
 
 /**
@@ -111,7 +107,7 @@ public class TrackTrackSegmentDAO extends DAO {
 			"INSERT INTO route_link(route_id, link_id) " +
 				"VALUES({route_id}, {link_id});";
 
-		Batch(query).set(routeLinks, mdl -> asList(
+		Batch(query).execute(routeLinks, mdl -> asList(
 			Param.value("route_id", mdl._1),
 			Param.value("link_id", mdl._2)
 		));

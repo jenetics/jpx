@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -36,7 +37,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Abstract DAO class
+ * Abstract DAO class which implements the methods for doing easy SQL.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -44,18 +45,26 @@ import java.util.stream.Collectors;
  */
 abstract class DAO {
 
-	final Connection _conn;
+	private final Connection _conn;
 
 	/**
 	 * Create a new DAO object with uses the given connection.
 	 *
 	 * @param conn the DB connection used for the DAO operations
+	 * @throws NullPointerException if the given connection is {@code null}
 	 */
 	DAO(final Connection conn) {
-		_conn = conn;
+		_conn = requireNonNull(conn);
 	}
 
-	<T> T with(final Function<Connection, T> create) {
+	/**
+	 * Create a new DAO object which the current connection.
+	 *
+	 * @param create the DAO creation function
+	 * @param <T> the DAO type
+	 * @return a new DAO object of type {@code T}
+	 */
+	<T extends DAO> T with(final Function<Connection, T> create) {
 		return create.apply(_conn);
 	}
 
@@ -64,6 +73,8 @@ abstract class DAO {
 	 *
 	 * @param query the SQL query
 	 * @return a new select query object
+	 * @throws NullPointerException if the given {@code query} string is
+	 *         {@code null}
 	 */
 	SQLQuery SQL(final String query) {
 		return new SQLQuery(_conn, query);
@@ -79,6 +90,20 @@ abstract class DAO {
 		return new BatchQuery(_conn, query);
 	}
 
+	/**
+	 * Helper method for insert or update the given values.
+	 *
+	 * @param values the values to insert or to update
+	 * @param key key function used for determining object equality
+	 * @param select select function for selecting existing objects
+	 * @param insert insert function for inserting missing objects
+	 * @param update update function for updating changed values
+	 * @param <T> the value type
+	 * @param <K> the key type
+	 * @return the missing + updated + unchanged rows
+	 * @throws SQLException if the DB operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
 	static <T, K> List<Stored<T>> put(
 		final Collection<T> values,
 		final Function<T, K> key,
@@ -88,6 +113,12 @@ abstract class DAO {
 	)
 		throws SQLException
 	{
+		requireNonNull(values);
+		requireNonNull(key);
+		requireNonNull(select);
+		requireNonNull(insert);
+		requireNonNull(update);
+
 		final List<Stored<T>> result;
 
 		if (!values.isEmpty()) {
@@ -124,10 +155,24 @@ abstract class DAO {
 		return result;
 	}
 
-	static <A, B> Map<B, Long> set(
+	/**
+	 * Writes the given values into the DB. Before the values are written, they
+	 * are mapped to type {@code T} with the given {@code mapper}.
+	 *
+	 * @param values the list of values to write
+	 * @param mapper the function used for converting the values into the actual
+	 *        insertion values
+	 * @param writer the method used for writing the converted values into the DB
+	 * @param <A> the raw value type
+	 * @param <B> the converted value type
+	 * @return a map of the inserted values mapped to its DB id
+	 * @throws SQLException if the DB write fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	static <A, B> Map<B, Long> write(
 		final Collection<A> values,
 		final ListMapper<A, B> mapper,
-		final SQL.Function<List<B>, List<Stored<B>>> set
+		final SQL.Function<List<B>, List<Stored<B>>> writer
 	)
 		throws SQLException
 	{
@@ -135,18 +180,32 @@ abstract class DAO {
 			.flatMap(v -> mapper.apply(v).stream())
 			.collect(Collectors.toList());
 
-		return set.apply(mapped).stream()
+		return writer.apply(mapped).stream()
 			.collect(toMap(Stored::value, Stored::id, (a, b) -> b));
 	}
 
-	static <A, B> Map<B, Long> set(
+	/**
+	 * Writes the given values into the DB. Before the values are written, they
+	 * are mapped to type {@code T} with the given {@code mapper}.
+	 *
+	 * @param values the list of values to write
+	 * @param mapper the function used for converting the values into the actual
+	 *        insertion values
+	 * @param writer the method used for writing the converted values into the DB
+	 * @param <A> the raw value type
+	 * @param <B> the converted value type
+	 * @return a map of the inserted values mapped to its DB id
+	 * @throws SQLException if the DB write fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	static <A, B> Map<B, Long> write(
 		final Collection<A> values,
 		final OptionMapper<A, B> mapper,
-		final SQL.Function<List<B>, List<Stored<B>>> set
+		final SQL.Function<List<B>, List<Stored<B>>> writer
 	)
 		throws SQLException
 	{
-		return set(values, mapper.toListMapper(), set);
+		return write(values, mapper.toListMapper(), writer);
 	}
 
 	/**
@@ -156,7 +215,7 @@ abstract class DAO {
 	 * @return the DB id of the inserted record
 	 * @throws SQLException if fetching the ID fails
 	 */
-	static long id(final Statement stmt) throws SQLException {
+	static long readID(final Statement stmt) throws SQLException {
 		try (ResultSet keys = stmt.getGeneratedKeys()) {
 			if (keys.next()) {
 				return keys.getLong(1);
