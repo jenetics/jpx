@@ -20,15 +20,16 @@
 package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.jpx.PersonTest.nextPerson;
+import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.Email;
 import io.jenetics.jpx.Person;
 
 /**
@@ -41,13 +42,12 @@ public class PersonDAOTest extends DAOTestBase<Person> {
 		return nextPerson(random);
 	}
 
-	private final List<Person> persons = nextObjects(new Random(123), 20);
-
+	private final List<Person> objects = nextObjects(new Random(123), 20);
 
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			new PersonDAO(conn).insert(persons);
+			new PersonDAO(conn).insert(objects);
 		});
 	}
 
@@ -57,13 +57,17 @@ public class PersonDAOTest extends DAOTestBase<Person> {
 			return new PersonDAO(conn).select();
 		});
 
-		Assert.assertEquals(
-			existing.stream()
-				.map(Stored::value)
-				.collect(Collectors.toSet()),
-			persons.stream()
-				.collect(Collectors.toSet())
-		);
+		Assert.assertEquals(map(existing, Stored::value), objects);
+	}
+
+	@Test(dependsOnMethods = "insert")
+	public void selectByName() throws SQLException {
+		final List<Stored<Person>> selected = db.transaction(conn -> {
+			return new PersonDAO(conn)
+				.selectBy("name", objects.get(0).getName());
+		});
+
+		Assert.assertEquals(selected.get(0).value(), objects.get(0));
 	}
 
 	@Test(dependsOnMethods = "select")
@@ -74,12 +78,16 @@ public class PersonDAOTest extends DAOTestBase<Person> {
 
 		db.transaction(conn -> {
 			final Stored<Person> updated = existing.get(0)
-				.map(p -> Person.of(p.getName().get(), null, null));
+				.map(l -> Person.of(
+					l.getName().orElse(null),
+					Email.of("other", "mail")));
 
 			Assert.assertEquals(
 				new PersonDAO(conn).update(updated),
 				updated
 			);
+
+			Assert.assertEquals(new PersonDAO(conn).select().get(0), updated);
 		});
 	}
 
@@ -88,14 +96,24 @@ public class PersonDAOTest extends DAOTestBase<Person> {
 		db.transaction(conn -> {
 			final PersonDAO dao = new PersonDAO(conn);
 
-			dao.put(persons);
+			dao.put(objects);
+			Assert.assertEquals(map(dao.select(), Stored::value), objects);
+		});
+	}
+
+	@Test(dependsOnMethods = "put")
+	public void delete() throws SQLException {
+		db.transaction(conn -> {
+			final PersonDAO dao = new PersonDAO(conn);
+
+			final int count = dao
+				.deleteBy(Column.of("name", Person::getName), objects.get(0));
+
+			Assert.assertEquals(count, 1);
 
 			Assert.assertEquals(
-				dao.select().stream()
-					.map(Stored::value)
-					.collect(Collectors.toSet()),
-				persons.stream()
-					.collect(Collectors.toSet())
+				map(dao.select(), Stored::value),
+				objects.subList(1, objects.size())
 			);
 		});
 	}

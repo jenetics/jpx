@@ -41,13 +41,12 @@ public class LinkDAOTest extends DAOTestBase<Link> {
 		return LinkTest.nextLink(random);
 	}
 
-	private final List<Link> links = nextObjects(new Random(123), 20);
-
+	private final List<Link> objects = nextObjects(new Random(123), 20);
 
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			new LinkDAO(conn).insert(links);
+			new LinkDAO(conn).insert(objects);
 		});
 	}
 
@@ -57,17 +56,17 @@ public class LinkDAOTest extends DAOTestBase<Link> {
 			return new LinkDAO(conn).select();
 		});
 
-		Assert.assertEquals(map(existing, Stored::value), links);
+		Assert.assertEquals(map(existing, Stored::value), objects);
 	}
 
 	@Test(dependsOnMethods = "insert")
 	public void selectByHref() throws SQLException {
 		final List<Stored<Link>> selected = db.transaction(conn -> {
 			return new LinkDAO(conn)
-				.selectBy("href", links.get(0).getHref());
+				.selectBy("href", objects.get(0).getHref());
 		});
 
-		Assert.assertEquals(selected.get(0).value(), links.get(0));
+		Assert.assertEquals(selected.get(0).value(), objects.get(0));
 	}
 
 	@Test(dependsOnMethods = "select")
@@ -94,8 +93,26 @@ public class LinkDAOTest extends DAOTestBase<Link> {
 		db.transaction(conn -> {
 			final LinkDAO dao = new LinkDAO(conn);
 
-			dao.put(links);
-			Assert.assertEquals(map(dao.select(), Stored::value), links);
+			dao.put(objects);
+			Assert.assertEquals(map(dao.select(), Stored::value), objects);
 		});
 	}
+
+	@Test(dependsOnMethods = "put")
+	public void delete() throws SQLException {
+		db.transaction(conn -> {
+			final LinkDAO dao = new LinkDAO(conn);
+
+			final int count = dao
+				.deleteBy(Column.of("href", Link::getHref), objects.get(0));
+
+			Assert.assertEquals(count, 1);
+
+			Assert.assertEquals(
+				map(dao.select(), Stored::value),
+				objects.subList(1, objects.size())
+			);
+		});
+	}
+
 }

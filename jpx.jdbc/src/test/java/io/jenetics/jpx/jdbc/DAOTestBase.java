@@ -27,8 +27,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -37,7 +37,7 @@ public abstract class DAOTestBase<T> {
 
 	public final DB db = H2DB.newTestInstance();
 
-	@BeforeSuite
+	@BeforeClass
 	public void setup() throws IOException, SQLException {
 		final String[] queries = IO.
 			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
@@ -52,7 +52,7 @@ public abstract class DAOTestBase<T> {
 		});
 	}
 
-	@AfterSuite
+	@AfterClass
 	public void shutdown() throws SQLException {
 		db.close();
 	}

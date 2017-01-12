@@ -39,7 +39,11 @@ import io.jenetics.jpx.Link;
  */
 public final class LinkDAO
 	extends DAO
-	implements SelectBy<Link>, Insert<Link>, Update<Link>, DeleteBy<Link>
+	implements
+		SelectBy<Link>,
+		Insert<Link>,
+		Update<Link>,
+		DeleteBy<Link>
 {
 
 	public LinkDAO(final Connection connection) {

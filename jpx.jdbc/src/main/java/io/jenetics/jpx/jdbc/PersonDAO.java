@@ -38,7 +38,14 @@ import io.jenetics.jpx.Person;
  * @version !__version__!
  * @since !__version__!
  */
-public final class PersonDAO extends DAO implements SelectBy<Person> {
+public final class PersonDAO
+	extends DAO
+	implements
+		SelectBy<Person>,
+		Insert<Person>,
+		Update<Person>,
+		DeleteBy<Person>
+{
 
 	public PersonDAO(final Connection conn) {
 		super(conn);
@@ -120,6 +127,7 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 	 * @return return the stored persons
 	 * @throws SQLException if inserting fails
 	 */
+	@Override
 	public List<Stored<Person>> insert(final Collection<Person> persons)
 		throws SQLException
 	{
@@ -137,17 +145,6 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 		));
 	}
 
-	/**
-	 * Insert the given person into the DB.
-	 *
-	 * @param person the person to insert
-	 * @return return the stored person
-	 * @throws SQLException if inserting fails
-	 */
-	public Stored<Person> insert(final Person person) throws SQLException {
-		return insert(singletonList(person)).get(0);
-	}
-
 
 	/* *************************************************************************
 	 * UPDATE queries
@@ -160,6 +157,7 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 	 * @return the updated persons
 	 * @throws SQLException if the update fails
 	 */
+	@Override
 	public List<Stored<Person>> update(final Collection<Stored<Person>> persons)
 		throws SQLException
 	{
@@ -182,19 +180,6 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 		));
 
 		return new ArrayList<>(persons);
-	}
-
-	/**
-	 * Update the given person.
-	 *
-	 * @param person the person to update
-	 * @return the updated person
-	 * @throws SQLException if the update fails
-	 */
-	public Stored<Person> update(final Stored<Person> person)
-		throws SQLException
-	{
-		return update(singletonList(person)).get(0);
 	}
 
 	/**
@@ -221,4 +206,30 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 		return put(singletonList(person)).get(0);
 	}
 
+	/* *************************************************************************
+	 * DELETE queries
+	 **************************************************************************/
+
+	@Override
+	public <T, C> int deleteByVals(
+		final Column<T, C> column,
+		final Collection<T> values
+	)
+		throws SQLException
+	{
+		final int count;
+		if (!values.isEmpty()) {
+			final String query =
+				"DELETE FROM person WHERE "+column.name()+" IN ({values})";
+
+			count = SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.execute();
+
+		} else {
+			count = 0;
+		}
+
+		return count;
+	}
 }
