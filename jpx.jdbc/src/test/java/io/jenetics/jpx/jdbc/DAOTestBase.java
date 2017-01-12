@@ -17,58 +17,54 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx;
+package io.jenetics.jpx.jdbc;
 
-import static java.lang.String.format;
-
+import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.testng.annotations.Test;
+import org.testng.annotations.AfterSuite;
+import org.testng.annotations.BeforeSuite;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-@Test
-public class LinkTest
-	extends XMLStreamTestBase<Link>
-{
+public abstract class DAOTestBase<T> {
 
-	@Override
-	public Supplier<Link> factory(final Random random) {
-		return () -> nextLink(random);
+	public final DB db = H2DB.newTestInstance();
+
+	@BeforeSuite
+	public void setup() throws IOException, SQLException {
+		final String[] queries = IO.
+			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
+			.split(";");
+
+		db.transaction(conn -> {
+			for (String query : queries) {
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute(query);
+				}
+			}
+		});
 	}
 
-	@Override
-	protected Params<Link> params(final Random random) {
-		return new Params<>(
-			() -> nextLink(random),
-			Link.reader(),
-			Link::write
-		);
+	@AfterSuite
+	public void shutdown() throws SQLException {
+		db.close();
 	}
 
-	public static Link nextLink(final Random random) {
-		return Link.of(
-			format("http://link_%d", Math.abs(random.nextLong())),
-			random.nextBoolean()
-				? format("text_%s", Math.abs(random.nextLong()))
-				: null,
-			random.nextBoolean()
-				? format("type_%s", Math.abs(random.nextLong()))
-				: null
-		);
+	public abstract T nextObject(final Random random);
+
+	public List<T> nextObjects(final Random random) {
+		return nextObjects(random, 20);
 	}
 
-	public static List<Link> nextLinks(final Random random) {
-		return nextLinks(random, 20);
-	}
-
-	public static List<Link> nextLinks(final Random random, final int count) {
-		return Stream.generate(() -> nextLink(random))
+	public List<T> nextObjects(final Random random, final int count) {
+		return Stream.generate(() -> nextObject(random))
 			.limit(count)
 			.collect(Collectors.toList());
 	}

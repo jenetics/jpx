@@ -68,8 +68,8 @@ public final class LinkDAO extends DAO {
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public List<Stored<Link>> select() throws SQLException {
-		return SQL("SELECT id, href, text, type FROM link")
-			.as(RowParser.list());
+		final String query = "SELECT id, href, text, type FROM link ORDER BY id";
+		return SQL(query).as(RowParser.list());
 	}
 
 	/**
@@ -91,7 +91,8 @@ public final class LinkDAO extends DAO {
 		if (!values.isEmpty()) {
 			final String query =
 				"SELECT id, href, text, type " +
-				"FROM link WHERE "+column.name()+" IN ({values})";
+				"FROM link WHERE "+column.name()+" IN ({values}) " +
+				"ORDER BY id";
 
 			links = SQL(query)
 				.on(Param.values("values", values, column.mapper()))

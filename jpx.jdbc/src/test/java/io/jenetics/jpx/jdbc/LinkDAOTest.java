@@ -19,17 +19,13 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.io.IOException;
+import static io.jenetics.jpx.jdbc.Lists.map;
+
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Link;
@@ -38,40 +34,15 @@ import io.jenetics.jpx.LinkTest;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class LinkDAOTest {
+public class LinkDAOTest extends DAOTestBase<Link> {
 
-	private final DB db = H2DB.newTestInstance();
-
-	private final List<Link> links = nextLinks(new Random(123), 20);
-
-	private static List<Link> nextLinks(final Random random, final int count) {
-		final List<Link> links = new ArrayList<>();
-		for (int i = 0; i < count; ++i) {
-			links.add(LinkTest.nextLink(random));
-		}
-
-		return links;
+	@Override
+	public Link nextObject(final Random random) {
+		return LinkTest.nextLink(random);
 	}
 
-	@BeforeSuite
-	public void setup() throws IOException, SQLException {
-		final String[] queries = IO.
-			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
-			.split(";");
+	private final List<Link> links = nextObjects(new Random(123), 20);
 
-		db.transaction(conn -> {
-			for (String query : queries) {
-				try (Statement stmt = conn.createStatement()) {
-					stmt.execute(query);
-				}
-			}
-		});
-	}
-
-	@AfterSuite
-	public void shutdown() throws SQLException {
-		db.close();
-	}
 
 	@Test
 	public void insert() throws SQLException {
@@ -86,13 +57,17 @@ public class LinkDAOTest {
 			return new LinkDAO(conn).select();
 		});
 
-		Assert.assertEquals(
-			existing.stream()
-				.map(Stored::value)
-				.collect(Collectors.toSet()),
-			links.stream()
-				.collect(Collectors.toSet())
-		);
+		Assert.assertEquals(map(existing, Stored::value), links);
+	}
+
+	@Test(dependsOnMethods = "insert")
+	public void selectByHref() throws SQLException {
+		final List<Stored<Link>> selected = db.transaction(conn -> {
+			return new LinkDAO(conn)
+				.selectBy("href", links.get(0).getHref());
+		});
+
+		Assert.assertEquals(selected.get(0).value(), links.get(0));
 	}
 
 	@Test(dependsOnMethods = "select")
@@ -109,6 +84,8 @@ public class LinkDAOTest {
 				new LinkDAO(conn).update(updated),
 				updated
 			);
+
+			Assert.assertEquals(new LinkDAO(conn).select().get(0), updated);
 		});
 	}
 
@@ -118,15 +95,7 @@ public class LinkDAOTest {
 			final LinkDAO dao = new LinkDAO(conn);
 
 			dao.put(links);
-
-			Assert.assertEquals(
-				dao.select().stream()
-					.map(Stored::value)
-					.collect(Collectors.toSet()),
-				links.stream()
-					.collect(Collectors.toSet())
-			);
+			Assert.assertEquals(map(dao.select(), Stored::value), links);
 		});
 	}
-
 }
