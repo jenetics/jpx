@@ -35,9 +35,7 @@ CREATE TABLE copyright(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	author VARCHAR(255) NOT NULL,
 	year INT,
-	license VARCHAR(255),
-
-	CONSTRAINT c_copyright_author UNIQUE (author)
+	license VARCHAR(255)
 );
 
 -- -----------------------------------------------------------------------------
