@@ -20,10 +20,11 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +37,10 @@ import io.jenetics.jpx.Link;
  * @version !__version__!
  * @since !__version__!
  */
-public final class LinkDAO extends DAO {
+public final class LinkDAO
+	extends DAO
+	implements SelectBy<Link>, Insert<Link>, Update<Link>, DeleteBy<Link>
+{
 
 	public LinkDAO(final Connection connection) {
 		super(connection);
@@ -72,18 +76,10 @@ public final class LinkDAO extends DAO {
 		return SQL(query).as(RowParser.list());
 	}
 
-	/**
-	 * Selects the all stored link objects with the given column values.
-	 *
-	 * @param column the column to select
-	 * @param values the value list
-	 * @return the selected stored links
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public <T, C> List<Stored<Link>> selectBy(
-		final Column<T, C> column,
-		final List<T> values
+	@Override
+	public <V, C> List<Stored<Link>> selectByVals(
+		final Column<V, C> column,
+		final Collection<V> values
 	)
 		throws SQLException
 	{
@@ -104,53 +100,13 @@ public final class LinkDAO extends DAO {
 		return links;
 	}
 
-	/**
-	 * Selects the all stored link objects with the given column value.
-	 *
-	 * @param column the column to select
-	 * @param value the selection value
-	 * @return the selected stored links
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public <T, C> List<Stored<Link>> selectBy(
-		final Column<T, C> column,
-		final T value
-	)
-		throws SQLException
-	{
-		return selectBy(column, singletonList(value));
-	}
-
-	/**
-	 * Selects the all stored link objects with the given column value.
-	 *
-	 * @param column the column to select
-	 * @param value the selection value
-	 * @return the selected stored links
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public <T> List<Stored<Link>> selectBy(final String column, final T value)
-		throws SQLException
-	{
-		return selectBy(Column.of(column), value);
-	}
-
 
 	/* *************************************************************************
 	 * INSERT queries
 	 **************************************************************************/
 
-	/**
-	 * Insert the given link list into the DB.
-	 *
-	 * @param links the links to insert
-	 * @return return the stored links
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public List<Stored<Link>> insert(final List<Link> links)
+	@Override
+	public List<Stored<Link>> insert(final Collection<Link> links)
 		throws SQLException
 	{
 		final String query =
@@ -164,34 +120,13 @@ public final class LinkDAO extends DAO {
 		));
 	}
 
-	/**
-	 * Insert the given link into the DB.
-	 *
-	 * @param link the link to insert
-	 * @return return the stored link
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public Stored<Link> insert(final Link link)
-		throws SQLException
-	{
-		return insert(singletonList(link)).get(0);
-	}
-
 
 	/* *************************************************************************
 	 * UPDATE queries
 	 **************************************************************************/
 
-	/**
-	 * Updates the given list of already inserted link objects.
-	 *
-	 * @param links the links to update
-	 * @return the updated links
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public List<Stored<Link>> update(final List<Stored<Link>> links)
+	@Override
+	public List<Stored<Link>> update(final Collection<Stored<Link>> links)
 		throws SQLException
 	{
 		final String query =
@@ -204,19 +139,7 @@ public final class LinkDAO extends DAO {
 			Param.value("type", link.value().getType())
 		));
 
-		return links;
-	}
-
-	/**
-	 * Update the given link.
-	 *
-	 * @param link the link to update
-	 * @return the updated link
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public Stored<Link> update(final Stored<Link> link) throws SQLException {
-		return update(singletonList(link)).get(0);
+		return new ArrayList<>(links);
 	}
 
 	/**
@@ -228,13 +151,13 @@ public final class LinkDAO extends DAO {
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public List<Stored<Link>> put(final List<Link> links) throws SQLException {
+	public List<Stored<Link>> put(final Collection<Link> links) throws SQLException {
 		return links.isEmpty()
 			? Collections.emptyList()
 			: DAO.put(
 				links,
 				Link::getHref,
-				values -> selectBy(Column.of("href", Link::getHref), links),
+				values -> selectByVals(Column.of("href", Link::getHref), links),
 				this::insert,
 				this::update
 			);
@@ -245,20 +168,10 @@ public final class LinkDAO extends DAO {
 	 * DELETE queries
 	 **************************************************************************/
 
-	/**
-	 * Delete links by the given column values.
-	 *
-	 * @param column the column which specifies the deleted rows
-	 * @param values the rows to delete
-	 * @param <T> the value type
-	 * @param <C> the column type
-	 * @return the number of deleted rows
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
+	@Override
 	public <T, C> int deleteBy(
 		final Column<T, C> column,
-		final List<T> values
+		final Collection<T> values
 	)
 		throws SQLException
 	{

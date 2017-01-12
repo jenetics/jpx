@@ -5,7 +5,7 @@
 -- -----------------------------------------------------------------------------
 
 -- -----------------------------------------------------------------------------
--- Create the `link` table.
+-- Create the `link` table. A link is meant to be shared.
 -- -----------------------------------------------------------------------------
 CREATE TABLE link(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -17,7 +17,7 @@ CREATE TABLE link(
 );
 
 -- -----------------------------------------------------------------------------
--- Create the `person` table.
+-- Create the `person` table. A person is meant to be shared.
 -- -----------------------------------------------------------------------------
 CREATE TABLE person(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,

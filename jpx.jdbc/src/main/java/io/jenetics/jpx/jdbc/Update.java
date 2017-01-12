@@ -19,41 +19,41 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Collections.singletonList;
+
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-final class Lists {
+public interface Update<T> {
 
-	private Lists() {
-	}
+	/**
+	 * Updates the given list of already inserted objects.
+	 *
+	 * @param values the values to update
+	 * @return the updated values
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public List<Stored<T>> update(final Collection<Stored<T>> values)
+		throws SQLException;
 
-	static <A, B> List<B> map(final Collection<A> values, final Function<A, B> mapper) {
-		return values.stream()
-			.map(mapper)
-			.collect(Collectors.toList());
-	}
 
-	static <A, B> List<B> flatMap(
-		final Collection<A> values,
-		final OptionMapper<A, B> mapper
-	) {
-		return flatMap(values, mapper.toListMapper());
-	}
-
-	static <A, B> List<B> flatMap(
-		final Collection<A> values,
-		final ListMapper<A, B> mapper
-	) {
-		return values.stream()
-			.flatMap(value -> mapper.apply(value).stream())
-			.collect(Collectors.toList());
+	/**
+	 * Update the given Object.
+	 *
+	 * @param value the link to update
+	 * @return the updated value
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public default Stored<T> update(final Stored<T> value) throws SQLException {
+		return update(singletonList(value)).get(0);
 	}
 
 }

@@ -86,7 +86,7 @@ public class RouteLinkDAO extends DAO {
 			.as(RowParser.list());
 
 		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectBy(Column.of("id", Row::linkID), rows).stream()
+			.selectByVals(Column.of("id", Row::linkID), rows).stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()

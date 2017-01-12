@@ -28,7 +28,7 @@ import static io.jenetics.jpx.jdbc.Lists.map;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -120,11 +120,11 @@ public class MetadataDAO extends DAO {
 		return toMetadata(rows);
 	}
 
-	private List<Stored<Metadata>> toMetadata(final List<Stored<Row>> rows)
+	private List<Stored<Metadata>> toMetadata(final Collection<Stored<Row>> rows)
 		throws SQLException
 	{
 		final Map<Long, Person> persons = with(PersonDAO::new)
-			.selectByID(map(rows, r -> r.value().personID)).stream()
+			.selectByVals(Column.of("id", Stored::id), rows).stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Copyright> copyrights = with(CopyrightDAO::new)

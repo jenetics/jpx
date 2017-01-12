@@ -27,6 +27,7 @@ import static java.util.stream.Collectors.toMap;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -73,7 +74,7 @@ public final class MetadataLinkDAO extends DAO {
 	 * SELECT queries
 	 **************************************************************************/
 
-	public Map<Long, List<Link>> selectLinksByMetadataID(final List<Long> ids)
+	public Map<Long, List<Link>> selectLinksByMetadataID(final Collection<Long> ids)
 		throws SQLException
 	{
 		final String query =
@@ -86,7 +87,7 @@ public final class MetadataLinkDAO extends DAO {
 			.as(RowParser.list());
 
 		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectBy(Column.of("id", Row::linkID), rows).stream()
+			.selectByVals(Column.of("id", Row::linkID), rows).stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()

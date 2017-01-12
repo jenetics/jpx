@@ -24,6 +24,8 @@ import static java.util.Collections.singletonList;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -36,7 +38,7 @@ import io.jenetics.jpx.Person;
  * @version !__version__!
  * @since !__version__!
  */
-public final class PersonDAO extends DAO {
+public final class PersonDAO extends DAO implements SelectBy<Person> {
 
 	public PersonDAO(final Connection conn) {
 		super(conn);
@@ -63,6 +65,12 @@ public final class PersonDAO extends DAO {
 	 * SELECT queries
 	 **************************************************************************/
 
+	/**
+	 * Select all available persons.
+	 *
+	 * @return all available stored persons
+	 * @throws SQLException if the operation fails
+	 */
 	public List<Stored<Person>> select() throws SQLException {
 		final String query =
 			"SELECT person.id, " +
@@ -77,14 +85,11 @@ public final class PersonDAO extends DAO {
 		return SQL(query).as(RowParser.list());
 	}
 
-	/**
-	 * Selects the links by its hrefs.
-	 *
-	 * @param persons the person names
-	 * @return the link with the given hrefs currently in the DB
-	 * @throws SQLException if the select fails
-	 */
-	public List<Stored<Person>> select(final List<Person> persons)
+	@Override
+	public <V, C> List<Stored<Person>> selectByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
 		throws SQLException
 	{
 		final String query =
@@ -96,29 +101,10 @@ public final class PersonDAO extends DAO {
 				"link.type AS link_type " +
 			"FROM person " +
 			"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
-			"WHERE name IN ({names})";
+			"WHERE "+column.name()+" IN ({values})";
 
 		return SQL(query)
-			.on(Param.values("names", persons, Person::getName))
-			.as(RowParser.list());
-	}
-
-	public <T> List<Stored<Person>> selectByID(final List<Long> ids)
-		throws SQLException
-	{
-		final String query =
-			"SELECT person.id, " +
-				"name, " +
-				"email, " +
-				"link.href AS link_href, " +
-				"link.text AS link_text, " +
-				"link.type AS link_type " +
-			"FROM person " +
-			"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
-			"WHERE person.id IN ({ids})";
-
-		return SQL(query)
-			.on(Param.values("ids", ids))
+			.on(Param.values("values", values, column.mapper()))
 			.as(RowParser.list());
 	}
 
@@ -134,7 +120,7 @@ public final class PersonDAO extends DAO {
 	 * @return return the stored persons
 	 * @throws SQLException if inserting fails
 	 */
-	public List<Stored<Person>> insert(final List<Person> persons)
+	public List<Stored<Person>> insert(final Collection<Person> persons)
 		throws SQLException
 	{
 		final Map<Link, Long> links = DAO
@@ -174,7 +160,7 @@ public final class PersonDAO extends DAO {
 	 * @return the updated persons
 	 * @throws SQLException if the update fails
 	 */
-	public List<Stored<Person>> update(final List<Stored<Person>> persons)
+	public List<Stored<Person>> update(final Collection<Stored<Person>> persons)
 		throws SQLException
 	{
 		final Map<Link, Long> links = DAO.set(
@@ -195,7 +181,7 @@ public final class PersonDAO extends DAO {
 			Param.value("link_id", person.value().getLink().map(links::get))
 		));
 
-		return persons;
+		return new ArrayList<>(persons);
 	}
 
 	/**
@@ -219,13 +205,13 @@ public final class PersonDAO extends DAO {
 	 * @return the inserted or updated links
 	 * @throws SQLException if the insert/update fails
 	 */
-	public List<Stored<Person>> put(final List<Person> persons)
+	public List<Stored<Person>> put(final Collection<Person> persons)
 		throws SQLException
 	{
 		return DAO.put(
 			persons,
 			Person::getName,
-			this::select,
+			values -> selectByVals(Column.of("href", Person::getName), persons),
 			this::insert,
 			this::update
 		);
@@ -233,11 +219,6 @@ public final class PersonDAO extends DAO {
 
 	public Stored<Person> put(final Person person) throws SQLException {
 		return put(singletonList(person)).get(0);
-	}
-
-
-	public static PersonDAO of(final Connection conn) {
-		return new PersonDAO(conn);
 	}
 
 }

@@ -73,14 +73,14 @@ public class CopyrightDAOTest {
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			CopyrightDAO.of(conn).insert(copyrights);
+			new CopyrightDAO(conn).insert(copyrights);
 		});
 	}
 
 	@Test(dependsOnMethods = "insert")
 	public void select() throws SQLException {
 		final List<Stored<Copyright>> existing = db.transaction(conn -> {
-			return CopyrightDAO.of(conn).select();
+			return new CopyrightDAO(conn).select();
 		});
 
 		Assert.assertEquals(
@@ -95,7 +95,7 @@ public class CopyrightDAOTest {
 	@Test(dependsOnMethods = "select")
 	public void update() throws SQLException {
 		final List<Stored<Copyright>> existing = db.transaction(conn -> {
-			return CopyrightDAO.of(conn).select();
+			return new CopyrightDAO(conn).select();
 		});
 
 		db.transaction(conn -> {
@@ -103,7 +103,7 @@ public class CopyrightDAOTest {
 				.map(l -> Copyright.of(l.getAuthor(), 2000, (String)null));
 
 			Assert.assertEquals(
-				CopyrightDAO.of(conn).update(updated),
+				new CopyrightDAO(conn).update(updated),
 				updated
 			);
 		});
@@ -112,7 +112,7 @@ public class CopyrightDAOTest {
 	@Test(dependsOnMethods = "update")
 	public void put() throws SQLException {
 		db.transaction(conn -> {
-			final CopyrightDAO dao = CopyrightDAO.of(conn);
+			final CopyrightDAO dao = new CopyrightDAO(conn);
 
 			dao.put(copyrights);
 

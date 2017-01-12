@@ -19,79 +19,42 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.lang.String.format;
+import static io.jenetics.jpx.PersonTest.nextPerson;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import io.jenetics.jpx.EmailTest;
-import io.jenetics.jpx.LinkTest;
 import io.jenetics.jpx.Person;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
  */
-public class PersonDAOTest {
+public class PersonDAOTest extends DAOTestBase<Person> {
 
-	private final DB db = H2DB.newTestInstance();
-
-	private final List<Person> persons = nextPersons(new Random(123), 2);
-
-	private static List<Person> nextPersons(final Random random, final int count) {
-		return Stream.generate(() -> nextPerson(random))
-			.limit(count)
-			.collect(Collectors.toList());
+	@Override
+	public Person nextObject(final Random random) {
+		return nextPerson(random);
 	}
 
-	private static Person nextPerson(final Random random) {
-		return Person.of(
-			format("name_%s", Math.abs(random.nextLong())),
-			random.nextBoolean() ? EmailTest.nextEmail(random) : null,
-			random.nextBoolean() ? LinkTest.nextLink(random) : null
-		);
-	}
+	private final List<Person> persons = nextObjects(new Random(123), 2);
 
-	@BeforeSuite
-	public void setup() throws IOException, SQLException {
-		final String[] queries = IO.
-			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
-			.split(";");
-
-		db.transaction(conn -> {
-			for (String query : queries) {
-				try (Statement stmt = conn.createStatement()) {
-					stmt.execute(query);
-				}
-			}
-		});
-	}
-
-	@AfterSuite
-	public void shutdown() throws SQLException {
-		db.close();
-	}
 
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			PersonDAO.of(conn).insert(persons);
+			new PersonDAO(conn).insert(persons);
 		});
 	}
 
 	@Test(dependsOnMethods = "insert")
 	public void select() throws SQLException {
 		final List<Stored<Person>> existing = db.transaction(conn -> {
-			return PersonDAO.of(conn).select();
+			return new PersonDAO(conn).select();
 		});
 
 		Assert.assertEquals(
@@ -106,7 +69,7 @@ public class PersonDAOTest {
 	@Test(dependsOnMethods = "select")
 	public void update() throws SQLException {
 		final List<Stored<Person>> existing = db.transaction(conn -> {
-			return PersonDAO.of(conn).select();
+			return new PersonDAO(conn).select();
 		});
 
 		db.transaction(conn -> {
@@ -114,7 +77,7 @@ public class PersonDAOTest {
 				.map(p -> Person.of(p.getName().get(), null, null));
 
 			Assert.assertEquals(
-				PersonDAO.of(conn).update(updated),
+				new PersonDAO(conn).update(updated),
 				updated
 			);
 		});
@@ -123,7 +86,7 @@ public class PersonDAOTest {
 	@Test(dependsOnMethods = "update")
 	public void put() throws SQLException {
 		db.transaction(conn -> {
-			final PersonDAO dao = PersonDAO.of(conn);
+			final PersonDAO dao = new PersonDAO(conn);
 
 			dao.put(persons);
 

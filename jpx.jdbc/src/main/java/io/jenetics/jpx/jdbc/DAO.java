@@ -27,6 +27,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -79,11 +80,11 @@ abstract class DAO {
 	}
 
 	static <T, K> List<Stored<T>> put(
-		final List<T> values,
+		final Collection<T> values,
 		final Function<T, K> key,
-		final SQL.Function<List<T>, List<Stored<T>>> select,
-		final SQL.Function<List<T>, List<Stored<T>>> insert,
-		final SQL.Function<List<Stored<T>>, List<Stored<T>>> update
+		final SQL.Function<Collection<T>, List<Stored<T>>> select,
+		final SQL.Function<Collection<T>, List<Stored<T>>> insert,
+		final SQL.Function<Collection<Stored<T>>, List<Stored<T>>> update
 	)
 		throws SQLException
 	{
@@ -124,7 +125,7 @@ abstract class DAO {
 	}
 
 	static <A, B> Map<B, Long> set(
-		final List<A> values,
+		final Collection<A> values,
 		final ListMapper<A, B> mapper,
 		final SQL.Function<List<B>, List<Stored<B>>> set
 	)
@@ -139,7 +140,7 @@ abstract class DAO {
 	}
 
 	static <A, B> Map<B, Long> set(
-		final List<A> values,
+		final Collection<A> values,
 		final OptionMapper<A, B> mapper,
 		final SQL.Function<List<B>, List<Stored<B>>> set
 	)

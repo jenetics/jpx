@@ -27,6 +27,8 @@ import java.net.URISyntaxException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -94,7 +96,7 @@ final class CopyrightDAO extends DAO {
 	 * @return the copyrights with the given authors currently in the DB
 	 * @throws SQLException if the select fails
 	 */
-	public List<Stored<Copyright>> select(final List<Copyright> copyrights)
+	public List<Stored<Copyright>> select(final Collection<Copyright> copyrights)
 		throws SQLException
 	{
 		final String query =
@@ -107,7 +109,7 @@ final class CopyrightDAO extends DAO {
 			.as(RowParser.list());
 	}
 
-	public List<Stored<Copyright>> selectByID(final List<Long> ids)
+	public List<Stored<Copyright>> selectByID(final Collection<Long> ids)
 		throws SQLException
 	{
 		final String query =
@@ -130,7 +132,7 @@ final class CopyrightDAO extends DAO {
 	 * @return return the stored copyrights
 	 * @throws SQLException if inserting fails
 	 */
-	public List<Stored<Copyright>> insert(final List<Copyright> copyrights)
+	public List<Stored<Copyright>> insert(final Collection<Copyright> copyrights)
 		throws SQLException
 	{
 		final String query =
@@ -169,7 +171,7 @@ final class CopyrightDAO extends DAO {
 	 * @return the updated copyrights
 	 * @throws SQLException if the update fails
 	 */
-	public List<Stored<Copyright>> update(final List<Stored<Copyright>> copyrights)
+	public List<Stored<Copyright>> update(final Collection<Stored<Copyright>> copyrights)
 		throws SQLException
 	{
 		final String query =
@@ -182,7 +184,7 @@ final class CopyrightDAO extends DAO {
 			Param.value("license", copyright.value().getLicense())
 		));
 
-		return copyrights;
+		return new ArrayList<>(copyrights);
 	}
 
 	/**
@@ -206,7 +208,7 @@ final class CopyrightDAO extends DAO {
 	 * @return the inserted or updated links
 	 * @throws SQLException if the insert/update fails
 	 */
-	public List<Stored<Copyright>> put(final List<Copyright> copyrights)
+	public List<Stored<Copyright>> put(final Collection<Copyright> copyrights)
 		throws SQLException
 	{
 		return copyrights.isEmpty()
@@ -218,10 +220,6 @@ final class CopyrightDAO extends DAO {
 				this::insert,
 				this::update
 			);
-	}
-
-	static CopyrightDAO of(final Connection conn) {
-		return new CopyrightDAO(conn);
 	}
 
 }

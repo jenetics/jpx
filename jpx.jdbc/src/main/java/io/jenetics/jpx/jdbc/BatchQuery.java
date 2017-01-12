@@ -23,6 +23,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
@@ -40,7 +41,7 @@ public final class BatchQuery extends AbstractQuery {
 	}
 
 	public <T> List<Stored<T>> insert(
-		final List<T> values,
+		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
 		throws SQLException
@@ -49,7 +50,7 @@ public final class BatchQuery extends AbstractQuery {
 
 		if (!values.isEmpty()) {
 			final PreparedSQL preparedSQL = PreparedSQL
-				.parse(_sql, format.apply(values.get(0)));
+				.parse(_sql, format.apply(values.iterator().next()));
 
 			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
 				for (T value : values) {
@@ -66,14 +67,14 @@ public final class BatchQuery extends AbstractQuery {
 	}
 
 	public <T> void set(
-		final List<T> values,
+		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
 		throws SQLException
 	{
 		if (!values.isEmpty()) {
 			final PreparedSQL preparedSQL = PreparedSQL
-				.parse(_sql, format.apply(values.get(0)));
+				.parse(_sql, format.apply(values.iterator().next()));
 
 			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
 				for (T value : values) {
@@ -87,7 +88,7 @@ public final class BatchQuery extends AbstractQuery {
 	}
 
 	public <T> int update(
-		final List<T> values,
+		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
 		throws SQLException
@@ -95,7 +96,7 @@ public final class BatchQuery extends AbstractQuery {
 		int count = 0;
 		if (!values.isEmpty()) {
 			final PreparedSQL preparedSQL = PreparedSQL
-				.parse(_sql, format.apply(values.get(0)));
+				.parse(_sql, format.apply(values.iterator().next()));
 
 			try (PreparedStatement stmt = preparedSQL.prepare(_conn)) {
 				for (T value : values) {
