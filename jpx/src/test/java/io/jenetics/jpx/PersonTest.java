@@ -59,9 +59,7 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 
 	public static Person nextPerson(final Random random) {
 		return Person.of(
-			random.nextBoolean()
-				? format("name_%s", random.nextInt(100))
-				: null,
+			format("name_%s", Math.abs(random.nextLong())),
 			random.nextBoolean()
 				? EmailTest.nextEmail(random)
 				: null,
