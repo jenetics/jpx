@@ -211,7 +211,7 @@ public final class PersonDAO extends DAO implements SelectBy<Person> {
 		return DAO.put(
 			persons,
 			Person::getName,
-			values -> selectByVals(Column.of("href", Person::getName), persons),
+			values -> selectByVals(Column.of("name", Person::getName), persons),
 			this::insert,
 			this::update
 		);

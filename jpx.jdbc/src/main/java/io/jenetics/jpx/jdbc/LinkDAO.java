@@ -151,16 +151,16 @@ public final class LinkDAO
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public List<Stored<Link>> put(final Collection<Link> links) throws SQLException {
-		return links.isEmpty()
-			? Collections.emptyList()
-			: DAO.put(
-				links,
-				Link::getHref,
-				values -> selectByVals(Column.of("href", Link::getHref), links),
-				this::insert,
-				this::update
-			);
+	public List<Stored<Link>> put(final Collection<Link> links)
+		throws SQLException
+	{
+		return DAO.put(
+			links,
+			Link::getHref,
+			values -> selectByVals(Column.of("href", Link::getHref), links),
+			this::insert,
+			this::update
+		);
 	}
 
 

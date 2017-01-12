@@ -41,7 +41,7 @@ public class PersonDAOTest extends DAOTestBase<Person> {
 		return nextPerson(random);
 	}
 
-	private final List<Person> persons = nextObjects(new Random(123), 2);
+	private final List<Person> persons = nextObjects(new Random(123), 20);
 
 
 	@Test
