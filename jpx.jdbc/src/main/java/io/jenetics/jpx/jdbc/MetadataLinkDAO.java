@@ -30,6 +30,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.jenetics.jpx.Link;
 
@@ -38,7 +39,11 @@ import io.jenetics.jpx.Link;
  * @version !__version__!
  * @since !__version__!
  */
-public final class MetadataLinkDAO extends DAO implements DeleteBy {
+public final class MetadataLinkDAO
+	extends DAO
+	implements
+		DeleteBy
+{
 
 	/**
 	 * Represents a row in the "metadata_link" table.
@@ -74,7 +79,10 @@ public final class MetadataLinkDAO extends DAO implements DeleteBy {
 	 * SELECT queries
 	 **************************************************************************/
 
-	public Map<Long, List<Link>> selectLinksByMetadataID(final Collection<Long> ids)
+	public <T> Map<Long, List<Link>> selectLinks(
+		final Collection<T> values,
+		final Function<T, Long> mapper
+	)
 		throws SQLException
 	{
 		final String query =
@@ -84,11 +92,12 @@ public final class MetadataLinkDAO extends DAO implements DeleteBy {
 			"ORDER BY link_id";
 
 		final List<Row> rows = SQL(query)
-			.on(Param.values("ids", ids))
+			.on(Param.values("ids", values, mapper))
 			.as(RowParser.list());
 
 		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByVals(Column.of("id", Row::linkID), rows).stream()
+			.selectByVals(Column.of("id", Row::linkID), rows)
+			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()

@@ -21,7 +21,6 @@ package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -145,7 +144,7 @@ public class MetadataDAO
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, List<Link>> links = with(MetadataLinkDAO::new)
-			.selectLinksByMetadataID(map(rows, Stored::id));
+			.selectLinks(rows, Stored::id);
 
 		return rows.stream()
 			.map(row -> Stored.of(
