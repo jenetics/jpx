@@ -43,42 +43,16 @@ import io.jenetics.jpx.Link;
 public final class MetadataLinkDAO
 	extends DAO
 	implements
-		Insert<MetadataLinkDAO.Row>,
+		Insert<MetadataLink>,
 		Delete
 {
-
-	/**
-	 * Represents a row in the "metadata_link" table.
-	 */
-	public static final class Row {
-		final Long metadataID;
-		final Long linkID;
-
-		Row(final Long metadataID, final Long linkID) {
-			this.metadataID = metadataID;
-			this.linkID = linkID;
-		}
-
-		Long metadataID() {
-			return metadataID;
-		}
-
-		Long linkID() {
-			return linkID;
-		}
-
-		public static Row of(final Pair<Long, Long> pair) {
-			return new Row(pair._1, pair._2);
-		}
-	}
-
 	public MetadataLinkDAO(final Connection conn) {
 		super(conn);
 	}
 
-	private static final RowParser<Stored<Row>> RowParser = rs -> Stored.of(
+	private static final RowParser<Stored<MetadataLink>> RowParser = rs -> Stored.of(
 		rs.getLong("metadata_id"),
-		new Row(
+		MetadataLink.of(
 			rs.getLong("metadata_id"),
 			rs.getLong("link_id")
 		)
@@ -100,19 +74,19 @@ public final class MetadataLinkDAO
 			"WHERE metadata_id IN ({ids}) " +
 			"ORDER BY link_id";
 
-		final List<Stored<Row>> rows = SQL(query)
+		final List<Stored<MetadataLink>> rows = SQL(query)
 			.on(Param.values("ids", values, mapper))
 			.as(RowParser.list());
 
 		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByVals(Column.of("id", row -> row.value().linkID), rows)
+			.selectByVals(Column.of("id", row -> row.value().getLinkID()), rows)
 			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()
 			.collect(groupingBy(
 				Stored::id,
-				mapping(row -> links.get(row.value().linkID), toList())));
+				mapping(row -> links.get(row.value().getLinkID()), toList())));
 	}
 
 	/* *************************************************************************
@@ -120,7 +94,7 @@ public final class MetadataLinkDAO
 	 **************************************************************************/
 
 	@Override
-	public List<Stored<Row>> insert(final Collection<Row> rows)
+	public List<Stored<MetadataLink>> insert(final Collection<MetadataLink> rows)
 		throws SQLException
 	{
 		final String query =
@@ -128,12 +102,12 @@ public final class MetadataLinkDAO
 			"VALUES({metadata_id}, {link_id});";
 
 		Batch(query).execute(rows, row -> asList(
-			Param.value("metadata_id", row.metadataID),
-			Param.value("link_id", row.linkID)
+			Param.value("metadata_id", row.getMetadataID()),
+			Param.value("link_id", row.getLinkID())
 		));
 
 		return map(rows, row ->
-			Stored.of(row.metadataID, new Row(row.metadataID, row.linkID)));
+			Stored.of(row.getMetadataID(), row));
 	}
 
 	@Override

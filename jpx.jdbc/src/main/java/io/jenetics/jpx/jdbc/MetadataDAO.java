@@ -261,7 +261,7 @@ public class MetadataDAO
 			.collect(Collectors.toList());
 
 		with(MetadataLinkDAO::new)
-			.insert(metadataLinks, MetadataLinkDAO.Row::of);
+			.insert(metadataLinks, MetadataLink::of);
 
 		return inserted;
 	}
@@ -340,7 +340,7 @@ public class MetadataDAO
 			.collect(Collectors.toList());
 
 		with(MetadataLinkDAO::new)
-			.insert(metadataLinks, MetadataLinkDAO.Row::of);
+			.insert(metadataLinks, MetadataLink::of);
 
 		// Delete old copyright.
 		with(CopyrightDAO::new).deleteByVals(
