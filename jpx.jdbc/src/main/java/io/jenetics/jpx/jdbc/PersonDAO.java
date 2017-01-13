@@ -44,7 +44,7 @@ public final class PersonDAO
 		SelectBy<Person>,
 		Insert<Person>,
 		Update<Person>,
-		DeleteBy<Person>
+		DeleteBy
 {
 
 	public PersonDAO(final Connection conn) {

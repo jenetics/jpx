@@ -43,7 +43,7 @@ public final class LinkDAO
 		SelectBy<Link>,
 		Insert<Link>,
 		Update<Link>,
-		DeleteBy<Link>
+		DeleteBy
 {
 
 	public LinkDAO(final Connection connection) {

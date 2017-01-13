@@ -37,10 +37,11 @@ CREATE TABLE copyright(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	author VARCHAR(255) NOT NULL,
 	year INT,
-	license VARCHAR(255),
-
-	CONSTRAINT c_copyright_author_year_license UNIQUE (author, year, license)
+	license VARCHAR(255)
 );
+CREATE INDEX i_copyright_author ON copyright(author);
+CREATE INDEX i_copyright_year ON copyright(year);
+CREATE INDEX i_copyright_license ON copyright(license);
 
 -- -----------------------------------------------------------------------------
 -- Create the `bounce` table.

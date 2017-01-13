@@ -41,7 +41,7 @@ final class CopyrightDAO
 		SelectBy<Copyright>,
 		Insert<Copyright>,
 		Update<Copyright>,
-		DeleteBy<Copyright>
+		DeleteBy
 {
 
 	public CopyrightDAO(final Connection connection) {

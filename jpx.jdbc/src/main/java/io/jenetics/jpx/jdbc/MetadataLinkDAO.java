@@ -38,7 +38,7 @@ import io.jenetics.jpx.Link;
  * @version !__version__!
  * @since !__version__!
  */
-public final class MetadataLinkDAO extends DAO {
+public final class MetadataLinkDAO extends DAO implements DeleteBy {
 
 	/**
 	 * Represents a row in the "metadata_link" table.
@@ -112,6 +112,29 @@ public final class MetadataLinkDAO extends DAO {
 		));
 
 		return metadataLinks;
+	}
+
+	@Override
+	public <V, C> int deleteByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
+		throws SQLException
+	{
+		final int count;
+		if (!values.isEmpty()) {
+			final String query =
+				"DELETE FROM metadata_link WHERE "+column.name()+" IN ({values})";
+
+			count = SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.execute();
+
+		} else {
+			count = 0;
+		}
+
+		return count;
 	}
 
 }

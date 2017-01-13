@@ -20,18 +20,16 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.Lists.flatMap;
 import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Bounds;
@@ -45,7 +43,14 @@ import io.jenetics.jpx.Person;
  * @version !__version__!
  * @since !__version__!
  */
-public class MetadataDAO extends DAO {
+public class MetadataDAO
+	extends DAO
+	implements
+		SelectBy<Metadata>,
+		Insert<Metadata>,
+		Update<Metadata>,
+		DeleteBy
+{
 
 	/**
 	 * Represents a row in the "metadata" tables.
@@ -84,8 +89,8 @@ public class MetadataDAO extends DAO {
 	}
 
 	/**
-	 * The link row parser which creates a {@link Link} object from a given DB
-	 * row.
+	 * The metadata row parser which creates a {@link Metadata} object from a
+	 * given DB row.
 	 */
 	private static final RowParser<Stored<Row>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
@@ -114,7 +119,8 @@ public class MetadataDAO extends DAO {
 				"time, " +
 				"keywords, " +
 				"bound_id " +
-			"FROM metadata";
+			"FROM metadata " +
+			"ORDER BY id";
 
 		final List<Stored<Row>> rows = SQL(query).as(RowParser.list());
 		return toMetadata(rows);
@@ -157,21 +163,20 @@ public class MetadataDAO extends DAO {
 			.collect(Collectors.toList());
 	}
 
-	/**
-	 * Select the {@link Metadata} with the given DB IDs.
-	 *
-	 * @param ids the metadata DB IDs.
-	 * @return the selected metadata which maps the DB ID to the given metadata
-	 * @throws SQLException if the DB operation fails
-	 */
-	public Map<Long, Metadata> selectByID(final List<Long> ids)
+	@Override
+	public <V, C> List<Stored<Metadata>> selectByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
 		throws SQLException
 	{
-		return toMetadata(selectRowsByID(ids)).stream()
-			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
+		return toMetadata(selectRowsByVal(column, values));
 	}
 
-	private List<Stored<Row>> selectRowsByID(final List<Long> ids)
+	private <V, C> List<Stored<Row>> selectRowsByVal(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
 		throws SQLException
 	{
 		final String query =
@@ -184,9 +189,12 @@ public class MetadataDAO extends DAO {
 				"keywords, " +
 				"bound_id " +
 			"FROM metadata " +
-			"WHERE id IN ({ids})";
+			"WHERE "+column.name()+" IN ({values}) " +
+			"ORDER BY id";
 
-		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
+		return SQL(query)
+			.on(Param.values("values", values, column.mapper()))
+			.as(RowParser.list());
 	}
 
 	/* *************************************************************************
@@ -200,14 +208,15 @@ public class MetadataDAO extends DAO {
 	 * @return return the stored persons
 	 * @throws SQLException if inserting fails
 	 */
-	public List<Stored<Metadata>> insert(final List<Metadata> metadata)
+	@Override
+	public List<Stored<Metadata>> insert(final Collection<Metadata> metadata)
 		throws SQLException
 	{
 		final Map<Person, Long> persons = DAO
 			.write(metadata, Metadata::getAuthor, with(PersonDAO::new)::put);
 
 		final Map<Copyright, Long> copyrights = DAO
-			.write(metadata, Metadata::getCopyright, with(CopyrightDAO::new)::put);
+			.write(metadata, Metadata::getCopyright, with(CopyrightDAO::new)::insert);
 
 		final Map<Bounds, Long> bounds = DAO
 			.write(metadata, Metadata::getBounds, with(BoundsDAO::new)::insert);
@@ -240,30 +249,125 @@ public class MetadataDAO extends DAO {
 		return inserted;
 	}
 
-	public Stored<Metadata> insert(final Metadata metadata) throws SQLException {
-		return insert(singletonList(metadata)).get(0);
+	/* *************************************************************************
+	 * UPDATE queries
+	 **************************************************************************/
+
+	@Override
+	public List<Stored<Metadata>> update(final Collection<Stored<Metadata>> metadata)
+		throws SQLException
+	{
+		final List<Stored<Row>> rows =
+			selectRowsByVal(Column.of("id", Stored::id), metadata);
+
+		// Update author.
+		final Map<Person, Long> persons = DAO.write(
+			metadata,
+			(OptionMapper<Stored<Metadata>, Person>)
+				md -> md.value().getAuthor(),
+			with(PersonDAO::new)::put
+		);
+
+		// Update copyright.
+		with(CopyrightDAO::new).deleteByVals(
+			Column.of("id", row -> row.value().copyrightID), rows
+		);
+
+		final Map<Copyright, Long> copyrights = DAO.write(
+			metadata,
+			(OptionMapper<Stored<Metadata>, Copyright>)
+				md -> md.value().getCopyright(),
+			with(CopyrightDAO::new)::insert
+		);
+
+		// Update bounds.
+		with(BoundsDAO::new).deleteByVals(
+			Column.of("id", row -> row.value().boundsID), rows
+		);
+
+		final Map<Bounds, Long> bounds = DAO.write(
+			metadata,
+			(OptionMapper<Stored<Metadata>, Bounds>)
+				md -> md.value().getBounds(),
+			with(BoundsDAO::new)::insert
+		);
+
+		final String query =
+			"UPDATE metadata " +
+				"SET name = {name}, " +
+				"desc = {desc}, " +
+				"person_id = {person_id}, " +
+				"copyright_id = {copyright_id}, " +
+				"time = {time}, " +
+				"keywords = {keywords}, " +
+				"bounds_id = {bounds_id}" +
+			"WHERE id = {id}";
+
+		// Update metadata.
+		Batch(query).update(metadata, md -> asList(
+			Param.value("id", md.id()),
+			Param.value("name", md.value().getName()),
+			Param.value("desc", md.value().getDescription()),
+			Param.value("person_id", md.value().getAuthor().map(persons::get)),
+			Param.value("copyright_id", md.value().getCopyright().map(copyrights::get)),
+			Param.value("time", md.value().getTime()),
+			Param.value("keywords", md.value().getKeywords()),
+			Param.value("bounds_id", md.value().getBounds().map(bounds::get))
+		));
+
+		// Update metadata links.
+		with(MetadataLinkDAO::new)
+			.deleteByVals(Column.of("metadata_id", Stored::id), rows);
+
+		final Map<Link, Long> links = DAO.write(
+			metadata,
+			(ListMapper<Stored<Metadata>, Link>)md -> md.value().getLinks(),
+			with(LinkDAO::new)::put
+		);
+
+		final List<Pair<Long, Long>> metadataLinks = metadata.stream()
+			.flatMap(md -> md.value().getLinks().stream()
+				.map(l -> Pair.of(md.id(), links.get(l))))
+			.collect(Collectors.toList());
+
+		with(MetadataLinkDAO::new).insert(metadataLinks);
+
+		return new ArrayList<>(metadata);
 	}
 
 	/* *************************************************************************
 	 * DELETE queries
 	 **************************************************************************/
 
-	public int deleteByID(final List<Long> ids) throws SQLException {
-		final List<Stored<Row>> rows = selectRowsByID(ids);
+	@Override
+	public <V, C> int deleteByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
+		throws SQLException
+	{
+		final List<Stored<Row>> rows = selectRowsByVal(column, values);
 
-		final int deleted = SQL("DELETE FROM metadata WHERE id IN ({ids})")
-			.on(Param.values("ids", ids))
-			.execute();
+		final int count;
+		if (!values.isEmpty()) {
+			final String query =
+				"DELETE FROM metadata WHERE "+column.name()+" IN ({values})";
 
-		/*
-		with(BoundsDAO::new).deleteBy(
-			flatMap(rows,
-				(OptionMapper<Stored<Row>, Long>)
-					row -> Optional.ofNullable(row.value().boundsID))
-		);
-		*/
+			count = SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.execute();
 
-		return deleted;
+		} else {
+			count = 0;
+		}
+
+		with(CopyrightDAO::new)
+			.deleteByVals(Column.of("id", row -> row.value().copyrightID), rows);
+
+		with(BoundsDAO::new)
+			.deleteByVals(Column.of("id", row -> row.value().boundsID), rows);
+
+		return count;
 	}
 
 }

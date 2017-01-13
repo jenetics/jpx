@@ -81,8 +81,8 @@ public final class GPXDAO extends DAO {
 
 		final List<Stored<Row>> rows = SQL(query).as(RowParser.list());
 
-		final Map<Long, Metadata> metadata = with(MetadataDAO::new)
-			.selectByID(map(rows, row -> row.value().metadataID));
+		//final Map<Long, Metadata> metadata = with(MetadataDAO::new)
+		//	.selectByID(map(rows, row -> row.value().metadataID));
 
 		return null;
 	}
