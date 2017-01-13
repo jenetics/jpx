@@ -118,7 +118,7 @@ public class MetadataDAO
 				"copyright_id, " +
 				"time, " +
 				"keywords, " +
-				"bound_id " +
+				"bounds_id " +
 			"FROM metadata " +
 			"ORDER BY id";
 
@@ -130,7 +130,7 @@ public class MetadataDAO
 		throws SQLException
 	{
 		final Map<Long, Person> persons = with(PersonDAO::new)
-			.selectByVals(Column.of("id", Stored::id), rows).stream()
+			.selectByVals(Column.of("person.id", Stored::id), rows).stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Copyright> copyrights = with(CopyrightDAO::new)
@@ -187,7 +187,7 @@ public class MetadataDAO
 				"copyright_id, " +
 				"time, " +
 				"keywords, " +
-				"bound_id " +
+				"bounds_id " +
 			"FROM metadata " +
 			"WHERE "+column.name()+" IN ({values}) " +
 			"ORDER BY id";
@@ -222,8 +222,24 @@ public class MetadataDAO
 			.write(metadata, Metadata::getBounds, with(BoundsDAO::new)::insert);
 
 		final String query =
-			"INSERT INTO person(name, email, link_id) " +
-			"VALUES({name}, {email}, {link_id});";
+			"INSERT INTO metadata(" +
+				"name, " +
+				"desc, " +
+				"person_id, " +
+				"copyright_id, " +
+				"time, " +
+				"keywords, " +
+				"bounds_id" +
+			") " +
+			"VALUES(" +
+				"{name}, " +
+				"{desc}, " +
+				"{person_id}, " +
+				"{copyright_id}, " +
+				"{time}, " +
+				"{keywords}, " +
+				"{bounds_id}" +
+			")";
 
 		final List<Stored<Metadata>> inserted =
 			Batch(query).insert(metadata, md -> asList(

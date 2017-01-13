@@ -50,10 +50,10 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 	public static Metadata nextMetadata(final Random random) {
 		return Metadata.of(
 			random.nextBoolean()
-				? format("name_%s", random.nextInt(100))
+				? format("name_%s", Math.abs(random.nextLong()))
 				: null,
 			random.nextBoolean()
-				? format("description_%s", random.nextInt(100))
+				? format("description_%s", Math.abs(random.nextLong()))
 				: null,
 			random.nextBoolean()
 				? PersonTest.nextPerson(random)
@@ -61,12 +61,12 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 			random.nextBoolean()
 				? CopyrightTest.nextCopyright(random)
 				: null,
-			LinkTest.nextLinks(random),
+			LinkTest.nextLinks(random, 5),
 			random.nextBoolean()
 				? ZonedDateTime.now()
 				: null,
 			random.nextBoolean()
-				? format("keywords_%s", random.nextInt(100))
+				? format("keywords_%s", Math.abs(random.nextLong()))
 				: null,
 			random.nextBoolean()
 				? BoundsTest.nextBounds(random)

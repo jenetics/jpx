@@ -80,7 +80,8 @@ public final class MetadataLinkDAO extends DAO implements DeleteBy {
 		final String query =
 			"SELECT metadata_id, link_id " +
 			"FROM metadata_link " +
-			"WHERE metadata_id IN ({ids})";
+			"WHERE metadata_id IN ({ids}) " +
+			"ORDER BY link_id";
 
 		final List<Row> rows = SQL(query)
 			.on(Param.values("ids", ids))

@@ -86,7 +86,9 @@ final class Results implements ResultSet {
 		throws SQLException
 	{
 		final Timestamp ts = getTimestamp(columnName);
-		return ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts.getTime()), UTC);
+		return ts != null
+			? ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts.getTime()), UTC)
+			: null;
 	}
 
 	public Year getYear(final String columnName) throws SQLException {
