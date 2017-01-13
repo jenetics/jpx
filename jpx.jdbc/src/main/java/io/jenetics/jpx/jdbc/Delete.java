@@ -29,7 +29,7 @@ import java.util.Collection;
  * @version !__version__!
  * @since !__version__!
  */
-public interface DeleteBy {
+public interface Delete {
 
 	/**
 	 * Delete the objects by the given column values.

@@ -48,7 +48,7 @@ public class MetadataDAO
 		SelectBy<Metadata>,
 		Insert<Metadata>,
 		Update<Metadata>,
-		DeleteBy
+	Delete
 {
 
 	/**

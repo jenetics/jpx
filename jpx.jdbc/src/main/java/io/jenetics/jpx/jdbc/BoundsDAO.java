@@ -40,7 +40,7 @@ public final class BoundsDAO
 		SelectBy<Bounds>,
 		Insert<Bounds>,
 		Update<Bounds>,
-		DeleteBy
+	Delete
 {
 
 	public BoundsDAO(final Connection connection) {

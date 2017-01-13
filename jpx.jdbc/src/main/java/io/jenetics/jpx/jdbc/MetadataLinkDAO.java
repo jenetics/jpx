@@ -42,7 +42,7 @@ import io.jenetics.jpx.Link;
 public final class MetadataLinkDAO
 	extends DAO
 	implements
-		DeleteBy
+	Delete
 {
 
 	/**
