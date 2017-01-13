@@ -260,7 +260,8 @@ public class MetadataDAO
 				.map(l -> Pair.of(md.id(), links.get(l))))
 			.collect(Collectors.toList());
 
-		with(MetadataLinkDAO::new).insert(metadataLinks);
+		with(MetadataLinkDAO::new)
+			.insert(metadataLinks, MetadataLinkDAO.Row::of);
 
 		return inserted;
 	}
@@ -338,7 +339,8 @@ public class MetadataDAO
 				.map(l -> Pair.of(md.id(), links.get(l))))
 			.collect(Collectors.toList());
 
-		with(MetadataLinkDAO::new).insert(metadataLinks);
+		with(MetadataLinkDAO::new)
+			.insert(metadataLinks, MetadataLinkDAO.Row::of);
 
 		// Delete old copyright.
 		with(CopyrightDAO::new).deleteByVals(

@@ -20,10 +20,12 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Collections.singletonList;
+import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * This interface defines insertion methods for a given row type.
@@ -47,6 +49,23 @@ public interface Insert<T> {
 	public List<Stored<T>> insert(final Collection<T> values)
 		throws SQLException;
 
+	/**
+	 *
+	 * @param values the objects to insert
+	 * @param mapper the object mapper
+	 * @param <A> the raw object type
+	 * @return return the inserted objects
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public default <A> List<Stored<T>> insert(
+		final Collection<A> values,
+		final Function<A, T> mapper
+	)
+		throws SQLException
+	{
+		return insert(map(values, mapper));
+	}
 
 	/**
 	 * Insert the given object into the DB.

@@ -24,6 +24,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -42,13 +43,14 @@ import io.jenetics.jpx.Link;
 public final class MetadataLinkDAO
 	extends DAO
 	implements
-	Delete
+		Insert<MetadataLinkDAO.Row>,
+		Delete
 {
 
 	/**
 	 * Represents a row in the "metadata_link" table.
 	 */
-	private static final class Row {
+	public static final class Row {
 		final Long metadataID;
 		final Long linkID;
 
@@ -64,15 +66,22 @@ public final class MetadataLinkDAO
 		Long linkID() {
 			return linkID;
 		}
+
+		public static Row of(final Pair<Long, Long> pair) {
+			return new Row(pair._1, pair._2);
+		}
 	}
 
 	public MetadataLinkDAO(final Connection conn) {
 		super(conn);
 	}
 
-	private static final RowParser<Row> RowParser = rs -> new Row(
+	private static final RowParser<Stored<Row>> RowParser = rs -> Stored.of(
+		rs.getLong("metadata_id"),
+		new Row(
 			rs.getLong("metadata_id"),
 			rs.getLong("link_id")
+		)
 	);
 
 	/* *************************************************************************
@@ -91,37 +100,40 @@ public final class MetadataLinkDAO
 			"WHERE metadata_id IN ({ids}) " +
 			"ORDER BY link_id";
 
-		final List<Row> rows = SQL(query)
+		final List<Stored<Row>> rows = SQL(query)
 			.on(Param.values("ids", values, mapper))
 			.as(RowParser.list());
 
 		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByVals(Column.of("id", Row::linkID), rows)
+			.selectByVals(Column.of("id", row -> row.value().linkID), rows)
 			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()
-			.map(row -> Pair.of(row.metadataID, links.get(row.linkID)))
-			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
+			.collect(groupingBy(
+				Stored::id,
+				mapping(row -> links.get(row.value().linkID), toList())));
 	}
 
 	/* *************************************************************************
 	 * INSERT queries
 	 **************************************************************************/
 
-	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> metadataLinks)
+	@Override
+	public List<Stored<Row>> insert(final Collection<Row> rows)
 		throws SQLException
 	{
 		final String query =
 			"INSERT INTO metadata_link(metadata_id, link_id) " +
 			"VALUES({metadata_id}, {link_id});";
 
-		Batch(query).execute(metadataLinks, mdl -> asList(
-			Param.value("metadata_id", mdl._1),
-			Param.value("link_id", mdl._2)
+		Batch(query).execute(rows, row -> asList(
+			Param.value("metadata_id", row.metadataID),
+			Param.value("link_id", row.linkID)
 		));
 
-		return metadataLinks;
+		return map(rows, row ->
+			Stored.of(row.metadataID, new Row(row.metadataID, row.linkID)));
 	}
 
 	@Override
