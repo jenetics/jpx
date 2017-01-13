@@ -20,8 +20,6 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toMap;
 
 import java.sql.Connection;
 import java.sql.SQLException;

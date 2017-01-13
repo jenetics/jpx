@@ -20,17 +20,12 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import io.jenetics.jpx.GPX;
-import io.jenetics.jpx.Metadata;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.comt">Franz Wilhelmstötter</a>
