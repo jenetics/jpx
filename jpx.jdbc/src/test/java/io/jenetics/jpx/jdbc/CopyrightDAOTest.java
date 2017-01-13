@@ -89,16 +89,6 @@ public class CopyrightDAOTest extends DAOTestBase<Copyright> {
 	}
 
 	@Test(dependsOnMethods = "update")
-	public void put() throws SQLException {
-		db.transaction(conn -> {
-			final CopyrightDAO dao = new CopyrightDAO(conn);
-
-			dao.put(objects);
-			Assert.assertEquals(map(dao.select(), Stored::value), objects);
-		});
-	}
-
-	@Test(dependsOnMethods = "put")
 	public void delete() throws SQLException {
 		db.transaction(conn -> {
 			final CopyrightDAO dao = new CopyrightDAO(conn);

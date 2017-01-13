@@ -175,26 +175,6 @@ final class CopyrightDAO
 		return new ArrayList<>(copyrights);
 	}
 
-	/**
-	 * Inserts the given copyrights into the DB.
-	 *
-	 * @param copyrights the links to insert or update
-	 * @return the inserted or updated links
-	 * @throws SQLException if the insert/update fails
-	 */
-	public List<Stored<Copyright>> put(final Collection<Copyright> copyrights)
-		throws SQLException
-	{
-		return DAO.put(
-				copyrights,
-				copyright -> copyright,
-				this::select,
-				this::insert,
-				this::update
-			);
-
-	}
-
 	/* *************************************************************************
 	 * DELETE queries
 	 **************************************************************************/
