@@ -62,4 +62,9 @@ public class LatitudeTest extends ObjectTester<Latitude> {
 		);
 	}
 
+	public static Latitude nextLatitude(final Random random) {
+		final double value = random.nextDouble();
+		return Latitude.ofDegrees(value*180 - 90);
+	}
+
 }

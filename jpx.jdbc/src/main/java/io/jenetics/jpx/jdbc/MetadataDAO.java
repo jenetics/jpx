@@ -133,7 +133,7 @@ public class MetadataDAO extends DAO {
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Bounds> bounds = with(BoundsDAO::new)
-			.selectByID(map(rows, r -> r.value().boundsID))
+			.selectByVals(Column.of("id", r -> r.value().boundsID), rows)
 			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
@@ -255,11 +255,13 @@ public class MetadataDAO extends DAO {
 			.on(Param.values("ids", ids))
 			.execute();
 
-		with(BoundsDAO::new).deleteByID(
+		/*
+		with(BoundsDAO::new).deleteBy(
 			flatMap(rows,
 				(OptionMapper<Stored<Row>, Long>)
 					row -> Optional.ofNullable(row.value().boundsID))
 		);
+		*/
 
 		return deleted;
 	}

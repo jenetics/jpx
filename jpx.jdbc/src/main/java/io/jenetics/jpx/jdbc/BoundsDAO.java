@@ -20,10 +20,11 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import io.jenetics.jpx.Bounds;
@@ -33,7 +34,14 @@ import io.jenetics.jpx.Bounds;
  * @version !__version__!
  * @since !__version__!
  */
-public final class BoundsDAO extends DAO {
+public final class BoundsDAO
+	extends DAO
+	implements
+		SelectBy<Bounds>,
+		Insert<Bounds>,
+		Update<Bounds>,
+		DeleteBy<Bounds>
+{
 
 	public BoundsDAO(final Connection connection) {
 		super(connection);
@@ -59,27 +67,34 @@ public final class BoundsDAO extends DAO {
 	 **************************************************************************/
 
 	/**
-	 * Select all available copyrights.
+	 * Select all available bounds.
 	 *
-	 * @return all stored copyrights
+	 * @return all stored bounds
 	 * @throws SQLException if the select fails
 	 */
 	public List<Stored<Bounds>> select() throws SQLException {
 		final String query =
-			"SELECT id, minlat, minlon, maxlat, maxlon FROM bounds;";
+			"SELECT id, minlat, minlon, maxlat, maxlon FROM bounds ORDER BY id";
 
 		return SQL(query).as(RowParser.list());
 	}
 
-	public List<Stored<Bounds>> selectByID(final List<Long> ids)
+	@Override
+	public <V, C> List<Stored<Bounds>> selectByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
 		throws SQLException
 	{
 		final String query =
 			"SELECT id, minlat, minlon, maxlat, maxlon " +
 			"FROM bounds " +
-			"WHERE id IN({ids})";
+			"WHERE "+column.name()+" IN({values}) " +
+			"ORDER BY id";
 
-		return SQL(query).on(Param.values("ids", ids)).as(RowParser.list());
+		return SQL(query)
+			.on(Param.values("values", values, column.mapper()))
+			.as(RowParser.list());
 	}
 
 
@@ -94,7 +109,8 @@ public final class BoundsDAO extends DAO {
 	 * @return return the stored copyrights
 	 * @throws SQLException if inserting fails
 	 */
-	public List<Stored<Bounds>> insert(final List<Bounds> bounds)
+	@Override
+	public List<Stored<Bounds>> insert(final Collection<Bounds> bounds)
 		throws SQLException
 	{
 		final String query =
@@ -109,28 +125,63 @@ public final class BoundsDAO extends DAO {
 		));
 	}
 
+	/* *************************************************************************
+	 * UPDATE queries
+	 **************************************************************************/
+
 	/**
-	 * Insert the given bounds into the DB.
+	 * Updates the given list of already inserted link objects.
 	 *
-	 * @param bounds the copyright to insert
-	 * @return return the stored bounds
-	 * @throws SQLException if inserting fails
+	 * @param bounds the bounds to update
+	 * @return the updated bounds
+	 * @throws SQLException if the update fails
 	 */
-	public Stored<Bounds> insert(final Bounds bounds)
+	@Override
+	public List<Stored<Bounds>> update(final Collection<Stored<Bounds>> bounds)
 		throws SQLException
 	{
-		return insert(singletonList(bounds)).get(0);
-	}
+		final String query =
+			"UPDATE bounds " +
+			"SET minlat = {minlat}, minlon = {minlon}, " +
+				"maxlat = {maxlat}, maxlon = {maxlon} " +
+			"WHERE id = {id}";
 
+		Batch(query).update(bounds, bound -> asList(
+			Param.value("id", bound.id()),
+			Param.value("minlat", bound.value().getMinLatitude().doubleValue()),
+			Param.value("minlon", bound.value().getMinLongitude().doubleValue()),
+			Param.value("maxlat", bound.value().getMaxLatitude().doubleValue()),
+			Param.value("maxlon", bound.value().getMaxLongitude().doubleValue())
+		));
+
+		return new ArrayList<>(bounds);
+	}
 
 	/* *************************************************************************
 	 * DELETE queries
 	 **************************************************************************/
 
-	public int deleteByID(final List<Long> ids) throws SQLException {
-		return SQL("DELETE FROM bounds WHERE id IN ({ids})")
-			.on(Param.values("ids", ids))
-			.execute();
+	@Override
+	public <T, C> int deleteByVals(
+		final Column<T, C> column,
+		final Collection<T> values
+	)
+		throws SQLException
+	{
+		final int count;
+		if (!values.isEmpty()) {
+			final String query =
+				"DELETE FROM bounds WHERE "+column.name()+" IN ({values})";
+
+			count = SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.execute();
+
+		} else {
+			count = 0;
+		}
+
+		return count;
 	}
 
 }
