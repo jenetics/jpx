@@ -375,7 +375,7 @@ public final class WayPoint implements Point, Serializable {
 		hash += 17*Objects.hashCode(_comment) + 31;
 		hash += 17*Objects.hashCode(_description) + 31;
 		hash += 17*Objects.hashCode(_source) + 31;
-		hash += 17*Objects.hashCode(_links) + 31;
+		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 31;
 		hash += 17*Objects.hashCode(_symbol) + 31;
 		hash += 17*Objects.hashCode(_type) + 31;
 		hash += 17*Objects.hashCode(_fix) + 31;
@@ -403,7 +403,8 @@ public final class WayPoint implements Point, Serializable {
 			Objects.equals(((WayPoint)obj)._comment, _comment) &&
 			Objects.equals(((WayPoint)obj)._description, _description) &&
 			Objects.equals(((WayPoint)obj)._source, _source) &&
-			Objects.equals(((WayPoint)obj)._links, _links) &&
+			((WayPoint)obj)._links.size() == _links.size() &&
+			((WayPoint)obj)._links.containsAll(_links) &&
 			Objects.equals(((WayPoint)obj)._symbol, _symbol) &&
 			Objects.equals(((WayPoint)obj)._type, _type) &&
 			Objects.equals(((WayPoint)obj)._fix, _fix) &&
