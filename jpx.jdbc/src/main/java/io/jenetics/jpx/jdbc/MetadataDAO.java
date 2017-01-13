@@ -207,7 +207,7 @@ public class MetadataDAO extends DAO {
 			.write(metadata, Metadata::getAuthor, with(PersonDAO::new)::put);
 
 		final Map<Copyright, Long> copyrights = DAO
-			.write(metadata, Metadata::getCopyright, with(CopyrightDAO::new)::insert);
+			.write(metadata, Metadata::getCopyright, with(CopyrightDAO::new)::put);
 
 		final Map<Bounds, Long> bounds = DAO
 			.write(metadata, Metadata::getBounds, with(BoundsDAO::new)::insert);
