@@ -31,7 +31,7 @@ CREATE TABLE person(
 CREATE INDEX i_person_email ON person(email);
 
 -- -----------------------------------------------------------------------------
--- Create the `copyright` table.
+-- Create the `copyright` table. Is bound to one metadata object.
 -- -----------------------------------------------------------------------------
 CREATE TABLE copyright(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -44,7 +44,7 @@ CREATE INDEX i_copyright_year ON copyright(year);
 CREATE INDEX i_copyright_license ON copyright(license);
 
 -- -----------------------------------------------------------------------------
--- Create the `bounce` table.
+-- Create the `bounce` table. Is bound to one metadata object.
 -- -----------------------------------------------------------------------------
 CREATE TABLE bounds(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
@@ -62,12 +62,13 @@ CREATE TABLE metadata(
 	name VARCHAR(255),
 	`desc` TEXT,
 	person_id BIGINT REFERENCES person(id),
-	copyright_id BIGINT,
+	copyright_id BIGINT REFERENCES copyright(id),
 	time TIMESTAMP,
 	keywords VARCHAR(255),
 	bounds_id BIGINT REFERENCES bounds(id)
 );
 CREATE INDEX i_metadata_name ON metadata(name);
+CREATE INDEX i_metadata_time ON metadata(time);
 CREATE INDEX i_metadata_keywords ON metadata(keywords);
 
 CREATE TABLE metadata_link(

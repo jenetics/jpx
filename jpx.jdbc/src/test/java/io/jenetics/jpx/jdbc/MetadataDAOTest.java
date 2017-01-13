@@ -41,7 +41,7 @@ public class MetadataDAOTest extends DAOTestBase<Metadata> {
 		return MetadataTest.nextMetadata(random);
 	}
 
-	private final List<Metadata> objects = nextObjects(new Random(123), 3);
+	private final List<Metadata> objects = nextObjects(new Random(), 20);
 
 
 	@Test
@@ -58,6 +58,54 @@ public class MetadataDAOTest extends DAOTestBase<Metadata> {
 		});
 
 		Assert.assertEquals(map(existing, Stored::value), objects);
+	}
+
+	@Test(dependsOnMethods = "insert")
+	public void selectByName() throws SQLException {
+		final List<Stored<Metadata>> selected = db.transaction(conn -> {
+			return new MetadataDAO(conn)
+				.selectBy("name", objects.get(0).getName());
+		});
+
+		Assert.assertEquals(selected.get(0).value(), objects.get(0));
+	}
+
+	@Test(dependsOnMethods = "select")
+	public void update() throws SQLException {
+		final List<Stored<Metadata>> existing = db.transaction(conn -> {
+			return new MetadataDAO(conn).select();
+		});
+
+		db.transaction(conn -> {
+			final Stored<Metadata> updated = existing.get(0)
+				.map(l -> nextObject(new Random()));
+
+			Assert.assertEquals(
+				new MetadataDAO(conn).update(updated),
+				updated
+			);
+
+			Assert.assertEquals(new MetadataDAO(conn).select().get(0), updated);
+		});
+	}
+
+	@Test(dependsOnMethods = "update")
+	public void delete() throws SQLException {
+		db.transaction(conn -> {
+			final MetadataDAO dao = new MetadataDAO(conn);
+
+			final List<Stored<Metadata>> existing = dao.select();
+
+			final int count = dao
+				.deleteBy(Column.of("name", md -> md.value().getName()), existing.get(0));
+
+			Assert.assertEquals(count, 1);
+
+			Assert.assertEquals(
+				dao.select(),
+				existing.subList(1, existing.size())
+			);
+		});
 	}
 
 }

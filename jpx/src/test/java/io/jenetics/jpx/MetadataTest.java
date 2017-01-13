@@ -49,9 +49,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 
 	public static Metadata nextMetadata(final Random random) {
 		return Metadata.of(
-			random.nextBoolean()
-				? format("name_%s", Math.abs(random.nextLong()))
-				: null,
+			format("name_%s", Math.abs(random.nextLong())),
 			random.nextBoolean()
 				? format("description_%s", Math.abs(random.nextLong()))
 				: null,

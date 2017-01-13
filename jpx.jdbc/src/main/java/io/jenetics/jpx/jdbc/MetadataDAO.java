@@ -130,16 +130,17 @@ public class MetadataDAO
 		throws SQLException
 	{
 		final Map<Long, Person> persons = with(PersonDAO::new)
-			.selectByVals(Column.of("person.id", Stored::id), rows).stream()
+			.selectByVals(Column.of("person.id", row -> row.value().personID), rows)
+			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Copyright> copyrights = with(CopyrightDAO::new)
-			.selectByVals(Column.of("id", r -> r.value().copyrightID), rows)
+			.selectByVals(Column.of("id", row -> row.value().copyrightID), rows)
 			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Bounds> bounds = with(BoundsDAO::new)
-			.selectByVals(Column.of("id", r -> r.value().boundsID), rows)
+			.selectByVals(Column.of("id", row -> row.value().boundsID), rows)
 			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
@@ -285,10 +286,6 @@ public class MetadataDAO
 		);
 
 		// Update copyright.
-		with(CopyrightDAO::new).deleteByVals(
-			Column.of("id", row -> row.value().copyrightID), rows
-		);
-
 		final Map<Copyright, Long> copyrights = DAO.write(
 			metadata,
 			(OptionMapper<Stored<Metadata>, Copyright>)
@@ -297,10 +294,6 @@ public class MetadataDAO
 		);
 
 		// Update bounds.
-		with(BoundsDAO::new).deleteByVals(
-			Column.of("id", row -> row.value().boundsID), rows
-		);
-
 		final Map<Bounds, Long> bounds = DAO.write(
 			metadata,
 			(OptionMapper<Stored<Metadata>, Bounds>)
@@ -348,6 +341,16 @@ public class MetadataDAO
 
 		with(MetadataLinkDAO::new).insert(metadataLinks);
 
+		// Delete old copyright.
+		with(CopyrightDAO::new).deleteByVals(
+			Column.of("id", row -> row.value().copyrightID), rows
+		);
+
+		// Delete old bounds.
+		with(BoundsDAO::new).deleteByVals(
+			Column.of("id", row -> row.value().boundsID), rows
+		);
+
 		return new ArrayList<>(metadata);
 	}
 
@@ -365,14 +368,13 @@ public class MetadataDAO
 		final List<Stored<Row>> rows = selectRowsByVal(column, values);
 
 		final int count;
-		if (!values.isEmpty()) {
+		if (!rows.isEmpty()) {
 			final String query =
-				"DELETE FROM metadata WHERE "+column.name()+" IN ({values})";
+				"DELETE FROM metadata WHERE id IN ({ids})";
 
 			count = SQL(query)
-				.on(Param.values("values", values, column.mapper()))
+				.on(Param.values("ids", rows, Stored::id))
 				.execute();
-
 		} else {
 			count = 0;
 		}
