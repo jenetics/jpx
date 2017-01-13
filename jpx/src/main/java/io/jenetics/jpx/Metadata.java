@@ -199,7 +199,7 @@ public final class Metadata implements Serializable {
 		hash += 17*Objects.hashCode(_description) + 31;
 		hash += 17*Objects.hashCode(_author) + 31;
 		hash += 17*Objects.hashCode(_copyright) + 31;
-		hash += 17*Objects.hashCode(_links) + 31;
+		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 31;
 		hash += 17*Objects.hashCode(_time) + 31;
 		hash += 17*Objects.hashCode(_keywords) + 31;
 		hash += 17*Objects.hashCode(_bounds) + 31;
@@ -213,7 +213,8 @@ public final class Metadata implements Serializable {
 			Objects.equals(((Metadata)obj)._description, _description) &&
 			Objects.equals(((Metadata)obj)._author, _author) &&
 			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
-			Objects.equals(((Metadata)obj)._links, _links) &&
+			((Metadata)obj)._links.size() == _links.size() &&
+			((Metadata)obj)._links.containsAll(_links) &&
 			ZonedDateTimeFormat.equals(((Metadata)obj)._time, _time) &&
 			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
 			Objects.equals(((Metadata)obj)._bounds, _bounds);
