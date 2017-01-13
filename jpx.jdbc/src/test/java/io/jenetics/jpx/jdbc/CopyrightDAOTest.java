@@ -19,17 +19,13 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.io.IOException;
+import static io.jenetics.jpx.jdbc.Lists.map;
+
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.testng.Assert;
-import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Copyright;
@@ -38,42 +34,19 @@ import io.jenetics.jpx.CopyrightTest;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class CopyrightDAOTest {
+public class CopyrightDAOTest extends DAOTestBase<Copyright> {
 
-	private final DB db = H2DB.newTestInstance();
-
-	private final List<Copyright> copyrights = nextCopyrights(new Random(123), 20);
-
-	private static List<Copyright> nextCopyrights(final Random random, final int count) {
-		return Stream.generate(() -> CopyrightTest.nextCopyright(random))
-			.limit(count)
-			.collect(Collectors.toList());
+	@Override
+	public Copyright nextObject(final Random random) {
+		return CopyrightTest.nextCopyright(random);
 	}
 
-	@BeforeSuite
-	public void setup() throws IOException, SQLException {
-		final String[] queries = IO.
-			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
-			.split(";");
-
-		db.transaction(conn -> {
-			for (String query : queries) {
-				try (Statement stmt = conn.createStatement()) {
-					stmt.execute(query);
-				}
-			}
-		});
-	}
-
-	@AfterSuite
-	public void shutdown() throws SQLException {
-		db.close();
-	}
+	private final List<Copyright> objects = nextObjects(new Random(123), 20);
 
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			new CopyrightDAO(conn).insert(copyrights);
+			new CopyrightDAO(conn).insert(objects);
 		});
 	}
 
@@ -83,13 +56,17 @@ public class CopyrightDAOTest {
 			return new CopyrightDAO(conn).select();
 		});
 
-		Assert.assertEquals(
-			existing.stream()
-				.map(Stored::value)
-				.collect(Collectors.toSet()),
-			copyrights.stream()
-				.collect(Collectors.toSet())
-		);
+		Assert.assertEquals(map(existing, Stored::value), objects);
+	}
+
+	@Test(dependsOnMethods = "insert")
+	public void selectByAuthor() throws SQLException {
+		final List<Stored<Copyright>> selected = db.transaction(conn -> {
+			return new CopyrightDAO(conn)
+				.selectBy("author", objects.get(0).getAuthor());
+		});
+
+		Assert.assertEquals(selected.get(0).value(), objects.get(0));
 	}
 
 	@Test(dependsOnMethods = "select")
@@ -100,12 +77,14 @@ public class CopyrightDAOTest {
 
 		db.transaction(conn -> {
 			final Stored<Copyright> updated = existing.get(0)
-				.map(l -> Copyright.of(l.getAuthor(), 2000, (String)null));
+				.map(l -> Copyright.of(l.getAuthor(), 2019, (String)null));
 
 			Assert.assertEquals(
 				new CopyrightDAO(conn).update(updated),
 				updated
 			);
+
+			Assert.assertEquals(new CopyrightDAO(conn).select().get(0), updated);
 		});
 	}
 
@@ -114,14 +93,24 @@ public class CopyrightDAOTest {
 		db.transaction(conn -> {
 			final CopyrightDAO dao = new CopyrightDAO(conn);
 
-			dao.put(copyrights);
+			dao.put(objects);
+			Assert.assertEquals(map(dao.select(), Stored::value), objects);
+		});
+	}
+
+	@Test(dependsOnMethods = "put")
+	public void delete() throws SQLException {
+		db.transaction(conn -> {
+			final CopyrightDAO dao = new CopyrightDAO(conn);
+
+			final int count = dao
+				.deleteBy(Column.of("author", Copyright::getAuthor), objects.get(0));
+
+			Assert.assertEquals(count, 1);
 
 			Assert.assertEquals(
-				dao.select().stream()
-					.map(Stored::value)
-					.collect(Collectors.toSet()),
-				copyrights.stream()
-					.collect(Collectors.toSet())
+				map(dao.select(), Stored::value),
+				objects.subList(1, objects.size())
 			);
 		});
 	}

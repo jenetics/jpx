@@ -128,11 +128,13 @@ public class MetadataDAO extends DAO {
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Copyright> copyrights = with(CopyrightDAO::new)
-			.selectByID(map(rows, r -> r.value().copyrightID)).stream()
+			.selectByVals(Column.of("id", r -> r.value().copyrightID), rows)
+			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, Bounds> bounds = with(BoundsDAO::new)
-			.selectByID(map(rows, r -> r.value().boundsID)).stream()
+			.selectByID(map(rows, r -> r.value().boundsID))
+			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		final Map<Long, List<Link>> links = with(MetadataLinkDAO::new)

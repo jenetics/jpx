@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  * limitations under the License.
  *
  * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmx.at)
+ *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.jdbc;
 
@@ -25,6 +25,8 @@ import static java.util.Objects.requireNonNull;
 import java.io.InputStream;
 import java.io.Reader;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.Array;
 import java.sql.Blob;
@@ -44,6 +46,7 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Map;
@@ -60,7 +63,7 @@ import io.jenetics.jpx.UInt;
 /**
  * Extends the JDBC {@link ResultSet} with additional useful access methods.
  *
- * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
@@ -84,6 +87,22 @@ final class Results implements ResultSet {
 	{
 		final Timestamp ts = getTimestamp(columnName);
 		return ZonedDateTime.ofInstant(Instant.ofEpochMilli(ts.getTime()), UTC);
+	}
+
+	public Year getYear(final String columnName) throws SQLException {
+		final Integer value = get(Integer.class, columnName);
+		return value != null ? Year.of(value) : null;
+	}
+
+	public URI getURI(final String columnName) throws SQLException {
+		final String value = getString(columnName);
+
+		URI uri = null;
+		if (value != null) {
+			try { uri = new URI(value); } catch (URISyntaxException ignore) {}
+		}
+
+		return uri;
 	}
 
 	public Latitude getLatitude(final String columnName) throws SQLException {

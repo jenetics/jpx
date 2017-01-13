@@ -19,12 +19,17 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import static java.util.Objects.requireNonNull;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 
 /**
@@ -36,6 +41,54 @@ import java.util.function.Function;
  */
 final class BatchQuery extends AbstractQuery {
 
+	final class Select<T> {
+		private final Collection<T> _values;
+		private final  Function<T, List<Param>> _format;
+
+		private Select(
+			final Collection<T> values,
+			final Function<T, List<Param>> format
+		) {
+			_values = requireNonNull(values);
+			_format = requireNonNull(format);
+		}
+
+		/**
+		 * Executes the select query.
+		 *
+		 * @param parser the row parser used for creating the result objects
+		 * @return the query result
+		 * @throws SQLException if the query execution fails
+		 * @throws NullPointerException if the given row {@code parser} is
+		 *         {@code null}
+		 */
+		<B> List<B> as(final RowParser<List<B>> parser) throws SQLException {
+			requireNonNull(parser);
+
+			final Set<B> results = new HashSet<B>();
+
+			if (!_values.isEmpty()) {
+				final PreparedSQL preparedSQL = PreparedSQL
+					.parse(_sql, _format.apply(head(_values)));
+
+				try (PreparedStatement ps = preparedSQL.prepare(_conn)) {
+					for (T value : _values) {
+						final List<Param> params = _format.apply(value);
+						preparedSQL.fill(ps, params);
+
+						try (ResultSet rs = ps.executeQuery()) {
+							final List<B> rows = parser.parse(Results.of(rs));
+							results.addAll(rows);
+						}
+					}
+				}
+			}
+
+			return new ArrayList<B>(results);
+		}
+
+	}
+
 	/**
 	 * Create a new batch query object with the given connection and SQL string.
 	 *
@@ -45,6 +98,13 @@ final class BatchQuery extends AbstractQuery {
 	 */
 	BatchQuery(final Connection conn, final String sql) {
 		super(conn, sql);
+	}
+
+	<T> Select<T> select(
+		final Collection<T> values,
+		final Function<T, List<Param>> format
+	)  {
+		return new Select<T>(values, format);
 	}
 
 	/**

@@ -76,7 +76,9 @@ public final class LinkDAO
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public List<Stored<Link>> select() throws SQLException {
-		final String query = "SELECT id, href, text, type FROM link ORDER BY id";
+		final String query =
+			"SELECT id, href, text, type FROM link ORDER BY id";
+
 		return SQL(query).as(RowParser.list());
 	}
 

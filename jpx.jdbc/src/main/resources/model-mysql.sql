@@ -15,6 +15,7 @@ CREATE TABLE link(
 
 	CONSTRAINT c_link_href UNIQUE (href)
 );
+CREATE INDEX i_link_text ON link(text);
 
 -- -----------------------------------------------------------------------------
 -- Create the `person` table. A person is meant to be shared.
@@ -27,6 +28,7 @@ CREATE TABLE person(
 
 	CONSTRAINT c_person_name UNIQUE (name)
 );
+CREATE INDEX i_person_email ON person(email);
 
 -- -----------------------------------------------------------------------------
 -- Create the `copyright` table.
@@ -35,7 +37,9 @@ CREATE TABLE copyright(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	author VARCHAR(255) NOT NULL,
 	year INT,
-	license VARCHAR(255)
+	license VARCHAR(255),
+
+	CONSTRAINT c_copyright_author_year_license UNIQUE (author, year, license)
 );
 
 -- -----------------------------------------------------------------------------

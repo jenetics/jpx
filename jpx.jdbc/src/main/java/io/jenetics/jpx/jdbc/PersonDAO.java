@@ -87,7 +87,8 @@ public final class PersonDAO
 				"link.text AS link_text, " +
 				"link.type AS link_type " +
 				"FROM person " +
-				"LEFT OUTER JOIN link ON (person.link_id = link.id)";
+				"LEFT OUTER JOIN link ON (person.link_id = link.id) " +
+				"ORDER BY person.id";
 
 		return SQL(query).as(RowParser.list());
 	}
@@ -108,7 +109,8 @@ public final class PersonDAO
 				"link.type AS link_type " +
 			"FROM person " +
 			"LEFT OUTER JOIN link ON (person.link_id = link.id)" +
-			"WHERE "+column.name()+" IN ({values})";
+			"WHERE "+column.name()+" IN ({values}) " +
+			"ORDER BY person.id";
 
 		return SQL(query)
 			.on(Param.values("values", values, column.mapper()))
