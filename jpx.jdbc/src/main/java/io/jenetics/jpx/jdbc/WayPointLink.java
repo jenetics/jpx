@@ -21,6 +21,8 @@ package io.jenetics.jpx.jdbc;
 
 import static java.lang.String.format;
 
+import io.jenetics.jpx.jdbc.internal.util.Pair;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

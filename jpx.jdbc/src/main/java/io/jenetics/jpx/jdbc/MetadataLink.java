@@ -21,6 +21,8 @@ package io.jenetics.jpx.jdbc;
 
 import static java.lang.String.format;
 
+import io.jenetics.jpx.jdbc.internal.util.Pair;
+
 /**
  * Represents a row in the "metadata_link" table.
  *

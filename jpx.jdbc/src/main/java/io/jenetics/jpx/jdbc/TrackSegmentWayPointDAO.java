@@ -31,6 +31,7 @@ import java.util.Map;
 
 import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
+import io.jenetics.jpx.jdbc.internal.util.Pair;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

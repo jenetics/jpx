@@ -43,6 +43,7 @@ import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Insert;
 import io.jenetics.jpx.jdbc.internal.db.ListMapper;
 import io.jenetics.jpx.jdbc.internal.db.OptionMapper;
+import io.jenetics.jpx.jdbc.internal.util.Pair;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
