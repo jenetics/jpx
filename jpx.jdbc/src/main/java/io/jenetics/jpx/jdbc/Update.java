@@ -25,6 +25,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
+import io.jenetics.jpx.jdbc.internal.db.Stored;
+
 /**
  * Interface for common update functions.
  *

@@ -37,8 +37,6 @@ import io.jenetics.jpx.jdbc.Param;
 import io.jenetics.jpx.jdbc.PreparedSQL;
 import io.jenetics.jpx.jdbc.Results;
 import io.jenetics.jpx.jdbc.RowParser;
-import io.jenetics.jpx.jdbc.Stored;
-import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
 
 /**
  * Represents batch insert query.

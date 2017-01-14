@@ -37,6 +37,7 @@ import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.Stored;
 import io.jenetics.jpx.jdbc.internal.util.Pair;
 
 /**

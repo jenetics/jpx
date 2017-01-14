@@ -32,6 +32,7 @@ import org.testng.annotations.Test;
 import io.jenetics.jpx.Email;
 import io.jenetics.jpx.Person;
 import io.jenetics.jpx.jdbc.internal.db.Column;
+import io.jenetics.jpx.jdbc.internal.db.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
