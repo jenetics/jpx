@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
+import io.jenetics.jpx.jdbc.internal.db.Param;
 
 /**
  * Represents a select SQL query.
