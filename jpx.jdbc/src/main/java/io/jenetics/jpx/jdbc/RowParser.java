@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import io.jenetics.jpx.jdbc.internal.db.Results;
+
 /**
  * Converts one row from the given {@link ResultSet} into a data object from
  * the given type.

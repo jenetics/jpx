@@ -30,6 +30,7 @@ import java.util.List;
 
 import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.Results;
 
 /**
  * Represents a select SQL query.
