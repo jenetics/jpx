@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc;
+package io.jenetics.jpx.jdbc.internal.db;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import io.jenetics.jpx.jdbc.internal.db.Results;
 
 /**
  * Converts one row from the given {@link ResultSet} into a data object from

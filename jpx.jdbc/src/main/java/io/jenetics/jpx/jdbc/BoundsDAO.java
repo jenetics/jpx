@@ -57,7 +57,7 @@ public final class BoundsDAO
 	 * The link row parser which creates a {@link Bounds} object from a given DB
 	 * row.
 	 */
-	private static final RowParser<Stored<Bounds>> RowParser = rs -> Stored.of(
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Bounds>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
 		Bounds.of(
 			rs.getDouble("minlat"),

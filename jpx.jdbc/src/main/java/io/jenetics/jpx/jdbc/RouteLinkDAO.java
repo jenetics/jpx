@@ -56,7 +56,7 @@ public class RouteLinkDAO
 		super(conn);
 	}
 
-	private static final RowParser<Stored<RouteLink>> RowParser = rs -> Stored.of(
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<RouteLink>> RowParser = rs -> Stored.of(
 		rs.getLong("route_id"),
 		RouteLink.of(
 			rs.getLong("route_id"),

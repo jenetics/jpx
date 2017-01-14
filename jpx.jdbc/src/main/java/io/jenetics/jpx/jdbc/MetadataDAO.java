@@ -100,7 +100,7 @@ public class MetadataDAO
 	 * The metadata row parser which creates a {@link Metadata} object from a
 	 * given DB row.
 	 */
-	private static final RowParser<Stored<Row>> RowParser = rs -> Stored.of(
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Row>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
 		new Row(
 			rs.getString("name"),

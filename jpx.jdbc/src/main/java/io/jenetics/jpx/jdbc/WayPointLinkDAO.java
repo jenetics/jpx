@@ -56,7 +56,7 @@ public class WayPointLinkDAO
 		super(conn);
 	}
 
-	private static final RowParser<Stored<WayPointLink>> RowParser = rs -> Stored.of(
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<WayPointLink>> RowParser = rs -> Stored.of(
 		rs.getLong("way_point_id"),
 		WayPointLink.of(
 			rs.getLong("way_point_id"),

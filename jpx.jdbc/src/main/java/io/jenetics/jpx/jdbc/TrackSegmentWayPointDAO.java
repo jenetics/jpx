@@ -66,7 +66,7 @@ public class TrackSegmentWayPointDAO extends DAO {
 		super(conn);
 	}
 
-	private static final RowParser<Row> RowParser = rs -> new Row(
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Row> RowParser = rs -> new Row(
 		rs.getLong("track_segment_id"),
 		rs.getLong("way_point_id")
 	);

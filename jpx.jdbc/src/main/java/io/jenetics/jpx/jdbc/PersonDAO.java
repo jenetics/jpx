@@ -57,7 +57,7 @@ public final class PersonDAO
 		super(conn);
 	}
 
-	private final static RowParser<Stored<Person>> RowParser = rs -> Stored.of(
+	private final static io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Person>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
 		Person.of(
 			rs.getString("name"),

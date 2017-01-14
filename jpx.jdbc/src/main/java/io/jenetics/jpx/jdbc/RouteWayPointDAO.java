@@ -57,7 +57,7 @@ public class RouteWayPointDAO
 		super(conn);
 	}
 
-	private static final RowParser<Stored<RouteWayPoint>> RowParser = rs -> Stored.of(
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<RouteWayPoint>> RowParser = rs -> Stored.of(
 		rs.getLong("route_id"),
 		RouteWayPoint.of(
 			rs.getLong("route_id"),

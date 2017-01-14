@@ -59,7 +59,7 @@ public final class LinkDAO
 	 * The link row parser which creates a {@link Link} object from a given DB
 	 * row.
 	 */
-	private static final RowParser<Stored<Link>> RowParser = rs -> Stored.of(
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Link>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
 		Link.of(
 			rs.getString("href"),
