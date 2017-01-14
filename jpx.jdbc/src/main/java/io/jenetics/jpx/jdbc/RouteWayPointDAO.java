@@ -39,6 +39,7 @@ import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Insert;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -48,7 +49,7 @@ import io.jenetics.jpx.jdbc.internal.db.Param;
 public class RouteWayPointDAO
 	extends DAO
 	implements
-		SelectBy<RouteWayPoint>,
+	SelectBy<RouteWayPoint>,
 	Insert<RouteWayPoint>,
 	Delete
 {

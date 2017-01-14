@@ -40,6 +40,7 @@ import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Insert;
 import io.jenetics.jpx.jdbc.internal.db.ListMapper;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.util.Pair;
 
 /**
@@ -50,7 +51,7 @@ import io.jenetics.jpx.jdbc.internal.util.Pair;
 public class RouteDAO
 	extends DAO
 	implements
-		SelectBy<Route>,
+	SelectBy<Route>,
 	Insert<Route>,
 		Update<Route>,
 	Delete

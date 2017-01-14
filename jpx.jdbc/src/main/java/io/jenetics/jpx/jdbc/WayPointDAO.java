@@ -48,6 +48,7 @@ import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Insert;
 import io.jenetics.jpx.jdbc.internal.db.ListMapper;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.util.Pair;
 
 /**
@@ -58,7 +59,7 @@ import io.jenetics.jpx.jdbc.internal.util.Pair;
 public class WayPointDAO
 	extends DAO
 	implements
-		SelectBy<WayPoint>,
+	SelectBy<WayPoint>,
 	Insert<WayPoint>,
 		Update<WayPoint>,
 	Delete

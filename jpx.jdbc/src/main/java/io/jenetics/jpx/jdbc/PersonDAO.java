@@ -38,6 +38,7 @@ import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Insert;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -47,7 +48,7 @@ import io.jenetics.jpx.jdbc.internal.db.Param;
 public final class PersonDAO
 	extends DAO
 	implements
-		SelectBy<Person>,
+	SelectBy<Person>,
 	Insert<Person>,
 		Update<Person>,
 	Delete
