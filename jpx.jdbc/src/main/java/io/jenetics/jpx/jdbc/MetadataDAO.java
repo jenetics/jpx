@@ -46,6 +46,7 @@ import io.jenetics.jpx.jdbc.internal.db.OptionMapper;
 import io.jenetics.jpx.jdbc.internal.db.Param;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
+import io.jenetics.jpx.jdbc.internal.db.Update;
 import io.jenetics.jpx.jdbc.internal.util.Pair;
 
 /**
@@ -58,7 +59,7 @@ public class MetadataDAO
 	implements
 	SelectBy<Metadata>,
 	Insert<Metadata>,
-		Update<Metadata>,
+	Update<Metadata>,
 	Delete
 {
 
