@@ -89,21 +89,16 @@ public final class LinkDAO
 	)
 		throws SQLException
 	{
-		final List<Stored<Link>> links;
-		if (!values.isEmpty()) {
 			final String query =
 				"SELECT id, href, text, type " +
 				"FROM link WHERE "+column.name()+" IN ({values}) " +
 				"ORDER BY id";
 
-			links = SQL(query)
+		return values.isEmpty()
+			? Collections.emptyList()
+			: SQL(query)
 				.on(Param.values("values", values, column.mapper()))
 				.as(RowParser.list());
-		} else {
-			links = Collections.emptyList();
-		}
-
-		return links;
 	}
 
 

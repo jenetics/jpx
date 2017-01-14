@@ -29,6 +29,7 @@ import static io.jenetics.jpx.jdbc.Lists.map;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -74,19 +75,23 @@ public final class MetadataLinkDAO
 			"WHERE metadata_id IN ({ids}) " +
 			"ORDER BY link_id";
 
-		final List<Stored<MetadataLink>> rows = SQL(query)
-			.on(Param.values("ids", values, mapper))
-			.as(RowParser.list());
+		if (!values.isEmpty()) {
+			final List<Stored<MetadataLink>> rows = SQL(query)
+				.on(Param.values("ids", values, mapper))
+				.as(RowParser.list());
 
-		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByVals(Column.of("id", row -> row.value().getLinkID()), rows)
-			.stream()
-			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
+			final Map<Long, Link> links = with(LinkDAO::new)
+				.selectByVals(Column.of("id", row -> row.value().getLinkID()), rows)
+				.stream()
+				.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
-		return rows.stream()
-			.collect(groupingBy(
-				Stored::id,
-				mapping(row -> links.get(row.value().getLinkID()), toList())));
+			return rows.stream()
+				.collect(groupingBy(
+					Stored::id,
+					mapping(row -> links.get(row.value().getLinkID()), toList())));
+		} else {
+			return Collections.emptyMap();
+		}
 	}
 
 	/* *************************************************************************

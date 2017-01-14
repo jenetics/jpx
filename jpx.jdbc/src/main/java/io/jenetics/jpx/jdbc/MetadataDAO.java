@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -192,9 +193,11 @@ public class MetadataDAO
 			"WHERE "+column.name()+" IN ({values}) " +
 			"ORDER BY id";
 
-		return SQL(query)
-			.on(Param.values("values", values, column.mapper()))
-			.as(RowParser.list());
+		return values.isEmpty()
+			? Collections.emptyList()
+			: SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.as(RowParser.list());
 	}
 
 	/* *************************************************************************

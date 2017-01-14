@@ -20,11 +20,12 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
-import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,8 +40,14 @@ import io.jenetics.jpx.WayPoint;
  * @version !__version__!
  * @since !__version__!
  */
-public class RouteDAO extends DAO {
-
+public class RouteDAO
+	extends DAO
+	implements
+		SelectBy<Route>,
+		Insert<Route>,
+		Update<Route>,
+		Delete
+{
 
 	private static final class Row {
 		final String name;
@@ -100,7 +107,7 @@ public class RouteDAO extends DAO {
 				"desc, " +
 				"src, " +
 				"number, " +
-				"type, " +
+				"type " +
 			"FROM route";
 
 		final List<Stored<Row>> rows = SQL(query).as(RowParser.list());
@@ -110,13 +117,11 @@ public class RouteDAO extends DAO {
 	private List<Stored<Route>> toRoute(final List<Stored<Row>> rows)
 		throws SQLException
 	{
-		final List<Long> ids = map(rows, Stored::id);
-
 		final Map<Long, List<Link>> links = with(RouteLinkDAO::new)
-			.selectLinksByRouteID(ids);
+			.selectLinks(rows, Stored::id);
 
 		final Map<Long, List<WayPoint>> points = with(RouteWayPointDAO::new)
-			.selectWayPointsByRouteID(ids);
+			.selectWayPoints(rows, Stored::id);
 
 		return rows.stream()
 			.map(row -> Stored.of(
@@ -135,7 +140,20 @@ public class RouteDAO extends DAO {
 			.collect(Collectors.toList());
 	}
 
-	public List<Stored<Route>> selectByID(final List<Long> ids)
+	@Override
+	public <V, C> List<Stored<Route>> selectByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
+		throws SQLException
+	{
+		return toRoute(selectRowsByVal(column, values));
+	}
+
+	public <V, C> List<Stored<Row>> selectRowsByVal(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
 		throws SQLException
 	{
 		final String query =
@@ -145,30 +163,24 @@ public class RouteDAO extends DAO {
 				"desc, " +
 				"src, " +
 				"number, " +
-				"type, " +
+				"type " +
 			"FROM route " +
-			"WHERE id IN ({ids}) " +
-			"ORDER BY id ASC";
+			"WHERE "+column.name()+" IN ({values}) " +
+			"ORDER BY id";
 
-		final List<Stored<Row>> rows = SQL(query)
-			.on(Param.values("ids", ids))
-			.as(RowParser.list());
-
-		return toRoute(rows);
+		return values.isEmpty()
+			? Collections.emptyList()
+			: SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.as(RowParser.list());
 	}
 
 	/* *************************************************************************
 	 * INSERT queries
 	 **************************************************************************/
 
-	/**
-	 * Insert the given person list into the DB.
-	 *
-	 * @param routes the persons to insert
-	 * @return return the stored persons
-	 * @throws SQLException if inserting fails
-	 */
-	public List<Stored<Route>> insert(final List<Route> routes)
+	@Override
+	public List<Stored<Route>> insert(final Collection<Route> routes)
 		throws SQLException
 	{
 		final String query =
@@ -178,15 +190,15 @@ public class RouteDAO extends DAO {
 				"desc, " +
 				"src, " +
 				"number, " +
-				"type, " +
+				"type" +
 			") " +
 			"VALUES(" +
-				"name, " +
-				"cmt, " +
-				"desc, " +
-				"src, " +
-				"number, " +
-				"type, " +
+				"{name}, " +
+				"{cmt}, " +
+				"{desc}, " +
+				"{src}, " +
+				"{number}, " +
+				"{type}" +
 			")";
 
 		final List<Stored<Route>> inserted =
@@ -203,20 +215,21 @@ public class RouteDAO extends DAO {
 		final Map<Link, Long> links = DAO
 			.write(routes, Route::getLinks, with(LinkDAO::new)::put);
 
-		final List<Pair<Long, Long>> routeLinks = inserted.stream()
+		final List<RouteLink> routeLinks = inserted.stream()
 			.flatMap(md -> md.value().getLinks().stream()
-				.map(link -> Pair.of(md.id(), links.get(link))))
+				.map(l -> RouteLink.of(md.id(), links.get(l))))
 			.collect(Collectors.toList());
 
 		with(RouteLinkDAO::new).insert(routeLinks);
+
 
 		// Insert route way-points.
 		final Map<WayPoint, Long> points = DAO
 			.write(routes, Route::getPoints, with(WayPointDAO::new)::insert);
 
-		final List<Pair<Long, Long>> routePoints = inserted.stream()
+		final List<RouteWayPoint> routePoints = inserted.stream()
 			.flatMap(md -> md.value().getPoints().stream()
-				.map(point -> Pair.of(md.id(), points.get(point))))
+				.map(point -> RouteWayPoint.of(md.id(), points.get(point))))
 			.collect(Collectors.toList());
 
 		with(RouteWayPointDAO::new).insert(routePoints);
@@ -224,26 +237,116 @@ public class RouteDAO extends DAO {
 		return inserted;
 	}
 
+
+	/* *************************************************************************
+	 * UPDATE queries
+	 **************************************************************************/
+
+	@Override
+	public List<Stored<Route>> update(
+		final Collection<Stored<Route>> routes
+	)
+		throws SQLException
+	{
+		final String query =
+			"UPDATE route " +
+				"SET name = {name}, " +
+				"cmt = {cmt}, " +
+				"desc = {desc}, " +
+				"src = {src}, " +
+				"number = {number}, " +
+				"type = {type} " +
+			"WHERE id = {id}";
+
+		// Update way-points.
+		Batch(query).update(routes, route -> asList(
+			Param.value("id", route.id()),
+			Param.value("name", route.value().getName()),
+			Param.value("cmt", route.value().getComment()),
+			Param.value("desc", route.value().getDescription()),
+			Param.value("src", route.value().getSource()),
+			Param.value("number", route.value().getNumber()),
+			Param.value("type", route.value().getType())
+		));
+
+		// Update route links.
+		with(RouteLinkDAO::new)
+			.deleteByVals(Column.of("route_id", Stored::id), routes);
+
+		final Map<Link, Long> links = DAO.write(
+			routes,
+			(ListMapper<Stored<Route>, Link>)md -> md.value().getLinks(),
+			with(LinkDAO::new)::put
+		);
+
+		final List<Pair<Long, Long>> wayPointLinks = routes.stream()
+			.flatMap(md -> md.value().getLinks().stream()
+				.map(l -> Pair.of(md.id(), links.get(l))))
+			.collect(Collectors.toList());
+
+		with(WayPointLinkDAO::new)
+			.insert(wayPointLinks, WayPointLink::of);
+
+		// Update route way-points.
+		final List<Stored<RouteWayPoint>> wayPoints = with(RouteWayPointDAO::new)
+			.selectByVals(Column.of("route_id", Stored::id), routes);
+
+		with(RouteWayPointDAO::new)
+			.deleteByVals(Column.of("route_id", Stored::id), routes);
+
+		with(WayPointDAO::new).deleteByVals(
+			Column.of("id", p -> p.value().getWayPointUD()),
+			wayPoints
+		);
+
+		final Map<WayPoint, Long> points = DAO.write(
+			routes,
+			(ListMapper<Stored<Route>, WayPoint>)r -> r.value().getPoints(),
+			with(WayPointDAO::new)::insert
+		);
+
+		final List<RouteWayPoint> routePoints = routes.stream()
+			.flatMap(md -> md.value().getPoints().stream()
+				.map(point -> RouteWayPoint.of(md.id(), points.get(point))))
+			.collect(Collectors.toList());
+
+		with(RouteWayPointDAO::new).insert(routePoints);
+
+		return new ArrayList<>(routes);
+	}
+
 	/* *************************************************************************
 	 * DELETE queries
 	 **************************************************************************/
 
-	public int deleteByID(final List<Long> ids) throws SQLException {
-		/*
-		final Map<Long, List<Long>> wayPointIDs = with(RouteWayPointDAO::new)
-			.selectWayPointIDsByRouteID(ids);
+	@Override
+	public <V, C> int deleteByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
+		throws SQLException
+	{
+		final List<Stored<Route>> routes = selectByVals(column, values);
 
-		final int count = SQL("DELETE FROM route WHERE id IN ({ids})")
-			.on(Param.values("ids", ids))
-			.execute();
-*/
-		/*
-		with(WayPointDAO::new)
-			.deleteByID(wayPointIDs.values().stream()
-				.flatMap(Collection::stream)
-				.collect(Collectors.toList()));
-*/
-		return 0;
+		final List<Stored<RouteWayPoint>> wayPoints = with(RouteWayPointDAO::new)
+			.selectByVals(Column.of("route_id", Stored::id), routes);
+
+		final int count;
+		if (!routes.isEmpty()) {
+			final String query =
+				"DELETE FROM route WHERE id IN ({ids})";
+
+			count = SQL(query)
+				.on(Param.values("ids", routes, Stored::id))
+				.execute();
+		} else {
+			count = 0;
+		}
+
+		with(RouteWayPointDAO::new)
+			.deleteByVals(Column.of("route_id", Stored::id), routes);
+
+		return count;
 	}
 
 }

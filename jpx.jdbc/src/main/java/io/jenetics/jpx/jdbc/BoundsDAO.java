@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import io.jenetics.jpx.Bounds;
@@ -92,9 +93,11 @@ public final class BoundsDAO
 			"WHERE "+column.name()+" IN({values}) " +
 			"ORDER BY id";
 
-		return SQL(query)
-			.on(Param.values("values", values, column.mapper()))
-			.as(RowParser.list());
+		return values.isEmpty()
+			? Collections.emptyList()
+			: SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.as(RowParser.list());
 	}
 
 

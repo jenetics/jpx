@@ -107,8 +107,7 @@ public class WayPointLinkDAO
 			Param.value("link_id", row.getLinkID())
 		));
 
-		return map(rows, row ->
-			Stored.of(row.getWayPointID(), row));
+		return map(rows, row -> Stored.of(row.getWayPointID(), row));
 	}
 
 	/* *************************************************************************
