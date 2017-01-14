@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc;
+package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.util.Objects.requireNonNull;
 
@@ -32,6 +32,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import io.jenetics.jpx.jdbc.DAO;
+import io.jenetics.jpx.jdbc.Param;
+import io.jenetics.jpx.jdbc.PreparedSQL;
+import io.jenetics.jpx.jdbc.Results;
+import io.jenetics.jpx.jdbc.RowParser;
+import io.jenetics.jpx.jdbc.Stored;
 import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
 
 /**
@@ -41,9 +47,9 @@ import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
  * @version !__version__!
  * @since !__version__!
  */
-final class BatchQuery extends AbstractQuery {
+public final class BatchQuery extends AbstractQuery {
 
-	final class Select<T> {
+	public final class Select<T> {
 		private final Collection<T> _values;
 		private final  Function<T, List<Param>> _format;
 
@@ -64,7 +70,7 @@ final class BatchQuery extends AbstractQuery {
 		 * @throws NullPointerException if the given row {@code parser} is
 		 *         {@code null}
 		 */
-		<B> List<B> as(final RowParser<List<B>> parser) throws SQLException {
+		public <B> List<B> as(final RowParser<List<B>> parser) throws SQLException {
 			requireNonNull(parser);
 
 			final Set<B> results = new HashSet<B>();
@@ -98,11 +104,11 @@ final class BatchQuery extends AbstractQuery {
 	 * @param sql the SQL query string
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	BatchQuery(final Connection conn, final String sql) {
+	public BatchQuery(final Connection conn, final String sql) {
 		super(conn, sql);
 	}
 
-	<T> Select<T> select(
+	public <T> Select<T> select(
 		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)  {
@@ -119,7 +125,7 @@ final class BatchQuery extends AbstractQuery {
 	 * @return the inserted objects
 	 * @throws SQLException if the insertion fails
 	 */
-	<T> List<Stored<T>> insert(
+	public <T> List<Stored<T>> insert(
 		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
@@ -158,7 +164,7 @@ final class BatchQuery extends AbstractQuery {
 	 * @param <T> the value type
 	 * @throws SQLException if the execution fails
 	 */
-	<T> void execute(
+	public <T> void execute(
 		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
@@ -189,7 +195,7 @@ final class BatchQuery extends AbstractQuery {
 	 * @return the number of affected rows
 	 * @throws SQLException if the update fails
 	 */
-	<T> int update(
+	public <T> int update(
 		final Collection<T> values,
 		final Function<T, List<Param>> format
 	)
