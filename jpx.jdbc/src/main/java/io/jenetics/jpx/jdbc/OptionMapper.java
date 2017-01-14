@@ -24,6 +24,8 @@ import static java.util.Collections.emptyList;
 import java.util.Collections;
 import java.util.Optional;
 
+import io.jenetics.jpx.jdbc.internal.db.ListMapper;
+
 /**
  * Maps a given value to an optional value.
  *

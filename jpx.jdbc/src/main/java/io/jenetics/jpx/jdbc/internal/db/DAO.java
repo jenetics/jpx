@@ -37,7 +37,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.jdbc.Diff;
-import io.jenetics.jpx.jdbc.ListMapper;
 import io.jenetics.jpx.jdbc.OptionMapper;
 import io.jenetics.jpx.jdbc.SQL;
 import io.jenetics.jpx.jdbc.SQLQuery;
