@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.jdbc.internal.db.DAO;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.comt">Franz Wilhelmstötter</a>

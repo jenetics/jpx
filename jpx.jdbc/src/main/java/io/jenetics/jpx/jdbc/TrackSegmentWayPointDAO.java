@@ -21,10 +21,7 @@ package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -33,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.jenetics.jpx.WayPoint;
+import io.jenetics.jpx.jdbc.internal.db.DAO;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

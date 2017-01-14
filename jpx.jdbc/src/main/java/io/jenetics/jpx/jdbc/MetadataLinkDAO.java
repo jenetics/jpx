@@ -36,6 +36,7 @@ import java.util.function.Function;
 
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
+import io.jenetics.jpx.jdbc.internal.db.DAO;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

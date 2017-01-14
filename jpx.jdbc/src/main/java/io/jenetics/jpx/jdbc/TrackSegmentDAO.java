@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
+import io.jenetics.jpx.jdbc.internal.db.DAO;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

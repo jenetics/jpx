@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc;
+package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
@@ -36,7 +36,12 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import io.jenetics.jpx.jdbc.internal.db.BatchQuery;
+import io.jenetics.jpx.jdbc.Diff;
+import io.jenetics.jpx.jdbc.ListMapper;
+import io.jenetics.jpx.jdbc.OptionMapper;
+import io.jenetics.jpx.jdbc.SQL;
+import io.jenetics.jpx.jdbc.SQLQuery;
+import io.jenetics.jpx.jdbc.Stored;
 
 /**
  * Abstract DAO class which implements the methods for doing easy SQL.
