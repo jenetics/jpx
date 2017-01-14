@@ -19,30 +19,30 @@
  */
 package io.jenetics.jpx.jdbc.model;
 
+import static java.util.Objects.requireNonNull;
+
 import io.jenetics.jpx.Email;
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.jdbc.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class Person {
-	private final String _name;
-	private final Email _email;
-	private final Stored<Link> _link;
+public final class PersonRow {
+	public final long id;
+	public final String name;
+	public final Email email;
+	public final LinkRow link;
 
-	/**
-	 * Create a new {@code Person} object with the given parameters.
-	 *
-	 * @param name name of person or organization
-	 * @param email the person's email address
-	 * @param link link to Web site or other external information about person
-	 */
-	private Person(final String name, final Email email, final Stored<Link> link) {
-		_name = name;
-		_email = email;
-		_link = link;
+	private PersonRow(
+		final long id,
+		final String name,
+		final Email email,
+		final LinkRow link
+	) {
+		this.id = id;
+		this.name = requireNonNull(name);
+		this.email = email;
+		this.link = link;
 	}
 }

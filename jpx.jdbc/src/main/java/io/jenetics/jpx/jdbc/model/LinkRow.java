@@ -21,23 +21,27 @@ package io.jenetics.jpx.jdbc.model;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class Link {
+public final class LinkRow {
 	public final long id;
 	public final String href;
 	public final String text;
 	public final String type;
 
-	public Link(final long id, final String href, final String text, final String type) {
+	public LinkRow(
+		final long id,
+		final String href,
+		final String text,
+		final String type
+	) {
 		this.id = id;
 		this.href = requireNonNull(href);
 		this.text = text;
 		this.type = type;
 	}
+
 }
