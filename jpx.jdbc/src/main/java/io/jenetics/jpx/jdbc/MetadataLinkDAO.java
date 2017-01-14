@@ -38,6 +38,7 @@ import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
+import io.jenetics.jpx.jdbc.internal.db.Insert;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -47,7 +48,7 @@ import io.jenetics.jpx.jdbc.internal.db.Delete;
 public final class MetadataLinkDAO
 	extends DAO
 	implements
-		Insert<MetadataLink>,
+	Insert<MetadataLink>,
 	Delete
 {
 	public MetadataLinkDAO(final Connection conn) {

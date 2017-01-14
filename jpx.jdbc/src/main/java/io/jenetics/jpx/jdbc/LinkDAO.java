@@ -32,6 +32,7 @@ import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
+import io.jenetics.jpx.jdbc.internal.db.Insert;
 
 /**
  * DAO for the {@code Link} data class.
@@ -44,7 +45,7 @@ public final class LinkDAO
 	extends DAO
 	implements
 		SelectBy<Link>,
-		Insert<Link>,
+	Insert<Link>,
 		Update<Link>,
 	Delete
 {

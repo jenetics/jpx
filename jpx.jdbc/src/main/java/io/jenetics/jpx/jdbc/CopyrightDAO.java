@@ -32,6 +32,7 @@ import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
+import io.jenetics.jpx.jdbc.internal.db.Insert;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -42,7 +43,7 @@ final class CopyrightDAO
 	extends DAO
 	implements
 		SelectBy<Copyright>,
-		Insert<Copyright>,
+	Insert<Copyright>,
 		Update<Copyright>,
 	Delete
 {
