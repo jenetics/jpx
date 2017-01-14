@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc;
+package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,10 +28,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
-import io.jenetics.jpx.jdbc.internal.db.Param;
-import io.jenetics.jpx.jdbc.internal.db.Results;
-import io.jenetics.jpx.jdbc.internal.db.RowParser;
+import io.jenetics.jpx.jdbc.PreparedSQL;
 
 /**
  * Represents a select SQL query.
