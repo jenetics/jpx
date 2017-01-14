@@ -31,6 +31,7 @@ import java.util.List;
 import io.jenetics.jpx.Bounds;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
+import io.jenetics.jpx.jdbc.internal.db.Delete;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

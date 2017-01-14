@@ -36,6 +36,7 @@ import io.jenetics.jpx.UInt;
 import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
+import io.jenetics.jpx.jdbc.internal.db.Delete;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -48,7 +49,7 @@ public class RouteDAO
 		SelectBy<Route>,
 		Insert<Route>,
 		Update<Route>,
-		Delete
+	Delete
 {
 
 	private static final class Row {

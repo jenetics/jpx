@@ -31,6 +31,7 @@ import java.util.List;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
+import io.jenetics.jpx.jdbc.internal.db.Delete;
 
 /**
  * DAO for the {@code Link} data class.

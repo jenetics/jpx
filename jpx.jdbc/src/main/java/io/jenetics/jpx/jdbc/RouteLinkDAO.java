@@ -36,6 +36,7 @@ import java.util.function.Function;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
+import io.jenetics.jpx.jdbc.internal.db.Delete;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -46,7 +47,7 @@ public class RouteLinkDAO
 	extends DAO
 	implements
 		Insert<RouteLink>,
-		Delete
+	Delete
 {
 
 	public RouteLinkDAO(final Connection conn) {
