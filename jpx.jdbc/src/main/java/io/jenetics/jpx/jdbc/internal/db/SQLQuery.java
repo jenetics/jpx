@@ -28,8 +28,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jenetics.jpx.jdbc.PreparedSQL;
-
 /**
  * Represents a select SQL query.
  *
@@ -37,7 +35,7 @@ import io.jenetics.jpx.jdbc.PreparedSQL;
  * @version !__version__!
  * @since !__version__!
  */
-final class SQLQuery extends AbstractQuery {
+public final class SQLQuery extends AbstractQuery {
 	private final List<Param> _params = new ArrayList<>();
 
 	/**
@@ -47,7 +45,7 @@ final class SQLQuery extends AbstractQuery {
 	 * @param sql the SQL query string
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	SQLQuery(final Connection conn, final String sql) {
+	public SQLQuery(final Connection conn, final String sql) {
 		super(conn, sql);
 	}
 
@@ -57,7 +55,7 @@ final class SQLQuery extends AbstractQuery {
 	 * @param param the query parameter to set
 	 * @return {@code this} object, for method chaining
 	 */
-	SQLQuery on(final Param param) {
+	public SQLQuery on(final Param param) {
 		_params.add(param);
 		return this;
 	}
@@ -70,7 +68,7 @@ final class SQLQuery extends AbstractQuery {
 	 * @return {@code this} object, for method chaining
 	 * @throws NullPointerException if the parameter {@code name} is {@code null}
 	 */
-	SQLQuery on(final String name, final Object value) {
+	public SQLQuery on(final String name, final Object value) {
 		return on(Param.value(name, value));
 	}
 
@@ -80,7 +78,7 @@ final class SQLQuery extends AbstractQuery {
 	 * @return the number of affected rows
 	 * @throws SQLException if the query execution fails
 	 */
-	int execute() throws SQLException {
+	public int execute() throws SQLException {
 		try (PreparedStatement ps = PreparedSQL.prepare(_sql, _params, _conn)) {
 			return ps.executeUpdate();
 		}
@@ -96,7 +94,7 @@ final class SQLQuery extends AbstractQuery {
 	 * @throws NullPointerException if the given row {@code parser} is
 	 *         {@code null}
 	 */
-	<T> T as(final RowParser<T> parser) throws SQLException {
+	public <T> T as(final RowParser<T> parser) throws SQLException {
 		requireNonNull(parser);
 
 		try (PreparedStatement ps = PreparedSQL.prepare(_sql, _params, _conn);

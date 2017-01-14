@@ -28,11 +28,11 @@ import java.util.Objects;
  * @version !__version__!
  * @since !__version__!
  */
-final class Tuple3<T1, T2, T3> {
+public final class Tuple3<T1, T2, T3> {
 
-	final T1 _1;
-	final T2 _2;
-	final T3 _3;
+	public final T1 _1;
+	public final T2 _2;
+	public final T3 _3;
 
 	private Tuple3(final T1 p1, final T2 p2, final T3 p3) {
 		_1 = p1;
@@ -40,15 +40,15 @@ final class Tuple3<T1, T2, T3> {
 		_3 = p3;
 	}
 
-	T1 _1() {
+	public T1 _1() {
 		return _1;
 	}
 
-	T2 _2() {
+	public T2 _2() {
 		return _2;
 	}
 
-	T3 _3() {
+	public T3 _3() {
 		return _3;
 	}
 
@@ -75,7 +75,7 @@ final class Tuple3<T1, T2, T3> {
 		return format("Pair[%s, %s]", _1, _2);
 	}
 
-	static <T1, T2, T3> Tuple3<T1, T2, T3> of(final T1 p1, final T2 p2, final T3 p3) {
+	public static <T1, T2, T3> Tuple3<T1, T2, T3> of(final T1 p1, final T2 p2, final T3 p3) {
 		return new Tuple3<>(p1, p2, p3);
 	}
 

@@ -67,7 +67,7 @@ import io.jenetics.jpx.UInt;
  * @version !__version__!
  * @since !__version__!
  */
-final class Results implements ResultSet {
+public final class Results implements ResultSet {
 
 	private final ResultSet _rs;
 

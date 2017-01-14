@@ -37,7 +37,7 @@ import java.util.Optional;
  * @since !__version__!
  */
 @FunctionalInterface
-interface RowParser<T> {
+public interface RowParser<T> {
 
 	/**
 	 * Converts the row on the current cursor position into a data object.
@@ -46,14 +46,14 @@ interface RowParser<T> {
 	 * @return the stored data object
 	 * @throws SQLException if reading of the current row fails
 	 */
-	T parse(final Results rs) throws SQLException;
+	public T parse(final Results rs) throws SQLException;
 
 	/**
 	 * Return a new parser which expects at least one result.
 	 *
 	 * @return a new parser which expects at least one result
 	 */
-	default RowParser<T> single() {
+	public default RowParser<T> single() {
 		return rs -> {
 			if (rs.next()) {
 				return parse(rs);
@@ -67,7 +67,7 @@ interface RowParser<T> {
 	 *
 	 * @return a new parser which parses a single selection result
 	 */
-	default RowParser<Optional<T>> singleOpt() {
+	public default RowParser<Optional<T>> singleOpt() {
 		return rs -> rs.next()
 			? Optional.ofNullable(parse(rs))
 			: Optional.empty();
@@ -78,7 +78,7 @@ interface RowParser<T> {
 	 *
 	 * @return a new parser witch parses a the whole selection result
 	 */
-	default RowParser<List<T>> list() {
+	public default RowParser<List<T>> list() {
 		return rs -> {
 			final List<T> result = new ArrayList<>();
 			while (rs.next()) {

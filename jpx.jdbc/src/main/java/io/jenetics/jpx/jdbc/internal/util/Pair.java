@@ -33,17 +33,17 @@ import java.util.Objects;
  * @version !__version__!
  * @since !__version__!
  */
-final class Pair<A, B> {
+public final class Pair<A, B> {
 
 	/**
 	 * The fist value.
 	 */
-	final A _1;
+	public final A _1;
 
 	/**
 	 * The second value.
 	 */
-	final B _2;
+	public final B _2;
 
 	private Pair(final A a, final B b) {
 		_1 = a;
@@ -55,7 +55,7 @@ final class Pair<A, B> {
 	 *
 	 * @return the first value
 	 */
-	A _1() {
+	public A _1() {
 		return _1;
 	}
 
@@ -64,7 +64,7 @@ final class Pair<A, B> {
 	 *
 	 * @return the second value
 	 */
-	B _2() {
+	public B _2() {
 		return _2;
 	}
 

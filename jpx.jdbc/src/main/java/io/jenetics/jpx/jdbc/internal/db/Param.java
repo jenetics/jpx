@@ -37,7 +37,7 @@ import java.util.stream.LongStream;
  * @version !__version__!
  * @since !__version__!
  */
-final class Param {
+public final class Param {
 
 	private final String _name;
 	private final Collection<? extends Object> _values;
@@ -52,7 +52,7 @@ final class Param {
 	 *
 	 * @return the parameter name
 	 */
-	String name() {
+	public String name() {
 		return _name;
 	}
 
@@ -61,7 +61,7 @@ final class Param {
 	 *
 	 * @return the parameter values
 	 */
-	Collection<? extends Object> values() {
+	public Collection<? extends Object> values() {
 		return _values;
 	}
 

@@ -56,7 +56,7 @@ import io.jenetics.jpx.UInt;
  * @version !__version__!
  * @since !__version__!
  */
-final class PreparedSQL {
+public final class PreparedSQL {
 	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
 
 	private final String _query;
@@ -78,7 +78,7 @@ final class PreparedSQL {
 	 * @throws SQLException if the preparing fails
 	 * @throws NullPointerException if the connection is {@code null}
 	 */
-	PreparedStatement prepare(final Connection conn)
+	public PreparedStatement prepare(final Connection conn)
 		throws SQLException
 	{
 		requireNonNull(conn);
@@ -92,7 +92,7 @@ final class PreparedSQL {
 	 * @throws SQLException if the statement preparation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	void fill(final PreparedStatement stmt, final List<Param> params)
+	public void fill(final PreparedStatement stmt, final List<Param> params)
 		throws SQLException
 	{
 		requireNonNull(stmt);
@@ -161,7 +161,7 @@ final class PreparedSQL {
 	 *
 	 * @return the prepared statement query
 	 */
-	String getQuery() {
+	public String getQuery() {
 		return _query;
 	}
 
@@ -217,7 +217,7 @@ final class PreparedSQL {
 	 * @throws SQLException if the preparation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	static PreparedStatement prepare(
+	public static PreparedStatement prepare(
 		final String sql,
 		final List<Param> params,
 		final Connection conn

@@ -36,9 +36,6 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import io.jenetics.jpx.jdbc.Diff;
-import io.jenetics.jpx.jdbc.SQLQuery;
-
 /**
  * Abstract DAO class which implements the methods for doing easy SQL.
  *
@@ -46,7 +43,7 @@ import io.jenetics.jpx.jdbc.SQLQuery;
  * @version !__version__!
  * @since !__version__!
  */
-abstract class DAO {
+public abstract class DAO {
 
 	private final Connection _conn;
 
@@ -56,7 +53,7 @@ abstract class DAO {
 	 * @param conn the DB connection used for the DAO operations
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	DAO(final Connection conn) {
+	protected DAO(final Connection conn) {
 		_conn = requireNonNull(conn);
 	}
 
@@ -67,7 +64,7 @@ abstract class DAO {
 	 * @param <T> the DAO type
 	 * @return a new DAO object of type {@code T}
 	 */
-	<T extends DAO> T with(final Function<Connection, T> create) {
+	protected <T extends DAO> T with(final Function<Connection, T> create) {
 		return create.apply(_conn);
 	}
 
@@ -79,7 +76,7 @@ abstract class DAO {
 	 * @throws NullPointerException if the given {@code query} string is
 	 *         {@code null}
 	 */
-	SQLQuery SQL(final String query) {
+	protected SQLQuery SQL(final String query) {
 		return new SQLQuery(_conn, query);
 	}
 
@@ -89,7 +86,7 @@ abstract class DAO {
 	 * @param query the insert SQL query
 	 * @return a new batch insert query object
 	 */
-	BatchQuery Batch(final String query) {
+	protected BatchQuery Batch(final String query) {
 		return new BatchQuery(_conn, query);
 	}
 
@@ -107,7 +104,7 @@ abstract class DAO {
 	 * @throws SQLException if the DB operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	static <T, K> List<Stored<T>> put(
+	protected static <T, K> List<Stored<T>> put(
 		final Collection<T> values,
 		final Function<T, K> key,
 		final SQL.Function<Collection<T>, List<Stored<T>>> select,
@@ -172,7 +169,7 @@ abstract class DAO {
 	 * @throws SQLException if the DB write fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	static <A, B> Map<B, Long> write(
+	protected static <A, B> Map<B, Long> write(
 		final Collection<A> values,
 		final ListMapper<A, B> mapper,
 		final SQL.Function<List<B>, List<Stored<B>>> writer
@@ -201,7 +198,7 @@ abstract class DAO {
 	 * @throws SQLException if the DB write fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	static <A, B> Map<B, Long> write(
+	protected static <A, B> Map<B, Long> write(
 		final Collection<A> values,
 		final OptionMapper<A, B> mapper,
 		final SQL.Function<List<B>, List<Stored<B>>> writer
@@ -218,7 +215,7 @@ abstract class DAO {
 	 * @return the DB id of the inserted record
 	 * @throws SQLException if fetching the ID fails
 	 */
-	static long readID(final Statement stmt) throws SQLException {
+	protected static long readID(final Statement stmt) throws SQLException {
 		try (ResultSet keys = stmt.getGeneratedKeys()) {
 			if (keys.next()) {
 				return keys.getLong(1);

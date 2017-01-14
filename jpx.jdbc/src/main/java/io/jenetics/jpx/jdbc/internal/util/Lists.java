@@ -32,25 +32,25 @@ import io.jenetics.jpx.jdbc.internal.db.OptionMapper;
  * @version !__version__!
  * @since !__version__!
  */
-final class Lists {
+public final class Lists {
 
 	private Lists() {
 	}
 
-	static <A, B> List<B> map(final Collection<A> values, final Function<A, B> mapper) {
+	public static <A, B> List<B> map(final Collection<A> values, final Function<A, B> mapper) {
 		return values.stream()
 			.map(mapper)
 			.collect(Collectors.toList());
 	}
 
-	static <A, B> List<B> flatMap(
+	public static <A, B> List<B> flatMap(
 		final Collection<A> values,
 		final OptionMapper<A, B> mapper
 	) {
 		return flatMap(values, mapper.toListMapper());
 	}
 
-	static <A, B> List<B> flatMap(
+	public static <A, B> List<B> flatMap(
 		final Collection<A> values,
 		final ListMapper<A, B> mapper
 	) {

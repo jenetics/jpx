@@ -20,7 +20,7 @@
 package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.util.Collections.singletonList;
-import static io.jenetics.jpx.jdbc.Lists.map;
+import static io.jenetics.jpx.jdbc.internal.util.Lists.map;
 
 import java.sql.SQLException;
 import java.util.Collection;

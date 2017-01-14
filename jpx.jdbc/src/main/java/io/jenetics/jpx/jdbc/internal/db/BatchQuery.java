@@ -32,12 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import io.jenetics.jpx.jdbc.DAO;
-import io.jenetics.jpx.jdbc.Param;
-import io.jenetics.jpx.jdbc.PreparedSQL;
-import io.jenetics.jpx.jdbc.Results;
-import io.jenetics.jpx.jdbc.RowParser;
-
 /**
  * Represents batch insert query.
  *

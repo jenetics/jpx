@@ -52,7 +52,7 @@ import java.util.function.BiPredicate;
  * @version !__version__!
  * @since !__version__!
  */
-final class Diff<K, E, A> {
+public final class Diff<K, E, A> {
 
 	private final Map<K, E> _existing;
 	private final Map<K, A> _actual;
@@ -74,27 +74,27 @@ final class Diff<K, E, A> {
 		_intersection.retainAll(_actual.keySet());
 	}
 
-	List<A> missing() {
+	public List<A> missing() {
 		return _actual.entrySet().stream()
 			.filter(entry -> !_intersection.contains(entry.getKey()))
 			.map(Map.Entry::getValue)
 			.collect(toList());
 	}
 
-	List<E> removed() {
+	public List<E> removed() {
 		return _existing.entrySet().stream()
 			.filter(entry -> !_intersection.contains(entry.getKey()))
 			.map(Map.Entry::getValue)
 			.collect(toList());
 	}
 
-	Map<E, A> updated(final BiPredicate<E, A> equals) {
+	public Map<E, A> updated(final BiPredicate<E, A> equals) {
 		return _intersection.stream()
 			.filter(key -> !equals.test(_existing.get(key), _actual.get(key)))
 			.collect(toMap(_existing::get, _actual::get, (a, b) -> b));
 	}
 
-	List<E> unchanged(final BiPredicate<E, A> equals) {
+	public List<E> unchanged(final BiPredicate<E, A> equals) {
 		return _intersection.stream()
 			.filter(key -> equals.test(_existing.get(key), _actual.get(key)))
 			.map(_existing::get)
@@ -109,7 +109,7 @@ final class Diff<K, E, A> {
 	 *        the DB update)
 	 * @return a new diff object
 	 */
-	static <K, E, A> Diff<K, E, A> of(
+	public static <K, E, A> Diff<K, E, A> of(
 		final Map<K, E> existing,
 		final Map<K, A> actual
 	) {
