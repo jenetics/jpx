@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc;
+package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.lang.String.format;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -48,7 +48,6 @@ import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.Speed;
 import io.jenetics.jpx.UInt;
-import io.jenetics.jpx.jdbc.internal.db.Param;
 
 /**
  * Represents a SQL query for usage with a {@link PreparedStatement}.
