@@ -24,7 +24,7 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.Lists.map;
+import static io.jenetics.jpx.jdbc.internal.util.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;

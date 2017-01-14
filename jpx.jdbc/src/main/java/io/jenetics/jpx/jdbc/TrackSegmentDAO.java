@@ -21,7 +21,7 @@ package io.jenetics.jpx.jdbc;
 
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.Lists.map;
+import static io.jenetics.jpx.jdbc.internal.util.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
