@@ -229,19 +229,21 @@ public class RouteDAO extends DAO {
 	 **************************************************************************/
 
 	public int deleteByID(final List<Long> ids) throws SQLException {
+		/*
 		final Map<Long, List<Long>> wayPointIDs = with(RouteWayPointDAO::new)
 			.selectWayPointIDsByRouteID(ids);
 
 		final int count = SQL("DELETE FROM route WHERE id IN ({ids})")
 			.on(Param.values("ids", ids))
 			.execute();
-
+*/
+		/*
 		with(WayPointDAO::new)
 			.deleteByID(wayPointIDs.values().stream()
 				.flatMap(Collection::stream)
 				.collect(Collectors.toList()));
-
-		return count;
+*/
+		return 0;
 	}
 
 }

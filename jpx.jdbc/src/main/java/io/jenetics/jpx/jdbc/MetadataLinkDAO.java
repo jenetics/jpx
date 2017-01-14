@@ -110,6 +110,10 @@ public final class MetadataLinkDAO
 			Stored.of(row.getMetadataID(), row));
 	}
 
+	/* *************************************************************************
+	 * DELETE queries
+	 **************************************************************************/
+
 	@Override
 	public <V, C> int deleteByVals(
 		final Column<V, C> column,

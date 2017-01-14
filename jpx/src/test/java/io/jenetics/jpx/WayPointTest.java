@@ -77,7 +77,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			.pdop(random.nextBoolean() ? random.nextDouble() + 2: null)
 			.ageofdgpsdata(random.nextBoolean() ? Duration.ofSeconds(random.nextInt(1000)) : null)
 			.dgpsid(random.nextBoolean() ? DGPSStation.of(random.nextInt(100)) : null)
-			.build(48 + random.nextDouble()*2, 16 + random.nextDouble()*2);
+			.build(LatitudeTest.nextLatitude(random), LongitudeTest.nextLongitude(random));
 	}
 
 	public static List<WayPoint> nextWayPoints(final Random random) {

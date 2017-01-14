@@ -162,11 +162,15 @@ final class CopyrightDAO
 		throws SQLException
 	{
 		final String query =
-			"UPDATE copyright SET year = {year}, license = {license} " +
+			"UPDATE copyright " +
+			"SET author = {author}, " +
+				"year = {year}, " +
+				"license = {license} " +
 			"WHERE id = {id}";
 
 		Batch(query).update(copyrights, copyright -> asList(
 			Param.value("id", copyright.id()),
+			Param.value("author", copyright.value().getAuthor()),
 			Param.value("year", copyright.value().getYear()),
 			Param.value("license", copyright.value().getLicense())
 		));

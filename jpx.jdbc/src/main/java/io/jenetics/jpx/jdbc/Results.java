@@ -114,7 +114,7 @@ final class Results implements ResultSet {
 
 	public Longitude getLongitude(final String columnName) throws SQLException {
 		final Double value = get(Double.class, columnName);
-		return value != null ? Longitude.ofRadians(value) : null;
+		return value != null ? Longitude.ofDegrees(value) : null;
 	}
 
 	public Length getLength(final String columnName) throws SQLException {

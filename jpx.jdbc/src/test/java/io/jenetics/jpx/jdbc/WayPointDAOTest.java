@@ -28,42 +28,44 @@ import java.util.Random;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import io.jenetics.jpx.Copyright;
-import io.jenetics.jpx.CopyrightTest;
+import io.jenetics.jpx.WayPoint;
+import io.jenetics.jpx.WayPointTest;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
  */
-public class CopyrightDAOTest extends DAOTestBase<Copyright> {
+public class WayPointDAOTest extends DAOTestBase<WayPoint> {
 
 	@Override
-	public Copyright nextObject(final Random random) {
-		return CopyrightTest.nextCopyright(random);
+	public WayPoint nextObject(final Random random) {
+		return WayPointTest.nextWayPoint(random);
 	}
 
-	private final List<Copyright> objects = nextObjects(new Random(123), 20);
+	private final List<WayPoint> objects = nextObjects(new Random(), 20);
 
 	@Test
 	public void insert() throws SQLException {
 		db.transaction(conn -> {
-			new CopyrightDAO(conn).insert(objects);
+			new WayPointDAO(conn).insert(objects);
 		});
 	}
 
 	@Test(dependsOnMethods = "insert")
 	public void select() throws SQLException {
-		final List<Stored<Copyright>> existing = db.transaction(conn -> {
-			return new CopyrightDAO(conn).select();
+		final List<Stored<WayPoint>> existing = db.transaction(conn -> {
+			return new WayPointDAO(conn).select();
 		});
 
 		Assert.assertEquals(map(existing, Stored::value), objects);
 	}
 
 	@Test(dependsOnMethods = "insert")
-	public void selectByAuthor() throws SQLException {
-		final List<Stored<Copyright>> selected = db.transaction(conn -> {
-			return new CopyrightDAO(conn)
-				.selectBy("author", objects.get(0).getAuthor());
+	public void selectByLat() throws SQLException {
+		final List<Stored<WayPoint>> selected = db.transaction(conn -> {
+			return new WayPointDAO(conn)
+				.selectBy("lat", objects.get(0).getLatitude());
 		});
 
 		Assert.assertEquals(selected.get(0).value(), objects.get(0));
@@ -71,32 +73,32 @@ public class CopyrightDAOTest extends DAOTestBase<Copyright> {
 
 	@Test(dependsOnMethods = "select")
 	public void update() throws SQLException {
-		final List<Stored<Copyright>> existing = db.transaction(conn -> {
-			return new CopyrightDAO(conn).select();
+		final List<Stored<WayPoint>> existing = db.transaction(conn -> {
+			return new WayPointDAO(conn).select();
 		});
 
 		db.transaction(conn -> {
-			final Stored<Copyright> updated = existing.get(0)
+			final Stored<WayPoint> updated = existing.get(0)
 				.map(l -> nextObject(new Random()));
 
 			Assert.assertEquals(
-				new CopyrightDAO(conn).update(updated),
+				new WayPointDAO(conn).update(updated),
 				updated
 			);
 
-			Assert.assertEquals(new CopyrightDAO(conn).select().get(0), updated);
+			Assert.assertEquals(new WayPointDAO(conn).select().get(0), updated);
 		});
 	}
 
 	@Test(dependsOnMethods = "update")
 	public void delete() throws SQLException {
 		db.transaction(conn -> {
-			final CopyrightDAO dao = new CopyrightDAO(conn);
+			final WayPointDAO dao = new WayPointDAO(conn);
 
-			final List<Stored<Copyright>> existing = dao.select();
+			final List<Stored<WayPoint>> existing = dao.select();
 
 			final int count = dao
-				.deleteBy(Column.of("author", a -> a.value().getAuthor()), existing.get(0));
+				.deleteBy(Column.of("lat", md -> md.value().getLatitude()), existing.get(0));
 
 			Assert.assertEquals(count, 1);
 

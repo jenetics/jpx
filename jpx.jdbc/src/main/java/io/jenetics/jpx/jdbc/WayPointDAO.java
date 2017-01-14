@@ -20,12 +20,13 @@
 package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
-import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Duration;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -46,7 +47,14 @@ import io.jenetics.jpx.WayPoint;
  * @version !__version__!
  * @since !__version__!
  */
-public class WayPointDAO extends DAO {
+public class WayPointDAO
+	extends DAO
+	implements
+		SelectBy<WayPoint>,
+		Insert<WayPoint>,
+		Update<WayPoint>,
+		Delete
+{
 
 	private static final class Row {
 		final Latitude latitude;
@@ -177,7 +185,7 @@ public class WayPointDAO extends DAO {
 				"pdop, " +
 				"ageofdgpsdata, " +
 				"dgpsid " +
-			"FROM waypoint " +
+			"FROM way_point " +
 			"ORDER BY id ASC";
 
 		final List<Stored<Row>> rows = SQL(query).as(RowParser.list());
@@ -188,7 +196,7 @@ public class WayPointDAO extends DAO {
 		throws SQLException
 	{
 		final Map<Long, List<Link>> links = with(WayPointLinkDAO::new)
-			.selectLinksByWayPointID(map(rows, Stored::id));
+			.selectLinks(rows, Stored::id);
 
 		return rows.stream()
 			.map(row -> Stored.of(
@@ -220,13 +228,20 @@ public class WayPointDAO extends DAO {
 			.collect(Collectors.toList());
 	}
 
-	public List<Stored<WayPoint>> selectByID(final List<Long> ids)
+	@Override
+	public <V, C> List<Stored<WayPoint>> selectByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
 		throws SQLException
 	{
-		return toWayPoint(selectRowsByID(ids));
+		return toWayPoint(selectRowsByVal(column, values));
 	}
 
-	private List<Stored<Row>> selectRowsByID(final List<Long> ids)
+	private <V, C> List<Stored<Row>> selectRowsByVal(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
 		throws SQLException
 	{
 		final String query =
@@ -251,12 +266,12 @@ public class WayPointDAO extends DAO {
 				"pdop, " +
 				"ageofdgpsdata, " +
 				"dgpsid " +
-			"FROM waypoint " +
-			"WHERE id IN ({ids}) " +
-			"ORDER BY id ASC";
+			"FROM way_point " +
+			"WHERE "+column.name()+" IN ({values}) " +
+			"ORDER BY id";
 
 		return SQL(query)
-			.on(Param.values("ids", ids))
+			.on(Param.values("values", values, column.mapper()))
 			.as(RowParser.list());
 	}
 
@@ -264,14 +279,8 @@ public class WayPointDAO extends DAO {
 	 * INSERT queries
 	 **************************************************************************/
 
-	/**
-	 * Insert the given person list into the DB.
-	 *
-	 * @param wayPoints the persons to insert
-	 * @return return the stored persons
-	 * @throws SQLException if inserting fails
-	 */
-	public List<Stored<WayPoint>> insert(final List<WayPoint> wayPoints)
+	@Override
+	public List<Stored<WayPoint>> insert(final Collection<WayPoint> wayPoints)
 		throws SQLException
 	{
 		final String query =
@@ -324,7 +333,7 @@ public class WayPointDAO extends DAO {
 			Batch(query).insert(wayPoints, wp -> asList(
 				Param.value("lat", wp.getLatitude()),
 				Param.value("lon", wp.getLongitude()),
-				Param.value("elem", wp.getElevation()),
+				Param.value("ele", wp.getElevation()),
 				Param.value("speed", wp.getSpeed()),
 				Param.value("time", wp.getTime()),
 				Param.value("magvar", wp.getMagneticVariation()),
@@ -347,9 +356,9 @@ public class WayPointDAO extends DAO {
 		final Map<Link, Long> links = DAO
 			.write(wayPoints, WayPoint::getLinks, with(LinkDAO::new)::put);
 
-		final List<Pair<Long, Long>> wayPointLinks = inserted.stream()
+		final List<WayPointLink> wayPointLinks = inserted.stream()
 			.flatMap(md -> md.value().getLinks().stream()
-				.map(l -> Pair.of(md.id(), links.get(l))))
+				.map(l -> WayPointLink.of(md.id(), links.get(l))))
 			.collect(Collectors.toList());
 
 		with(WayPointLinkDAO::new).insert(wayPointLinks);
@@ -357,14 +366,113 @@ public class WayPointDAO extends DAO {
 		return inserted;
 	}
 
+
+	/* *************************************************************************
+	 * UPDATE queries
+	 **************************************************************************/
+
+	@Override
+	public List<Stored<WayPoint>> update(
+		final Collection<Stored<WayPoint>> wayPoints
+	)
+		throws SQLException
+	{
+		final String query =
+			"UPDATE way_point " +
+				"SET lat = {lat}, " +
+				"lon = {lon}, " +
+				"ele = {ele}, " +
+				"speed = {speed}, " +
+				"time = {time}, " +
+				"magvar = {magvar}, " +
+				"geoidheight = {geoidheight}, " +
+				"name = {name}, " +
+				"cmt = {cmt}, " +
+				"desc = {desc}, " +
+				"src = {src}, " +
+				"sym = {sym}, " +
+				"type = {type}, " +
+				"fix = {fix}, " +
+				"sat = {sat}, " +
+				"hdop = {hdop}, " +
+				"vdop = {vdop}, " +
+				"pdop = {pdop}, " +
+				"ageofdgpsdata = {ageofdgpsdata}, " +
+				"dgpsid = {dgpsid} " +
+			"WHERE id = {id}";
+
+		// Update way-points.
+		Batch(query).update(wayPoints, wp -> asList(
+			Param.value("id", wp.id()),
+			Param.value("lat", wp.value().getLatitude()),
+			Param.value("lon", wp.value().getLongitude()),
+			Param.value("ele", wp.value().getElevation()),
+			Param.value("speed", wp.value().getSpeed()),
+			Param.value("time", wp.value().getTime()),
+			Param.value("magvar", wp.value().getMagneticVariation()),
+			Param.value("geoidheight", wp.value().getGeoidHeight()),
+			Param.value("name", wp.value().getName()),
+			Param.value("cmt", wp.value().getComment()),
+			Param.value("desc", wp.value().getDescription()),
+			Param.value("src", wp.value().getSource()),
+			Param.value("sym", wp.value().getSymbol()),
+			Param.value("type", wp.value().getType()),
+			Param.value("fix", wp.value().getFix()),
+			Param.value("sat", wp.value().getSat()),
+			Param.value("hdop", wp.value().getHdop()),
+			Param.value("vdop", wp.value().getVdop()),
+			Param.value("pdop", wp.value().getPdop()),
+			Param.value("ageofdgpsdata", wp.value().getAgeOfGPSData()),
+			Param.value("dgpsid", wp.value().getDGPSID())
+		));
+
+		// Update metadata links.
+		with(WayPointLinkDAO::new)
+			.deleteByVals(Column.of("way_point_id", Stored::id), wayPoints);
+
+		final Map<Link, Long> links = DAO.write(
+			wayPoints,
+			(ListMapper<Stored<WayPoint>, Link>)md -> md.value().getLinks(),
+			with(LinkDAO::new)::put
+		);
+
+		final List<Pair<Long, Long>> wayPointLinks = wayPoints.stream()
+			.flatMap(md -> md.value().getLinks().stream()
+				.map(l -> Pair.of(md.id(), links.get(l))))
+			.collect(Collectors.toList());
+
+		with(WayPointLinkDAO::new)
+			.insert(wayPointLinks, WayPointLink::of);
+
+		return new ArrayList<>(wayPoints);
+	}
+
 	/* *************************************************************************
 	 * DELETE queries
 	 **************************************************************************/
 
-	public int deleteByID(final List<Long> ids) throws SQLException {
-		return SQL("DELETE FROM way_point WHERE id IN ({ids})")
-			.on(Param.values("ids", ids))
-			.execute();
+	@Override
+	public <V, C> int deleteByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
+		throws SQLException
+	{
+		final List<Stored<Row>> rows = selectRowsByVal(column, values);
+
+		final int count;
+		if (!rows.isEmpty()) {
+			final String query =
+				"DELETE FROM way_point WHERE id IN ({ids})";
+
+			count = SQL(query)
+				.on(Param.values("ids", rows, Stored::id))
+				.execute();
+		} else {
+			count = 0;
+		}
+
+		return count;
 	}
 
 }

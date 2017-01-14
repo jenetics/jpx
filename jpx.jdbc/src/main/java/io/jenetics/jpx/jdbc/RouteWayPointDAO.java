@@ -77,6 +77,7 @@ public class RouteWayPointDAO extends DAO {
 	public Map<Long, List<WayPoint>> selectWayPointsByRouteID(final List<Long> ids)
 		throws SQLException
 	{
+		/*
 		final String query =
 			"SELECT route_id, way_point_id " +
 			"FROM route_way_point " +
@@ -110,6 +111,9 @@ public class RouteWayPointDAO extends DAO {
 		return rows.stream()
 			.map(row -> Pair.of(row.routeID, row.wayPointID))
 			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
+			*/
+
+		return null;
 	}
 
 	/* *************************************************************************

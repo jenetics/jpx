@@ -24,11 +24,14 @@ import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.mapping;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
+import static io.jenetics.jpx.jdbc.Lists.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.jenetics.jpx.Link;
 
@@ -37,80 +40,102 @@ import io.jenetics.jpx.Link;
  * @version !__version__!
  * @since !__version__!
  */
-public class WayPointLinkDAO extends DAO {
-
-	/**
-	 * Represents a row in the "metadata_link" table.
-	 */
-	private static final class Row {
-		final Long wayPointID;
-		final Long linkID;
-
-		Row(final Long wayPointID, final Long linkID) {
-			this.wayPointID = wayPointID;
-			this.linkID = linkID;
-		}
-
-		Long wayPointID() {
-			return wayPointID;
-		}
-
-		Long linkID() {
-			return linkID;
-		}
-	}
+public class WayPointLinkDAO
+	extends DAO
+	implements
+		Insert<WayPointLink>,
+		Delete
+{
 
 	public WayPointLinkDAO(final Connection conn) {
 		super(conn);
 	}
 
-	private static final RowParser<Row> RowParser = rs -> new Row(
+	private static final RowParser<Stored<WayPointLink>> RowParser = rs -> Stored.of(
 		rs.getLong("way_point_id"),
-		rs.getLong("link_id")
+		WayPointLink.of(
+			rs.getLong("way_point_id"),
+			rs.getLong("link_id")
+		)
 	);
 
 	/* *************************************************************************
 	 * SELECT queries
 	 **************************************************************************/
 
-	public Map<Long, List<Link>> selectLinksByWayPointID(final List<Long> ids)
+	public <T> Map<Long, List<Link>> selectLinks(
+		final Collection<T> values,
+		final Function<T, Long> mapper
+	)
 		throws SQLException
 	{
 		final String query =
 			"SELECT way_point_id, link_id " +
 			"FROM way_point_link " +
-			"WHERE way_point_id IN ({ids})";
+			"WHERE way_point_id IN ({ids}) " +
+			"ORDER BY link_id";
 
-		final List<Row> rows = SQL(query)
-			.on(Param.values("ids", ids))
+		final List<Stored<WayPointLink>> rows = SQL(query)
+			.on(Param.values("ids", values, mapper))
 			.as(RowParser.list());
 
 		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByVals(Column.of("id", Row::linkID), rows).stream()
+			.selectByVals(Column.of("id", row -> row.value().getLinkID()), rows)
+			.stream()
 			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
 
 		return rows.stream()
-			.map(row -> Pair.of(row.wayPointID, links.get(row.linkID)))
-			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
+			.collect(groupingBy(
+				Stored::id,
+				mapping(row -> links.get(row.value().getLinkID()), toList())));
 	}
 
 	/* *************************************************************************
 	 * INSERT queries
 	 **************************************************************************/
 
-	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> wayPointLinks)
+	@Override
+	public List<Stored<WayPointLink>> insert(final Collection<WayPointLink> rows)
 		throws SQLException
 	{
 		final String query =
 			"INSERT INTO way_point_link(way_point_id, link_id) " +
 			"VALUES({way_point_id}, {link_id});";
 
-		Batch(query).execute(wayPointLinks, mdl -> asList(
-			Param.value("way_point_id", mdl._1),
-			Param.value("link_id", mdl._2)
+		Batch(query).execute(rows, row -> asList(
+			Param.value("way_point_id", row.getWayPointID()),
+			Param.value("link_id", row.getLinkID())
 		));
 
-		return wayPointLinks;
+		return map(rows, row ->
+			Stored.of(row.getWayPointID(), row));
+	}
+
+	/* *************************************************************************
+	 * DELETE queries
+	 **************************************************************************/
+
+	@Override
+	public <V, C> int deleteByVals(
+		final Column<V, C> column,
+		final Collection<V> values
+	)
+		throws SQLException
+	{
+		final int count;
+		if (!values.isEmpty()) {
+			final String query =
+				"DELETE FROM way_point_link WHERE "+column.name()+" IN ({values})";
+
+			count = SQL(query)
+				.on(Param.values("values", values, column.mapper()))
+				.execute();
+
+		} else {
+			count = 0;
+		}
+
+		return count;
 	}
 
 }

@@ -30,7 +30,6 @@ import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Bounds;
 import io.jenetics.jpx.BoundsTest;
-import io.jenetics.jpx.LongitudeTest;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -78,12 +77,7 @@ public class BoundsDAOTest extends DAOTestBase<Bounds> {
 
 		db.transaction(conn -> {
 			final Stored<Bounds> updated = existing.get(0)
-				.map(b -> Bounds.of(
-						b.getMinLatitude(),
-						b.getMinLongitude(),
-						b.getMaxLatitude(),
-						LongitudeTest.nextLongitude(new Random()))
-					);
+				.map(b -> nextObject(new Random()));
 
 			Assert.assertEquals(
 				new BoundsDAO(conn).update(updated),
@@ -99,8 +93,10 @@ public class BoundsDAOTest extends DAOTestBase<Bounds> {
 		db.transaction(conn -> {
 			final BoundsDAO dao = new BoundsDAO(conn);
 
+			final List<Stored<Bounds>> existing = dao.select();
+
 			final int count = dao
-				.deleteBy(Column.of("minlon", Bounds::getMinLongitude), objects.get(0));
+				.deleteBy(Column.of("minlon", b -> b.value().getMinLongitude()), existing.get(0));
 
 			Assert.assertEquals(count, 1);
 
