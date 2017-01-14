@@ -42,6 +42,7 @@ import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.Speed;
 import io.jenetics.jpx.UInt;
 import io.jenetics.jpx.WayPoint;
+import io.jenetics.jpx.jdbc.internal.db.Column;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

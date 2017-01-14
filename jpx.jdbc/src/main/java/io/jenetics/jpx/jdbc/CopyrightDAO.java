@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.jenetics.jpx.Copyright;
+import io.jenetics.jpx.jdbc.internal.db.Column;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

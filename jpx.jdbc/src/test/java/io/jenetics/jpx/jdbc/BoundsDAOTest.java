@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Bounds;
 import io.jenetics.jpx.BoundsTest;
+import io.jenetics.jpx.jdbc.internal.db.Column;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

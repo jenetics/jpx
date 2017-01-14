@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.jenetics.jpx.Link;
+import io.jenetics.jpx.jdbc.internal.db.Column;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

@@ -29,6 +29,7 @@ import java.util.Collections;
 import java.util.List;
 
 import io.jenetics.jpx.Link;
+import io.jenetics.jpx.jdbc.internal.db.Column;
 
 /**
  * DAO for the {@code Link} data class.

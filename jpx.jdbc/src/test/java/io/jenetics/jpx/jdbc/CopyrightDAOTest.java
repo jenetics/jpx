@@ -30,6 +30,7 @@ import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.CopyrightTest;
+import io.jenetics.jpx.jdbc.internal.db.Column;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

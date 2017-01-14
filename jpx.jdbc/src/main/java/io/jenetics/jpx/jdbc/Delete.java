@@ -24,6 +24,8 @@ import static java.util.Collections.singletonList;
 import java.sql.SQLException;
 import java.util.Collection;
 
+import io.jenetics.jpx.jdbc.internal.db.Column;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
