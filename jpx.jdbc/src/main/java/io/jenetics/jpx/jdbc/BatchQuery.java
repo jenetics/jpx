@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
+
 /**
  * Represents batch insert query.
  *

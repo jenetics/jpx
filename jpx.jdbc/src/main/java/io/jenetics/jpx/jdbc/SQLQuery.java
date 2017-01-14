@@ -28,6 +28,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.jenetics.jpx.jdbc.internal.db.AbstractQuery;
+
 /**
  * Represents a select SQL query.
  *

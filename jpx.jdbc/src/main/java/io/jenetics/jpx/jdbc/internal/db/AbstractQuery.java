@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc;
+package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.util.Objects.requireNonNull;
 
@@ -30,11 +30,11 @@ import java.sql.Connection;
  * @version !__version__!
  * @since !__version__!
  */
-abstract class AbstractQuery {
-	final Connection _conn;
-	final String _sql;
+public abstract class AbstractQuery {
+	protected final Connection _conn;
+	protected final String _sql;
 
-	AbstractQuery(final Connection conn, final String sql) {
+	protected AbstractQuery(final Connection conn, final String sql) {
 		_conn = requireNonNull(conn);
 		_sql = requireNonNull(sql);
 	}
