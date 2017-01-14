@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.jdbc.internal.db.ListMapper;
+import io.jenetics.jpx.jdbc.internal.db.OptionMapper;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
