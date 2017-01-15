@@ -19,59 +19,33 @@
  */
 package io.jenetics.jpx.jdbc.model;
 
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
+import io.jenetics.jpx.Copyright;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class LinkRow {
+public class CopyrightRow {
 	public final long id;
+	public String author;
+	public int year;
+	public String license;
 
-	public String href;
-	public String text;
-	public String type;
-
-	public LinkRow(
+	public CopyrightRow(
 		final long id,
-		final String href,
-		final String text,
-		final String type
+		final String author,
+		final int year,
+		final String license
 	) {
 		this.id = id;
-		this.href = href;
-		this.text = text;
-		this.type = type;
+		this.author = author;
+		this.year = year;
+		this.license = license;
 	}
 
-	public LinkRow(final long id) {
-		this.id = id;
-	}
-
-	public LinkRow fill(final LinkRow link) {
-		href = link.href;
-		text = link.text;
-		type = link.type;
-		return this;
-	}
-
-	public LinkRow copy() {
-		return new LinkRow(id, href, text, type);
-	}
-
-	public Link toLink() {
-		return Link.of(href, text, type);
-	}
-
-	public static LinkRow of(final Stored<Link> link) {
-		return new LinkRow(
-			link.id(),
-			link.value().getHref().toString(),
-			link.value().getText().orElse(null),
-			link.value().getType().orElse(null)
-		);
+	public Copyright toCopyright() {
+		return Copyright.of(author, year, license);
 	}
 
 }

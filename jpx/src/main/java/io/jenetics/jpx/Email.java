@@ -132,14 +132,18 @@ public final class Email implements Comparable<Email>, Serializable {
 	}
 
 	public static Email of(final String email) {
-		final String[] parts = email.split("@");
-		if (parts.length == 2) {
-			return of(parts[0], parts[1]);
-		} else {
-			throw new IllegalArgumentException(format(
-				"Email '%s' not valid.", email
-			));
+		if (email != null) {
+			final String[] parts = email.split("@");
+			if (parts.length == 2) {
+				return of(parts[0], parts[1]);
+			} else {
+				throw new IllegalArgumentException(format(
+					"Email '%s' not valid.", email
+				));
+			}
 		}
+
+		return null;
 	}
 
 

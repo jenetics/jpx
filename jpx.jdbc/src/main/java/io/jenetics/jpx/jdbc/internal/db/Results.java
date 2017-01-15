@@ -50,6 +50,7 @@ import java.time.Year;
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.function.Function;
 
 import io.jenetics.jpx.DGPSStation;
 import io.jenetics.jpx.Degrees;
@@ -80,6 +81,17 @@ public final class Results implements ResultSet {
 		throws SQLException
 	{
 		return type.cast(getObject(columnName));
+	}
+
+	public <A, B> B get(
+		final Class<A> type,
+		final Function<A, B> mapper,
+		final String columnName
+	)
+		throws SQLException
+	{
+		final A value = get(type, columnName);
+		return value != null ? mapper.apply(value) : null;
 	}
 
 	public ZonedDateTime getZonedDateTime(final String columnName)

@@ -21,6 +21,7 @@ package io.jenetics.jpx.jdbc;
 
 import static java.util.stream.Collectors.toMap;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -62,6 +63,13 @@ public class DiffTest {
 			missing.get(0),
 			Person.of("name_3", Email.of("name", "gmail.com"))
 		);
+	}
+
+	@Test
+	public void foo() {
+		final Map<String, String> map = new HashMap<>();
+		map.put(null, "");
+		map.get(null);
 	}
 
 }

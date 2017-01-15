@@ -19,59 +19,36 @@
  */
 package io.jenetics.jpx.jdbc.model;
 
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
+import io.jenetics.jpx.Bounds;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class LinkRow {
+public class BoundsRow {
 	public final long id;
+	public double minlat;
+	public double minlon;
+	public double maxlat;
+	public double maxlon;
 
-	public String href;
-	public String text;
-	public String type;
-
-	public LinkRow(
+	public BoundsRow(
 		final long id,
-		final String href,
-		final String text,
-		final String type
+		final double minlat,
+		final double minlon,
+		final double maxlat,
+		final double maxlon
 	) {
 		this.id = id;
-		this.href = href;
-		this.text = text;
-		this.type = type;
+		this.minlat = minlat;
+		this.minlon = minlon;
+		this.maxlat = maxlat;
+		this.maxlon = maxlon;
 	}
 
-	public LinkRow(final long id) {
-		this.id = id;
-	}
-
-	public LinkRow fill(final LinkRow link) {
-		href = link.href;
-		text = link.text;
-		type = link.type;
-		return this;
-	}
-
-	public LinkRow copy() {
-		return new LinkRow(id, href, text, type);
-	}
-
-	public Link toLink() {
-		return Link.of(href, text, type);
-	}
-
-	public static LinkRow of(final Stored<Link> link) {
-		return new LinkRow(
-			link.id(),
-			link.value().getHref().toString(),
-			link.value().getText().orElse(null),
-			link.value().getType().orElse(null)
-		);
+	public Bounds toBounds() {
+		return Bounds.of(minlat, minlon, maxlat, maxlon);
 	}
 
 }

@@ -19,38 +19,60 @@
  */
 package io.jenetics.jpx.jdbc.model;
 
-import io.jenetics.jpx.Email;
-import io.jenetics.jpx.Person;
+import static io.jenetics.jpx.jdbc.internal.util.Lists.map;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import io.jenetics.jpx.Metadata;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class PersonRow {
+public class MetadataRow {
 	public final long id;
-
 	public String name;
-	public String email;
-	public LinkRow link;
+	public String desc;
+	public PersonRow person;
+	public CopyrightRow copyright;
+	public final List<LinkRow> links = new ArrayList<>();
+	public ZonedDateTime time;
+	public String keywords;
+	public BoundsRow bounds;
 
-	public PersonRow(
+	public MetadataRow(
 		final long id,
 		final String name,
-		final String email,
-		final LinkRow link
+		final String desc,
+		final PersonRow person,
+		final CopyrightRow copyright,
+		final ZonedDateTime time,
+		final String keywords,
+		final BoundsRow bounds
 	) {
 		this.id = id;
 		this.name = name;
-		this.email = email;
-		this.link = link;
+		this.desc = desc;
+		this.person = person;
+		this.copyright = copyright;
+		this.time = time;
+		this.keywords = keywords;
+		this.bounds = bounds;
 	}
 
-	public Person toPerson() {
-		return Person.of(
+	public Metadata toMetadata() {
+		return Metadata.of(
 			name,
-			Email.of(email),
-			link != null ? link.toLink() : null
+			desc,
+			person != null ? person.toPerson() : null,
+			copyright != null ? copyright.toCopyright() : null,
+			map(links, LinkRow::toLink),
+			time,
+			keywords,
+			bounds != null ? bounds.toBounds() : null
 		);
 	}
 
