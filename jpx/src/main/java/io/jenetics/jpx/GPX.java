@@ -356,6 +356,18 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Set the GPX creator.
+		 *
+		 * @param creator the GPX creator
+		 * @throws NullPointerException if the given argument is {@code null}
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder creator(final String creator) {
+			_creator = requireNonNull(creator);
+			return this;
+		}
+
+		/**
 		 * Set the GPX metadata.
 		 *
 		 * @param metadata the GPX metadata
