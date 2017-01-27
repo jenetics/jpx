@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.mutable;
 import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLReader.attr;
 
@@ -394,7 +395,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
-			_wayPoints = wayPoints;
+			_wayPoints = mutable(wayPoints);
 			return this;
 		}
 
@@ -442,7 +443,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder routes(final List<Route> routes) {
-			_routes = routes;
+			_routes = mutable(routes);
 			return this;
 		}
 
@@ -489,7 +490,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder tracks(final List<Track> tracks) {
-			_tracks = tracks;
+			_tracks = mutable(tracks);
 			return this;
 		}
 

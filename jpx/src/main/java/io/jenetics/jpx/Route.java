@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.mutable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -344,7 +345,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			_links = links;
+			_links = mutable(links);
 			return this;
 		}
 
@@ -423,7 +424,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder points(final List<WayPoint> points) {
-			_points = points;
+			_points = mutable(points);
 			return this;
 		}
 

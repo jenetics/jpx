@@ -77,4 +77,15 @@ final class Lists {
 			: Collections.emptyList();
 	}
 
+	static <T> List<T> mutable(final List<T> list) {
+		List<T> result = list;
+		if (result == null) {
+			result = new ArrayList<>();
+		} else if (isImmutable(list)) {
+			result = new ArrayList<T>(list);
+		}
+
+		return result;
+	}
+
 }

@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.mutable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -158,7 +159,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder points(final List<WayPoint> points) {
-			_points = points;
+			_points = mutable(points);
 			return this;
 		}
 

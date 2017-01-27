@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.mutable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -357,7 +358,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			_links = links;
+			_links = mutable(links);
 			return this;
 		}
 
@@ -431,7 +432,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder segments(final List<TrackSegment> segments) {
-			_segments = segments;
+			_segments = mutable(segments);
 			return this;
 		}
 
