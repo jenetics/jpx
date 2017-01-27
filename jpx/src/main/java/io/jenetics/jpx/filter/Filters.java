@@ -36,9 +36,9 @@ import io.jenetics.jpx.WayPoint;
  * @version !__version__!
  * @since !__version__!
  */
-public final class Filter {
+public final class Filters {
 
-	private Filter() {
+	private Filters() {
 	}
 
 	public static GPX filter(final GPX gpx, final Predicate<? super WayPoint> filter) {
