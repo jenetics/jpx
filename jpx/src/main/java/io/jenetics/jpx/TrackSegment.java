@@ -29,7 +29,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -221,6 +223,41 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return new Builder();
 	}
 
+
+	public static final class Filter {
+
+		private final List<Function<? super TrackSegment, ? extends Stream<TrackSegment>>>
+		_filters = new ArrayList<>();
+
+		private Function<? super TrackSegment, ? extends Stream<TrackSegment>>
+		_filter = Stream::of;
+
+		public Filter map(final Function<? super TrackSegment, TrackSegment> mapper) {
+			_filters.add(mapper.andThen(Stream::of));
+			return this;
+		}
+
+		public Filter flatMap(
+			final Function<? super TrackSegment, ? extends Stream<TrackSegment>> mapper
+		) {
+			_filters.add(mapper);
+			return this;
+		}
+
+		public Filter withFilter(final WayPoint.Filter filter) {
+			return this;
+		}
+
+		public Stream<TrackSegment> filter(final TrackSegment segment) {
+			Stream<TrackSegment> stream = Stream.of(segment);
+			for (Function<? super TrackSegment, ? extends Stream<TrackSegment>> f : _filters) {
+				stream = stream.flatMap(f);
+			}
+
+			return stream;
+		}
+
+	}
 
 	/* *************************************************************************
 	 *  Static object creation methods

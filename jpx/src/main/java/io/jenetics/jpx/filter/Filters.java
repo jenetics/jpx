@@ -20,10 +20,16 @@
 package io.jenetics.jpx.filter;
 
 import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.groupingBy;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Route;
@@ -40,6 +46,27 @@ public final class Filters {
 
 	private Filters() {
 	}
+
+	public static Stream<TrackSegment> split(final TrackSegment segment) {
+		final Map<LocalDate, List<WayPoint>> parts = segment.points()
+			.collect(groupingBy(wp -> wp.getTime()
+				.map(ZonedDateTime::toLocalDate)
+				.orElse(LocalDate.MIN)));
+
+		return parts.values().stream()
+			.map(TrackSegment::of);
+	}
+
+	public static Track merge(final Track track) {
+		final List<WayPoint> points = track.segments()
+			.flatMap(TrackSegment::points)
+			.collect(Collectors.toList());
+
+		return track.toBuilder()
+			.segments(Collections.singletonList(TrackSegment.of(points)))
+			.build();
+	}
+
 
 	public static GPX filter(final GPX gpx, final Predicate<? super WayPoint> filter) {
 		final List<WayPoint> wayPoints = gpx.wayPoints()

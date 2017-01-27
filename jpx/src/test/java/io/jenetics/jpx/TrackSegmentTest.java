@@ -26,6 +26,9 @@ import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.TrackSegment.Filter;
+import io.jenetics.jpx.filter.Filters;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -57,6 +60,14 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		}
 
 		return segments;
+	}
+
+	public void filter() {
+		final TrackSegment segment = nextTrackSegment(new Random());
+
+		new TrackSegment.Filter()
+			.flatMap(Filters::split)
+			.filter(segment);
 	}
 
 }
