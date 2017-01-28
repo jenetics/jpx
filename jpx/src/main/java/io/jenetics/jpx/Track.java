@@ -39,6 +39,8 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import io.jenetics.jpx.filter.Filter;
+
 /**
  * Represents a GPX track - an ordered list of points describing a path.
  * <p>
@@ -234,16 +236,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				_segments.stream().allMatch(TrackSegment::isEmpty));
 	}
 
-	public Track filter(final Predicate<? super WayPoint> filter) {
-		final List<TrackSegment> segments = segments()
-			.map(segment -> segment.filter(filter))
-			.collect(Collectors.toList());
-
-		return toBuilder()
-			.segments(unmodifiableList(segments))
-			.build();
-	}
-
 	@Override
 	public int hashCode() {
 		int hash = 31;
@@ -294,7 +286,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder {
+	public static final class Builder implements Filter<TrackSegment, Track, Builder> {
 		private String _name;
 		private String _comment;
 		private String _description;
@@ -501,6 +493,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	public static Builder builder() {
 		return new Builder();
 	}
+
 
 	/* *************************************************************************
 	 *  Static object creation methods

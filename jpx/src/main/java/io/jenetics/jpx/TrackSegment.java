@@ -39,6 +39,9 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import io.jenetics.jpx.GPX.Builder;
+import io.jenetics.jpx.filter.Filter;
+
 /**
  * A Track Segment holds a list of Track Points which are logically connected in
  * order. To represent a single GPS track where GPS reception was lost, or the
@@ -148,7 +151,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder {
+	public static final class Builder implements Filter<WayPoint, TrackSegment, Builder> {
 		private List<WayPoint> _points;
 
 		private Builder() {
@@ -223,41 +226,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return new Builder();
 	}
 
-
-	public static final class Filter {
-
-		private final List<Function<? super TrackSegment, ? extends Stream<TrackSegment>>>
-		_filters = new ArrayList<>();
-
-		private Function<? super TrackSegment, ? extends Stream<TrackSegment>>
-		_filter = Stream::of;
-
-		public Filter map(final Function<? super TrackSegment, TrackSegment> mapper) {
-			_filters.add(mapper.andThen(Stream::of));
-			return this;
-		}
-
-		public Filter flatMap(
-			final Function<? super TrackSegment, ? extends Stream<TrackSegment>> mapper
-		) {
-			_filters.add(mapper);
-			return this;
-		}
-
-		public Filter withFilter(final WayPoint.Filter filter) {
-			return this;
-		}
-
-		public Stream<TrackSegment> filter(final TrackSegment segment) {
-			Stream<TrackSegment> stream = Stream.of(segment);
-			for (Function<? super TrackSegment, ? extends Stream<TrackSegment>> f : _filters) {
-				stream = stream.flatMap(f);
-			}
-
-			return stream;
-		}
-
-	}
 
 	/* *************************************************************************
 	 *  Static object creation methods

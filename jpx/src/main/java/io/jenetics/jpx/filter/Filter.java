@@ -19,50 +19,31 @@
  */
 package io.jenetics.jpx.filter;
 
-import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
-
-import io.jenetics.jpx.GPX;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class GPXFilter {
+public interface Filter<T, R, F extends Filter<T, R, F>> {
 
-	public GPXFilter map(final Function<? super GPX, GPX> mapper) {
-		return this;
+	public default F map(final Function<? super T, ? extends T> mapper) {
+		return null;
 	}
 
-	public GPXFilter builder(final Consumer<GPX.Builder> builder) {
-		return this;
+	public default F flatMap(final Function<? super T, ? extends Stream<? extends T>> mapper) {
+		return null;
 	}
 
-	public GPXFilter flatMap(
-		final Function<? super GPX, ? extends Stream<GPX>> mapper
-	) {
-		return this;
+	public default F withFilter(final Predicate<? super T> predicate) {
+		return null;
 	}
 
-	public GPXFilter withTrackFilter(final Consumer<TrackFilter> filter) {
-		return this;
-	}
-
-	public static void main(final String[] args) {
-		new GPXFilter()
-			.map(Function.identity())
-			.builder(gpx -> gpx
-				.metadata(md -> md
-					.author("Franz Wilhelmstötter")
-					.keywords("MTB, Road")))
-			.withTrackFilter(track -> track
-				.map(Function.identity())
-				.withSegmentFilter(segment -> segment
-					.map(Function.identity())))
-		;
+	public default R filter() {
+		return null;
 	}
 
 }
-

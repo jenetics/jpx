@@ -22,11 +22,13 @@ package io.jenetics.jpx.filter;
 import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.groupingBy;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -47,6 +49,72 @@ public final class Filters {
 	private Filters() {
 	}
 
+
+	public static void main(final String[] args) {
+		final GPX gpx = GPX.builder().build();
+
+		final Track track = Track.builder().build();
+
+		final Track track1 = track.toBuilder()
+			.map(segment -> segment.toBuilder()
+				.map(addDuration(Duration.ofSeconds(3))).filter())
+			.filter();
+
+		track.toBuilder()
+			.flatMap(merge())
+			.filter();
+
+
+		gpx.toBuilder()
+			.tracks()
+				.map(Filters::merge)
+				.map(Filters::splitByDay)
+				.filter()
+			.build();
+
+		;
+
+
+		gpx.toBuilder()
+			//.filterTracks(Filters::mergeTrackSegments)
+			.mapTracks(tracks -> tracks.map(Filters::mergeTrackSegments))
+
+		;
+
+	}
+
+	public static Function<WayPoint, WayPoint> addDuration(final Duration duration) {
+		return null;
+	}
+
+
+	public static List<Track> merge(final List<Track> tracks) {
+		tracks.stream()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+
+			;
+
+		return null;
+	}
+
+	public static List<Track> splitByDay(final List<Track> tracks) {
+		return null;
+	}
+
+	private static final class MergeTrackSegments
+		implements Function<TrackSegment, Stream<TrackSegment>>
+	{
+		@Override
+		public Stream<TrackSegment> apply(final TrackSegment wayPoints) {
+			return null;
+		}
+	}
+
+	public static Function<TrackSegment, Stream<TrackSegment>> merge() {
+		return null;
+	}
+
 	public static Stream<TrackSegment> split(final TrackSegment segment) {
 		final Map<LocalDate, List<WayPoint>> parts = segment.points()
 			.collect(groupingBy(wp -> wp.getTime()
@@ -57,7 +125,7 @@ public final class Filters {
 			.map(TrackSegment::of);
 	}
 
-	public static Track merge(final Track track) {
+	public static Track mergeTrackSegments(final Track track) {
 		final List<WayPoint> points = track.segments()
 			.flatMap(TrackSegment::points)
 			.collect(Collectors.toList());

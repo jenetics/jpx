@@ -36,6 +36,8 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import io.jenetics.jpx.filter.Filter;
+
 /**
  * Represents a route - an ordered list of way-points representing a series of
  * turn points leading to a destination.
@@ -279,7 +281,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder {
+	public static final class Builder implements Filter<WayPoint, Route, Builder> {
 
 		private String _name;
 		private String _comment;

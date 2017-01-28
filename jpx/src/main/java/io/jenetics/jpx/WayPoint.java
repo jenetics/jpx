@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
@@ -52,7 +53,6 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import io.jenetics.jpx.TrackSegment.Filter;
 
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
@@ -500,6 +500,10 @@ public final class WayPoint implements Point, Serializable {
 		private DGPSStation _dgpsID;
 
 		Builder() {
+		}
+
+		public Builder map(final Consumer<Builder> builder) {
+			return this;
 		}
 
 		public Builder lat(final Latitude latitude) {
@@ -1024,28 +1028,6 @@ public final class WayPoint implements Point, Serializable {
 		return new Builder();
 	}
 
-
-	public static final class Filter {
-
-		public Filter map(final Function<? super WayPoint, ? extends WayPoint> mapper) {
-			return null;
-		}
-
-		public Filter flatMap(
-			final Function<? super WayPoint, ? extends Stream<? extends WayPoint>> mapper
-		) {
-			return null;
-		}
-
-		public Filter withFilter(final Predicate<? extends WayPoint> predicate) {
-			return this;
-		}
-
-		public Stream<WayPoint> filter(final WayPoint point) {
-			return null;
-		}
-
-	}
 
 	/* *************************************************************************
 	 *  Static object creation methods

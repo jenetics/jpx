@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
@@ -48,6 +49,8 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import io.jenetics.jpx.filter.Filter;
 
 /**
  * GPX documents contain a metadata header, followed by way-points, routes, and
@@ -279,6 +282,18 @@ public final class GPX implements Serializable {
 		return _tracks.stream();
 	}
 
+	public Filter<WayPoint, GPX, ?> wayPointFilter() {
+		return null;
+	}
+
+	public Filter<Route, GPX, ?> routeFilter() {
+		return null;
+	}
+
+	public Filter<Track, GPX, ?> trackFilter() {
+		return null;
+	}
+
 	/**
 	 * Convert the <em>immutable</em> GPX object into a <em>mutable</em>
 	 * builder initialized with the current GPX values.
@@ -506,6 +521,10 @@ public final class GPX implements Serializable {
 			return this;
 		}
 
+		public Filter<List<Track>, Builder, ?> tracks() {
+			return null;
+		}
+
 		/**
 		 * Add a track the {@code GPX} object.
 		 *
@@ -542,6 +561,10 @@ public final class GPX implements Serializable {
 			final Track.Builder builder = Track.builder();
 			track.accept(builder);
 			return addTrack(builder.build());
+		}
+
+		public Builder mapTracks(final Function<Stream<Track>, Stream<Track>> tracks) {
+			return this;
 		}
 
 		/**
