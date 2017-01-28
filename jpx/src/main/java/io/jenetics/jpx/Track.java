@@ -476,6 +476,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *
 		 * @return a new GPX track from the current builder state
 		 */
+		@Override
 		public Track build() {
 			return new Track(
 				_name,

@@ -57,19 +57,20 @@ public final class Filters {
 
 		final Track track1 = track.toBuilder()
 			.map(segment -> segment.toBuilder()
-				.map(addDuration(Duration.ofSeconds(3))).filter())
-			.filter();
+				.map(addDuration(Duration.ofSeconds(3)))
+				.build())
+			.build();
 
 		track.toBuilder()
 			.flatMap(merge())
-			.filter();
+			.build();
 
 
 		gpx.toBuilder()
 			.tracks()
 				.map(Filters::merge)
 				.map(Filters::splitByDay)
-				.filter()
+				.build()
 			.build();
 
 		;

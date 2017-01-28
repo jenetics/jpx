@@ -42,7 +42,7 @@ public interface Filter<T, R, F extends Filter<T, R, F>> {
 		return null;
 	}
 
-	public default R filter() {
+	public default R build() {
 		return null;
 	}
 
