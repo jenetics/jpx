@@ -67,7 +67,7 @@ public final class Filters {
 
 
 		gpx.toBuilder()
-			.tracks()
+			.tracksFilter()
 				.map(Filters::merge)
 				.map(Filters::splitByDay)
 				.build()

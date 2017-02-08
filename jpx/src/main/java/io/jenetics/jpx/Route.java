@@ -281,7 +281,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder implements Filter<WayPoint, Route, Builder> {
+	public static final class Builder implements Filter<WayPoint, Route> {
 
 		private String _name;
 		private String _comment;

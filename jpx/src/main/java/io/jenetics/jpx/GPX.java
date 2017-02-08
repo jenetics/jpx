@@ -20,8 +20,10 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.isImmutable;
 import static io.jenetics.jpx.Lists.mutable;
 import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLReader.attr;
@@ -37,11 +39,14 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
@@ -282,18 +287,6 @@ public final class GPX implements Serializable {
 		return _tracks.stream();
 	}
 
-	public Filter<WayPoint, GPX, ?> wayPointFilter() {
-		return null;
-	}
-
-	public Filter<Route, GPX, ?> routeFilter() {
-		return null;
-	}
-
-	public Filter<Track, GPX, ?> trackFilter() {
-		return null;
-	}
-
 	/**
 	 * Convert the <em>immutable</em> GPX object into a <em>mutable</em>
 	 * builder initialized with the current GPX values.
@@ -361,9 +354,9 @@ public final class GPX implements Serializable {
 		private String _creator;
 		private String _version;
 		private Metadata _metadata;
-		private List<WayPoint> _wayPoints;;
-		private List<Route> _routes;
-		private List<Track> _tracks;
+		private List<WayPoint> _wayPoints = emptyList();
+		private List<Route> _routes = emptyList();
+		private List<Track> _tracks = emptyList();
 
 		private Builder(final String version, final String creator) {
 			_version = requireNonNull(version);
@@ -422,7 +415,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
-			_wayPoints = mutable(wayPoints);
+			_wayPoints = wayPoints != null ? wayPoints : emptyList();
 			return this;
 		}
 
@@ -435,9 +428,7 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public Builder addWayPoint(final WayPoint wayPoint) {
-			if (_wayPoints == null) {
-				_wayPoints = new ArrayList<>();
-			}
+			_wayPoints = mutable(_wayPoints);
 			_wayPoints.add(requireNonNull(wayPoint));
 
 			return this;
@@ -470,7 +461,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder routes(final List<Route> routes) {
-			_routes = mutable(routes);
+			_routes = routes != null ? routes : emptyList();
 			return this;
 		}
 
@@ -482,9 +473,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if the given {@code route} is {@code null}
 		 */
 		public Builder addRoute(final Route route) {
-			if (_routes == null) {
-				_routes = new ArrayList<>();
-			}
+			_routes = mutable(_routes);
 			_routes.add(requireNonNull(route));
 
 			return this;
@@ -517,12 +506,8 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder tracks(final List<Track> tracks) {
-			_tracks = mutable(tracks);
+			_tracks = tracks != null ? tracks : emptyList();
 			return this;
-		}
-
-		public Filter<List<Track>, Builder, ?> tracks() {
-			return null;
 		}
 
 		/**
@@ -533,9 +518,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if the given {@code track} is {@code null}
 		 */
 		public Builder addTrack(final Track track) {
-			if (_tracks == null) {
-				_tracks = new ArrayList<>();
-			}
+			_tracks = mutable(_tracks);
 			_tracks.add(requireNonNull(track));
 
 			return this;
@@ -581,6 +564,45 @@ public final class GPX implements Serializable {
 				_routes,
 				_tracks
 			);
+		}
+
+		public Filter<List<Track>, Builder> tracksFilter() {
+			return new Filter<List<Track>, Builder>() {
+				@Override
+				public Filter<List<Track>, Builder> map(
+					Function<? super List<Track>, ? extends List<Track>> mapper
+				) {
+					tracks(mapper.apply(mutable(_tracks)));
+					return this;
+				}
+
+				@Override
+				public Filter<List<Track>, Builder> flatMap(
+					Function<? super List<Track>, ? extends Stream<? extends List<Track>>> mapper
+				) {
+					tracks(
+						mapper.apply(mutable(_tracks))
+							.flatMap(List::stream)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<List<Track>, Builder> filter(
+					Predicate<? super List<Track>> predicate
+				) {
+					tracks(predicate.test(mutable(_tracks)) ? _tracks : null);
+
+					return this;
+				}
+
+				@Override
+				public Builder build() {
+					return Builder.this;
+				}
+			};
 		}
 
 	}

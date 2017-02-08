@@ -28,17 +28,17 @@ import java.util.stream.Stream;
  * @version !__version__!
  * @since !__version__!
  */
-public interface Filter<T, R, F extends Filter<T, R, F>> {
+public interface Filter<T, R> {
 
-	public default F map(final Function<? super T, ? extends T> mapper) {
+	public default Filter<T, R> map(final Function<? super T, ? extends T> mapper) {
 		return null;
 	}
 
-	public default F flatMap(final Function<? super T, ? extends Stream<? extends T>> mapper) {
+	public default Filter<T, R> flatMap(final Function<? super T, ? extends Stream<? extends T>> mapper) {
 		return null;
 	}
 
-	public default F withFilter(final Predicate<? super T> predicate) {
+	public default Filter<T, R> filter(final Predicate<? super T> predicate) {
 		return null;
 	}
 

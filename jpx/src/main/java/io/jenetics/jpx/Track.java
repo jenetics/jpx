@@ -286,7 +286,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder implements Filter<TrackSegment, Track, Builder> {
+	public static final class Builder implements Filter<TrackSegment, Track> {
 		private String _name;
 		private String _comment;
 		private String _description;

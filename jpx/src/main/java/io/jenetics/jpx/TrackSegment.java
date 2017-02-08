@@ -151,7 +151,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder implements Filter<WayPoint, TrackSegment, Builder> {
+	public static final class Builder implements Filter<WayPoint, TrackSegment> {
 		private List<WayPoint> _points;
 
 		private Builder() {
