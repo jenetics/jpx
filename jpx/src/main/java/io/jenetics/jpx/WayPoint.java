@@ -943,7 +943,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @return the current links
 		 */
 		public List<Link> links() {
-			return _links != null ? _links : Collections.emptyList();
+			return _links;
 		}
 
 		/**

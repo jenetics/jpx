@@ -20,10 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Lists.mutable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -32,8 +30,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -291,10 +287,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		private String _comment;
 		private String _description;
 		private String _source;
-		private List<Link> _links;
+		private final List<Link> _links = new ArrayList<>();
 		private UInt _number;
 		private String _type;
-		private List<TrackSegment> _segments;
+		private final List<TrackSegment> _segments = new ArrayList<>();
 
 		private Builder() {
 		}
@@ -350,7 +346,11 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			_links = mutable(links);
+			_links.clear();
+			if (links != null) {
+				_links.addAll(links);
+			}
+
 			return this;
 		}
 
@@ -361,9 +361,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder addLink(final Link link) {
-			if (_links == null) {
-				_links = new ArrayList<>();
-			}
 			_links.add(requireNonNull(link));
 
 			return this;
@@ -424,7 +421,11 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder segments(final List<TrackSegment> segments) {
-			_segments = mutable(segments);
+			_segments.clear();
+			if (segments != null) {
+				_segments.addAll(segments);
+			}
+
 			return this;
 		}
 
@@ -436,9 +437,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
 		public Builder addSegment(final TrackSegment segment) {
-			if (_segments == null) {
-				_segments = new ArrayList<>();
-			}
 			_segments.add(requireNonNull(segment));
 
 			return this;

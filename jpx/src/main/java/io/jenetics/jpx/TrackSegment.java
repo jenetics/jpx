@@ -23,15 +23,12 @@ import static java.lang.String.format;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Lists.mutable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,7 +36,6 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import io.jenetics.jpx.GPX.Builder;
 import io.jenetics.jpx.filter.Filter;
 
 /**
@@ -151,8 +147,10 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder implements Filter<WayPoint, TrackSegment> {
-		private List<WayPoint> _points;
+	public static final class Builder
+		implements Filter<WayPoint.Builder, TrackSegment>
+	{
+		private final List<WayPoint> _points = new ArrayList<>();
 
 		private Builder() {
 		}
@@ -164,7 +162,11 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder points(final List<WayPoint> points) {
-			_points = mutable(points);
+			_points.clear();
+			if (points != null) {
+				_points.addAll(points);
+			}
+
 			return this;
 		}
 
@@ -176,9 +178,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * @throws NullPointerException if the given {@code href} is {@code null}
 		 */
 		public Builder addPoint(final WayPoint point) {
-			if (_points == null) {
-				_points = new ArrayList<>();
-			}
 			_points.add(requireNonNull(point));
 
 			return this;
@@ -204,6 +203,15 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
 			return addPoint(builder.build());
+		}
+
+		/**
+		 * Return the current way-points.
+		 *
+		 * @return the current way-points
+		 */
+		public List<WayPoint> points() {
+			return _points;
 		}
 
 		/**

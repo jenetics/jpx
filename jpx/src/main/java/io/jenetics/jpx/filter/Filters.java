@@ -57,7 +57,9 @@ public final class Filters {
 
 		final Track track1 = track.toBuilder()
 			.map(segment -> segment.toBuilder()
-				.map(addDuration(Duration.ofSeconds(3)))
+				.map(wp -> wp
+					.time(wp.time().map(t -> t.plusDays(2)).orElse(null))
+					.cmt("foo"))
 				.build())
 			.build();
 
@@ -91,10 +93,16 @@ public final class Filters {
 
 	public static List<Track> merge(final List<Track> tracks) {
 		tracks.stream()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points)
+			.map(track -> track.toBuilder()
+				.map(segment -> segment.toBuilder()
+					.map(wp -> wp.lat(wp.lat()))
+					.build())
+				.build())
+			.collect(Collectors.toList());
 
-			;
+		tracks.stream()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points);
 
 		return null;
 	}
