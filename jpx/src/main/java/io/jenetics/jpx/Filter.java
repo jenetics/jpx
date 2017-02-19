@@ -17,12 +17,37 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.filter;
+package io.jenetics.jpx;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class Split {
+public interface Filter<T, R> {
+
+	public default Filter<T, R> filter(final Predicate<? super T> predicate) {
+		return null;
+	}
+
+	public default Filter<T, R> map(final Function<? super T, ? extends T> mapper) {
+		return null;
+	}
+
+	public default Filter<T, R> flatMap(final Function<? super T, ? extends List<T>> mapper) {
+		return null;
+	}
+
+	public default Filter<T, R> listMap(final Function<? super List<T>, ? extends List<T>> mapper) {
+		return null;
+	}
+
+	public default R build() {
+		return null;
+	}
+
 }

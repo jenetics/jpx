@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 
@@ -36,9 +35,6 @@ import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import io.jenetics.jpx.WayPoint.Builder;
-import io.jenetics.jpx.filter.Filter;
 
 /**
  * A Track Segment holds a list of Track Points which are logically connected in

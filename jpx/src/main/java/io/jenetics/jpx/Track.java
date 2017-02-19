@@ -38,8 +38,6 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import io.jenetics.jpx.filter.Filter;
-
 /**
  * Represents a GPX track - an ordered list of points describing a path.
  * <p>
