@@ -30,6 +30,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -306,6 +309,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		public Optional<String> name() {
+			return Optional.ofNullable(_name);
+		}
+
 		/**
 		 * Set the comment of the track.
 		 *
@@ -315,6 +322,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		public Builder cmt(final String comment) {
 			_comment = comment;
 			return this;
+		}
+
+		public Optional<String> cmt() {
+			return Optional.ofNullable(_comment);
 		}
 
 		/**
@@ -328,6 +339,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		public Optional<String> desc() {
+			return Optional.ofNullable(_description);
+		}
+
 		/**
 		 * Set the source of the track.
 		 *
@@ -337,6 +352,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		public Builder src(final String source) {
 			_source = source;
 			return this;
+		}
+
+		public Optional<String> src() {
+			return Optional.ofNullable(_source);
 		}
 
 		/**
@@ -379,6 +398,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return addLink(Link.of(href));
 		}
 
+		public List<Link> links() {
+			return _links;
+		}
+
 		/**
 		 * Set the track number.
 		 *
@@ -403,6 +426,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		public Optional<UInt> number() {
+			return Optional.ofNullable(_number);
+		}
+
 		/**
 		 * Set the track type.
 		 *
@@ -412,6 +439,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		public Builder type(final String type) {
 			_type = type;
 			return this;
+		}
+
+		public Optional<String> type() {
+			return Optional.ofNullable(_type);
 		}
 
 		/**
@@ -467,6 +498,60 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			final TrackSegment.Builder builder = TrackSegment.builder();
 			segment.accept(builder);
 			return addSegment(builder.build());
+		}
+
+		public List<TrackSegment> segments() {
+			return _segments;
+		}
+
+		@Override
+		public Builder filter(final Predicate<? super TrackSegment> predicate) {
+			segments(
+				_segments.stream()
+					.filter(predicate)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder map(
+			final Function<? super TrackSegment, ? extends TrackSegment> mapper
+		) {
+			segments(
+				_segments.stream()
+					.map(mapper)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder flatMap(
+			final Function<
+				? super TrackSegment,
+				? extends List<TrackSegment>> mapper
+		) {
+			segments(
+				_segments.stream()
+					.flatMap(segment -> mapper.apply(segment).stream())
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder listMap(
+			final Function<
+				? super List<TrackSegment>,
+				? extends List<TrackSegment>> mapper
+		) {
+			segments(mapper.apply(_segments));
+
+			return this;
 		}
 
 		/**

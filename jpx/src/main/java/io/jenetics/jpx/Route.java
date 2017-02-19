@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -287,10 +290,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		private String _comment;
 		private String _description;
 		private String _source;
-		private List<Link> _links;
+		private final List<Link> _links = new ArrayList<>();
 		private UInt _number;
 		private String _type;
-		private List<WayPoint> _points;
+		private final List<WayPoint> _points = new ArrayList<>();
 
 		private Builder() {
 		}
@@ -306,6 +309,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		public Optional<String> name() {
+			return Optional.ofNullable(_name);
+		}
+
 		/**
 		 * Set the route comment.
 		 *
@@ -317,6 +324,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		public Optional<String> cmt() {
+			return Optional.ofNullable(_comment);
+		}
+
 		/**
 		 * Set the route description.
 		 *
@@ -326,6 +337,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		public Builder desc(final String description) {
 			_description = description;
 			return this;
+		}
+
+		public Optional<String> desc() {
+			return Optional.ofNullable(_description);
 		}
 
 		/**
@@ -340,6 +355,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		public Optional<String> src() {
+			return Optional.ofNullable(_source);
+		}
+
 		/**
 		 * Set the links to additional information about the route.
 		 *
@@ -347,7 +366,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			_links = mutable(links);
+			_links.clear();
+			if (links != null) {
+				_links.addAll(links);
+			}
+
 			return this;
 		}
 
@@ -359,9 +382,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @throws NullPointerException if the given {@code link} is {@code null}
 		 */
 		public Builder addLink(final Link link) {
-			if (_links == null) {
-				_links = new ArrayList<>();
-			}
 			_links.add(requireNonNull(link));
 
 			return this;
@@ -378,12 +398,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 *         valid URL
 		 */
 		public Builder addLink(final String href) {
-			if (_links == null) {
-				_links = new ArrayList<>();
-			}
 			_links.add(Link.of(href));
 
 			return this;
+		}
+
+		public List<Link> links() {
+			return _links;
 		}
 
 		/**
@@ -408,6 +429,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		public Optional<UInt> number() {
+			return Optional.ofNullable(_number);
+		}
+
 		/**
 		 * Set the type (classification) of the route.
 		 *
@@ -419,6 +444,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		public Optional<String> type() {
+			return Optional.ofNullable(_type);
+		}
+
 		/**
 		 * Sets the way-points of the route.
 		 *
@@ -426,7 +455,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder points(final List<WayPoint> points) {
-			_points = mutable(points);
+			_points.clear();
+			if (points != null) {
+				_points.addAll(points);
+			}
+
 			return this;
 		}
 
@@ -438,9 +471,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @throws NullPointerException if the {@code point} is {@code null}
 		 */
 		public Builder addPoint(final WayPoint point) {
-			if (_points == null) {
-				_points = new ArrayList<>();
-			}
 			_points.add(requireNonNull(point));
 
 			return this;
@@ -458,11 +488,66 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return addPoint(builder.build());
 		}
 
+		public List<WayPoint> points() {
+			return _points;
+		}
+
+		@Override
+		public Builder filter(final Predicate<? super WayPoint> predicate) {
+			points(
+				_points.stream()
+					.filter(predicate)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder map(
+			final Function<? super WayPoint, ? extends WayPoint> mapper
+		) {
+			points(
+				_points.stream()
+					.map(mapper)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder flatMap(
+			final Function<
+				? super WayPoint,
+				? extends List<WayPoint>> mapper
+		) {
+			points(
+				_points.stream()
+					.flatMap(wp -> mapper.apply(wp).stream())
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder listMap(
+			final Function<
+				? super List<WayPoint>,
+				? extends List<WayPoint>> mapper
+		) {
+			points(mapper.apply(_points));
+
+			return this;
+		}
+
 		/**
 		 * Create a new {@code Route} object with the set values.
 		 *
 		 * @return a new {@code Route} object with the set values
 		 */
+		@Override
 		public Route build() {
 			return new Route(
 				_name,

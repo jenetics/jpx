@@ -546,10 +546,6 @@ public final class GPX implements Serializable {
 			return addTrack(builder.build());
 		}
 
-		public Builder mapTracks(final Function<Stream<Track>, Stream<Track>> tracks) {
-			return this;
-		}
-
 		/**
 		 * Create an immutable {@code GPX} object from the current builder state.
 		 *
@@ -566,7 +562,15 @@ public final class GPX implements Serializable {
 			);
 		}
 
-		public Filter<List<Track>, Builder> tracksFilter() {
+		public Filter<WayPoint, Builder> wayPointFilter() {
+			return null;
+		}
+
+		public Filter<Route, Builder> routeFilter() {
+			return null;
+		}
+
+		public Filter<Track, Builder> trackFilter() {
 			return null;
 		}
 

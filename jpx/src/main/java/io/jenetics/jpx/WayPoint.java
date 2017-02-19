@@ -522,7 +522,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Set the latitude value of the way-point.
 		 *
-		 * @param latitude the new latitude value
+		 * @param degrees the new latitude value
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws IllegalArgumentException if the given value is not within the
 		 *         range of {@code [-90..90]}
@@ -557,7 +557,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Set the longitude value of the way-point.
 		 *
-		 * @param longitude the new longitude value
+		 * @param degrees the new longitude value
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws IllegalArgumentException if the given value is not within the
 		 *         range of {@code [-180..180]}

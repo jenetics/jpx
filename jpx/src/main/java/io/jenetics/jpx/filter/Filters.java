@@ -74,21 +74,12 @@ public final class Filters {
 
 
 		gpx.toBuilder()
-			.tracksFilter()
-				.map(Filters::merge)
-				.map(Filters::splitByDay)
-				.build()
+			.trackFilter()
+				.listMap(Filters::merge)
+				.listMap(Filters::splitByDay).build()
+			.routeFilter()
+				.map(route -> route).build()
 			.build();
-
-		;
-
-
-		gpx.toBuilder()
-			//.filterTracks(Filters::mergeTrackSegments)
-			.mapTracks(tracks -> tracks.map(Filters::mergeTrackSegments))
-
-		;
-
 	}
 
 	public static Function<WayPoint, WayPoint> addDuration(final Duration duration) {

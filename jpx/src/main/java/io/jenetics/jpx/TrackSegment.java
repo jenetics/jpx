@@ -200,6 +200,8 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current way-points. The returned list is mutable.
 		 *
+		 * @since !__version__!
+		 *
 		 * @return the current, mutable way-point list
 		 */
 		public List<WayPoint> points() {
