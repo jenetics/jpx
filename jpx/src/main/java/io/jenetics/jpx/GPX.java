@@ -41,6 +41,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
@@ -554,16 +557,202 @@ public final class GPX implements Serializable {
 			);
 		}
 
+		/**
+		 * Return a new {@link WayPoint} filter.
+		 *
+		 * @return a new {@link WayPoint} filter
+		 */
 		public Filter<WayPoint, Builder> wayPointFilter() {
-			return null;
+			return new Filter<WayPoint, Builder>() {
+
+				@Override
+				public Filter<WayPoint, Builder> filter(
+					final Predicate<? super WayPoint> predicate
+				) {
+					wayPoints(
+						_wayPoints.stream()
+							.filter(predicate)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<WayPoint, Builder> map(
+					final Function<? super WayPoint, ? extends WayPoint> mapper
+				) {
+					wayPoints(
+						_wayPoints.stream()
+							.map(mapper)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<WayPoint, Builder> flatMap(
+					final Function<
+						? super WayPoint,
+						? extends List<WayPoint>> mapper
+				) {
+					wayPoints(
+						_wayPoints.stream()
+							.flatMap(wp -> mapper.apply(wp).stream())
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<WayPoint, Builder> listMap(
+					final Function<
+						? super List<WayPoint>,
+						? extends List<WayPoint>> mapper
+				) {
+					wayPoints(mapper.apply(_wayPoints));
+
+					return this;
+				}
+
+				@Override
+				public Builder build() {
+					return GPX.Builder.this;
+				}
+
+			};
 		}
 
+		/**
+		 * Return a new {@link Route} filter.
+		 *
+		 * @return a new {@link Route} filter
+		 */
 		public Filter<Route, Builder> routeFilter() {
-			return null;
+			return new Filter<Route, Builder>() {
+				@Override
+				public Filter<Route, Builder> filter(
+					final Predicate<? super Route> predicate
+				) {
+					routes(
+						_routes.stream()
+							.filter(predicate)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Route, Builder> map(
+					final Function<? super Route, ? extends Route> mapper
+				) {
+					routes(
+						_routes.stream()
+							.map(mapper)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Route, Builder> flatMap(
+					final Function<? super Route, ? extends List<Route>> mapper)
+				{
+					routes(
+						_routes.stream()
+							.flatMap(route -> mapper.apply(route).stream())
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Route, Builder> listMap(
+					final Function<
+						? super List<Route>,
+						? extends List<Route>> mapper
+				) {
+					routes(mapper.apply(_routes));
+
+					return this;
+				}
+
+				@Override
+				public Builder build() {
+					return GPX.Builder.this;
+				}
+
+			};
 		}
 
+		/**
+		 * Return a new {@link Track} filter.
+		 *
+		 * @return a new {@link Track} filter
+		 */
 		public Filter<Track, Builder> trackFilter() {
-			return null;
+			return new Filter<Track, Builder>() {
+				@Override
+				public Filter<Track, Builder> filter(
+					final Predicate<? super Track> predicate
+				) {
+					tracks(
+						_tracks.stream()
+							.filter(predicate)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Track, Builder> map(
+					final Function<? super Track, ? extends Track> mapper
+				) {
+					tracks(
+						_tracks.stream()
+							.map(mapper)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Track, Builder> flatMap(
+					final Function<? super Track, ? extends List<Track>> mapper
+				) {
+					tracks(
+						_tracks.stream()
+							.flatMap(track -> mapper.apply(track).stream())
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Track, Builder> listMap(
+					final Function<
+						? super List<Track>,
+						? extends List<Track>> mapper
+				) {
+					tracks(mapper.apply(_tracks));
+
+					return this;
+				}
+
+				@Override
+				public Builder build() {
+					return GPX.Builder.this;
+				}
+
+			};
 		}
 
 	}
