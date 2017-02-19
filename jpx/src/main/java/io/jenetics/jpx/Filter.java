@@ -30,24 +30,14 @@ import java.util.function.Predicate;
  */
 public interface Filter<T, R> {
 
-	public default Filter<T, R> filter(final Predicate<? super T> predicate) {
-		return null;
-	}
+	public Filter<T, R> filter(final Predicate<? super T> predicate);
 
-	public default Filter<T, R> map(final Function<? super T, ? extends T> mapper) {
-		return null;
-	}
+	public Filter<T, R> map(final Function<? super T, ? extends T> mapper);
 
-	public default Filter<T, R> flatMap(final Function<? super T, ? extends List<T>> mapper) {
-		return null;
-	}
+	public Filter<T, R> flatMap(final Function<? super T, ? extends List<T>> mapper);
 
-	public default Filter<T, R> listMap(final Function<? super List<T>, ? extends List<T>> mapper) {
-		return null;
-	}
+	public Filter<T, R> listMap(final Function<? super List<T>, ? extends List<T>> mapper);
 
-	public default R build() {
-		return null;
-	}
+	public R build();
 
 }

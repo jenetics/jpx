@@ -560,6 +560,8 @@ public final class GPX implements Serializable {
 		/**
 		 * Return a new {@link WayPoint} filter.
 		 *
+		 * @since !__version__!
+		 *
 		 * @return a new {@link WayPoint} filter
 		 */
 		public Filter<WayPoint, Builder> wayPointFilter() {
@@ -628,6 +630,8 @@ public final class GPX implements Serializable {
 		/**
 		 * Return a new {@link Route} filter.
 		 *
+		 * @since !__version__!
+		 *
 		 * @return a new {@link Route} filter
 		 */
 		public Filter<Route, Builder> routeFilter() {
@@ -692,6 +696,8 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Return a new {@link Track} filter.
+		 *
+		 * @since !__version__!
 		 *
 		 * @return a new {@link Track} filter
 		 */
