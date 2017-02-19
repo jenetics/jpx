@@ -567,42 +567,7 @@ public final class GPX implements Serializable {
 		}
 
 		public Filter<List<Track>, Builder> tracksFilter() {
-			return new Filter<List<Track>, Builder>() {
-				@Override
-				public Filter<List<Track>, Builder> map(
-					Function<? super List<Track>, ? extends List<Track>> mapper
-				) {
-					tracks(mapper.apply(mutable(_tracks)));
-					return this;
-				}
-
-				@Override
-				public Filter<List<Track>, Builder> flatMap(
-					Function<? super List<Track>, ? extends Stream<? extends List<Track>>> mapper
-				) {
-					tracks(
-						mapper.apply(mutable(_tracks))
-							.flatMap(List::stream)
-							.collect(Collectors.toList())
-					);
-
-					return this;
-				}
-
-				@Override
-				public Filter<List<Track>, Builder> filter(
-					Predicate<? super List<Track>> predicate
-				) {
-					tracks(predicate.test(mutable(_tracks)) ? _tracks : null);
-
-					return this;
-				}
-
-				@Override
-				public Builder build() {
-					return Builder.this;
-				}
-			};
+			return null;
 		}
 
 	}

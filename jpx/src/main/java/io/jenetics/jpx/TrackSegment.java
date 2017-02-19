@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -36,6 +37,7 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import io.jenetics.jpx.WayPoint.Builder;
 import io.jenetics.jpx.filter.Filter;
 
 /**
@@ -111,14 +113,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return _points.isEmpty();
 	}
 
-	public TrackSegment filter(final Predicate<? super WayPoint> filter) {
-		return TrackSegment.of(unmodifiableList(
-			points()
-				.filter(filter)
-				.collect(Collectors.toList())
-		));
-	}
-
 	@Override
 	public int hashCode() {
 		return _points.hashCode();
@@ -147,9 +141,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder
-		implements Filter<WayPoint.Builder, TrackSegment>
-	{
+	public static final class Builder implements Filter<WayPoint, TrackSegment> {
 		private final List<WayPoint> _points = new ArrayList<>();
 
 		private Builder() {
@@ -206,12 +198,62 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
-		 * Return the current way-points.
+		 * Return the current way-points. The returned list is mutable.
 		 *
-		 * @return the current way-points
+		 * @return the current, mutable way-point list
 		 */
 		public List<WayPoint> points() {
 			return _points;
+		}
+
+		@Override
+		public Builder filter(final Predicate<? super WayPoint> predicate) {
+			points(
+				_points.stream()
+					.filter(predicate)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder map(
+			final Function<? super WayPoint, ? extends WayPoint> mapper
+		) {
+			points(
+				_points.stream()
+					.map(mapper)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder flatMap(
+			final Function<
+				? super WayPoint,
+				? extends List<WayPoint>> mapper
+		) {
+			points(
+				_points.stream()
+					.flatMap(wp -> mapper.apply(wp).stream())
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder listMap(
+			final Function<
+				? super List<WayPoint>,
+				? extends List<WayPoint>> mapper
+		) {
+			points(mapper.apply(_points));
+
+			return this;
 		}
 
 		/**
@@ -219,6 +261,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 *
 		 * @return a new track-segment from the current builder state
 		 */
+		@Override
 		public TrackSegment build() {
 			return new TrackSegment(_points);
 		}

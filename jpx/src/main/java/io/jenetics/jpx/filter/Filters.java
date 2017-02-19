@@ -55,16 +55,21 @@ public final class Filters {
 
 		final Track track = Track.builder().build();
 
+		track.toBuilder()
+			.listMap(Filters::mergeSegments)
+			.build();
+
 		final Track track1 = track.toBuilder()
 			.map(segment -> segment.toBuilder()
-				.map(wp -> wp
-					.time(wp.time().map(t -> t.plusDays(2)).orElse(null))
-					.cmt("foo"))
+				.map(wp -> wp.toBuilder()
+					.time(wp.getTime().map(t -> t.plusDays(2)).orElse(null))
+					.cmt("foo")
+					.build())
 				.build())
 			.build();
 
 		track.toBuilder()
-			.flatMap(merge())
+//			.flatMap(merge())
 			.build();
 
 
@@ -92,6 +97,7 @@ public final class Filters {
 
 
 	public static List<Track> merge(final List<Track> tracks) {
+		/*
 		tracks.stream()
 			.map(track -> track.toBuilder()
 				.map(segment -> segment.toBuilder()
@@ -103,7 +109,7 @@ public final class Filters {
 		tracks.stream()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points);
-
+		*/
 		return null;
 	}
 
@@ -132,6 +138,14 @@ public final class Filters {
 
 		return parts.values().stream()
 			.map(TrackSegment::of);
+	}
+
+	public static List<TrackSegment> mergeSegments(final List<TrackSegment> segments) {
+		final List<WayPoint> points = segments.stream()
+			.flatMap(TrackSegment::points)
+			.collect(Collectors.toList());
+
+		return Collections.singletonList(TrackSegment.of(points));
 	}
 
 	public static Track mergeTrackSegments(final Track track) {
