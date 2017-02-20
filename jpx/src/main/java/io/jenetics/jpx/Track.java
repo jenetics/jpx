@@ -307,6 +307,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current name value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current name value
+		 */
 		public Optional<String> name() {
 			return Optional.ofNullable(_name);
 		}
@@ -337,6 +344,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current description value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current description value
+		 */
 		public Optional<String> desc() {
 			return Optional.ofNullable(_description);
 		}
@@ -352,6 +366,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current source value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current source value
+		 */
 		public Optional<String> src() {
 			return Optional.ofNullable(_source);
 		}
@@ -396,6 +417,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return addLink(Link.of(href));
 		}
 
+		/**
+		 * Return the current links. The returned link list is mutable.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current links
+		 */
 		public List<Link> links() {
 			return _links;
 		}
@@ -424,6 +452,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current number value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current number value
+		 */
 		public Optional<UInt> number() {
 			return Optional.ofNullable(_number);
 		}
@@ -439,6 +474,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current type value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current type value
+		 */
 		public Optional<String> type() {
 			return Optional.ofNullable(_type);
 		}
@@ -498,6 +540,14 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			return addSegment(builder.build());
 		}
 
+		/**
+		 * Return the current track segments. The returned segment list is
+		 * mutable.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current track segments
+		 */
 		public List<TrackSegment> segments() {
 			return _segments;
 		}
