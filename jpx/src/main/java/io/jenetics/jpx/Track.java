@@ -425,7 +425,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return the current links
 		 */
 		public List<Link> links() {
-			return _links;
+			return new NonNullList<>(_links);
 		}
 
 		/**
@@ -549,7 +549,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return the current track segments
 		 */
 		public List<TrackSegment> segments() {
-			return _segments;
+			return new NonNullList<>(_segments);
 		}
 
 		@Override

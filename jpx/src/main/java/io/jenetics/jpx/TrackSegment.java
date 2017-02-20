@@ -202,7 +202,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * @return the current, mutable way-point list
 		 */
 		public List<WayPoint> points() {
-			return _points;
+			return new NonNullList<>(_points);
 		}
 
 		@Override

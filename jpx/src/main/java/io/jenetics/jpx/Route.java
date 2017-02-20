@@ -321,6 +321,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current comment value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current comment value
+		 */
 		public Optional<String> cmt() {
 			return Optional.ofNullable(_comment);
 		}
@@ -336,6 +343,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current description value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current description value
+		 */
 		public Optional<String> desc() {
 			return Optional.ofNullable(_description);
 		}
@@ -352,6 +366,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current source value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current source value
+		 */
 		public Optional<String> src() {
 			return Optional.ofNullable(_source);
 		}
@@ -400,8 +421,15 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current links. The returned link list is mutable.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current links
+		 */
 		public List<Link> links() {
-			return _links;
+			return new NonNullList<>(_links);
 		}
 
 		/**
@@ -426,6 +454,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current number value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current number value
+		 */
 		public Optional<UInt> number() {
 			return Optional.ofNullable(_number);
 		}
@@ -441,6 +476,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current type value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current type value
+		 */
 		public Optional<String> type() {
 			return Optional.ofNullable(_type);
 		}
@@ -485,8 +527,15 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return addPoint(builder.build());
 		}
 
+		/**
+		 * Return the current way-points. The returned list is mutable.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current, mutable way-point list
+		 */
 		public List<WayPoint> points() {
-			return _points;
+			return new NonNullList<>(_points);
 		}
 
 		@Override

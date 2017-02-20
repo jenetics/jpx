@@ -371,6 +371,28 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Return the current creator value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current creator value
+		 */
+		public String creator() {
+			return _creator;
+		}
+
+		/**
+		 * Return the current version value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current version value
+		 */
+		public String version() {
+			return _version;
+		}
+
+		/**
 		 * Set the GPX metadata.
 		 *
 		 * @param metadata the GPX metadata
@@ -401,6 +423,17 @@ public final class GPX implements Serializable {
 			_metadata = builder.build();
 
 			return this;
+		}
+
+		/**
+		 * Return the current metadata value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current metadata value
+		 */
+		public Optional<Metadata> metadata() {
+			return Optional.ofNullable(_metadata);
 		}
 
 		/**
@@ -450,6 +483,17 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Return the current way-points. The returned list is mutable.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current, mutable way-point list
+		 */
+		public List<WayPoint> wayPoints() {
+			return new NonNullList<>(_wayPoints);
+		}
+
+		/**
 		 * Sets the routes of the {@code GPX} object.
 		 *
 		 * @param routes the {@code GPX} routes
@@ -492,6 +536,17 @@ public final class GPX implements Serializable {
 			final Route.Builder builder = Route.builder();
 			route.accept(builder);
 			return addRoute(builder.build());
+		}
+
+		/**
+		 * Return the current routes. The returned list is mutable.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current, mutable route list
+		 */
+		public List<Route> routes() {
+			return new NonNullList<>(_routes);
 		}
 
 		/**
@@ -539,6 +594,17 @@ public final class GPX implements Serializable {
 			final Track.Builder builder = Track.builder();
 			track.accept(builder);
 			return addTrack(builder.build());
+		}
+
+		/**
+		 * Return the current tracks. The returned list is mutable.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current, mutable track list
+		 */
+		public List<Track> tracks() {
+			return new NonNullList<>(_tracks);
 		}
 
 		/**

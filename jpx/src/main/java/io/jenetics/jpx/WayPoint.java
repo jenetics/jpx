@@ -960,7 +960,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @return the current links
 		 */
 		public List<Link> links() {
-			return _links;
+			return new NonNullList<>(_links);
 		}
 
 		/**
