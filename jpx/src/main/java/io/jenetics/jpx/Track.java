@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.Serializable;
@@ -378,17 +379,15 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
-		 * Set the track links
+		 * Set the track links. The link list may be {@code null}.
 		 *
 		 * @param links the track links
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the links in the list is
+		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			_links.clear();
-			if (links != null) {
-				_links.addAll(links);
-			}
-
+			copy(links, _links);
 			return this;
 		}
 
@@ -486,17 +485,15 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
-		 * Set the track segments of the track.
+		 * Set the track segments of the track. The list may be {@code null}.
 		 *
 		 * @param segments the track segments
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the segments in the list is
+		 *         {@code null}
 		 */
 		public Builder segments(final List<TrackSegment> segments) {
-			_segments.clear();
-			if (segments != null) {
-				_segments.addAll(segments);
-			}
-
+			copy(segments, _segments);
 			return this;
 		}
 

@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.Serializable;
@@ -306,6 +307,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			return this;
 		}
 
+		/**
+		 * Return the current name value.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the current name value
+		 */
 		public Optional<String> name() {
 			return Optional.ofNullable(_name);
 		}
@@ -378,17 +386,16 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
-		 * Set the links to additional information about the route.
+		 * Set the links to additional information about the route. The link
+		 * list may be {@code null}.
 		 *
 		 * @param links the links to additional information about the route
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the links in the list is
+		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			_links.clear();
-			if (links != null) {
-				_links.addAll(links);
-			}
-
+			copy(links, _links);
 			return this;
 		}
 
@@ -488,17 +495,15 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
-		 * Sets the way-points of the route.
+		 * Sets the way-points of the route. The way-point list may be
+		 * {@code null}.
 		 *
 		 * @param points the way-points
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the way-points is {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			_points.clear();
-			if (points != null) {
-				_points.addAll(points);
-			}
-
+			copy(points, _points);
 			return this;
 		}
 

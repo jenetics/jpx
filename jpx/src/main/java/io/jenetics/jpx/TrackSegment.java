@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.Serializable;
@@ -145,17 +146,16 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
-		 * Set the way-points fo the track segment.
+		 * Set the way-points fo the track segment. The list of way-points may
+		 * be {@code null}.
 		 *
 		 * @param points the track-segment points
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the way-points in the list is
+		 *         {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			_points.clear();
-			if (points != null) {
-				_points.addAll(points);
-			}
-
+			copy(points, _points);
 			return this;
 		}
 

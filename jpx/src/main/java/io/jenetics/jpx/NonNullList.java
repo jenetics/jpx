@@ -81,7 +81,7 @@ final class NonNullList<E> implements List<E>, Serializable {
 	@Override
 	public Iterator<E> iterator() {
 		return new Iterator<E>() {
-			private final Iterator<? extends E> _it = _adoptee.iterator();
+			private final Iterator<E> _it = _adoptee.iterator();
 
 			@Override
 			public boolean hasNext() {

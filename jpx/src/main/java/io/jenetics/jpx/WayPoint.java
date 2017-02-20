@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.Parsers.toDGPSStation;
 import static io.jenetics.jpx.Parsers.toDegrees;
@@ -45,8 +46,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -911,16 +910,16 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
-		 * Set the links to additional information about the way-point.
+		 * Set the links to additional information about the way-point. The link
+		 * list may be {@code null}.
 		 *
 		 * @param links the links to additional information about the way-point
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the links in the list is
+		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			_links.clear();
-			if (links != null) {
-				_links.addAll(links);
-			}
+			copy(links, _links);
 			return this;
 		}
 

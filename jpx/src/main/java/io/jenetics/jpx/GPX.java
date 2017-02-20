@@ -20,10 +20,9 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Lists.mutable;
 import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLReader.attr;
 
@@ -37,6 +36,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -349,9 +349,9 @@ public final class GPX implements Serializable {
 		private String _creator;
 		private String _version;
 		private Metadata _metadata;
-		private List<WayPoint> _wayPoints = emptyList();
-		private List<Route> _routes = emptyList();
-		private List<Track> _tracks = emptyList();
+		private final List<WayPoint> _wayPoints = new ArrayList<>();
+		private final List<Route> _routes = new ArrayList<>();
+		private final List<Track> _tracks = new ArrayList<>();
 
 		private Builder(final String version, final String creator) {
 			_version = requireNonNull(version);
@@ -437,13 +437,16 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Sets the way-points of the {@code GPX} object.
+		 * Sets the way-points of the {@code GPX} object. The list of way-points
+		 * may be {@code null}.
 		 *
 		 * @param wayPoints the {@code GPX} way-points
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the way-points in the list is
+		 *         {@code null}
 		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
-			_wayPoints = wayPoints != null ? wayPoints : emptyList();
+			copy(wayPoints, _wayPoints);
 			return this;
 		}
 
@@ -456,9 +459,7 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public Builder addWayPoint(final WayPoint wayPoint) {
-			_wayPoints = mutable(_wayPoints);
 			_wayPoints.add(requireNonNull(wayPoint));
-
 			return this;
 		}
 
@@ -494,13 +495,15 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Sets the routes of the {@code GPX} object.
+		 * Sets the routes of the {@code GPX} object. The list of routes may be
+		 * {@code null}.
 		 *
 		 * @param routes the {@code GPX} routes
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the routes is {@code null}
 		 */
 		public Builder routes(final List<Route> routes) {
-			_routes = routes != null ? routes : emptyList();
+			copy(routes, _routes);
 			return this;
 		}
 
@@ -512,7 +515,6 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if the given {@code route} is {@code null}
 		 */
 		public Builder addRoute(final Route route) {
-			_routes = mutable(_routes);
 			_routes.add(requireNonNull(route));
 
 			return this;
@@ -550,13 +552,15 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Sets the tracks of the {@code GPX} object.
+		 * Sets the tracks of the {@code GPX} object. The list of tracks may be
+		 * {@code null}.
 		 *
 		 * @param tracks the {@code GPX} tracks
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the tracks is {@code null}
 		 */
 		public Builder tracks(final List<Track> tracks) {
-			_tracks = tracks != null ? tracks : emptyList();
+			copy(tracks, _tracks);
 			return this;
 		}
 
@@ -568,9 +572,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if the given {@code track} is {@code null}
 		 */
 		public Builder addTrack(final Track track) {
-			_tracks = mutable(_tracks);
 			_tracks.add(requireNonNull(track));
-
 			return this;
 		}
 

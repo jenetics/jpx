@@ -64,7 +64,8 @@ public interface Filter<T, R> {
 	 *        element which produces a list of new values
 	 * @return a new filter
 	 */
-	public Filter<T, R> flatMap(final Function<? super T, ? extends List<T>> mapper);
+	public Filter<T, R>
+	flatMap(final Function<? super T, ? extends List<T>> mapper);
 
 	/**
 	 * Return a filter with the results of the applying given mapper function.
@@ -73,7 +74,8 @@ public interface Filter<T, R> {
 	 *        existing elements
 	 * @return a new filter
 	 */
-	public Filter<T, R> listMap(final Function<? super List<T>, ? extends List<T>> mapper);
+	public Filter<T, R>
+	listMap(final Function<? super List<T>, ? extends List<T>> mapper);
 
 	/**
 	 * Return a new object of type {@code R} which contains the elements of the
