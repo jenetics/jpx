@@ -234,6 +234,17 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				_segments.stream().allMatch(TrackSegment::isEmpty));
 	}
 
+	/**
+	 * Return {@code true} if not all track properties are {@code null} or empty.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return {@code true} if not all track properties are {@code null} or empty
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 31;

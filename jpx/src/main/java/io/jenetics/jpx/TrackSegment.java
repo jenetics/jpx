@@ -111,6 +111,19 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return _points.isEmpty();
 	}
 
+	/**
+	 * Return {@code true} if {@code this} track-segment contains at least one
+	 * track-point.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return {@code true} if {@code this} track-segment is not empty,
+	 *         {@code false} otherwise
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		return _points.hashCode();

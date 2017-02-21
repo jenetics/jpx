@@ -226,6 +226,17 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			_points.isEmpty();
 	}
 
+	/**
+	 * Return {@code true} if not all route properties are {@code null} or empty.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return {@code true} if not all route properties are {@code null} or empty
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 31;
