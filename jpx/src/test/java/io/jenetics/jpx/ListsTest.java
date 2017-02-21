@@ -24,6 +24,7 @@ import static java.util.Collections.unmodifiableList;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -38,6 +39,14 @@ public class ListsTest {
 		Assert.assertTrue(Lists.isImmutable(unmodifiableList(new ArrayList<String>())));
 		Assert.assertTrue(Lists.isImmutable(unmodifiableList(new LinkedList<>())));
 		Assert.assertTrue(Lists.isImmutable(emptyList()));
+	}
+
+	static <T> List<T> revert(final List<T> list) {
+		final List<T> result = new ArrayList<T>(list.size());
+		for (int i = 0, n = list.size(); i < n; ++i) {
+			result.add(list.get(n - i - 1));
+		}
+		return result;
 	}
 
 }
