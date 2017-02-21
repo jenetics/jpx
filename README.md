@@ -174,7 +174,7 @@ final GPX gpx3 = gpx.toBuilder()
 ```java
 final GPX gpx = GPX.read("track.gpx");
 
-gpx.toBuilder()
+final GPX gpx1 = gpx.toBuilder()
     .trackFilter()
         .map(track -> track.toBuilder()
             .map(segment -> segment.toBuilder()
@@ -194,7 +194,7 @@ Doing the same only for the GPX way-points.
 ```java
 final GPX gpx = GPX.read("track.gpx");
 
-final GPX g = gpx.toBuilder()
+final GPX gpx1 = gpx.toBuilder()
     .wayPointFilter()
         .map(wp -> wp.toBuilder()
             .time(wp.getTime()
