@@ -21,21 +21,22 @@ package io.jenetics.jpx;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
-import static java.util.Collections.unmodifiableList;
 import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * Some commonly usable way-point filter methods.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
@@ -136,151 +137,34 @@ public final class Filters {
 				);
 	}
 
-
-
-
-
-
-
-
-	public static void main(final String[] args) {
-		final GPX gpx = GPX.builder().build();
-
-		final Track track = Track.builder().build();
-
-		track.toBuilder()
-			.listMap(Filters::mergeSegments)
-			.build();
-
-		final Track track1 = track.toBuilder()
-			.map(segment -> segment.toBuilder()
-				.map(wp -> wp.toBuilder()
-					.time(wp.getTime().map(t -> t.plusDays(2)).orElse(null))
-					.cmt("foo")
-					.build())
-				.build())
-			.build();
-
-		track.toBuilder()
-//			.flatMap(merge())
-			.build();
-
-
-		gpx.toBuilder()
-			.trackFilter()
-				.listMap(Filters::merge)
-				.listMap(Filters::splitByDay).build()
-			.routeFilter()
-				.map(route -> route).build()
-			.build();
+	static List<Track> splitByDay(final Track track) {
+		return splitWayPointsByDay(
+			track.segments()
+				.flatMap(TrackSegment::points))
+			.stream()
+			.map(TrackSegment::of)
+			.map(segment -> Track.builder().addSegment(segment).build())
+			.collect(toList());
 	}
 
-	public static Function<WayPoint, WayPoint> addDuration(final Duration duration) {
-		return null;
-	}
-
-
-	public static List<Track> merge(final List<Track> tracks) {
-		/*
-		tracks.stream()
-			.map(track -> track.toBuilder()
-				.map(segment -> segment.toBuilder()
-					.map(wp -> wp.lat(wp.lat()))
-					.build())
-				.build())
-			.collect(Collectors.toList());
-
-		tracks.stream()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points);
-		*/
-		return null;
-	}
-
-	public static List<Track> splitByDay(final List<Track> tracks) {
-		return null;
-	}
-
-	private static final class MergeTrackSegments
-		implements Function<TrackSegment, Stream<TrackSegment>>
-	{
-		@Override
-		public Stream<TrackSegment> apply(final TrackSegment wayPoints) {
-			return null;
-		}
-	}
-
-	public static Function<TrackSegment, Stream<TrackSegment>> merge() {
-		return null;
-	}
-
-	public static Stream<TrackSegment> split(final TrackSegment segment) {
-		final Map<LocalDate, List<WayPoint>> parts = segment.points()
+	private static List<List<WayPoint>> splitWayPointsByDay(
+		final Stream<WayPoint> points
+	) {
+		final Map<LocalDate, List<WayPoint>> parts = points
 			.collect(groupingBy(wp -> wp.getTime()
 				.map(ZonedDateTime::toLocalDate)
 				.orElse(LocalDate.MIN)));
 
-		return parts.values().stream()
-			.map(TrackSegment::of);
+		return parts.entrySet().stream()
+			.sorted(Comparator.comparing(Entry::getKey))
+			.map(Entry::getValue)
+			.collect(Collectors.toList());
 	}
 
-	public static Track mergeTrackSegments(final Track track) {
-		final List<WayPoint> points = track.segments()
-			.flatMap(TrackSegment::points)
+	static List<TrackSegment> splitByDay(final TrackSegment segment) {
+		return splitWayPointsByDay(segment.points()).stream()
+			.map(TrackSegment::of)
 			.collect(Collectors.toList());
-
-		return track.toBuilder()
-			.segments(Collections.singletonList(TrackSegment.of(points)))
-			.build();
-	}
-
-
-	public static GPX filter(final GPX gpx, final Predicate<? super WayPoint> filter) {
-		final List<WayPoint> wayPoints = gpx.wayPoints()
-			.filter(filter)
-			.collect(Collectors.toList());
-
-		final List<Route> routes = gpx.routes()
-			.map(route -> filter(route, filter))
-			.collect(Collectors.toList());
-
-		final List<Track> tracks = gpx.tracks()
-			.map(track -> filter(track, filter))
-			.collect(Collectors.toList());
-
-		return gpx.toBuilder()
-			.wayPoints(unmodifiableList(wayPoints))
-			.routes(unmodifiableList(routes))
-			.tracks(unmodifiableList(tracks))
-			.build();
-	}
-
-	private static Route filter(final Route route, final Predicate<? super WayPoint> filter) {
-		final List<WayPoint> points = route.points()
-			.filter(filter)
-			.collect(Collectors.toList());
-
-		return route.toBuilder()
-			.points(unmodifiableList(points))
-			.build();
-	}
-
-	private static Track filter(final Track track, final Predicate<? super WayPoint> filter) {
-		final List<TrackSegment> segments = track.segments()
-			.map(segment -> filter(segment, filter))
-			.collect(Collectors.toList());
-
-		return track.toBuilder()
-			.segments(unmodifiableList(segments))
-			.build();
-	}
-
-	private static TrackSegment filter(final TrackSegment segment, final Predicate<? super WayPoint> filter) {
-		return TrackSegment.of(unmodifiableList(
-			segment.points()
-				.filter(filter)
-				.collect(Collectors.toList())
-		));
 	}
 
 }
