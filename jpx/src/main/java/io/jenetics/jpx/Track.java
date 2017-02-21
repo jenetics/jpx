@@ -202,7 +202,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * Convert the <em>immutable</em> track object into a <em>mutable</em>
 	 * builder initialized with the current track values.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return a new track builder initialized with the values of {@code this}
 	 *         track
@@ -312,7 +312,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Return the current name value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current name value
 		 */
@@ -349,7 +349,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Return the current description value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current description value
 		 */
@@ -371,7 +371,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Return the current source value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current source value
 		 */
@@ -420,7 +420,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Return the current links. The returned link list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current links
 		 */
@@ -455,7 +455,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Return the current number value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current number value
 		 */
@@ -477,7 +477,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Return the current type value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current type value
 		 */
@@ -542,7 +542,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * Return the current track segments. The returned segment list is
 		 * mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current track segments
 		 */

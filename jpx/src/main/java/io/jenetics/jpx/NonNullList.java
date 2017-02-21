@@ -36,8 +36,8 @@ import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.1
+ * @since 1.1
  */
 final class NonNullList<E> implements List<E>, Serializable {
 	private static final long serialVersionUID = 1L;

@@ -45,7 +45,7 @@ import javax.xml.stream.XMLStreamWriter;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.1
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
@@ -91,7 +91,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * <em>mutable</em> builder initialized with the current track-segment
 	 * values.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return a new track-segment builder initialized with the values of
 	 *        {@code this} track-segment
@@ -197,7 +197,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current way-points. The returned list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current, mutable way-point list
 		 */

@@ -195,7 +195,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * Convert the <em>immutable</em> route object into a <em>mutable</em>
 	 * builder initialized with the current route values.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return a new route builder initialized with the values of {@code this}
 	 *         route
@@ -311,7 +311,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current name value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current name value
 		 */
@@ -333,7 +333,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current comment value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current comment value
 		 */
@@ -355,7 +355,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current description value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current description value
 		 */
@@ -378,7 +378,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current source value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current source value
 		 */
@@ -432,7 +432,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current links. The returned link list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current links
 		 */
@@ -465,7 +465,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current number value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current number value
 		 */
@@ -487,7 +487,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current type value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current type value
 		 */
@@ -536,7 +536,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current way-points. The returned list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current, mutable way-point list
 		 */

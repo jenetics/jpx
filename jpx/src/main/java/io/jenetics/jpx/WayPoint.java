@@ -63,7 +63,7 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.1
  * @since 1.0
  */
 public final class WayPoint implements Point, Serializable {
@@ -367,7 +367,7 @@ public final class WayPoint implements Point, Serializable {
 	 * Convert the <em>immutable</em> way-point object into a <em>mutable</em>
 	 * builder initialized with the current way-point values.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return a new way-point builder initialized with the values of {@code this}
 	 *         way-point
@@ -527,7 +527,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current latitude value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current latitude value
 		 */
@@ -562,7 +562,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current longitude value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current longitude value
 		 */
@@ -607,7 +607,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current elevation value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current elevation value
 		 */
@@ -651,7 +651,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current speed value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current speed value
 		 */
@@ -724,7 +724,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current time value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current time value
 		 */
@@ -759,7 +759,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current magnetic variation value.
 		 *
-		 * @version !__version__!
+		 * @version 1.1
 		 *
 		 * @return the current magnetic variation value
 		 */
@@ -810,7 +810,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current height of geoid value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current height of geoid value
 		 */
@@ -836,7 +836,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current name value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current name value
 		 */
@@ -858,7 +858,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current comment value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current comment value
 		 */
@@ -880,7 +880,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current description value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current description value
 		 */
@@ -902,7 +902,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current source value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current source value
 		 */
@@ -955,7 +955,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current links. The returned link list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current links
 		 */
@@ -979,7 +979,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current symbol value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current symbol value
 		 */
@@ -1001,7 +1001,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current type value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current type value
 		 */
@@ -1040,7 +1040,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current GPX fix value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current GPX fix value
 		 */
@@ -1075,7 +1075,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current number of satelites.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current number of satelites
 		 */
@@ -1097,7 +1097,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current horizontal dilution.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current horizontal dilution
 		 */
@@ -1119,7 +1119,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current vertical dilution.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current vertical dilution
 		 */
@@ -1141,7 +1141,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current position dilution.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current position dilution
 		 */
@@ -1174,7 +1174,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current age since last DGPS update.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current age since last DGPS update
 		 */
@@ -1210,7 +1210,7 @@ public final class WayPoint implements Point, Serializable {
 		 * Return the current the ID of DGPS station used in differential
 		 * correction.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current the ID of DGPS station used in differential
 		 *         correction

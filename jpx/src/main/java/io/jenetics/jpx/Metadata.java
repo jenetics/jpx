@@ -180,7 +180,7 @@ public final class Metadata implements Serializable {
 	 * Convert the <em>immutable</em> metadata object into a <em>mutable</em>
 	 * builder initialized with the current metadata values.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return a new metadata builder initialized with the values of {@code this}
 	 *         metadata

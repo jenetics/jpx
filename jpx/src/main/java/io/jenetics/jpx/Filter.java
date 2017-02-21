@@ -32,8 +32,8 @@ import java.util.function.Predicate;
  * @param <R> the result type of the filtered object
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.1
+ * @since 1.1
  */
 public interface Filter<T, R> {
 

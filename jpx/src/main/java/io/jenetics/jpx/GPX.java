@@ -286,7 +286,7 @@ public final class GPX implements Serializable {
 	 * Convert the <em>immutable</em> GPX object into a <em>mutable</em>
 	 * builder initialized with the current GPX values.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return a new track builder initialized with the values of {@code this}
 	 *         GPX object
@@ -373,7 +373,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current creator value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current creator value
 		 */
@@ -384,7 +384,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current version value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current version value
 		 */
@@ -428,7 +428,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current metadata value.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current metadata value
 		 */
@@ -486,7 +486,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current way-points. The returned list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current, mutable way-point list
 		 */
@@ -543,7 +543,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current routes. The returned list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current, mutable route list
 		 */
@@ -601,7 +601,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current tracks. The returned list is mutable.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return the current, mutable track list
 		 */
@@ -628,7 +628,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return a new {@link WayPoint} filter.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return a new {@link WayPoint} filter
 		 */
@@ -698,7 +698,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return a new {@link Route} filter.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return a new {@link Route} filter
 		 */
@@ -765,7 +765,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return a new {@link Track} filter.
 		 *
-		 * @since !__version__!
+		 * @since 1.1
 		 *
 		 * @return a new {@link Track} filter
 		 */
@@ -1001,7 +1001,7 @@ public final class GPX implements Serializable {
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @param gpx the GPX object to write to the output
 	 * @param path the output path where the GPX object is written to
@@ -1103,7 +1103,7 @@ public final class GPX implements Serializable {
 	/**
 	 * Read an GPX object from the given {@code input} stream.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @param input the input stream from where the GPX date is read
 	 * @param lenient if {@code true}, out-of-range and syntactical errors are
