@@ -213,6 +213,17 @@ public final class Metadata implements Serializable {
 			_bounds == null;
 	}
 
+	/**
+	 * Return {@code true} if not all metadata properties are {@code null} or empty.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return {@code true} if not all metadata properties are {@code null} or empty
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 37;
