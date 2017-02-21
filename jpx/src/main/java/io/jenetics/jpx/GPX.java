@@ -1001,6 +1001,8 @@ public final class GPX implements Serializable {
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
 	 *
+	 * @since !__version__!
+	 *
 	 * @param gpx the GPX object to write to the output
 	 * @param path the output path where the GPX object is written to
 	 * @throws IOException if the writing of the GPX object fails
@@ -1100,6 +1102,8 @@ public final class GPX implements Serializable {
 
 	/**
 	 * Read an GPX object from the given {@code input} stream.
+	 *
+	 * @since !__version__!
 	 *
 	 * @param input the input stream from where the GPX date is read
 	 * @param lenient if {@code true}, out-of-range and syntactical errors are
