@@ -115,7 +115,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * Return {@code true} if {@code this} track-segment contains at least one
 	 * track-point.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return {@code true} if {@code this} track-segment is not empty,
 	 *         {@code false} otherwise

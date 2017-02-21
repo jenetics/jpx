@@ -216,7 +216,7 @@ public final class Metadata implements Serializable {
 	/**
 	 * Return {@code true} if not all metadata properties are {@code null} or empty.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return {@code true} if not all metadata properties are {@code null} or empty
 	 */

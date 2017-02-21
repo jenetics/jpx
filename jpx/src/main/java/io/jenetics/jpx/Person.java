@@ -95,7 +95,7 @@ public final class Person implements Serializable {
 	/**
 	 * Return {@code true} if not all person properties are {@code null}.
 	 *
-	 * @since !__version__!
+	 * @since 1.1
 	 *
 	 * @return {@code true} if not all person properties are {@code null}
 	 */
