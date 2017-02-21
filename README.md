@@ -227,14 +227,14 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ### [1.1.0](https://github.com/jenetics/jpx/releases/tag/v1.1.0)
 
+#### Bug fixes
+* [#20](https://github.com/jenetics/jpx/issues/20): Order of links in `Track`, `Route` and `Metadata` changes object equality.
+
 #### Improvements
 * [#3](https://github.com/jenetics/jpx/issues/3): Add methods for doing way-point filtering and manipulation in a functional way.
 * [#10](https://github.com/jenetics/jpx/issues/10): Add *lenient* mode for reading GPX files. Reading a GPX file in *lenient* mode simply skips invalid way-points.
 * [#18](https://github.com/jenetics/jpx/issues/18): Improve error handling when creating empty way-points.
 * [#22](https://github.com/jenetics/jpx/issues/22): Implement `Filter`s for merging `TrackSegment`s and `Track`s.
-
-#### Bug fixes
-* [#20](https://github.com/jenetics/jpx/issues/20): Order of links in 'Track', 'Route' and 'Metadata' changes object equality.
 
 ### [1.0.1](https://github.com/jenetics/jpx/releases/tag/v1.0.1)
 
