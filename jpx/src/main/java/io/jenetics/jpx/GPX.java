@@ -627,6 +627,13 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Return a new {@link WayPoint} filter.
+		 * <pre>{@code
+		 * final GPX filtered = gpx.toBuilder()
+		 *     .wayPointFilter()
+		 *         .filter(wp -> wp.getTime().isPresent())
+		 *         .build())
+		 *     .build();
+		 * }</pre>
 		 *
 		 * @since 1.1
 		 *
@@ -697,6 +704,13 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Return a new {@link Route} filter.
+		 * <pre>{@code
+		 * final GPX filtered = gpx.toBuilder()
+		 *     .routeFilter()
+		 *         .filter(Route::nonEmpty)
+		 *         .build())
+		 *     .build();
+		 * }</pre>
 		 *
 		 * @since 1.1
 		 *
@@ -764,6 +778,16 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Return a new {@link Track} filter.
+		 * <pre>{@code
+		 * final GPX merged = gpx.toBuilder()
+		 *     .trackFilter()
+		 *         .map(track -> track.toBuilder()
+		 *             .listMap(Filters::mergeSegments)
+		 *             .filter(TrackSegment::nonEmpty)
+		 *             .build())
+		 *         .build()
+		 *     .build();
+		 * }</pre>
 		 *
 		 * @since 1.1
 		 *
