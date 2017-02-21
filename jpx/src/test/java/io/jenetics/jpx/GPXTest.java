@@ -20,9 +20,12 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static io.jenetics.jpx.ListsTest.revert;
+import static io.jenetics.jpx.RouteTest.nextRoute;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
@@ -237,6 +240,79 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test(expectedExceptions = IllegalStateException.class)
 	public void emptyWayPointException() {
 		WayPoint.builder().build();
+	}
+
+	@Test
+	public void wayPointFilter() {
+		final GPX gpx = nextGPX(new Random());
+
+		final GPX filtered = gpx.toBuilder()
+			.wayPointFilter()
+				.filter(wp -> wp.getLatitude().doubleValue() < 50)
+				.build()
+			.build();
+
+		for (int i = 0, n = filtered.getWayPoints().size(); i < n; ++i) {
+			Assert.assertTrue(
+				filtered.getWayPoints().get(i).getLatitude().doubleValue() < 50
+			);
+		}
+	}
+
+	@Test
+	public void wayPointMap() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		final GPX mapped = gpx.toBuilder()
+			.wayPointFilter()
+				.map(wp -> wp.toBuilder()
+					.lat(wp.getLatitude().doubleValue() + 1)
+					.build())
+				.build()
+			.build();
+
+		for (int i = 0, n = mapped.getWayPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getWayPoints().get(i).getLatitude().doubleValue(),
+				gpx.getWayPoints().get(i).getLatitude().doubleValue() + 1
+			);
+		}
+	}
+
+	@Test
+	public void wayPointFlatMap() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		final GPX mapped = gpx.toBuilder()
+			.wayPointFilter()
+				.flatMap(wp -> Collections.singletonList(wp.toBuilder()
+					.lat(wp.getLatitude().doubleValue() + 1)
+					.build()))
+				.build()
+			.build();
+
+		for (int i = 0, n = mapped.getWayPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getWayPoints().get(i).getLatitude().doubleValue(),
+				gpx.getWayPoints().get(i).getLatitude().doubleValue() + 1
+			);
+		}
+	}
+
+	@Test
+	public void wayPointListMap() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		final GPX mapped = gpx.toBuilder()
+			.wayPointFilter()
+				.listMap(ListsTest::revert)
+				.build()
+			.build();
+
+		Assert.assertEquals(
+			mapped.getWayPoints(),
+			revert(gpx.getWayPoints())
+		);
 	}
 
 }
