@@ -1,6 +1,8 @@
-# JPX (_1.0.1_)
+# JPX (1.1.0)
 
 **JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API.
+
+Beside the basic functionality of reading and writing GPX files, the library also allows to manipulate the read GPX object in a functional way.
 
  The comprehensive Javadoc of the library can be [here](https://jenetics.github.io/jpx/javadoc/jpx/index.html).
 
@@ -33,8 +35,8 @@ For  building the JPX library you have to check out the master branch from Githu
     
 ## Download
 
-* **Github**: <https://github.com/jenetics/jpx/archive/v1.0.1.zip>
-*  **Maven**: `io.jenetics:jpx:1.0.1` on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22) 
+* **Github**: <https://github.com/jenetics/jpx/archive/v1.1.0.zip>
+*  **Maven**: `io.jenetics:jpx:1.1.0` on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22) 
 
 ## Examples
 
@@ -53,7 +55,7 @@ final GPX gpx = GPX.builder()
 **Writing GPX object to a file**
 
 ```java
-GPX.write(gpx, "gpx.xml");
+GPX.write(gpx, "track.gpx");
 ```
 
 *GPX output*
@@ -83,7 +85,7 @@ GPX.write(gpx, "gpx.xml");
 This example writes a given `GPX` object to a file, reads it again and prints the `WayPoint`s of all tracks and all track-segments to the console.
 
 ```java
-GPX.write(gpx, "gpx.xml");
+GPX.write(gpx, "track.gpx");
 GPX.read("gpx.xml").tracks()
     .flatMap(Track::segments)
     .flatMap(TrackSegment::points)
@@ -129,6 +131,79 @@ final Length length = gpx.tracks()
     .collect(Geoid.WGS84.toPathLength());
 ```
 
+### GPX manipulation/filtering
+
+#### Filtering
+
+The following example filters empty tracks and track-segments from an existing `GPX` object.
+	
+```java
+final GPX gpx = GPX.read("track.gpx");
+
+// Filtering empty tracks.
+final GPX gpx1 = gpx.toBuilder()
+    .trackFilter()
+        .filter(Track::nonEmpty)
+        .build()
+    .build();
+
+// Filtering empty track-segments.
+final GPX gpx2 = gpx.toBuilder()
+    .trackFilter()
+        .map(track -> track.toBuilder()
+            .filter(TrackSegment::nonEmpty)
+            .build())
+        .build()
+    .build();
+
+// Filtering empty tracks and track-segments.
+final GPX gpx3 = gpx.toBuilder()
+    .trackFilter()
+        .map(track -> track.toBuilder()
+            .filter(TrackSegment::nonEmpty)
+            .build())
+        .filter(Track::nonEmpty)
+        .build()
+    .build();
+```
+
+#### Changing GPX object
+
+*Fixing* the time of all track way-points by adding one hour.
+
+```java
+final GPX gpx = GPX.read("track.gpx");
+
+gpx.toBuilder()
+    .trackFilter()
+        .map(track -> track.toBuilder()
+            .map(segment -> segment.toBuilder()
+                .map(wp -> wp.toBuilder()
+                    .time(wp.getTime()
+                        .map(t -> t.plusHours(1))
+                        .orElse(null))
+                    .build())
+                .build())
+            .build())
+        .build()
+    .build();
+```
+
+Doing the same only for the GPX way-points.
+
+```java
+final GPX gpx = GPX.read("track.gpx");
+
+final GPX g = gpx.toBuilder()
+    .wayPointFilter()
+        .map(wp -> wp.toBuilder()
+            .time(wp.getTime()
+                .map(t -> t.plusHours(1))
+                .orElse(null))
+            .build())
+        .build()
+    .build();
+```
 
 ## License
 
@@ -149,6 +224,17 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
     limitations under the License.
 
 ## Release notes
+
+### [1.1.0](https://github.com/jenetics/jpx/releases/tag/v1.1.0)
+
+#### Improvements
+* [#3](https://github.com/jenetics/jpx/issues/3): Add methods for doing way-point filtering and manipulation in a functional way.
+* [#10](https://github.com/jenetics/jpx/issues/10): Add *lenient* mode for reading GPX files. Reading a GPX file in *lenient* mode simply skips invalid way-points.
+* [#18](https://github.com/jenetics/jpx/issues/18): Improve error handling when creating empty way-points.
+* [#22](https://github.com/jenetics/jpx/issues/22): Implement `Filter`s for merging `TrackSegment`s and `Track`s.
+
+#### Bug fixes
+* [#20](https://github.com/jenetics/jpx/issues/20): Order of links in 'Track', 'Route' and 'Metadata' changes object equality.
 
 ### [1.0.1](https://github.com/jenetics/jpx/releases/tag/v1.0.1)
 
