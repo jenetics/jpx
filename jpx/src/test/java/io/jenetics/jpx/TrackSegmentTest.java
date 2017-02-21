@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.ListsTest.revert;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -138,15 +140,13 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		);
 
 		final TrackSegment mapped = segment.toBuilder()
-			.listMap(Function.identity())
+			.listMap(ListsTest::revert)
 			.build();
 
-		for (int i = 0, n = mapped.getPoints().size(); i < n; ++i) {
-			Assert.assertEquals(
-				mapped.getPoints().get(i).getLatitude().doubleValue(),
-				(double)i
-			);
-		}
+		Assert.assertEquals(
+			mapped.getPoints(),
+			revert(segment.getPoints())
+		);
 	}
 
 }

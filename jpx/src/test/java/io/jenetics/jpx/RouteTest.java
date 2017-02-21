@@ -19,12 +19,15 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.ListsTest.revert;
 import static java.lang.String.format;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -62,6 +65,71 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 
 	public static List<Route> nextRoutes(final Random random) {
 		return nextObjects(() -> nextRoute(random), random);
+	}
+
+	@Test
+	public void filter() {
+		final Route route = nextRoute(new Random());
+
+		final Route filtered = route.toBuilder()
+			.filter(wp -> wp.getLatitude().doubleValue() < 50)
+			.build();
+
+		for (int i = 0, n = filtered.getPoints().size(); i < n; ++i) {
+			Assert.assertTrue(
+				filtered.getPoints().get(i).getLatitude().doubleValue() < 50
+			);
+		}
+	}
+
+	@Test
+	public void map() {
+		final Route route = nextRoute(new Random(1));
+
+		final Route mapped = route.toBuilder()
+			.map(wp -> wp.toBuilder()
+				.lat(wp.getLatitude().doubleValue() + 1)
+				.build())
+			.build();
+
+		for (int i = 0, n = mapped.getPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getPoints().get(i).getLatitude().doubleValue(),
+				route.getPoints().get(i).getLatitude().doubleValue() + 1
+			);
+		}
+	}
+
+	@Test
+	public void flatMap() {
+		final Route route = nextRoute(new Random(2));
+
+		final Route mapped = route.toBuilder()
+			.flatMap(wp -> Collections.singletonList(wp.toBuilder()
+				.lat(wp.getLatitude().doubleValue() + 1)
+				.build()))
+			.build();
+
+		for (int i = 0, n = mapped.getPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getPoints().get(i).getLatitude().doubleValue(),
+				route.getPoints().get(i).getLatitude().doubleValue() + 1
+			);
+		}
+	}
+
+	@Test
+	public void listMap() {
+		final Route route = nextRoute(new Random(3));
+
+		final Route mapped = route.toBuilder()
+			.listMap(ListsTest::revert)
+			.build();
+
+		Assert.assertEquals(
+			mapped.getPoints(),
+			revert(route.getPoints())
+		);
 	}
 
 }
