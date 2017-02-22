@@ -27,6 +27,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -140,6 +142,20 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 		Assert.assertEquals(
 			mapped.getSegments(),
 			revert(track.getSegments())
+		);
+	}
+
+	@Test
+	public void toBuilder() {
+		final Track object = nextTrack(new Random());
+
+		Assert.assertEquals(
+			object.toBuilder().build(),
+			object
+		);
+		Assert.assertNotSame(
+			object.toBuilder().build(),
+			object
 		);
 	}
 

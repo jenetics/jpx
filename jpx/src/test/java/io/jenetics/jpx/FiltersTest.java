@@ -19,12 +19,14 @@
  */
 package io.jenetics.jpx;
 
-import static java.time.ZoneOffset.UTC;
-import static java.util.stream.Collectors.toList;
 import static io.jenetics.jpx.GPXTest.nextGPX;
 import static io.jenetics.jpx.TrackTest.nextTrack;
 import static io.jenetics.jpx.WayPointTest.nextWayPoint;
+import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.toList;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Random;
@@ -123,6 +125,36 @@ public class FiltersTest {
 				System.out.println(point.getTime() + ": " + point);
 			}
 		}
+	}
+
+	@Test
+	public void nonEmptyFilter() throws IOException {
+		final GPX gpx = GPX.read(new ByteArrayInputStream((
+			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+			"<gpx version=\"1.1\" creator=\"JPX - https://jenetics.github.io/jpx\" " +
+			"xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
+			"    <metadata></metadata>\n" +
+			"    <trk><trkseg></trkseg></trk>\n" +
+			"    <trk>\n" +
+			"        <trkseg></trkseg>\n" +
+			"        <trkseg>\n" +
+			"            <trkpt lat=\"21.0\" lon=\"23.0\">\n" +
+			"                <ele>12.0</ele>\n" +
+			"            </trkpt>\n" +
+			"        </trkseg>\n" +
+			"    </trk>\n" +
+			"    <trk></trk>\n" +
+			"</gpx>").getBytes()));
+
+		final GPX nonEmpty = Filters.nonEmptyGPX(gpx);
+
+		final GPX expected = GPX.builder()
+			.addTrack(track -> track
+				.addSegment(segment -> segment
+					.addPoint(wp -> wp.lat(21.0).lon(23.0).ele(12.0))))
+			.build();
+
+		Assert.assertEquals(nonEmpty, expected);
 	}
 
 }

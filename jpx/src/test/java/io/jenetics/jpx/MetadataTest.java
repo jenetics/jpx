@@ -25,6 +25,7 @@ import java.time.ZonedDateTime;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -80,6 +81,23 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 			.author("Franz Wilhelmstötter")
 			.addLink(Link.of("http://jenetics.io/jpx"))
 			.build();
+	}
+
+	@Test
+	public void toBuilder() {
+		final Metadata metadata = Metadata.builder()
+			.author("Franz Wilhelmstötter")
+			.addLink(Link.of("http://jenetics.io/jpx"))
+			.build();
+
+		Assert.assertEquals(
+			metadata.toBuilder().build(),
+			metadata
+		);
+		Assert.assertNotSame(
+			metadata.toBuilder().build(),
+			metadata
+		);
 	}
 
 }

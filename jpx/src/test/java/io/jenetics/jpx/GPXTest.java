@@ -315,4 +315,18 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
+	@Test
+	public void toBuilder() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		Assert.assertEquals(
+			gpx.toBuilder().build(),
+			gpx
+		);
+		Assert.assertNotSame(
+			gpx.toBuilder().build(),
+			gpx
+		);
+	}
+
 }
