@@ -132,4 +132,18 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 		);
 	}
 
+	@Test
+	public void toBuilder() {
+		final Route object = nextRoute(new Random(3));
+
+		Assert.assertEquals(
+			object.toBuilder().build(),
+			object
+		);
+		Assert.assertNotSame(
+			object.toBuilder().build(),
+			object
+		);
+	}
+
 }

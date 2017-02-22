@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -146,6 +145,24 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		Assert.assertEquals(
 			mapped.getPoints(),
 			revert(segment.getPoints())
+		);
+	}
+
+	@Test
+	public void toBuilder() {
+		final TrackSegment object = TrackSegment.of(
+			IntStream.range(0, 25)
+				.mapToObj(i -> WayPoint.builder().build(i, i))
+				.collect(Collectors.toList())
+		);
+
+		Assert.assertEquals(
+			object.toBuilder().build(),
+			object
+		);
+		Assert.assertNotSame(
+			object.toBuilder().build(),
+			object
 		);
 	}
 

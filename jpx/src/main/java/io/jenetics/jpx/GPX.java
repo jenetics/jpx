@@ -292,7 +292,7 @@ public final class GPX implements Serializable {
 	 *         GPX object
 	 */
 	public Builder toBuilder() {
-		return builder(_creator, _version)
+		return builder(_version, _creator)
 			.metadata(_metadata)
 			.wayPoints(_wayPoints)
 			.routes(_routes)

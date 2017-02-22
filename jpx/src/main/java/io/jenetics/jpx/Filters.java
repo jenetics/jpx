@@ -137,6 +137,78 @@ public final class Filters {
 				);
 	}
 
+	/**
+	 * Return a new {@code GPX} object with all <i>empty</i> elements (tracks,
+	 * track-segments, routes and metadata) removed. This method can be used
+	 * to clean up the GPX object before writing it to file.
+	 * <pre>{@code
+	 * final GPX gpx = ...;
+	 * final GPX.write(Filters.nonEmptyGPX(gpx), "tracks.gpx", "    ");
+	 * }</pre>
+	 *
+	 * @param gpx the GPX object to clean up
+	 * @return a new {@code GPX} object with all <i>empty</i> elements removed
+	 * @throws NullPointerException if the given {@code gpx} object is
+	 *         {@code null}
+	 */
+	public static GPX nonEmptyGPX(final GPX gpx) {
+		return gpx.toBuilder()
+			.routeFilter()
+				.listMap(Filters::nonEmptyRoutes)
+				.build()
+			.trackFilter()
+				.listMap(Filters::nonEmptyTracks)
+				.build()
+			.metadata(gpx.getMetadata()
+						.filter(Metadata::nonEmpty)
+						.orElse(null))
+			.build();
+	}
+
+	/**
+	 * Return a new route list with all <i>empty</i> routes removed.
+	 *
+	 * @param routes the route list to clean up
+	 * @return a new route list with all <i>empty</i> routes removed
+	 * @throws NullPointerException if the given argument is {@code null}
+	 */
+	public static List<Route> nonEmptyRoutes(final List<Route> routes) {
+		return routes.stream()
+			.filter(Route::nonEmpty)
+			.collect(toList());
+	}
+
+	/**
+	 * Return a new track list with all <i>empty</i> tracks removed.
+	 *
+	 * @param tracks the track list to clean up
+	 * @return a new track list with all <i>empty</i> tracks removed
+	 * @throws NullPointerException if the given argument is {@code null}
+	 */
+	public static List<Track> nonEmptyTracks(final List<Track> tracks) {
+		return tracks.stream()
+			.map(track -> track.toBuilder()
+				.listMap(Filters::nonEmptySegments)
+				.build())
+			.filter(Track::nonEmpty)
+			.collect(toList());
+	}
+
+	/**
+	 * Return a new segment list with all <i>empty</i> segments removed.
+	 *
+	 * @param segments the segment list to clean up
+	 * @return  a new segment list with all <i>empty</i> segments removed
+	 * @throws NullPointerException if the given argument is {@code null}
+	 */
+	public static List<TrackSegment> nonEmptySegments(
+		final List<TrackSegment> segments
+	) {
+		return segments.stream()
+			.filter(TrackSegment::nonEmpty)
+			.collect(toList());
+	}
+
 	static List<Track> splitByDay(final Track track) {
 		return splitWayPointsByDay(
 			track.segments()
