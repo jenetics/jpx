@@ -233,6 +233,7 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 #### Improvements
 * [#3](https://github.com/jenetics/jpx/issues/3): Add methods for doing way-point filtering and manipulation in a functional way.
 * [#10](https://github.com/jenetics/jpx/issues/10): Add *lenient* mode for reading GPX files. Reading a GPX file in *lenient* mode simply skips invalid way-points.
+* [#17](https://github.com/jenetics/jpx/issues/17): Implement filter method (in `Filters` class) for removing empty GPX elements.
 * [#18](https://github.com/jenetics/jpx/issues/18): Improve error handling when creating empty way-points.
 * [#22](https://github.com/jenetics/jpx/issues/22): Implement `Filter`s for merging `TrackSegment`s and `Track`s.
 
