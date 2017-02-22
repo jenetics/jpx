@@ -177,6 +177,27 @@ public final class Metadata implements Serializable {
 	}
 
 	/**
+	 * Convert the <em>immutable</em> metadata object into a <em>mutable</em>
+	 * builder initialized with the current metadata values.
+	 *
+	 * @since 1.1
+	 *
+	 * @return a new metadata builder initialized with the values of {@code this}
+	 *         metadata
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.name(_name)
+			.desc(_description)
+			.author(_author)
+			.copyright(_copyright)
+			.links(_links)
+			.time(_time)
+			.keywords(_keywords)
+			.bounds(_bounds);
+	}
+
+	/**
 	 * Return {@code true} if all metadata properties are {@code null} or empty.
 	 *
 	 * @return {@code true} if all metadata properties are {@code null} or empty
@@ -192,6 +213,17 @@ public final class Metadata implements Serializable {
 			_bounds == null;
 	}
 
+	/**
+	 * Return {@code true} if not all metadata properties are {@code null} or empty.
+	 *
+	 * @since 1.1
+	 *
+	 * @return {@code true} if not all metadata properties are {@code null} or empty
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 37;
@@ -199,7 +231,7 @@ public final class Metadata implements Serializable {
 		hash += 17*Objects.hashCode(_description) + 31;
 		hash += 17*Objects.hashCode(_author) + 31;
 		hash += 17*Objects.hashCode(_copyright) + 31;
-		hash += 17*Objects.hashCode(_links) + 31;
+		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 31;
 		hash += 17*Objects.hashCode(_time) + 31;
 		hash += 17*Objects.hashCode(_keywords) + 31;
 		hash += 17*Objects.hashCode(_bounds) + 31;
@@ -213,7 +245,8 @@ public final class Metadata implements Serializable {
 			Objects.equals(((Metadata)obj)._description, _description) &&
 			Objects.equals(((Metadata)obj)._author, _author) &&
 			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
-			Objects.equals(((Metadata)obj)._links, _links) &&
+			((Metadata)obj)._links.size() == _links.size() &&
+			((Metadata)obj)._links.containsAll(_links) &&
 			ZonedDateTimeFormat.equals(((Metadata)obj)._time, _time) &&
 			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
 			Objects.equals(((Metadata)obj)._bounds, _bounds);

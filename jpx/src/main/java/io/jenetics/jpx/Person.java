@@ -92,6 +92,17 @@ public final class Person implements Serializable {
 			_link == null;
 	}
 
+	/**
+	 * Return {@code true} if not all person properties are {@code null}.
+	 *
+	 * @since 1.1
+	 *
+	 * @return {@code true} if not all person properties are {@code null}
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 37;

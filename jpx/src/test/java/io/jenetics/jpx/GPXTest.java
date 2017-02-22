@@ -20,9 +20,12 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static io.jenetics.jpx.ListsTest.revert;
+import static io.jenetics.jpx.RouteTest.nextRoute;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
@@ -126,8 +129,35 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@DataProvider(name = "invalidGPXFiles")
 	public Object[][] invalidGPXFiles() {
 		return new Object[][] {
-			{"/io/jenetics/jpx/empty-waypoint.xml"}
+			{"/io/jenetics/jpx/empty-waypoint.xml"},
+			{"/io/jenetics/jpx/invalid-latlon.xml"}
 		};
+	}
+
+	@Test
+	public void lenientRead() throws IOException {
+		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			final GPX gpx = GPX.read(in, true);
+
+			Assert.assertTrue(gpx.getMetadata().isPresent());
+			Assert.assertFalse(gpx.getMetadata().get().getBounds().isPresent());
+
+			final int length = (int)gpx.tracks()
+				.flatMap(Track::segments)
+				.flatMap(TrackSegment::points)
+				.count();
+
+			Assert.assertEquals(length, 4);
+		}
+	}
+
+	@Test(expectedExceptions = {IOException.class})
+	public void strictRead() throws IOException {
+		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			GPX.read(in, false);
+		}
 	}
 
 	@Test
@@ -204,6 +234,98 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		Assert.assertEquals(
 			gpx.getWayPoints().size(),
 			82
+		);
+	}
+
+	@Test(expectedExceptions = IllegalStateException.class)
+	public void emptyWayPointException() {
+		WayPoint.builder().build();
+	}
+
+	@Test
+	public void wayPointFilter() {
+		final GPX gpx = nextGPX(new Random());
+
+		final GPX filtered = gpx.toBuilder()
+			.wayPointFilter()
+				.filter(wp -> wp.getLatitude().doubleValue() < 50)
+				.build()
+			.build();
+
+		for (int i = 0, n = filtered.getWayPoints().size(); i < n; ++i) {
+			Assert.assertTrue(
+				filtered.getWayPoints().get(i).getLatitude().doubleValue() < 50
+			);
+		}
+	}
+
+	@Test
+	public void wayPointMap() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		final GPX mapped = gpx.toBuilder()
+			.wayPointFilter()
+				.map(wp -> wp.toBuilder()
+					.lat(wp.getLatitude().doubleValue() + 1)
+					.build())
+				.build()
+			.build();
+
+		for (int i = 0, n = mapped.getWayPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getWayPoints().get(i).getLatitude().doubleValue(),
+				gpx.getWayPoints().get(i).getLatitude().doubleValue() + 1
+			);
+		}
+	}
+
+	@Test
+	public void wayPointFlatMap() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		final GPX mapped = gpx.toBuilder()
+			.wayPointFilter()
+				.flatMap(wp -> Collections.singletonList(wp.toBuilder()
+					.lat(wp.getLatitude().doubleValue() + 1)
+					.build()))
+				.build()
+			.build();
+
+		for (int i = 0, n = mapped.getWayPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getWayPoints().get(i).getLatitude().doubleValue(),
+				gpx.getWayPoints().get(i).getLatitude().doubleValue() + 1
+			);
+		}
+	}
+
+	@Test
+	public void wayPointListMap() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		final GPX mapped = gpx.toBuilder()
+			.wayPointFilter()
+				.listMap(ListsTest::revert)
+				.build()
+			.build();
+
+		Assert.assertEquals(
+			mapped.getWayPoints(),
+			revert(gpx.getWayPoints())
+		);
+	}
+
+	@Test
+	public void toBuilder() {
+		final GPX gpx = nextGPX(new Random(1));
+
+		Assert.assertEquals(
+			gpx.toBuilder().build(),
+			gpx
+		);
+		Assert.assertNotSame(
+			gpx.toBuilder().build(),
+			gpx
 		);
 	}
 

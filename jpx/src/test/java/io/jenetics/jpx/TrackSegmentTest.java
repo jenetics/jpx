@@ -19,11 +19,17 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.ListsTest.revert;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -57,6 +63,107 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		}
 
 		return segments;
+	}
+
+	@Test
+	public void filter() {
+		final TrackSegment segment = TrackSegment.of(
+			IntStream.range(0, 90)
+				.mapToObj(i -> WayPoint.builder().build(i, i))
+				.collect(Collectors.toList())
+		);
+
+		final TrackSegment filtered = segment.toBuilder()
+			.filter(wp -> wp.getLatitude().doubleValue() < 50)
+			.build();
+
+		Assert.assertEquals(filtered.getPoints().size(), 50);
+		for (int i = 0, n = filtered.getPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				filtered.getPoints().get(i).getLatitude().doubleValue(),
+				(double)i
+			);
+		}
+	}
+
+	@Test
+	public void map() {
+		final TrackSegment segment = TrackSegment.of(
+			IntStream.range(0, 50)
+				.mapToObj(i -> WayPoint.builder().build(i, i))
+				.collect(Collectors.toList())
+		);
+
+		final TrackSegment mapped = segment.toBuilder()
+			.map(wp -> wp.toBuilder()
+				.lat(wp.getLatitude().doubleValue() + 1)
+				.build())
+			.build();
+
+		for (int i = 0, n = mapped.getPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getPoints().get(i).getLatitude().doubleValue(),
+				(double)(i + 1)
+			);
+		}
+	}
+
+	@Test
+	public void flatMap() {
+		final TrackSegment segment = TrackSegment.of(
+			IntStream.range(0, 25)
+				.mapToObj(i -> WayPoint.builder().build(i, i))
+				.collect(Collectors.toList())
+		);
+
+		final TrackSegment mapped = segment.toBuilder()
+			.flatMap(wp -> Collections.singletonList(wp.toBuilder()
+				.lat(wp.getLatitude().doubleValue() + 1)
+				.build()))
+			.build();
+
+		for (int i = 0, n = mapped.getPoints().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getPoints().get(i).getLatitude().doubleValue(),
+				(double)(i + 1)
+			);
+		}
+	}
+
+	@Test
+	public void listMap() {
+		final TrackSegment segment = TrackSegment.of(
+			IntStream.range(0, 25)
+				.mapToObj(i -> WayPoint.builder().build(i, i))
+				.collect(Collectors.toList())
+		);
+
+		final TrackSegment mapped = segment.toBuilder()
+			.listMap(ListsTest::revert)
+			.build();
+
+		Assert.assertEquals(
+			mapped.getPoints(),
+			revert(segment.getPoints())
+		);
+	}
+
+	@Test
+	public void toBuilder() {
+		final TrackSegment object = TrackSegment.of(
+			IntStream.range(0, 25)
+				.mapToObj(i -> WayPoint.builder().build(i, i))
+				.collect(Collectors.toList())
+		);
+
+		Assert.assertEquals(
+			object.toBuilder().build(),
+			object
+		);
+		Assert.assertNotSame(
+			object.toBuilder().build(),
+			object
+		);
 	}
 
 }

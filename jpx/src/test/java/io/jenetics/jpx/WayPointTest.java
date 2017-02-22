@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Length.Unit;
@@ -86,6 +87,20 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			points.add(nextWayPoint(random));
 		}
 		return points;
+	}
+
+	@Test
+	public void toBuilder() {
+		final WayPoint object = nextWayPoint(new Random());
+
+		Assert.assertEquals(
+			object.toBuilder().build(),
+			object
+		);
+		Assert.assertNotSame(
+			object.toBuilder().build(),
+			object
+		);
 	}
 
 }

@@ -132,7 +132,8 @@ abstract class XMLReader<T> {
 	 * @return the read type, maybe {@code null}
 	 * @throws XMLStreamException if an error occurs while reading the value
 	 */
-	public abstract T read(final XMLStreamReader reader) throws XMLStreamException;
+	public abstract T read(final XMLStreamReader reader, final boolean lenient)
+		throws XMLStreamException;
 
 	/**
 	 * Create a new {@code XMLReader} with the given elements.
@@ -312,7 +313,9 @@ final class XMLReaderImpl<T> extends XMLReader<T> {
 	}
 
 	@Override
-	public T read(final XMLStreamReader reader) throws XMLStreamException {
+	public T read(final XMLStreamReader reader, final boolean lenient)
+		throws XMLStreamException
+	{
 		final Map<String, Object> param = new HashMap<>();
 		for (Attr attr : attrs()) {
 			final Object value = reader.getAttributeValue(null, attr.name);
@@ -323,19 +326,27 @@ final class XMLReaderImpl<T> extends XMLReader<T> {
 			switch (reader.next()) {
 				case XMLStreamReader.START_ELEMENT:
 					final XMLReader<?> child = _childMap.get(reader.getLocalName());
-
-					// Special handling for XML list readers.
-					if (child instanceof XMLListReader<?>) {
-						@SuppressWarnings("unchecked")
-						final List<Object> result = (List<Object>)param
+					try {
+						// Special handling for XML list readers.
+						if (child instanceof XMLListReader<?>) {
+							@SuppressWarnings("unchecked")
+							final List<Object> result = (List<Object>)param
 								.computeIfAbsent(
 									child.name(), key -> new ArrayList<>());
 
-						result.add(
-							((XMLListReader<?>)child).adoptee().read(reader)
-						);
-					} else if (child != null) {
-						param.put(child.name(), child.read(reader));
+							result.add(
+								((XMLListReader<?>)child)
+									.adoptee()
+									.read(reader, lenient)
+							);
+
+						} else if (child != null) {
+							param.put(child.name(), child.read(reader, lenient));
+						}
+					} catch (XMLStreamException e) {
+						if (!lenient) {
+							throw e;
+						}
 					}
 
 					break;
@@ -374,7 +385,9 @@ final class XMLTextReader extends XMLReader<String> {
 	}
 
 	@Override
-	public String read(final XMLStreamReader reader) throws XMLStreamException {
+	public String read(final XMLStreamReader reader, final boolean lenient)
+		throws XMLStreamException
+	{
 		final StringBuilder result = new StringBuilder();
 		while (reader.hasNext()) {
 			switch (reader.next()) {
@@ -415,7 +428,9 @@ final class XMLListReader<T> extends XMLReader<List<T>>  {
 	}
 
 	@Override
-	public List<T> read(final XMLStreamReader reader) throws XMLStreamException {
+	public List<T> read(final XMLStreamReader reader, final boolean lenient)
+		throws XMLStreamException
+	{
 		throw new UnsupportedOperationException();
 	}
 

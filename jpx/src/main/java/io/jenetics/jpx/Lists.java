@@ -19,10 +19,13 @@
  */
 package io.jenetics.jpx;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Helper methods for handling lists. All method handles null values correctly.
@@ -75,6 +78,29 @@ final class Lists {
 				? Collections.emptyList()
 				: new ArrayList<T>(list)
 			: Collections.emptyList();
+	}
+
+	static <T> List<T> mutable(final List<T> list) {
+		List<T> result = list;
+		if (result == null) {
+			result = new ArrayList<>();
+		} else if (isImmutable(list)) {
+			result = new ArrayList<T>(list);
+		}
+
+		return result;
+	}
+
+	static <T> void copy(final List<T> source, final List<T> target) {
+		requireNonNull(target);
+		if (source != null) {
+			source.forEach(Objects::requireNonNull);
+		}
+
+		target.clear();
+		if (source != null) {
+			target.addAll(source);
+		}
 	}
 
 }
