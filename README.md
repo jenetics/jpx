@@ -1,4 +1,4 @@
-# JPX (1.1.0)
+# JPX (1.1.1)
 
 **JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API.
 
@@ -13,7 +13,7 @@ Beside the basic functionality of reading and writing GPX files, the library als
 
 ### Build time
 *  **JDK 8**: The Java [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) must be installed.
-*  **Gradle 3.x**: [Gradle](http://www.gradle.org/) is used for building the library. (Gradle is download automatically, if you are using the Gradle Wrapper script `./gradlew`, located in the base directory, for building the library.)
+*  **Gradle 4.x**: [Gradle](http://www.gradle.org/) is used for building the library. (Gradle is download automatically, if you are using the Gradle Wrapper script `./gradlew`, located in the base directory, for building the library.)
 *  **TestNG 6.10**: JPX uses [TestNG](http://testng.org/doc/index.html) framework for unit tests.
 
 ## Building JPX
@@ -35,8 +35,8 @@ For  building the JPX library you have to check out the master branch from Githu
     
 ## Download
 
-* **Github**: <https://github.com/jenetics/jpx/archive/v1.1.0.zip>
-*  **Maven**: `io.jenetics:jpx:1.1.0` on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22) 
+* **Github**: <https://github.com/jenetics/jpx/archive/v1.1.1.zip>
+*  **Maven**: `io.jenetics:jpx:1.1.1` on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22) 
 
 ## Examples
 
@@ -224,6 +224,11 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
     limitations under the License.
 
 ## Release notes
+
+### [1.1.1](https://github.com/jenetics/jpx/releases/tag/v1.1.1)
+
+#### Improvements
+* [#26](https://github.com/jenetics/jpx/issues/26): Define stable module name. `io.jenetics.jpx`.
 
 ### [1.1.0](https://github.com/jenetics/jpx/releases/tag/v1.1.0)
 
