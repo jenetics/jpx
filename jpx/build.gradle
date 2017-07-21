@@ -90,7 +90,8 @@ jar {
 			'Implementation-Vendor': 'jenetics',
 			'ProjectName': project.name,
 			'Version': project.version,
-			'Maintainer': 'Franz Wilhelmstötter'
+			'Maintainer': 'Franz Wilhelmstötter',
+			'Automatic-Module-Name': 'io.jenetics.jpx'
 		)
 	}
 }
