@@ -25,30 +25,28 @@
  * @version 1.0
  */
 
-import java.text.SimpleDateFormat
+import java.time.Year
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 
 ext {
 	javaVersion = '1.8'
 
-	now = Calendar.getInstance()
-	year = now.get(Calendar.YEAR);
-	copyrightYear = "2016-${year}".toString()
+	now = ZonedDateTime.now()
+	year = Year.now()
+	copyrightYear = "2017-${year}".toString()
 	identifier = "${rootProject.name}-${version}".toString()
-	dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm")
+	dateformat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 }
 
 allprojects {
 	group = 'io.jenetics'
-	version = '1.1.0'
+	version = '1.1.1'
 
 	repositories {
 		flatDir(dir: "${rootDir}/buildSrc/lib")
 		mavenCentral()
 	}
-}
-
-subprojects { Project prj ->
-	//prj.plugins.apply(SetupPlugin.class)
 }
 
 allprojects { Project prj ->
