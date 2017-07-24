@@ -456,7 +456,7 @@ public final class WayPoint implements Point, Serializable {
 	public String toString() {
 		return format(
 			"[lat=%s, lon=%s, ele=%s]",
-			_latitude, _latitude, _elevation
+			_latitude, _longitude, _elevation
 		);
 	}
 
