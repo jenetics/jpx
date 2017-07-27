@@ -227,6 +227,11 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [1.1.2](https://github.com/jenetics/jpx/releases/tag/v1.1.2)
+
+#### Bug fixes
+* [#28](https://github.com/jenetics/jpx/issues/28): Fix 'WayPoint.toString' method.
+
 ### [1.1.1](https://github.com/jenetics/jpx/releases/tag/v1.1.1)
 
 #### Improvements
