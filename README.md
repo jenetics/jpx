@@ -37,8 +37,8 @@ For  building the JPX library you have to check out the master branch from Githu
     
 ## Download
 
-* **Github**: <https://github.com/jenetics/jpx/archive/v1.1.1.zip>
-*  **Maven**: `io.jenetics:jpx:1.1.1` on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22) 
+* **Github**: <https://github.com/jenetics/jpx/archive/v1.1.2.zip>
+*  **Maven**: `io.jenetics:jpx:1.1.2` on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22) 
 
 ## Examples
 
