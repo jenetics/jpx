@@ -73,7 +73,7 @@ public final class Length
 		YARD(1_143.0/1_250.0),
 
 		/**
-		 * Represents a mile: ≙ 1,609.344 m.
+		 * Represents a statute mile: ≙ 1,609.344 m.
 		 */
 		MILE(201_168.0/125.0),
 
