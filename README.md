@@ -227,9 +227,11 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.1.3](https://github.com/jenetics/jpx/releases/tag/v1.1.3)
+### [1.2.0](https://github.com/jenetics/jpx/releases/tag/v1.2.0)
 
-#### Bug fixes
-* [#28](https://github.com/jenetics/jpx/issues/31): Explicitly set encoding of GPX writer to _UTF-8_.
+#### Improvements
+
+* [#35](https://github.com/jenetics/jpx/issues/35): Additional length units.
+
 
 _[All Release Notes](RELEASE_NOTES.md)_
