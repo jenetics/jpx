@@ -86,7 +86,7 @@ jar {
 		attributes(
 			'Implementation-Title': 'JPX - Java GPX library',
 			'Implementation-Version': "${project.name}-${project.version}",
-			'Implementation-URL': 'https://jenetics.github.io/jpx',
+			'Implementation-URL': 'http://jenetics.io',
 			'Implementation-Vendor': 'jenetics',
 			'ProjectName': project.name,
 			'Version': project.version,
