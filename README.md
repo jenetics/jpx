@@ -8,7 +8,7 @@
 
 Beside the basic functionality of reading and writing GPX files, the library also allows to manipulate the read GPX object in a functional way.
 
- The comprehensive Javadoc of the library can be [here](http://jenetics.io/javadoc/jpx/1.1/index.html).
+ The comprehensive Javadoc of the library can be [here](http://jenetics.io/javadoc/jpx/1.2/index.html).
 
 ## Requirements
 
@@ -35,10 +35,6 @@ For  building the JPX library you have to check out the master branch from Githu
 
     $ ./gradle jar
     
-## Download
-
-* **Github**: <https://github.com/jenetics/jpx/archive/v1.1.3.zip>
-*  **Maven**: `io.jenetics:jpx:1.1.3` on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22) 
 
 ## Examples
 
