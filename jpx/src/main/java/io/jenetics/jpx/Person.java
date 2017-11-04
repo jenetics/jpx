@@ -117,12 +117,12 @@ public final class Person implements Serializable {
 		return obj instanceof Person &&
 			Objects.equals(((Person)obj)._name, _name) &&
 			Objects.equals(((Person)obj)._email, _email) &&
-			Objects.equals(((Person) obj)._link, _link);
+			Objects.equals(((Person)obj)._link, _link);
 	}
 
 	@Override
 	public String toString() {
-		return _name;
+		return Objects.toString(_name);
 	}
 
 	/* *************************************************************************

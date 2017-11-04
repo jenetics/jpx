@@ -119,7 +119,7 @@ import javax.xml.stream.XMLStreamWriter;
  * which is read as
  * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
- * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/0">
+ * <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX" >
  *     <metadata>
  *         <time>2015-11-13T15:22:42.140Z</time>
  *     </metadata>

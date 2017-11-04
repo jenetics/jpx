@@ -37,11 +37,11 @@ import java.util.Objects;
 final class Lists {
 
 	private static final Class<?> IMMUTABLE = Collections
-		.unmodifiableList(new LinkedList<Object>())
+		.unmodifiableList(new LinkedList<>())
 		.getClass();
 
 	private static final Class<?> IMMUTABLE_RANDOM_ACCESS = Collections
-		.unmodifiableList(new ArrayList<Object>())
+		.unmodifiableList(new ArrayList<>())
 		.getClass();
 
 	private Lists() {
@@ -68,7 +68,7 @@ final class Lists {
 			list.isEmpty();
 	}
 
-	static boolean isMutable(final List<?> list) {
+	private static boolean isMutable(final List<?> list) {
 		return !isImmutable(list);
 	}
 
@@ -78,17 +78,6 @@ final class Lists {
 				? Collections.emptyList()
 				: new ArrayList<T>(list)
 			: Collections.emptyList();
-	}
-
-	static <T> List<T> mutable(final List<T> list) {
-		List<T> result = list;
-		if (result == null) {
-			result = new ArrayList<>();
-		} else if (isImmutable(list)) {
-			result = new ArrayList<T>(list);
-		}
-
-		return result;
 	}
 
 	static <T> void copy(final List<T> source, final List<T> target) {
