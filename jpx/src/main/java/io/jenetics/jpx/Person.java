@@ -122,7 +122,7 @@ public final class Person implements Serializable {
 
 	@Override
 	public String toString() {
-		return _name;
+		return Objects.toString(_name);
 	}
 
 	/* *************************************************************************
