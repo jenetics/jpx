@@ -1,0 +1,14 @@
+<gpx creator="Creator" version="1.1">
+	<metadata>
+		<name>Name of GPX</name>
+		<author>
+			<name>Name of Author/Person</name>
+			<link href="http://author.net">
+				<text>Link of Author/Person</text>
+			</link>
+		</author>
+		<link href="http://company.net">
+			<text>Link of GPX</text>
+		</link>
+	</metadata>
+</gpx>

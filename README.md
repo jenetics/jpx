@@ -223,11 +223,8 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.2.0](https://github.com/jenetics/jpx/releases/tag/v1.2.0)
+### [1.2.1](https://github.com/jenetics/jpx/releases/tag/v1.2.1)
 
-#### Improvements
-
-* [#35](https://github.com/jenetics/jpx/issues/35): Additional length units.
-
+* [#38](https://github.com/jenetics/jpx/issues/38): Errornous marshalling of `author` metadata.
 
 _[All Release Notes](RELEASE_NOTES.md)_

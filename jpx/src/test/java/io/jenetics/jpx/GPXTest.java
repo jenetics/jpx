@@ -21,8 +21,9 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static io.jenetics.jpx.ListsTest.revert;
-import static io.jenetics.jpx.RouteTest.nextRoute;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -327,6 +328,26 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			gpx.toBuilder().build(),
 			gpx
 		);
+	}
+
+	@Test(dataProvider = "readWriteGPX")
+	public void readWrite(final String resource) throws IOException {
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			final GPX gpx1 = GPX.read(in);
+
+			final ByteArrayOutputStream out = new ByteArrayOutputStream();
+			GPX.write(gpx1, out, "    ");
+			final GPX gpx2 = GPX.read(new ByteArrayInputStream(out.toByteArray()));
+
+			Assert.assertEquals(gpx1, gpx2);
+		}
+	}
+
+	@DataProvider(name = "readWriteGPX")
+	public Object[][] readWriteGPX() {
+		return new Object[][] {
+			{"/io/jenetics/jpx/ISSUE-38.gpx.xml"}
+		};
 	}
 
 }
