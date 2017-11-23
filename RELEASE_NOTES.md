@@ -1,5 +1,9 @@
 ## Release notes
 
+### [1.2.1](https://github.com/jenetics/jpx/releases/tag/v1.2.1)
+
+* [#38](https://github.com/jenetics/jpx/issues/38): Errornous marshalling of `author` metadata.
+
 ### [1.2.0](https://github.com/jenetics/jpx/releases/tag/v1.2.0)
 
 * [#35](https://github.com/jenetics/jpx/issues/35): Additional length units.
