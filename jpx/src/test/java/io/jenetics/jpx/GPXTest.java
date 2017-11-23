@@ -21,9 +21,9 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static io.jenetics.jpx.ListsTest.revert;
-import static io.jenetics.jpx.RouteTest.nextRoute;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
@@ -33,8 +33,6 @@ import java.util.Random;
 import java.util.function.Supplier;
 
 import javax.xml.stream.XMLStreamException;
-
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -337,9 +335,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
 			final GPX gpx1 = GPX.read(in);
 
-			final ByteOutputStream out = new ByteOutputStream();
+			final ByteArrayOutputStream out = new ByteArrayOutputStream();
 			GPX.write(gpx1, out, "    ");
-			final GPX gpx2 = GPX.read(new ByteArrayInputStream(out.getBytes()));
+			final GPX gpx2 = GPX.read(new ByteArrayInputStream(out.toByteArray()));
 
 			Assert.assertEquals(gpx1, gpx2);
 		}
