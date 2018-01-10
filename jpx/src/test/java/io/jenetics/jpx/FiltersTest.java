@@ -19,11 +19,11 @@
  */
 package io.jenetics.jpx;
 
+import static java.time.ZoneOffset.UTC;
+import static java.util.stream.Collectors.toList;
 import static io.jenetics.jpx.GPXTest.nextGPX;
 import static io.jenetics.jpx.TrackTest.nextTrack;
 import static io.jenetics.jpx.WayPointTest.nextWayPoint;
-import static java.time.ZoneOffset.UTC;
-import static java.util.stream.Collectors.toList;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class FiltersTest {
 			.mapToInt(t -> t.getSegments().size())
 			.sum();
 
-		Assert.assertEquals(segments, 38);
+		Assert.assertEquals(segments, 19);
 	}
 
 	@Test
