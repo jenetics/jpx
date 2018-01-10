@@ -19,12 +19,18 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.ListsTest.revert;
 import static java.lang.String.format;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -74,6 +80,83 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 
 	public static List<Track> nextTracks(final Random random) {
 		return nextObjects(() -> nextTrack(random), random);
+	}
+
+	@Test
+	public void filter() {
+		final Track track = nextTrack(new Random());
+
+		final Track filtered = track.toBuilder()
+			.filter(segment -> segment.getPoints().size() > 10)
+			.build();
+
+		filtered.getSegments().forEach(segment ->
+			Assert.assertTrue(segment.getPoints().size() > 10)
+		);
+	}
+
+	@Test
+	public void map() {
+		final Track track = nextTrack(new Random());
+
+		final Track mapped = track.toBuilder()
+			.map(segment -> segment.toBuilder()
+				.points(revert(segment.getPoints()))
+				.build())
+			.build();
+
+		for (int i = 0, n = mapped.getSegments().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getSegments().get(i).getPoints(),
+				revert(track.getSegments().get(i).getPoints())
+			);
+		}
+	}
+
+	@Test
+	public void flatMap() {
+		final Track track = nextTrack(new Random());
+
+		final Track mapped = track.toBuilder()
+			.flatMap(segment -> Collections.singletonList(segment.toBuilder()
+				.points(revert(segment.getPoints()))
+				.build()))
+			.build();
+
+		for (int i = 0, n = mapped.getSegments().size(); i < n; ++i) {
+			Assert.assertEquals(
+				mapped.getSegments().get(i).getPoints(),
+				revert(track.getSegments().get(i).getPoints())
+			);
+		}
+	}
+
+	@Test
+	public void listMap() {
+		final Track track = nextTrack(new Random());
+
+		final Track mapped = track.toBuilder()
+			.listMap(ListsTest::revert)
+			.build();
+
+		Assert.assertEquals(
+			mapped.getSegments(),
+			revert(track.getSegments())
+		);
+	}
+
+	@Test
+	public void toBuilder() {
+		final Track object = nextTrack(new Random());
+
+		Assert.assertEquals(
+			object.toBuilder().build(),
+			object
+		);
+		Assert.assertNotSame(
+			object.toBuilder().build(),
+			object
+		);
 	}
 
 }

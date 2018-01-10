@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.Parsers.toDGPSStation;
 import static io.jenetics.jpx.Parsers.toDegrees;
@@ -49,6 +50,7 @@ import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
  * feature on a map.
@@ -61,7 +63,7 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.1
  * @since 1.0
  */
 public final class WayPoint implements Point, Serializable {
@@ -361,6 +363,40 @@ public final class WayPoint implements Point, Serializable {
 		return Optional.ofNullable(_dgpsID);
 	}
 
+	/**
+	 * Convert the <em>immutable</em> way-point object into a <em>mutable</em>
+	 * builder initialized with the current way-point values.
+	 *
+	 * @since 1.1
+	 *
+	 * @return a new way-point builder initialized with the values of {@code this}
+	 *         way-point
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.lat(_latitude)
+			.lon(_longitude)
+			.ele(_elevation)
+			.speed(_speed)
+			.time(_time)
+			.magvar(_magneticVariation)
+			.geoidheight(_geoidHeight)
+			.name(_name)
+			.cmt(_comment)
+			.desc(_description)
+			.src(_source)
+			.links(_links)
+			.sym(_symbol)
+			.type(_type)
+			.fix(_fix)
+			.sat(_sat)
+			.hdop(_hdop)
+			.vdop(_vdop)
+			.pdop(_pdop)
+			.ageofdgpsdata(_ageOfGPSData)
+			.dgpsid(_dgpsID);
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 37;
@@ -420,7 +456,7 @@ public final class WayPoint implements Point, Serializable {
 	public String toString() {
 		return format(
 			"[lat=%s, lon=%s, ele=%s]",
-			_latitude, _latitude, _elevation
+			_latitude, _longitude, _elevation
 		);
 	}
 
@@ -461,25 +497,77 @@ public final class WayPoint implements Point, Serializable {
 		private Duration _ageOfDGPSData;
 		private DGPSStation _dgpsID;
 
-		Builder() {
+		private Builder() {
 		}
 
+		/**
+		 * Set the latitude value of the way-point.
+		 *
+		 * @param latitude the new latitude value
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given value is {@code null}
+		 */
 		public Builder lat(final Latitude latitude) {
 			_latitude = requireNonNull(latitude);
 			return this;
 		}
 
+		/**
+		 * Set the latitude value of the way-point.
+		 *
+		 * @param degrees the new latitude value
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the given value is not within the
+		 *         range of {@code [-90..90]}
+		 */
 		public Builder lat(final double degrees) {
 			return lat(Latitude.ofDegrees(degrees));
 		}
 
+		/**
+		 * Return the current latitude value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current latitude value
+		 */
+		public Latitude lat() {
+			return _latitude;
+		}
+
+		/**
+		 * Set the longitude value of the way-point.
+		 *
+		 * @param longitude the new longitude value
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if the given value is {@code null}
+		 */
 		public Builder lon(final Longitude longitude) {
 			_longitude = requireNonNull(longitude);
 			return this;
 		}
 
+		/**
+		 * Set the longitude value of the way-point.
+		 *
+		 * @param degrees the new longitude value
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the given value is not within the
+		 *         range of {@code [-180..180]}
+		 */
 		public Builder lon(final double degrees) {
 			return lon(Longitude.ofDegrees(degrees));
+		}
+
+		/**
+		 * Return the current longitude value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current longitude value
+		 */
+		public Longitude lon() {
+			return _longitude;
 		}
 
 		/**
@@ -517,6 +605,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current elevation value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current elevation value
+		 */
+		public Optional<Length> ele() {
+			return Optional.ofNullable(_elevation);
+		}
+
+		/**
 		 * Set the current GPS speed.
 		 *
 		 * @param speed the current GPS speed
@@ -547,6 +646,17 @@ public final class WayPoint implements Point, Serializable {
 		public Builder speed(final double meterPerSecond) {
 			_speed = Speed.of(meterPerSecond, Speed.Unit.METERS_PER_SECOND);
 			return this;
+		}
+
+		/**
+		 * Return the current speed value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current speed value
+		 */
+		public Optional<Speed> speed() {
+			return Optional.ofNullable(_speed);
 		}
 
 		/**
@@ -612,6 +722,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current time value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current time value
+		 */
+		public Optional<ZonedDateTime> time() {
+			return Optional.ofNullable(_time);
+		}
+
+		/**
 		 * Set the magnetic variation at the point.
 		 *
 		 * @param variation the magnetic variation
@@ -633,6 +754,17 @@ public final class WayPoint implements Point, Serializable {
 		public Builder magvar(final double degree) {
 			_magneticVariation = Degrees.ofDegrees(degree);
 			return this;
+		}
+
+		/**
+		 * Return the current magnetic variation value.
+		 *
+		 * @version 1.1
+		 *
+		 * @return the current magnetic variation value
+		 */
+		public Optional<Degrees> magvar() {
+			return Optional.ofNullable(_magneticVariation);
 		}
 
 		/**
@@ -676,6 +808,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current height of geoid value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current height of geoid value
+		 */
+		public Optional<Length> geoidheight() {
+			return Optional.ofNullable(_geoidHeight);
+		}
+
+		/**
 		 * Set the GPS name of the way-point. This field will be transferred to
 		 * and from the GPS. GPX does not place restrictions on the length of
 		 * this field or the characters contained in it. It is up to the
@@ -691,6 +834,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current name value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current name value
+		 */
+		public Optional<String> name() {
+			return Optional.ofNullable(_name);
+		}
+
+		/**
 		 * Set the GPS way-point comment.
 		 *
 		 * @param comment the GPS way-point comment.
@@ -699,6 +853,17 @@ public final class WayPoint implements Point, Serializable {
 		public Builder cmt(final String comment) {
 			_comment = comment;
 			return this;
+		}
+
+		/**
+		 * Return the current comment value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current comment value
+		 */
+		public Optional<String> cmt() {
+			return Optional.ofNullable(_comment);
 		}
 
 		/**
@@ -713,6 +878,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current description value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current description value
+		 */
+		public Optional<String> desc() {
+			return Optional.ofNullable(_description);
+		}
+
+		/**
 		 * Set the GPS way-point source.
 		 *
 		 * @param source the GPS way-point source.
@@ -724,16 +900,27 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
-		 * Set the links to additional information about the way-point.
+		 * Return the current source value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current source value
+		 */
+		public Optional<String> src() {
+			return Optional.ofNullable(_source);
+		}
+
+		/**
+		 * Set the links to additional information about the way-point. The link
+		 * list may be {@code null}.
 		 *
 		 * @param links the links to additional information about the way-point
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the links in the list is
+		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			_links.clear();
-			if (links != null) {
-				_links.addAll(links);
-			}
+			copy(links, _links);
 			return this;
 		}
 
@@ -766,6 +953,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current links. The returned link list is mutable.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current links
+		 */
+		public List<Link> links() {
+			return new NonNullList<>(_links);
+		}
+
+		/**
 		 * Set the text of GPS symbol name. For interchange with other programs,
 		 * use the exact spelling of the symbol as displayed on the GPS. If the
 		 * GPS abbreviates words, spell them out.
@@ -779,6 +977,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current symbol value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current symbol value
+		 */
+		public Optional<String> sym() {
+			return Optional.ofNullable(_symbol);
+		}
+
+		/**
 		 * Set the type (classification) of the way-point.
 		 *
 		 * @param type the type (classification) of the way-point
@@ -787,6 +996,17 @@ public final class WayPoint implements Point, Serializable {
 		public Builder type(final String type) {
 			_type = type;
 			return this;
+		}
+
+		/**
+		 * Return the current type value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current type value
+		 */
+		public Optional<String> type() {
+			return Optional.ofNullable(_type);
 		}
 
 		/**
@@ -818,6 +1038,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current GPX fix value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current GPX fix value
+		 */
+		public Optional<Fix> fix() {
+			return Optional.ofNullable(_fix);
+		}
+
+		/**
 		 * Set the number of satellites used to calculate the GPX fix.
 		 *
 		 * @param sat the number of satellites used to calculate the GPX fix
@@ -842,6 +1073,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current number of satelites.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current number of satelites
+		 */
+		public Optional<UInt> sat() {
+			return Optional.ofNullable(_sat);
+		}
+
+		/**
 		 * Set the horizontal dilution of precision.
 		 *
 		 * @param hdop the horizontal dilution of precision
@@ -850,6 +1092,17 @@ public final class WayPoint implements Point, Serializable {
 		public Builder hdop(final Double hdop) {
 			_hdop = hdop;
 			return this;
+		}
+
+		/**
+		 * Return the current horizontal dilution.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current horizontal dilution
+		 */
+		public Optional<Double> hdop() {
+			return Optional.ofNullable(_hdop);
 		}
 
 		/**
@@ -864,6 +1117,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current vertical dilution.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current vertical dilution
+		 */
+		public Optional<Double> vdop() {
+			return Optional.ofNullable(_vdop);
+		}
+
+		/**
 		 * Set the position dilution of precision.
 		 *
 		 * @param pdop the position dilution of precision
@@ -872,6 +1136,17 @@ public final class WayPoint implements Point, Serializable {
 		public Builder pdop(final Double pdop) {
 			_pdop = pdop;
 			return this;
+		}
+
+		/**
+		 * Return the current position dilution.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current position dilution
+		 */
+		public Optional<Double> pdop() {
+			return Optional.ofNullable(_pdop);
 		}
 
 		/**
@@ -897,6 +1172,17 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Return the current age since last DGPS update.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current age since last DGPS update
+		 */
+		public Optional<Duration> ageofdgpsdata() {
+			return Optional.ofNullable(_ageOfDGPSData);
+		}
+
+		/**
 		 * Set the ID of DGPS station used in differential correction.
 		 *
 		 * @param station the ID of DGPS station used in differential correction
@@ -918,6 +1204,19 @@ public final class WayPoint implements Point, Serializable {
 		public Builder dgpsid(final int station) {
 			_dgpsID = DGPSStation.of(station);
 			return this;
+		}
+
+		/**
+		 * Return the current the ID of DGPS station used in differential
+		 * correction.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current the ID of DGPS station used in differential
+		 *         correction
+		 */
+		public Optional<DGPSStation> dgpsid() {
+			return Optional.ofNullable(_dgpsID);
 		}
 
 		/**

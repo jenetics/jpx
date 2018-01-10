@@ -92,6 +92,17 @@ public final class Person implements Serializable {
 			_link == null;
 	}
 
+	/**
+	 * Return {@code true} if not all person properties are {@code null}.
+	 *
+	 * @since 1.1
+	 *
+	 * @return {@code true} if not all person properties are {@code null}
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
+	}
+
 	@Override
 	public int hashCode() {
 		int hash = 37;
@@ -167,25 +178,26 @@ public final class Person implements Serializable {
 	/**
 	 * Writes this {@code Link} object to the given XML stream {@code writer}.
 	 *
+	 * @param name the name of the {@code Person} tag
 	 * @param writer the XML data sink
 	 * @throws XMLStreamException if an error occurs
 	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
+	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
 		final XMLWriter xml = new XMLWriter(writer);
 
-		xml.write("person",
+		xml.write(name,
 			xml.elem("name", _name),
 			xml.elem(_email, Email::write),
 			xml.elem(_link, Link::write)
 		);
 	}
 
-	static XMLReader<Person> reader() {
+	static XMLReader<Person> reader(final String name) {
 		final XML.Function<Object[], Person> creator = a -> Person.of(
 			Parsers.toString(a[0]), (Email)a[1], (Link)a[2]
 		);
 
-		return XMLReader.of(creator, "person",
+		return XMLReader.of(creator, name,
 			XMLReader.of("name"),
 			Email.reader(),
 			Link.reader()

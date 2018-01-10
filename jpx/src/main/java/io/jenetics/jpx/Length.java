@@ -30,7 +30,7 @@ import java.io.Serializable;
  * "m" (metre).
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Length
@@ -53,24 +53,44 @@ public final class Length
 		METER(1.0),
 
 		/**
-		 * Represents a kilometer.
+		 * Represents a kilometer: ≙ 1,000 m.
 		 */
 		KILOMETER(1_000.0),
 
 		/**
-		 * Represents an inch.
+		 * Represents an inch: ≙ 0.0254 m.
 		 */
 		INCH(127.0/5_000.0),
 
 		/**
-		 * Represents a yard.
+		 * Represents a foot: ≙ 0.3048 m.
+		 */
+		FOOT(0.3048),
+
+		/**
+		 * Represents a yard: ≙ 0.9144 m.
 		 */
 		YARD(1_143.0/1_250.0),
 
 		/**
-		 * Represents a mile.
+		 * Represents a statute mile: ≙ 1,609.344 m.
 		 */
-		MILE(201_168.0/125.0);
+		MILE(201_168.0/125.0),
+
+		/**
+		 * Represents a fathom: ≙ 1.853184 m.
+		 */
+		FATHOM(1.853184),
+
+		/**
+		 * Represents a cable: ≙ 185.3184 m.
+		 */
+		CABLE(185.3184),
+
+		/**
+		 * Represents a nautical mile: ≙ 1,853.184 m.
+		 */
+		NAUTICAL_MILE(1853.184);
 
 		private final double _factor;
 

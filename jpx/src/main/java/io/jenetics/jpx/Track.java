@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.Serializable;
@@ -30,6 +31,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -195,6 +199,26 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	}
 
 	/**
+	 * Convert the <em>immutable</em> track object into a <em>mutable</em>
+	 * builder initialized with the current track values.
+	 *
+	 * @since 1.1
+	 *
+	 * @return a new track builder initialized with the values of {@code this}
+	 *         track
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.name(_name)
+			.cmt(_comment)
+			.desc(_description)
+			.src(_source)
+			.links(_links)
+			.number(_number)
+			.segments(_segments);
+	}
+
+	/**
 	 * Return {@code true} if all track properties are {@code null} or empty.
 	 *
 	 * @return {@code true} if all track properties are {@code null} or empty
@@ -208,6 +232,17 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			_number == null &&
 			(_segments.isEmpty() ||
 				_segments.stream().allMatch(TrackSegment::isEmpty));
+	}
+
+	/**
+	 * Return {@code true} if not all track properties are {@code null} or empty.
+	 *
+	 * @since 1.1
+	 *
+	 * @return {@code true} if not all track properties are {@code null} or empty
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
 	}
 
 	@Override
@@ -261,15 +296,15 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *     .build();
 	 * }</pre>
 	 */
-	public static final class Builder {
+	public static final class Builder implements Filter<TrackSegment, Track> {
 		private String _name;
 		private String _comment;
 		private String _description;
 		private String _source;
-		private List<Link> _links;
+		private final List<Link> _links = new ArrayList<>();
 		private UInt _number;
 		private String _type;
-		private List<TrackSegment> _segments;
+		private final List<TrackSegment> _segments = new ArrayList<>();
 
 		private Builder() {
 		}
@@ -286,6 +321,17 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
+		 * Return the current name value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current name value
+		 */
+		public Optional<String> name() {
+			return Optional.ofNullable(_name);
+		}
+
+		/**
 		 * Set the comment of the track.
 		 *
 		 * @param comment the track comment
@@ -294,6 +340,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		public Builder cmt(final String comment) {
 			_comment = comment;
 			return this;
+		}
+
+		public Optional<String> cmt() {
+			return Optional.ofNullable(_comment);
 		}
 
 		/**
@@ -308,6 +358,17 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
+		 * Return the current description value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current description value
+		 */
+		public Optional<String> desc() {
+			return Optional.ofNullable(_description);
+		}
+
+		/**
 		 * Set the source of the track.
 		 *
 		 * @param source the track source
@@ -319,13 +380,26 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
-		 * Set the track links
+		 * Return the current source value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current source value
+		 */
+		public Optional<String> src() {
+			return Optional.ofNullable(_source);
+		}
+
+		/**
+		 * Set the track links. The link list may be {@code null}.
 		 *
 		 * @param links the track links
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the links in the list is
+		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			_links = links;
+			copy(links, _links);
 			return this;
 		}
 
@@ -336,9 +410,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder addLink(final Link link) {
-			if (_links == null) {
-				_links = new ArrayList<>();
-			}
 			_links.add(requireNonNull(link));
 
 			return this;
@@ -355,6 +426,17 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 */
 		public Builder addLink(final String href) {
 			return addLink(Link.of(href));
+		}
+
+		/**
+		 * Return the current links. The returned link list is mutable.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current links
+		 */
+		public List<Link> links() {
+			return new NonNullList<>(_links);
 		}
 
 		/**
@@ -382,6 +464,17 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
+		 * Return the current number value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current number value
+		 */
+		public Optional<UInt> number() {
+			return Optional.ofNullable(_number);
+		}
+
+		/**
 		 * Set the track type.
 		 *
 		 * @param type the track type
@@ -393,13 +486,26 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
-		 * Set the track segments of the track.
+		 * Return the current type value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current type value
+		 */
+		public Optional<String> type() {
+			return Optional.ofNullable(_type);
+		}
+
+		/**
+		 * Set the track segments of the track. The list may be {@code null}.
 		 *
 		 * @param segments the track segments
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the segments in the list is
+		 *         {@code null}
 		 */
 		public Builder segments(final List<TrackSegment> segments) {
-			_segments = segments;
+			copy(segments, _segments);
 			return this;
 		}
 
@@ -411,9 +517,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
 		public Builder addSegment(final TrackSegment segment) {
-			if (_segments == null) {
-				_segments = new ArrayList<>();
-			}
 			_segments.add(requireNonNull(segment));
 
 			return this;
@@ -447,10 +550,73 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
+		 * Return the current track segments. The returned segment list is
+		 * mutable.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current track segments
+		 */
+		public List<TrackSegment> segments() {
+			return new NonNullList<>(_segments);
+		}
+
+		@Override
+		public Builder filter(final Predicate<? super TrackSegment> predicate) {
+			segments(
+				_segments.stream()
+					.filter(predicate)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder map(
+			final Function<? super TrackSegment, ? extends TrackSegment> mapper
+		) {
+			segments(
+				_segments.stream()
+					.map(mapper)
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder flatMap(
+			final Function<
+				? super TrackSegment,
+				? extends List<TrackSegment>> mapper
+		) {
+			segments(
+				_segments.stream()
+					.flatMap(segment -> mapper.apply(segment).stream())
+					.collect(Collectors.toList())
+			);
+
+			return this;
+		}
+
+		@Override
+		public Builder listMap(
+			final Function<
+				? super List<TrackSegment>,
+				? extends List<TrackSegment>> mapper
+		) {
+			segments(mapper.apply(_segments));
+
+			return this;
+		}
+
+		/**
 		 * Create a new GPX track from the current builder state.
 		 *
 		 * @return a new GPX track from the current builder state
 		 */
+		@Override
 		public Track build() {
 			return new Track(
 				_name,
@@ -468,6 +634,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	public static Builder builder() {
 		return new Builder();
 	}
+
 
 	/* *************************************************************************
 	 *  Static object creation methods

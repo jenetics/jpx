@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLReader.attr;
@@ -40,6 +41,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLInputFactory;
@@ -115,7 +119,7 @@ import javax.xml.stream.XMLStreamWriter;
  * which is read as
  * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
- * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/0">
+ * <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX" >
  *     <metadata>
  *         <time>2015-11-13T15:22:42.140Z</time>
  *     </metadata>
@@ -278,6 +282,23 @@ public final class GPX implements Serializable {
 		return _tracks.stream();
 	}
 
+	/**
+	 * Convert the <em>immutable</em> GPX object into a <em>mutable</em>
+	 * builder initialized with the current GPX values.
+	 *
+	 * @since 1.1
+	 *
+	 * @return a new track builder initialized with the values of {@code this}
+	 *         GPX object
+	 */
+	public Builder toBuilder() {
+		return builder(_version, _creator)
+			.metadata(_metadata)
+			.wayPoints(_wayPoints)
+			.routes(_routes)
+			.tracks(_tracks);
+	}
+
 	@Override
 	public String toString() {
 		return format(
@@ -328,13 +349,47 @@ public final class GPX implements Serializable {
 		private String _creator;
 		private String _version;
 		private Metadata _metadata;
-		private List<WayPoint> _wayPoints;;
-		private List<Route> _routes;
-		private List<Track> _tracks;
+		private final List<WayPoint> _wayPoints = new ArrayList<>();
+		private final List<Route> _routes = new ArrayList<>();
+		private final List<Track> _tracks = new ArrayList<>();
 
 		private Builder(final String version, final String creator) {
 			_version = requireNonNull(version);
 			_creator = requireNonNull(creator);
+		}
+
+		/**
+		 * Set the GPX creator.
+		 *
+		 * @param creator the GPX creator
+		 * @throws NullPointerException if the given argument is {@code null}
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder creator(final String creator) {
+			_creator = requireNonNull(creator);
+			return this;
+		}
+
+		/**
+		 * Return the current creator value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current creator value
+		 */
+		public String creator() {
+			return _creator;
+		}
+
+		/**
+		 * Return the current version value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current version value
+		 */
+		public String version() {
+			return _version;
 		}
 
 		/**
@@ -371,13 +426,27 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Sets the way-points of the {@code GPX} object.
+		 * Return the current metadata value.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current metadata value
+		 */
+		public Optional<Metadata> metadata() {
+			return Optional.ofNullable(_metadata);
+		}
+
+		/**
+		 * Sets the way-points of the {@code GPX} object. The list of way-points
+		 * may be {@code null}.
 		 *
 		 * @param wayPoints the {@code GPX} way-points
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the way-points in the list is
+		 *         {@code null}
 		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
-			_wayPoints = wayPoints;
+			copy(wayPoints, _wayPoints);
 			return this;
 		}
 
@@ -390,11 +459,7 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public Builder addWayPoint(final WayPoint wayPoint) {
-			if (_wayPoints == null) {
-				_wayPoints = new ArrayList<>();
-			}
 			_wayPoints.add(requireNonNull(wayPoint));
-
 			return this;
 		}
 
@@ -419,13 +484,26 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Sets the routes of the {@code GPX} object.
+		 * Return the current way-points. The returned list is mutable.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current, mutable way-point list
+		 */
+		public List<WayPoint> wayPoints() {
+			return new NonNullList<>(_wayPoints);
+		}
+
+		/**
+		 * Sets the routes of the {@code GPX} object. The list of routes may be
+		 * {@code null}.
 		 *
 		 * @param routes the {@code GPX} routes
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the routes is {@code null}
 		 */
 		public Builder routes(final List<Route> routes) {
-			_routes = routes;
+			copy(routes, _routes);
 			return this;
 		}
 
@@ -437,9 +515,6 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if the given {@code route} is {@code null}
 		 */
 		public Builder addRoute(final Route route) {
-			if (_routes == null) {
-				_routes = new ArrayList<>();
-			}
 			_routes.add(requireNonNull(route));
 
 			return this;
@@ -466,13 +541,26 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Sets the tracks of the {@code GPX} object.
+		 * Return the current routes. The returned list is mutable.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current, mutable route list
+		 */
+		public List<Route> routes() {
+			return new NonNullList<>(_routes);
+		}
+
+		/**
+		 * Sets the tracks of the {@code GPX} object. The list of tracks may be
+		 * {@code null}.
 		 *
 		 * @param tracks the {@code GPX} tracks
 		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws NullPointerException if one of the tracks is {@code null}
 		 */
 		public Builder tracks(final List<Track> tracks) {
-			_tracks = tracks;
+			copy(tracks, _tracks);
 			return this;
 		}
 
@@ -484,11 +572,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if the given {@code track} is {@code null}
 		 */
 		public Builder addTrack(final Track track) {
-			if (_tracks == null) {
-				_tracks = new ArrayList<>();
-			}
 			_tracks.add(requireNonNull(track));
-
 			return this;
 		}
 
@@ -515,6 +599,17 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Return the current tracks. The returned list is mutable.
+		 *
+		 * @since 1.1
+		 *
+		 * @return the current, mutable track list
+		 */
+		public List<Track> tracks() {
+			return new NonNullList<>(_tracks);
+		}
+
+		/**
 		 * Create an immutable {@code GPX} object from the current builder state.
 		 *
 		 * @return an immutable {@code GPX} object from the current builder state
@@ -528,6 +623,234 @@ public final class GPX implements Serializable {
 				_routes,
 				_tracks
 			);
+		}
+
+		/**
+		 * Return a new {@link WayPoint} filter.
+		 * <pre>{@code
+		 * final GPX filtered = gpx.toBuilder()
+		 *     .wayPointFilter()
+		 *         .filter(wp -> wp.getTime().isPresent())
+		 *         .build())
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @since 1.1
+		 *
+		 * @return a new {@link WayPoint} filter
+		 */
+		public Filter<WayPoint, Builder> wayPointFilter() {
+			return new Filter<WayPoint, Builder>() {
+
+				@Override
+				public Filter<WayPoint, Builder> filter(
+					final Predicate<? super WayPoint> predicate
+				) {
+					wayPoints(
+						_wayPoints.stream()
+							.filter(predicate)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<WayPoint, Builder> map(
+					final Function<? super WayPoint, ? extends WayPoint> mapper
+				) {
+					wayPoints(
+						_wayPoints.stream()
+							.map(mapper)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<WayPoint, Builder> flatMap(
+					final Function<
+						? super WayPoint,
+						? extends List<WayPoint>> mapper
+				) {
+					wayPoints(
+						_wayPoints.stream()
+							.flatMap(wp -> mapper.apply(wp).stream())
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<WayPoint, Builder> listMap(
+					final Function<
+						? super List<WayPoint>,
+						? extends List<WayPoint>> mapper
+				) {
+					wayPoints(mapper.apply(_wayPoints));
+
+					return this;
+				}
+
+				@Override
+				public Builder build() {
+					return GPX.Builder.this;
+				}
+
+			};
+		}
+
+		/**
+		 * Return a new {@link Route} filter.
+		 * <pre>{@code
+		 * final GPX filtered = gpx.toBuilder()
+		 *     .routeFilter()
+		 *         .filter(Route::nonEmpty)
+		 *         .build())
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @since 1.1
+		 *
+		 * @return a new {@link Route} filter
+		 */
+		public Filter<Route, Builder> routeFilter() {
+			return new Filter<Route, Builder>() {
+				@Override
+				public Filter<Route, Builder> filter(
+					final Predicate<? super Route> predicate
+				) {
+					routes(
+						_routes.stream()
+							.filter(predicate)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Route, Builder> map(
+					final Function<? super Route, ? extends Route> mapper
+				) {
+					routes(
+						_routes.stream()
+							.map(mapper)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Route, Builder> flatMap(
+					final Function<? super Route, ? extends List<Route>> mapper)
+				{
+					routes(
+						_routes.stream()
+							.flatMap(route -> mapper.apply(route).stream())
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Route, Builder> listMap(
+					final Function<
+						? super List<Route>,
+						? extends List<Route>> mapper
+				) {
+					routes(mapper.apply(_routes));
+
+					return this;
+				}
+
+				@Override
+				public Builder build() {
+					return GPX.Builder.this;
+				}
+
+			};
+		}
+
+		/**
+		 * Return a new {@link Track} filter.
+		 * <pre>{@code
+		 * final GPX merged = gpx.toBuilder()
+		 *     .trackFilter()
+		 *         .map(track -> track.toBuilder()
+		 *             .listMap(Filters::mergeSegments)
+		 *             .filter(TrackSegment::nonEmpty)
+		 *             .build())
+		 *         .build()
+		 *     .build();
+		 * }</pre>
+		 *
+		 * @since 1.1
+		 *
+		 * @return a new {@link Track} filter
+		 */
+		public Filter<Track, Builder> trackFilter() {
+			return new Filter<Track, Builder>() {
+				@Override
+				public Filter<Track, Builder> filter(
+					final Predicate<? super Track> predicate
+				) {
+					tracks(
+						_tracks.stream()
+							.filter(predicate)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Track, Builder> map(
+					final Function<? super Track, ? extends Track> mapper
+				) {
+					tracks(
+						_tracks.stream()
+							.map(mapper)
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Track, Builder> flatMap(
+					final Function<? super Track, ? extends List<Track>> mapper
+				) {
+					tracks(
+						_tracks.stream()
+							.flatMap(track -> mapper.apply(track).stream())
+							.collect(Collectors.toList())
+					);
+
+					return this;
+				}
+
+				@Override
+				public Filter<Track, Builder> listMap(
+					final Function<
+						? super List<Track>,
+						? extends List<Track>> mapper
+				) {
+					tracks(mapper.apply(_tracks));
+
+					return this;
+				}
+
+				@Override
+				public Builder build() {
+					return GPX.Builder.this;
+				}
+
+			};
 		}
 
 	}
@@ -702,6 +1025,8 @@ public final class GPX implements Serializable {
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
 	 *
+	 * @since 1.1
+	 *
 	 * @param gpx the GPX object to write to the output
 	 * @param path the output path where the GPX object is written to
 	 * @throws IOException if the writing of the GPX object fails
@@ -750,8 +1075,8 @@ public final class GPX implements Serializable {
 		try {
 			final XMLStreamWriter writer = indent != null
 				? new IndentingXMLWriter(
-					factory.createXMLStreamWriter(output), indent)
-				: factory.createXMLStreamWriter(output);
+					factory.createXMLStreamWriter(output, "UTF-8"), indent)
+				: factory.createXMLStreamWriter(output, "UTF-8");
 
 			writer.writeStartDocument("UTF-8", "1.0");
 			gpx.write(writer);
@@ -801,6 +1126,8 @@ public final class GPX implements Serializable {
 
 	/**
 	 * Read an GPX object from the given {@code input} stream.
+	 *
+	 * @since 1.1
 	 *
 	 * @param input the input stream from where the GPX date is read
 	 * @param lenient if {@code true}, out-of-range and syntactical errors are

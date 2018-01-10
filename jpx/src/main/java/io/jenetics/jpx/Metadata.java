@@ -177,6 +177,27 @@ public final class Metadata implements Serializable {
 	}
 
 	/**
+	 * Convert the <em>immutable</em> metadata object into a <em>mutable</em>
+	 * builder initialized with the current metadata values.
+	 *
+	 * @since 1.1
+	 *
+	 * @return a new metadata builder initialized with the values of {@code this}
+	 *         metadata
+	 */
+	public Builder toBuilder() {
+		return builder()
+			.name(_name)
+			.desc(_description)
+			.author(_author)
+			.copyright(_copyright)
+			.links(_links)
+			.time(_time)
+			.keywords(_keywords)
+			.bounds(_bounds);
+	}
+
+	/**
 	 * Return {@code true} if all metadata properties are {@code null} or empty.
 	 *
 	 * @return {@code true} if all metadata properties are {@code null} or empty
@@ -190,6 +211,17 @@ public final class Metadata implements Serializable {
 			_time == null &&
 			_keywords == null &&
 			_bounds == null;
+	}
+
+	/**
+	 * Return {@code true} if not all metadata properties are {@code null} or empty.
+	 *
+	 * @since 1.1
+	 *
+	 * @return {@code true} if not all metadata properties are {@code null} or empty
+	 */
+	public boolean nonEmpty() {
+		return !isEmpty();
 	}
 
 	@Override
@@ -525,7 +557,7 @@ public final class Metadata implements Serializable {
 		xml.write("metadata",
 			xml.elem("name", _name),
 			xml.elem("desc", _description),
-			xml.elem(_author, Person::write),
+			xml.elem(_author, (a, w) -> a.write("author", w)),
 			xml.elem(_copyright, Copyright::write),
 			xml.elems(_links, Link::write),
 			xml.elem("time", ZonedDateTimeFormat.format(_time)),
@@ -550,7 +582,7 @@ public final class Metadata implements Serializable {
 		return XMLReader.of(create, "metadata",
 			XMLReader.of("name"),
 			XMLReader.of("desc"),
-			Person.reader(),
+			Person.reader("author"),
 			Copyright.reader(),
 			XMLReader.ofList(Link.reader()),
 			XMLReader.of("time"),
