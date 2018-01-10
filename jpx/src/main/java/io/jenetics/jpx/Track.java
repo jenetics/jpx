@@ -252,7 +252,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		hash += 17*Objects.hashCode(_comment) + 37;
 		hash += 17*Objects.hashCode(_description) + 37;
 		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 37;
+		hash += 17*Objects.hashCode(_type) + 37;
+		hash += 17*Lists.hashCode(_links) + 37;
 		hash += 17*Objects.hashCode(_number) + 37;
 		hash += 17*Objects.hashCode(_segments) + 37;
 
@@ -261,13 +262,14 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Track &&
+		return obj == this ||
+			obj instanceof Track &&
 			Objects.equals(((Track)obj)._name, _name) &&
 			Objects.equals(((Track)obj)._comment, _comment) &&
 			Objects.equals(((Track)obj)._description, _description) &&
 			Objects.equals(((Track)obj)._source, _source) &&
-			((Track)obj)._links.size() == _links.size() &&
-			((Track)obj)._links.containsAll(_links) &&
+			Objects.equals(((Track)obj)._type, _type) &&
+			Lists.equals(((Track)obj)._links, _links) &&
 			Objects.equals(((Track)obj)._number, _number) &&
 			Objects.equals(((Track)obj)._segments, _segments);
 	}

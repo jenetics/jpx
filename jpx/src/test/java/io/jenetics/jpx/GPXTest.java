@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static io.jenetics.jpx.ListsTest.revert;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -348,6 +350,11 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		return new Object[][] {
 			{"/io/jenetics/jpx/ISSUE-38.gpx.xml"}
 		};
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(GPX.class).verify();
 	}
 
 }

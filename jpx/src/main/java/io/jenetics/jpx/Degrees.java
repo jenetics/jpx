@@ -117,7 +117,8 @@ public final class Degrees
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Degrees &&
+		return obj == this ||
+			obj instanceof Degrees &&
 			Double.compare(((Degrees)obj)._value, _value) == 0;
 	}
 

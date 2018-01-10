@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Year;
@@ -72,6 +74,11 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 	@Test
 	public void nullURIString() {
 		Copyright.of("author", 23, (String)null);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Copyright.class).verify();
 	}
 
 }

@@ -244,7 +244,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		hash += 17*Objects.hashCode(_comment) + 37;
 		hash += 17*Objects.hashCode(_description) + 37;
 		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 37;
+		hash += 17*Objects.hashCode(_type) + 37;
+		hash += 17*Lists.hashCode(_links) + 31;
 		hash += 17*Objects.hashCode(_number) + 37;
 		hash += 17*Objects.hashCode(_points) + 37;
 
@@ -253,13 +254,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Route &&
+		return obj == this ||
+			obj instanceof Route &&
 			Objects.equals(((Route)obj)._name, _name) &&
 			Objects.equals(((Route)obj)._comment, _comment) &&
 			Objects.equals(((Route)obj)._description, _description) &&
 			Objects.equals(((Route)obj)._source, _source) &&
-			((Route)obj)._links.size() == _links.size() &&
-			((Route)obj)._links.containsAll(_links) &&
+			Objects.equals(((Route)obj)._type, _type) &&
+			Lists.equals(((Route)obj)._links, _links) &&
 			Objects.equals(((Route)obj)._number, _number) &&
 			Objects.equals(((Route)obj)._points, _points);
 	}

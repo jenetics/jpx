@@ -24,6 +24,8 @@ import static java.time.Instant.ofEpochMilli;
 import static java.time.ZoneOffset.UTC;
 import static java.time.ZonedDateTime.ofInstant;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -101,6 +103,11 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			object.toBuilder().build(),
 			object
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(WayPoint.class).verify();
 	}
 
 }

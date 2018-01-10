@@ -93,7 +93,7 @@ public final class Link implements Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 37;
-		hash += 17*_href.hashCode() + 31;
+		hash += 17*Objects.hashCode(_href) + 31;
 		hash += 17*Objects.hashCode(_text) + 31;
 		hash += 17*Objects.hashCode(_type) + 31;
 		return hash;
@@ -101,8 +101,9 @@ public final class Link implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Link &&
-			((Link)obj)._href.equals(_href) &&
+		return obj == this ||
+			obj instanceof Link &&
+			Objects.equals(((Link)obj)._href, _href) &&
 			Objects.equals(((Link)obj)._text, _text) &&
 			Objects.equals(((Link)obj)._type, _type);
 	}

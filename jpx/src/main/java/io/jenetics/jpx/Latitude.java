@@ -104,7 +104,8 @@ public final class Latitude extends Number implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Latitude &&
+		return obj == this ||
+			obj instanceof Latitude &&
 			Double.compare(((Latitude)obj)._value, _value) == 0;
 	}
 

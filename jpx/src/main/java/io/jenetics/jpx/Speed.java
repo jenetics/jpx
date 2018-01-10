@@ -160,7 +160,8 @@ public final class Speed
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Speed &&
+		return obj == this ||
+			obj instanceof Speed &&
 			Double.compare(((Speed)obj)._value, _value) == 0;
 	}
 
