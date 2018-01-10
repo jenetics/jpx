@@ -26,6 +26,7 @@ import static io.jenetics.jpx.Parsers.toLongitude;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -106,20 +107,21 @@ public final class Bounds implements Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 17;
-		hash += 31*_minLatitude.hashCode() + 37;
-		hash += 31*_minLongitude.hashCode() + 37;
-		hash += 31*_maxLatitude.hashCode() + 37;
-		hash += 31*_maxLongitude.hashCode() + 37;
+		hash += 31*Objects.hashCode(_minLatitude) + 37;
+		hash += 31*Objects.hashCode(_minLongitude) + 37;
+		hash += 31*Objects.hashCode(_maxLatitude) + 37;
+		hash += 31*Objects.hashCode(_maxLongitude) + 37;
 		return hash;
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof  Bounds &&
-			((Bounds)obj)._minLatitude.equals(_minLatitude) &&
-			((Bounds)obj)._minLongitude.equals(_minLongitude) &&
-			((Bounds)obj)._maxLatitude.equals(_maxLatitude) &&
-			((Bounds)obj)._maxLongitude.equals(_maxLongitude);
+		return obj == this ||
+			obj instanceof  Bounds &&
+			Objects.equals(((Bounds)obj)._minLatitude, _minLatitude) &&
+			Objects.equals(((Bounds)obj)._minLongitude, _minLongitude) &&
+			Objects.equals(((Bounds)obj)._maxLatitude, _maxLatitude) &&
+			Objects.equals(((Bounds)obj)._maxLongitude, _maxLongitude);
 	}
 
 	@Override
