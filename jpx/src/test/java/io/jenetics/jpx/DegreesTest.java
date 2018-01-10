@@ -33,6 +33,8 @@ import org.testng.annotations.Test;
 @Test
 public class DegreesTest extends ObjectTester<Degrees> {
 
+	private static final double EPSILON = 0.000000000000001;
+
 	@Override
 	Supplier<Degrees> factory(final Random random) {
 		return () -> Degrees.ofDegrees(random.nextDouble());
@@ -54,13 +56,15 @@ public class DegreesTest extends ObjectTester<Degrees> {
 	@Test
 	public void ofDegrees() {
 		Assert.assertEquals(
-			Degrees.ofDegrees(3),
-			Degrees.ofRadians(Math.toRadians(3))
+			Degrees.ofDegrees(3).doubleValue(),
+			Degrees.ofRadians(Math.toRadians(3)).doubleValue(),
+			EPSILON
 		);
 
 		Assert.assertEquals(
 			Degrees.ofDegrees(3).toDegrees(),
-			Degrees.ofRadians(Math.toRadians(3)).toDegrees()
+			Degrees.ofRadians(Math.toRadians(3)).toDegrees(),
+			EPSILON
 		);
 	}
 

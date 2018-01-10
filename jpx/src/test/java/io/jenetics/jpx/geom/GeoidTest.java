@@ -37,6 +37,8 @@ import io.jenetics.jpx.WayPointTest;
  */
 public class GeoidTest {
 
+	private static final double EPSILON = 0.000000001;
+
 	private final static Geoid GEOID = Geoid.DEFAULT;
 
 	@Test
@@ -46,15 +48,18 @@ public class GeoidTest {
 
 		Assert.assertEquals(
 			GEOID.distance(start, end).doubleValue(),
-			24528.356073554987
+			24528.356073554987,
+			EPSILON
 		);
 		Assert.assertEquals(
 			GEOID.distance(end, start).doubleValue(),
-			24528.356073555155
+			24528.356073555155,
+			EPSILON
 		);
 		Assert.assertEquals(
 			GEOID.distance(end, end).doubleValue(),
-			0.0
+			0.0,
+			EPSILON
 		);
 	}
 
