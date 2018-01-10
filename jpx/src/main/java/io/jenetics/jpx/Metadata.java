@@ -31,6 +31,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -555,7 +556,7 @@ public final class Metadata implements Serializable {
 		private final String description;
 		private final Person author;
 		private final Copyright copyright;
-		private final List<Link> links;
+		private final Link[] links;
 		private final ZonedDateTime time;
 		private final String keywords;
 		private final Bounds bounds;
@@ -565,7 +566,8 @@ public final class Metadata implements Serializable {
 			description = metadata._description;
 			author = metadata._author;
 			copyright = metadata._copyright;
-			links = metadata._links.isEmpty() ? null : metadata._links;
+			links = metadata._links.isEmpty()
+				? null : metadata._links.toArray(new Link[0]);
 			time = metadata._time;
 			keywords = metadata._keywords;
 			bounds = metadata._bounds;
@@ -577,7 +579,7 @@ public final class Metadata implements Serializable {
 				description,
 				author,
 				copyright,
-				links,
+				links != null ? Arrays.asList(links) : null,
 				time,
 				keywords,
 				bounds

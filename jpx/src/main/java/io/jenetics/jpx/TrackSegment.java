@@ -28,6 +28,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -317,14 +318,15 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	private static final class SerializationProxy implements Serializable {
 		private static final long serialVersionUID = 1L;
 
-		private final List<WayPoint> _points;
+		private final WayPoint[] points;
 
 		private SerializationProxy(final TrackSegment segment) {
-			_points = segment._points.isEmpty() ? null : segment._points;
+			points = segment._points.isEmpty()
+				? null : segment._points.toArray(new WayPoint[0]);
 		}
 
 		private Object readResolve() {
-			return new TrackSegment(_points);
+			return new TrackSegment(points != null ? Arrays.asList(points) : null);
 		}
 	}
 

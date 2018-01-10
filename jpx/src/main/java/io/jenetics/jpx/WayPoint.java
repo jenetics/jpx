@@ -45,6 +45,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -1599,7 +1600,7 @@ public final class WayPoint implements Point, Serializable {
 		private final String comment;
 		private final String description;
 		private final String source;
-		private final List<Link> links;
+		private final Link[] links;
 		private final String symbol;
 		private final String type;
 		private final Fix fix;
@@ -1622,7 +1623,7 @@ public final class WayPoint implements Point, Serializable {
 			comment = point._comment;
 			description = point._description;
 			source = point._source;
-			links = point._links.isEmpty() ? null : point._links;
+			links = point._links.isEmpty() ? null : point._links.toArray(new Link[0]);
 			symbol = point._symbol;
 			type = point._type;
 			fix = point._fix;
@@ -1647,7 +1648,7 @@ public final class WayPoint implements Point, Serializable {
 				comment,
 				description,
 				source,
-				links,
+				links != null ? Arrays.asList(links) : null,
 				symbol,
 				type,
 				fix,

@@ -28,6 +28,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -726,20 +727,22 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		private final String comment;
 		private final String description;
 		private final String source;
-		private final List<Link> links;
+		private final Link[] links;
 		private final UInt number;
 		private final String type;
-		private final List<WayPoint> points;
+		private final WayPoint[] points;
 
 		private SerializationProxy(final Route route) {
 			name = route._name;
 			comment = route._comment;
 			description = route._description;
 			source = route._source;
-			links = route._links.isEmpty() ? null : route._links;
+			links = route._links.isEmpty()
+				? null : route._links.toArray(new Link[0]);
 			number = route._number;
 			type = route._type;
-			points = route._points.isEmpty() ? null : route._points;
+			points = route._points.isEmpty()
+				? null : route._points.toArray(new WayPoint[0]);
 		}
 
 		private Object readResolve() {
@@ -748,10 +751,10 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				comment,
 				description,
 				source,
-				links,
+				links != null ? Arrays.asList(links) : null,
 				number,
 				type,
-				points
+				points != null ? Arrays.asList(points) : null
 			);
 		}
 	}

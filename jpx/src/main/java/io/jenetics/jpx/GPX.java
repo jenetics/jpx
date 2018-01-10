@@ -39,6 +39,7 @@ import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -970,17 +971,20 @@ public final class GPX implements Serializable {
 		private final String version;
 		private final String creator;
 		private final Metadata metadata;
-		private final List<WayPoint> wayPoints;;
-		private final List<Route> routes;
-		private final List<Track> tracks;
+		private final WayPoint[] wayPoints;;
+		private final Route[] routes;
+		private final Track[] tracks;
 
 		private SerializationProxy(final GPX gpx) {
 			version = gpx._version;
 			creator = gpx._creator;
 			metadata = gpx._metadata;
-			wayPoints = gpx._wayPoints.isEmpty() ? null : gpx._wayPoints;
-			routes = gpx._routes.isEmpty() ? null : gpx._routes;
-			tracks = gpx._tracks.isEmpty() ? null : gpx._tracks;
+			wayPoints = gpx._wayPoints.isEmpty()
+				? null : gpx._wayPoints.toArray(new WayPoint[0]);
+			routes = gpx._routes.isEmpty()
+				? null : gpx._routes.toArray(new Route[0]);
+			tracks = gpx._tracks.isEmpty()
+				? null : gpx._tracks.toArray(new Track[0]);
 		}
 
 		private Object readResolve() {
@@ -988,9 +992,9 @@ public final class GPX implements Serializable {
 				version,
 				creator,
 				metadata,
-				wayPoints,
-				routes,
-				tracks
+				wayPoints != null ? Arrays.asList(wayPoints) : null,
+				routes != null ? Arrays.asList(routes): null,
+				tracks != null ? Arrays.asList(tracks) : null
 			);
 		}
 	}

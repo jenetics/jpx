@@ -28,6 +28,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -697,20 +698,22 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		private final String comment;
 		private final String description;
 		private final String source;
-		private final List<Link> links;
+		private final Link[] links;
 		private final UInt number;
 		private final String type;
-		private final List<TrackSegment> segments;
+		private final TrackSegment[] segments;
 
 		private SerializationProxy(final Track track) {
 			name = track._name;
 			comment = track._comment;
 			description = track._description;
 			source = track._source;
-			links = track._links.isEmpty() ? null : track._links;
+			links = track._links.isEmpty()
+				? null : track._links.toArray(new Link[0]);
 			number = track._number;
 			type = track._type;
-			segments = track._segments.isEmpty() ? null : track._segments;
+			segments = track._segments.isEmpty()
+				? null : track._segments.toArray(new TrackSegment[0]);
 		}
 
 		private Object readResolve() {
@@ -719,10 +722,10 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				comment,
 				description,
 				source,
-				links,
+				links != null ? Arrays.asList(links) : null,
 				number,
 				type,
-				segments
+				segments != null ? Arrays.asList(segments) : null
 			);
 		}
 	}
