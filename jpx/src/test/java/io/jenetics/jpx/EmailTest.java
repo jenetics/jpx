@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -51,6 +53,11 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 			format("id_%s", random.nextInt(100)),
 			format("domain_%s", random.nextInt(100))
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Email.class).verify();
 	}
 
 }

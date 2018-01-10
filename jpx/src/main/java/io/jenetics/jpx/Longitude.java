@@ -31,7 +31,7 @@ import java.io.Serializable;
  * @version 1.0
  * @since 1.0
  */
-public class Longitude extends Number implements Serializable {
+public final class Longitude extends Number implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -104,7 +104,8 @@ public class Longitude extends Number implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Longitude &&
+		return obj == this ||
+			obj instanceof Longitude &&
 			Double.compare(((Longitude)obj)._value, _value) == 0;
 	}
 

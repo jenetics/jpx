@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -33,6 +35,11 @@ public class UIntTest extends ObjectTester<UInt> {
 	@Override
 	Supplier<UInt> factory(final Random random) {
 		return () -> UInt.of(Math.abs(random.nextInt()));
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(UInt.class).verify();
 	}
 
 }

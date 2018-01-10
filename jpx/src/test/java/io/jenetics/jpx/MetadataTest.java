@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.time.ZonedDateTime;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -98,6 +100,11 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 			metadata.toBuilder().build(),
 			metadata
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Metadata.class).verify();
 	}
 
 }

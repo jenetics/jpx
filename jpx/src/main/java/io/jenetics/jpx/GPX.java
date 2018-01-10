@@ -321,7 +321,8 @@ public final class GPX implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof GPX &&
+		return obj == this ||
+			obj instanceof GPX &&
 			Objects.equals(((GPX)obj)._creator, _creator) &&
 			Objects.equals(((GPX)obj)._version, _version) &&
 			Objects.equals(((GPX)obj)._metadata, _metadata) &&

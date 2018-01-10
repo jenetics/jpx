@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -69,6 +71,11 @@ public class LinkTest
 		}
 
 		return links;
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Link.class).verify();
 	}
 
 }

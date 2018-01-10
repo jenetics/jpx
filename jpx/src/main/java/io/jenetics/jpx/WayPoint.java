@@ -400,8 +400,8 @@ public final class WayPoint implements Point, Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 37;
-		hash += 17*_latitude.hashCode() + 31;
-		hash += 17*_longitude.hashCode() + 31;
+		hash += 17*Objects.hashCode(_latitude) + 31;
+		hash += 17*Objects.hashCode(_longitude) + 31;
 		hash += 17*Objects.hashCode(_elevation) + 31;
 		hash += 17*Objects.hashCode(_speed) + 31;
 		hash += 17*Objects.hashCode(_time) + 31;
@@ -411,7 +411,7 @@ public final class WayPoint implements Point, Serializable {
 		hash += 17*Objects.hashCode(_comment) + 31;
 		hash += 17*Objects.hashCode(_description) + 31;
 		hash += 17*Objects.hashCode(_source) + 31;
-		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 31;
+		hash += 17*Lists.hashCode(_links) + 31;
 		hash += 17*Objects.hashCode(_symbol) + 31;
 		hash += 17*Objects.hashCode(_type) + 31;
 		hash += 17*Objects.hashCode(_fix) + 31;
@@ -428,8 +428,8 @@ public final class WayPoint implements Point, Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj instanceof WayPoint &&
-			((WayPoint)obj)._latitude.equals(_latitude) &&
-			((WayPoint)obj)._longitude.equals(_longitude) &&
+			Objects.equals(((WayPoint)obj)._latitude, _latitude) &&
+			Objects.equals(((WayPoint)obj)._longitude, _longitude) &&
 			Objects.equals(((WayPoint)obj)._elevation, _elevation) &&
 			Objects.equals(((WayPoint)obj)._speed, _speed) &&
 			ZonedDateTimeFormat.equals(((WayPoint)obj)._time, _time) &&
@@ -439,8 +439,7 @@ public final class WayPoint implements Point, Serializable {
 			Objects.equals(((WayPoint)obj)._comment, _comment) &&
 			Objects.equals(((WayPoint)obj)._description, _description) &&
 			Objects.equals(((WayPoint)obj)._source, _source) &&
-			((WayPoint)obj)._links.size() == _links.size() &&
-			((WayPoint)obj)._links.containsAll(_links) &&
+			Lists.equals(((WayPoint)obj)._links, _links) &&
 			Objects.equals(((WayPoint)obj)._symbol, _symbol) &&
 			Objects.equals(((WayPoint)obj)._type, _type) &&
 			Objects.equals(((WayPoint)obj)._fix, _fix) &&

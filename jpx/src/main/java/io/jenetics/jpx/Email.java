@@ -23,6 +23,7 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -95,16 +96,17 @@ public final class Email implements Comparable<Email>, Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 37;
-		hash += 17*_id.hashCode() + 31;
-		hash += 17*_domain.hashCode() + 31;
+		hash += 17*Objects.hashCode(_id) + 31;
+		hash += 17*Objects.hashCode(_domain) + 31;
 		return hash;
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Email &&
-			((Email)obj)._id.equals(_id) &&
-			((Email)obj)._domain.equals(_domain);
+		return obj == this ||
+			obj instanceof Email &&
+			Objects.equals(((Email)obj)._id, _id) &&
+			Objects.equals(((Email)obj)._domain, _domain);
 	}
 
 	@Override

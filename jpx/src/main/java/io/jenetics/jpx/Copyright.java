@@ -95,7 +95,7 @@ public final class Copyright implements Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 31;
-		hash += 17*_author.hashCode();
+		hash += 17*Objects.hashCode(_author) + 37;
 		hash += 17*Objects.hashCode(_year) + 37;
 		hash += 17*Objects.hashCode(_license) + 37;
 		return hash;
@@ -103,8 +103,9 @@ public final class Copyright implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Copyright &&
-			((Copyright) obj)._author.equals(_author) &&
+		return obj == this ||
+			obj instanceof Copyright &&
+			Objects.equals(((Copyright) obj)._author, _author) &&
 			Objects.equals(((Copyright) obj)._year, _year) &&
 			Objects.equals(((Copyright) obj)._license, _license);
 	}

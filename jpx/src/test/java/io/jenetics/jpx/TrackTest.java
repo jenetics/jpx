@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static io.jenetics.jpx.ListsTest.revert;
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -157,6 +159,11 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 			object.toBuilder().build(),
 			object
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Track.class).verify();
 	}
 
 }

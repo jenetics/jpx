@@ -92,4 +92,26 @@ final class Lists {
 		}
 	}
 
+	static int hashCode(final List<?> list) {
+		return list != null
+			? 17*list.stream().mapToInt(Objects::hashCode).sum() + 31
+			: 0;
+	}
+
+	static boolean equals(final List<?> b, final List<?> a) {
+		boolean result = false;
+		if (a != null) {
+			if (b != null) {
+				result = a.size() == b.size();
+				if (result) {
+					result = a.containsAll(b);
+				}
+			}
+		} else {
+			result = b == null;
+		}
+
+		return result;
+	}
+
 }

@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static io.jenetics.jpx.ListsTest.revert;
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -144,6 +146,11 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 			object.toBuilder().build(),
 			object
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Route.class).verify();
 	}
 
 }

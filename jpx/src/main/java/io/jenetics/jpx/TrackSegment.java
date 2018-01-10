@@ -126,13 +126,14 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public int hashCode() {
-		return _points.hashCode();
+		return Objects.hashCode(_points);
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof TrackSegment &&
-			((TrackSegment)obj)._points.equals(_points);
+		return obj == this ||
+			obj instanceof TrackSegment &&
+			Objects.equals(((TrackSegment)obj)._points, _points);
 	}
 
 	@Override
