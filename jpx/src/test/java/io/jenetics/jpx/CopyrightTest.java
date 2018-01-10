@@ -23,7 +23,6 @@ import static java.lang.String.format;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Year;
@@ -80,12 +79,6 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Copyright.class).verify();
-	}
-
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextCopyright(new Random());
-		Serialization.test(object);
 	}
 
 }

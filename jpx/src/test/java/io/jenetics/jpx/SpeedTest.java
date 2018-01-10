@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -85,12 +84,6 @@ public class SpeedTest extends ObjectTester<Speed> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Speed.class).verify();
-	}
-
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = Speed.of(new Random().nextDouble(), Unit.METERS_PER_SECOND);
-		Serialization.test(object);
 	}
 
 }

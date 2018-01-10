@@ -23,7 +23,6 @@ import static java.lang.String.format;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -88,12 +87,6 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Email.class).verify();
-	}
-
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextEmail(new Random());
-		Serialization.test(object);
 	}
 
 }

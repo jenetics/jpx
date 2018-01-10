@@ -23,7 +23,6 @@ import static java.lang.String.format;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -66,12 +65,6 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Person.class).verify();
-	}
-
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextPerson(new Random());
-		Serialization.test(object);
 	}
 
 }

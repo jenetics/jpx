@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -68,12 +67,6 @@ public class LatitudeTest extends ObjectTester<Latitude> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Latitude.class).verify();
-	}
-
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = Latitude.ofRadians(new Random().nextDouble());
-		Serialization.test(object);
 	}
 
 }

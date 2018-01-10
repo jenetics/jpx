@@ -23,7 +23,6 @@ import static java.lang.String.format;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -77,12 +76,6 @@ public class LinkTest
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Link.class).verify();
-	}
-
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextLink(new Random());
-		Serialization.test(object);
 	}
 
 }

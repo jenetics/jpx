@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -41,12 +40,6 @@ public class DGPSStationTest extends ObjectTester<DGPSStation> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(DGPSStation.class).verify();
-	}
-
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = DGPSStation.of(new Random().nextInt(1023));
-		Serialization.test(object);
 	}
 
 }
