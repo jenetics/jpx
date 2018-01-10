@@ -30,7 +30,7 @@ import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.comt">Franz Wilhelmstötter</a>
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
@@ -55,14 +55,15 @@ public final class GPXDAO extends DAO {
 	/**
 	 * Parses one row of the "gpx" table.
 	 */
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Row>> RowParser = rs -> Stored.of(
-		rs.getLong("id"),
-		new Row(
-			rs.getString("version"),
-			rs.getString("creator"),
-			rs.get(Long.class, "metadata_id")
-		)
-	);
+	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Row>>
+		RowParser = rs -> Stored.of(
+			rs.getLong("id"),
+			new Row(
+				rs.getString("version"),
+				rs.getString("creator"),
+				rs.get(Long.class, "metadata_id")
+			)
+		);
 
 	public GPXDAO(final Connection conn) {
 		super(conn);
