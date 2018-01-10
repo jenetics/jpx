@@ -155,7 +155,7 @@ public final class Latitude extends Number implements Serializable {
 		private final double value;
 
 		private SerializationProxy(final Latitude latitude) {
-			value = latitude.toDegrees();
+			value = latitude._value;
 		}
 
 		private Object readResolve() {

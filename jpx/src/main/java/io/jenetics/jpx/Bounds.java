@@ -201,10 +201,10 @@ public final class Bounds implements Serializable {
 		private final double maxLongitude;
 
 		private SerializationProxy(Bounds bounds) {
-			minLatitude = bounds.getMinLatitude().toDegrees();
-			minLongitude = bounds.getMinLongitude().toDegrees();
-			maxLatitude = bounds.getMaxLatitude().toDegrees();
-			maxLongitude = bounds.getMaxLongitude().toDegrees();
+			minLatitude = bounds._minLatitude.toDegrees();
+			minLongitude = bounds._minLongitude.toDegrees();
+			maxLatitude = bounds._maxLatitude.toDegrees();
+			maxLongitude = bounds._maxLongitude.toDegrees();
 		}
 
 		private Object readResolve() {

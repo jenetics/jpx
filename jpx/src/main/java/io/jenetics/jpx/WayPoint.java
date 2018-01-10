@@ -52,8 +52,6 @@ import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
-import io.jenetics.jpx.Length.Unit;
-
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
  * feature on a map.
@@ -1592,11 +1590,11 @@ public final class WayPoint implements Point, Serializable {
 		private final double latitude;
 		private final double longitude;
 
-		private final double elevation;
-		private final double speed;
+		private final Length elevation;
+		private final Speed speed;
 		private final ZonedDateTime time;
-		private final double magneticVariation;
-		private final double geoidHeight;
+		private final Degrees magneticVariation;
+		private final Length geoidHeight;
 		private final String name;
 		private final String comment;
 		private final String description;
@@ -1605,76 +1603,46 @@ public final class WayPoint implements Point, Serializable {
 		private final String symbol;
 		private final String type;
 		private final Fix fix;
-		private final int sat;
-		private final double hdop;
-		private final double vdop;
-		private final double pdop;
-		private final long ageOfGPSData;
-		private final short dgpsID;
+		private final UInt sat;
+		private final Double hdop;
+		private final Double vdop;
+		private final Double pdop;
+		private final Duration ageOfGPSData;
+		private final DGPSStation dgpsID;
 
 		private SerializationProxy(final WayPoint point) {
-			latitude = point.getLatitude().toDegrees();
-			longitude = point.getLongitude().toDegrees();
-			elevation = point._elevation != null
-				? point._elevation.doubleValue()
-				: Double.NaN;
-			speed = point._speed != null
-				? point._speed.doubleValue()
-				: Double.NaN;
+			latitude = point._latitude.toDegrees();
+			longitude = point._longitude.toDegrees();
+			elevation = point._elevation;
+			speed = point._speed;
 			time = point._time;
-			magneticVariation = point._magneticVariation != null
-				? point._magneticVariation.toDegrees()
-				: Double.NaN;
-			geoidHeight = point._geoidHeight != null
-				? point._geoidHeight.doubleValue()
-				: Double.NaN;
+			magneticVariation = point._magneticVariation;
+			geoidHeight = point._geoidHeight;
 			name = point._name;
 			comment = point._comment;
 			description = point._description;
 			source = point._source;
-			links = point._links.isEmpty()
-				? null
-				: point._links;
+			links = point._links.isEmpty() ? null : point._links;
 			symbol = point._symbol;
 			type = point._type;
 			fix = point._fix;
-			sat = point._sat != null
-				? point._sat.intValue()
-				: -1;
-			hdop = point._hdop != null
-				? point._hdop.doubleValue()
-				: Double.NaN;
-			vdop = point._vdop != null
-				? point._vdop.doubleValue()
-				: Double.NaN;
-			pdop = point._pdop != null
-				? point._pdop.doubleValue()
-				: Double.NaN;
-			ageOfGPSData = point._ageOfGPSData != null
-				? point._ageOfGPSData.toMillis()
-				: -1L;
-			dgpsID = point._dgpsID != null
-				? point._dgpsID.shortValue()
-				: -1;
+			sat = point._sat;
+			hdop = point._hdop;
+			vdop = point._vdop;
+			pdop = point._pdop;
+			ageOfGPSData = point._ageOfGPSData;
+			dgpsID = point._dgpsID;
 		}
 
 		private Object readResolve() {
 			return new WayPoint(
 				Latitude.ofDegrees(latitude),
 				Longitude.ofDegrees(longitude),
-				Double.isNaN(elevation)
-					? null
-					: Length.of(elevation, Unit.METER),
-				Double.isNaN(speed)
-					? null
-					: Speed.of(speed, Speed.Unit.METERS_PER_SECOND),
+				elevation,
+				speed,
 				time,
-				Double.isNaN(magneticVariation)
-					? null
-					: Degrees.ofDegrees(magneticVariation),
-				Double.isNaN(geoidHeight)
-					? null
-					: Length.of(geoidHeight, Unit.METER),
+				magneticVariation,
+				geoidHeight,
 				name,
 				comment,
 				description,
@@ -1683,12 +1651,12 @@ public final class WayPoint implements Point, Serializable {
 				symbol,
 				type,
 				fix,
-				sat == -1 ? null : UInt.of(sat),
-				Double.isNaN(hdop) ? null : hdop,
-				Double.isNaN(vdop) ? null : vdop,
-				Double.isNaN(pdop) ? null : pdop,
-				ageOfGPSData == -1 ? null : Duration.ofMillis(ageOfGPSData),
-				dgpsID == -1 ? null : DGPSStation.of(dgpsID)
+				sat,
+				hdop,
+				vdop,
+				pdop,
+				ageOfGPSData,
+				dgpsID
 			);
 		}
 	}

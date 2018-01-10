@@ -155,7 +155,7 @@ public final class Longitude extends Number implements Serializable {
 		private final double value;
 
 		private SerializationProxy(final Longitude longitude) {
-			value = longitude.toDegrees();
+			value = longitude._value;
 		}
 
 		private Object readResolve() {

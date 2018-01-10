@@ -138,7 +138,7 @@ public final class UInt
 		private final int value;
 
 		private SerializationProxy(final UInt uint) {
-			value = uint.intValue();
+			value = uint._value;
 		}
 
 		private Object readResolve() {

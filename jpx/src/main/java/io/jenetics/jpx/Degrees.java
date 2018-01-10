@@ -140,7 +140,7 @@ public final class Degrees
 		private final double value;
 
 		private SerializationProxy(final Degrees degrees) {
-			value = degrees.toDegrees();
+			value = degrees._value;
 		}
 
 		private Object readResolve() {

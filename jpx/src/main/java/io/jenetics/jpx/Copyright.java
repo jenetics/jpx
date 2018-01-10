@@ -237,23 +237,21 @@ public final class Copyright implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		private final String author;
-		private final int year;
+		private final Year year;
 		private final String license;
 
 		private SerializationProxy(final Copyright copyright) {
-			author = copyright.getAuthor();
-			year = copyright.getYear()
-				.map(Year::getValue)
-				.orElse(Year.MIN_VALUE - 1);
-			license = copyright.getLicense()
-				.map(URI::toString)
-				.orElse(null);
+			author = copyright._author;
+			year = copyright._year;
+			license = copyright._license != null
+				? copyright._license.toString()
+				: null;
 		}
 
 		private Object readResolve() throws URISyntaxException {
 			return new Copyright(
 				author,
-				year == Year.MIN_VALUE - 1 ? null : Year.of(year),
+				year,
 				license == null ? null : new URI(license)
 			);
 		}
