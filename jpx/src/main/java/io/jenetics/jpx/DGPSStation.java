@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -107,6 +109,33 @@ public final class DGPSStation
 		return Integer.toString(_value);
 	}
 
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final short value;
+
+		private SerializationProxy(final DGPSStation station) {
+			value = station.shortValue();
+		}
+
+		private Object readResolve() {
+			return new DGPSStation(value);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
+	}
 
 	/* *************************************************************************
 	 *  Static object creation methods

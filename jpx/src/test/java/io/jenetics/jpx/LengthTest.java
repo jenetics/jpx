@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -87,6 +88,13 @@ public class LengthTest extends ObjectTester<Length> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Length.class).verify();
+	}
+
+	@Test
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Random random = new Random();
+		final Object object = Length.of(random.nextInt(12)*random.nextDouble(),Unit.METER);
+		Serialization.test(object);
 	}
 
 }

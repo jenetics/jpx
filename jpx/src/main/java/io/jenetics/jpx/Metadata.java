@@ -23,7 +23,10 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -538,6 +541,58 @@ public final class Metadata implements Serializable {
 			keywords,
 			bounds
 		);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final String name;
+		private final String description;
+		private final Person author;
+		private final Copyright copyright;
+		private final List<Link> links;
+		private final ZonedDateTime time;
+		private final String keywords;
+		private final Bounds bounds;
+
+		private SerializationProxy(final Metadata metadata) {
+			name = metadata._name;
+			description = metadata._description;
+			author = metadata._author;
+			copyright = metadata._copyright;
+			links = metadata._links.isEmpty() ? null : metadata._links;
+			time = metadata._time;
+			keywords = metadata._keywords;
+			bounds = metadata._bounds;
+		}
+
+		private Object readResolve() {
+			return new Metadata(
+				name,
+				description,
+				author,
+				copyright,
+				links,
+				time,
+				keywords,
+				bounds
+			);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
 	}
 
 

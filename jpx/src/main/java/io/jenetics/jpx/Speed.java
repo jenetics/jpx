@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -188,4 +190,34 @@ public final class Speed
 		requireNonNull(unit);
 		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final double value;
+
+		private SerializationProxy(final Speed speed) {
+			value = speed._value;
+		}
+
+		private Object readResolve() {
+			return new Speed(value);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
+	}
+
 }

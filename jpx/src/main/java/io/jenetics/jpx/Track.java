@@ -24,6 +24,8 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -683,6 +685,57 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		);
 	}
 
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final String name;
+		private final String comment;
+		private final String description;
+		private final String source;
+		private final List<Link> links;
+		private final UInt number;
+		private final String type;
+		private final List<TrackSegment> segments;
+
+		private SerializationProxy(final Track track) {
+			name = track._name;
+			comment = track._comment;
+			description = track._description;
+			source = track._source;
+			links = track._links.isEmpty() ? null : track._links;
+			number = track._number;
+			type = track._type;
+			segments = track._segments.isEmpty() ? null : track._segments;
+		}
+
+		private Object readResolve() {
+			return new Track(
+				name,
+				comment,
+				description,
+				source,
+				links,
+				number,
+				type,
+				segments
+			);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

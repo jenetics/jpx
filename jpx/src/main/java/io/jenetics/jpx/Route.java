@@ -24,6 +24,8 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -710,6 +712,58 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			null,
 			points
 		);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final String name;
+		private final String comment;
+		private final String description;
+		private final String source;
+		private final List<Link> links;
+		private final UInt number;
+		private final String type;
+		private final List<WayPoint> points;
+
+		private SerializationProxy(final Route route) {
+			name = route._name;
+			comment = route._comment;
+			description = route._description;
+			source = route._source;
+			links = route._links.isEmpty() ? null : route._links;
+			number = route._number;
+			type = route._type;
+			points = route._points.isEmpty() ? null : route._points;
+		}
+
+		private Object readResolve() {
+			return new Route(
+				name,
+				comment,
+				description,
+				source,
+				links,
+				number,
+				type,
+				points
+			);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
 	}
 
 	/* *************************************************************************

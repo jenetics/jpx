@@ -32,6 +32,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -165,7 +167,7 @@ public final class GPX implements Serializable {
 	private final String _creator;
 	private final String _version;
 	private final Metadata _metadata;
-	private final List<WayPoint> _wayPoints;;
+	private final List<WayPoint> _wayPoints;
 	private final List<Route> _routes;
 	private final List<Track> _tracks;
 
@@ -957,6 +959,51 @@ public final class GPX implements Serializable {
 		);
 	}
 
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final String version;
+		private final String creator;
+		private final Metadata metadata;
+		private final List<WayPoint> wayPoints;;
+		private final List<Route> routes;
+		private final List<Track> tracks;
+
+		private SerializationProxy(final GPX gpx) {
+			version = gpx._version;
+			creator = gpx._creator;
+			metadata = gpx._metadata;
+			wayPoints = gpx._wayPoints.isEmpty() ? null : gpx._wayPoints;
+			routes = gpx._routes.isEmpty() ? null : gpx._routes;
+			tracks = gpx._tracks.isEmpty() ? null : gpx._tracks;
+		}
+
+		private Object readResolve() {
+			return new GPX(
+				version,
+				creator,
+				metadata,
+				wayPoints,
+				routes,
+				tracks
+			);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

@@ -1,5 +1,5 @@
 /*
- * Java GPX Library (@__identifier__@).
+ * Java Genetic Algorithm Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,34 +19,34 @@
  */
 package io.jenetics.jpx;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.Random;
-import java.util.function.Supplier;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 
-import org.testng.annotations.Test;
+import org.testng.Assert;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-@Test
-public class DGPSStationTest extends ObjectTester<DGPSStation> {
+public class Serialization {
 
-	@Override
-	Supplier<DGPSStation> factory(final Random random) {
-		return () -> DGPSStation.of(random.nextInt(1023));
+	private Serialization() {
 	}
 
-	@Test
-	public void equalsVerifier() {
-		EqualsVerifier.forClass(DGPSStation.class).verify();
-	}
+	public static void test(final Object object)
+		throws IOException, ClassNotFoundException
+	{
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		try (ObjectOutputStream oout = new ObjectOutputStream(bout)) {
+			oout.writeObject(object);
+		}
 
-	@Test
-	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = DGPSStation.of(new Random().nextInt(1023));
-		Serialization.test(object);
+		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+		try (ObjectInputStream oin = new ObjectInputStream(bin)) {
+			Assert.assertEquals(oin.readObject(), object);
+		}
 	}
 
 }

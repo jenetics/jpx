@@ -19,9 +19,12 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -132,6 +135,62 @@ public final class Email implements Comparable<Email>, Serializable {
 		return new Email(id, domain);
 	}
 
+	/**
+	 * Create a new {@code Email} from the given {@code address} string.
+	 *
+	 * @param address the email address string
+	 * @return a new {@code Email} object with {@code address}
+	 * @throws NullPointerException if one of the argument is {@code null}
+	 * @throws IllegalArgumentException if the given {@code address} is invalid
+	 */
+	public static Email of(final String address) {
+		if (address.length() < 3) {
+			throw new IllegalArgumentException(format(
+				"Invalid email: '%s'.", address
+			));
+		}
+
+		final int index = address.indexOf('@');
+		if (index == -1 || index == 0 || index == address.length()) {
+			throw new IllegalArgumentException(format(
+				"Invalid email: '%s'.", address
+			));
+		}
+
+		return new Email(
+			address.substring(0, index),
+			address.substring(index + 1, address.length())
+		);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final String value;
+
+		private SerializationProxy(final Email email) {
+			value = email.getAddress();
+		}
+
+		private Object readResolve() {
+			return Email.of(value);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

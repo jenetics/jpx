@@ -26,6 +26,7 @@ import static java.time.ZonedDateTime.ofInstant;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +109,12 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(WayPoint.class).verify();
+	}
+
+	@Test(invocationCount = 20)
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextWayPoint(new Random());
+		Serialization.test(object);
 	}
 
 }

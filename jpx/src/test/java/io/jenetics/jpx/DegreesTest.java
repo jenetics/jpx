@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -71,6 +72,12 @@ public class DegreesTest extends ObjectTester<Degrees> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Degrees.class).verify();
+	}
+
+	@Test
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = Degrees.ofDegrees(new Random().nextDouble()*360);
+		Serialization.test(object);
 	}
 
 }

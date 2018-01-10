@@ -24,6 +24,8 @@ import static io.jenetics.jpx.Parsers.toURI;
 import static io.jenetics.jpx.Parsers.toYear;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -227,6 +229,45 @@ public final class Copyright implements Serializable {
 		return new Copyright(author, null, null);
 	}
 
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final String author;
+		private final int year;
+		private final String license;
+
+		private SerializationProxy(final Copyright copyright) {
+			author = copyright.getAuthor();
+			year = copyright.getYear()
+				.map(Year::getValue)
+				.orElse(Year.MIN_VALUE - 1);
+			license = copyright.getLicense()
+				.map(URI::toString)
+				.orElse(null);
+		}
+
+		private Object readResolve() throws URISyntaxException {
+			return new Copyright(
+				author,
+				year == Year.MIN_VALUE - 1 ? null : Year.of(year),
+				license == null ? null : new URI(license)
+			);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

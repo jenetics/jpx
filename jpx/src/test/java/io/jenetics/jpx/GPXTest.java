@@ -357,4 +357,11 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		EqualsVerifier.forClass(GPX.class).verify();
 	}
 
+
+	@Test(invocationCount = 5)
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextGPX(new Random());
+		Serialization.test(object);
+	}
+
 }

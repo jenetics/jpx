@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -42,4 +43,9 @@ public class UIntTest extends ObjectTester<UInt> {
 		EqualsVerifier.forClass(UInt.class).verify();
 	}
 
+	@Test
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = UInt.of(Math.abs(new Random().nextInt()));
+		Serialization.test(object);
+	}
 }

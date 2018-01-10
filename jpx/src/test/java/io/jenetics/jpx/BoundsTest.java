@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -60,5 +61,10 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 		EqualsVerifier.forClass(Bounds.class).verify();
 	}
 
+	@Test
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextBounds(new Random());
+		Serialization.test(object);
+	}
 
 }

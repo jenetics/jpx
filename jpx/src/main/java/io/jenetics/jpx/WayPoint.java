@@ -37,6 +37,8 @@ import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
@@ -50,6 +52,7 @@ import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import io.jenetics.jpx.Length.Unit;
 
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
@@ -1576,6 +1579,128 @@ public final class WayPoint implements Point, Serializable {
 			ageOfGPSData,
 			dgpsID
 		);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final double latitude;
+		private final double longitude;
+
+		private final double elevation;
+		private final double speed;
+		private final ZonedDateTime time;
+		private final double magneticVariation;
+		private final double geoidHeight;
+		private final String name;
+		private final String comment;
+		private final String description;
+		private final String source;
+		private final List<Link> links;
+		private final String symbol;
+		private final String type;
+		private final Fix fix;
+		private final int sat;
+		private final double hdop;
+		private final double vdop;
+		private final double pdop;
+		private final long ageOfGPSData;
+		private final short dgpsID;
+
+		private SerializationProxy(final WayPoint point) {
+			latitude = point.getLatitude().toDegrees();
+			longitude = point.getLongitude().toDegrees();
+			elevation = point._elevation != null
+				? point._elevation.doubleValue()
+				: Double.NaN;
+			speed = point._speed != null
+				? point._speed.doubleValue()
+				: Double.NaN;
+			time = point._time;
+			magneticVariation = point._magneticVariation != null
+				? point._magneticVariation.toDegrees()
+				: Double.NaN;
+			geoidHeight = point._geoidHeight != null
+				? point._geoidHeight.doubleValue()
+				: Double.NaN;
+			name = point._name;
+			comment = point._comment;
+			description = point._description;
+			source = point._source;
+			links = point._links.isEmpty()
+				? null
+				: point._links;
+			symbol = point._symbol;
+			type = point._type;
+			fix = point._fix;
+			sat = point._sat != null
+				? point._sat.intValue()
+				: -1;
+			hdop = point._hdop != null
+				? point._hdop.doubleValue()
+				: Double.NaN;
+			vdop = point._vdop != null
+				? point._vdop.doubleValue()
+				: Double.NaN;
+			pdop = point._pdop != null
+				? point._pdop.doubleValue()
+				: Double.NaN;
+			ageOfGPSData = point._ageOfGPSData != null
+				? point._ageOfGPSData.toMillis()
+				: -1L;
+			dgpsID = point._dgpsID != null
+				? point._dgpsID.shortValue()
+				: -1;
+		}
+
+		private Object readResolve() {
+			return new WayPoint(
+				Latitude.ofDegrees(latitude),
+				Longitude.ofDegrees(longitude),
+				Double.isNaN(elevation)
+					? null
+					: Length.of(elevation, Unit.METER),
+				Double.isNaN(speed)
+					? null
+					: Speed.of(speed, Speed.Unit.METERS_PER_SECOND),
+				time,
+				Double.isNaN(magneticVariation)
+					? null
+					: Degrees.ofDegrees(magneticVariation),
+				Double.isNaN(geoidHeight)
+					? null
+					: Length.of(geoidHeight, Unit.METER),
+				name,
+				comment,
+				description,
+				source,
+				links,
+				symbol,
+				type,
+				fix,
+				sat == -1 ? null : UInt.of(sat),
+				Double.isNaN(hdop) ? null : hdop,
+				Double.isNaN(vdop) ? null : vdop,
+				Double.isNaN(pdop) ? null : pdop,
+				ageOfGPSData == -1 ? null : Duration.ofMillis(ageOfGPSData),
+				dgpsID == -1 ? null : DGPSStation.of(dgpsID)
+			);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
 	}
 
 

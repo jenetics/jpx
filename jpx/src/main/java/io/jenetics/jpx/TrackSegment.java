@@ -24,6 +24,8 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -305,6 +307,35 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 */
 	public static TrackSegment of(final List<WayPoint> points) {
 		return new TrackSegment(points);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private static final class SerializationProxy implements Serializable {
+		private static final long serialVersionUID = 1L;
+
+		private final List<WayPoint> _points;
+
+		private SerializationProxy(final TrackSegment segment) {
+			_points = segment._points.isEmpty() ? null : segment._points;
+		}
+
+		private Object readResolve() {
+			return new TrackSegment(_points);
+		}
+	}
+
+	private Object writeReplace() {
+		return new SerializationProxy(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
 	}
 
 

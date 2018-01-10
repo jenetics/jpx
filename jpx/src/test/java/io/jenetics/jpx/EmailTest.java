@@ -23,9 +23,11 @@ import static java.lang.String.format;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -55,9 +57,43 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 		);
 	}
 
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromEmptyAddress() {
+		Email.of("");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress1() {
+		Email.of("@");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress2() {
+		Email.of("a@");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress3() {
+		Email.of("@b");
+	}
+
+	@Test
+	public void fromAddress() {
+		Assert.assertEquals(
+			Email.of("a@b"),
+			Email.of("a", "b")
+		);
+	}
+
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Email.class).verify();
+	}
+
+	@Test
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextEmail(new Random());
+		Serialization.test(object);
 	}
 
 }

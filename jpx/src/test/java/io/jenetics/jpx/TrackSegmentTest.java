@@ -23,6 +23,7 @@ import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -171,6 +172,12 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(TrackSegment.class).verify();
+	}
+
+	@Test
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextTrackSegment(new Random());
+		Serialization.test(object);
 	}
 
 }
