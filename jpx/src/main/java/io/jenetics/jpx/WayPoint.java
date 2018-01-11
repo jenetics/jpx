@@ -37,8 +37,6 @@ import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.Externalizable;
@@ -47,7 +45,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
@@ -55,6 +52,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -1597,153 +1595,29 @@ public final class WayPoint implements Point, Serializable {
 	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private double latitude;
-		private double longitude;
-
-		private Length elevation;
-		private Speed speed;
-		private ZonedDateTime time;
-		private Degrees magneticVariation;
-		private Length geoidHeight;
-		private String name;
-		private String comment;
-		private String description;
-		private String source;
-		private Link[] links;
-		private String symbol;
-		private String type;
-		private Fix fix;
-		private UInt sat;
-		private Double hdop;
-		private Double vdop;
-		private Double pdop;
-		private Duration ageOfGPSData;
-		private DGPSStation dgpsID;
+		private WayPoint _object;
 
 		public Ser() {
 		}
 
-		private Ser(final WayPoint point) throws IOException {
-			latitude = point._latitude.toDegrees();
-			longitude = point._longitude.toDegrees();
-			elevation = point._elevation;
-			speed = point._speed;
-			time = point._time;
-			magneticVariation = point._magneticVariation;
-			geoidHeight = point._geoidHeight;
-			name = point._name;
-			comment = point._comment;
-			description = point._description;
-			source = point._source;
-			links = point._links.isEmpty() ? null : point._links.toArray(new Link[0]);
-			symbol = point._symbol;
-			type = point._type;
-			fix = point._fix;
-			sat = point._sat;
-			hdop = point._hdop;
-			vdop = point._vdop;
-			pdop = point._pdop;
-			ageOfGPSData = point._ageOfGPSData;
-			dgpsID = point._dgpsID;
+		private Ser(final WayPoint object) {
+			_object = object;
 		}
 
-		private Object readResolve() throws IOException, ClassNotFoundException {
-			return new WayPoint(
-				Latitude.ofDegrees(latitude),
-				Longitude.ofDegrees(longitude),
-				elevation,
-				speed,
-				time,
-				magneticVariation,
-				geoidHeight,
-				name,
-				comment,
-				description,
-				source,
-				links != null ? Arrays.asList(links) : null,
-				symbol,
-				type,
-				fix,
-				sat,
-				hdop,
-				vdop,
-				pdop,
-				ageOfGPSData,
-				dgpsID
-			);
+		private Object readResolve() {
+			return _object;
 		}
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			int existing = 0;
-			if (elevation != null) existing |= 1 << 0;
-			if (speed != null) existing |= 1 << 1;
-			if (time != null) existing |= 1 << 2;
-			if (magneticVariation != null) existing |= 1 << 3;
-			if (geoidHeight != null) existing |= 1 << 4;
-			if (name != null) existing |= 1 << 5;
-			if (comment != null) existing |= 1 << 6;
-			if (description != null) existing |= 1 << 7;
-			if (source != null) existing |= 1 << 8;
-			if (links != null) existing |= 1 << 9;
-			if (symbol != null) existing |= 1 << 10;
-			if (type != null) existing |= 1 << 11;
-			if (fix != null) existing |= 1 << 12;
-			if (sat != null) existing |= 1 << 13;
-			if (hdop != null) existing |= 1 << 14;
-			if (vdop != null) existing |= 1 << 15;
-			if (pdop != null) existing |= 1 << 16;
-			if (ageOfGPSData != null) existing |= 1 << 17;
-			if (dgpsID != null) existing |= 1 << 18;
-
-			out.writeInt(existing);
-			out.writeDouble(latitude);
-			out.writeDouble(longitude);
-			if (elevation != null) elevation.writeExternal(out);
-			if (speed != null) speed.writeExternal(out);
-			if (time != null) out.writeObject(time);
-			if (magneticVariation != null) out.writeObject(magneticVariation);
-			if (geoidHeight != null) geoidHeight.writeExternal(out);
-			if (name != null) out.writeUTF(name);
-			if (comment != null) out.writeUTF(comment);
-			if (description != null) out.writeUTF(description);
-			if (source != null) out.writeUTF(source);
-			if (links != null) out.writeObject(links);
-			if (symbol != null) out.writeUTF(symbol);
-			if (type != null) out.writeUTF(type);
-			if (fix != null) out.writeObject(fix);
-			if (sat != null) out.writeObject(sat);
-			if (hdop != null) out.writeDouble(hdop);
-			if (vdop != null) out.writeDouble(vdop);
-			if (pdop != null) out.writeDouble(pdop);
-			if (ageOfGPSData != null) out.writeLong(ageOfGPSData.toMillis());
-			if (dgpsID != null) out.writeShort(dgpsID.shortValue());
+			_object.writeExternal(out);
 		}
 
 		@Override
-		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-			final int existing = in.readInt();
-			latitude = in.readDouble();
-			longitude = in.readDouble();
-			if ((existing & 1 <<  0) != 0) elevation = Length.readExternal(in);
-			if ((existing & 1 <<  1) != 0) speed = Speed.readExternal(in);
-			if ((existing & 1 <<  2) != 0) time = (ZonedDateTime)in.readObject();
-			if ((existing & 1 <<  3) != 0) magneticVariation = Degrees.readExternal(in);
-			if ((existing & 1 <<  4) != 0) geoidHeight = Length.readExternal(in);
-			if ((existing & 1 <<  5) != 0) name = in.readUTF();
-			if ((existing & 1 <<  6) != 0) comment = in.readUTF();
-			if ((existing & 1 <<  7) != 0) description = in.readUTF();
-			if ((existing & 1 <<  8) != 0) source = in.readUTF();
-			if ((existing & 1 <<  9) != 0) links = (Link[])in.readObject();
-			if ((existing & 1 << 10) != 0) symbol = in.readUTF();
-			if ((existing & 1 << 11) != 0) type = in.readUTF();
-			if ((existing & 1 << 12) != 0) fix = (Fix)in.readObject();
-			if ((existing & 1 << 13) != 0) sat = (UInt)in.readObject();
-			if ((existing & 1 << 14) != 0) hdop = in.readDouble();
-			if ((existing & 1 << 15) != 0) vdop = in.readDouble();
-			if ((existing & 1 << 16) != 0) pdop = in.readDouble();
-			if ((existing & 1 << 17) != 0) ageOfGPSData = Duration.ofMillis(in.readLong());
-			if ((existing & 1 << 18) != 0) dgpsID = DGPSStation.of(in.readShort());
+		public void readExternal(final ObjectInput in)
+			throws IOException, ClassNotFoundException
+		{
+			_object = WayPoint.readExternal(in);
 		}
 	}
 
@@ -1768,7 +1642,7 @@ public final class WayPoint implements Point, Serializable {
 		if (_comment != null) existing |= 1 << 6;
 		if (_description != null) existing |= 1 << 7;
 		if (_source != null) existing |= 1 << 8;
-		if (_links != null) existing |= 1 << 9;
+		if (_links != null && !_links.isEmpty()) existing |= 1 << 9;
 		if (_symbol != null) existing |= 1 << 10;
 		if (_type != null) existing |= 1 << 11;
 		if (_fix != null) existing |= 1 << 12;
@@ -1791,7 +1665,7 @@ public final class WayPoint implements Point, Serializable {
 		if (_comment != null) out.writeUTF(_comment);
 		if (_description != null) out.writeUTF(_description);
 		if (_source != null) out.writeUTF(_source);
-		if (_links != null) out.writeObject(_links);
+		if (_links != null && !_links.isEmpty()) IO.writes(_links, Link::writeExternal, out);
 		if (_symbol != null) out.writeUTF(_symbol);
 		if (_type != null) out.writeUTF(_type);
 		if (_fix != null) out.writeObject(_fix);
@@ -1803,33 +1677,54 @@ public final class WayPoint implements Point, Serializable {
 		if (_dgpsID != null) out.writeShort(_dgpsID.shortValue());
 	}
 
-	static WayPoint readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+	static WayPoint readExternal(final ObjectInput in)
+		throws IOException, ClassNotFoundException
+	{
 		final int existing = in.readInt();
 		return new WayPoint(
 			Latitude.ofDegrees(in.readDouble()),
 			Longitude.ofDegrees(in.readDouble()),
-			((existing & 1 <<  0) != 0) ? Length.readExternal(in) : null,
-			((existing & 1 <<  1) != 0) ? Speed.readExternal(in) : null,
-			((existing & 1 <<  2) != 0) ? (ZonedDateTime)in.readObject() : null,
-			((existing & 1 <<  3) != 0) ? Degrees.readExternal(in) : null,
-			((existing & 1 <<  4) != 0) ? Length.readExternal(in) : null,
-			((existing & 1 <<  5) != 0) ? in.readUTF() : null,
-			((existing & 1 <<  6) != 0) ? in.readUTF() : null,
-			((existing & 1 <<  7) != 0) ? in.readUTF() : null,
-			((existing & 1 <<  8) != 0) ? in.readUTF() : null,
-			((existing & 1 <<  9) != 0) ? Arrays.asList((Link[])in.readObject()) : null,
-			((existing & 1 << 10) != 0) ? in.readUTF() : null,
-			((existing & 1 << 11) != 0) ? in.readUTF() : null,
-			((existing & 1 << 12) != 0) ? (Fix)in.readObject() : null,
-			((existing & 1 << 13) != 0) ? (UInt)in.readObject() : null,
-			((existing & 1 << 14) != 0) ? in.readDouble() : null,
-			((existing & 1 << 15) != 0) ? in.readDouble() : null,
-			((existing & 1 << 16) != 0) ? in.readDouble() : null,
-			((existing & 1 << 17) != 0) ? Duration.ofMillis(in.readLong()) : null,
-			((existing & 1 << 18) != 0) ? DGPSStation.of(in.readShort()) : null
+			((existing & (1 <<  0)) != 0) ? Length.readExternal(in) : null,
+			((existing & (1 <<  1)) != 0) ? Speed.readExternal(in) : null,
+			((existing & (1 <<  2)) != 0) ? (ZonedDateTime)in.readObject() : null,
+			((existing & (1 <<  3)) != 0) ? Degrees.readExternal(in) : null,
+			((existing & (1 <<  4)) != 0) ? Length.readExternal(in) : null,
+			((existing & (1 <<  5)) != 0) ? in.readUTF() : null,
+			((existing & (1 <<  6)) != 0) ? in.readUTF() : null,
+			((existing & (1 <<  7)) != 0) ? in.readUTF() : null,
+			((existing & (1 <<  8)) != 0) ? in.readUTF() : null,
+			((existing & (1 <<  9)) != 0) ? IO.reads(Link::readExternal, in) : null,
+			((existing & (1 << 10)) != 0) ? in.readUTF() : null,
+			((existing & (1 << 11)) != 0) ? in.readUTF() : null,
+			((existing & (1 << 12)) != 0) ? (Fix)in.readObject() : null,
+			((existing & (1 << 13)) != 0) ? (UInt)in.readObject() : null,
+			((existing & (1 << 14)) != 0) ? in.readDouble() : null,
+			((existing & (1 << 15)) != 0) ? in.readDouble() : null,
+			((existing & (1 << 16)) != 0) ? in.readDouble() : null,
+			((existing & (1 << 17)) != 0) ? Duration.ofMillis(in.readLong()) : null,
+			((existing & (1 << 18)) != 0) ? DGPSStation.of(in.readShort()) : null
 		);
 	}
 
+	static void writeExternals(final Collection<WayPoint> points, final ObjectOutput out)
+		throws IOException
+	{
+		out.writeInt(points.size());
+		for (WayPoint point : points) {
+			point.writeExternal(out);
+		}
+	}
+
+	static List<WayPoint> readExternals(final ObjectInput in)
+		throws IOException, ClassNotFoundException
+	{
+		final int length = in.readInt();
+		final List<WayPoint> points = new ArrayList<>(length);
+		for (int i = 0; i < length; ++i) {
+			points.add(readExternal(in));
+		}
+		return points;
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

@@ -209,30 +209,30 @@ public final class Speed
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class Ser implements Externalizable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private double value;
+		private Speed _object;
 
 		public Ser() {
 		}
 
-		private Ser(final Speed speed) {
-			value = speed._value;
+		private Ser(final Speed object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new Speed(value);
+			return _object;
 		}
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			out.writeDouble(value);
+			_object.writeExternal(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			value = in.readDouble();
+			_object = Speed.readExternal(in);
 		}
 	}
 

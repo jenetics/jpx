@@ -23,11 +23,20 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -186,32 +195,78 @@ public final class Link implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final String href;
-		private final String text;
-		private final String type;
+		private Link _object;
 
-		private SerializationProxy(final Link link) {
-			href = link._href.toString();
-			text = link._text;
-			type = link._type;
+		public Ser() {
 		}
 
-		private Object readResolve() throws URISyntaxException {
-			return new Link(new URI(href), text, type);
+		private Ser(final Link object) {
+			_object = object;
+		}
+
+		private Object readResolve() {
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = Link.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		IO.writeNullableString(_href.toString(), out);
+		IO.writeNullableString(_text, out);
+		IO.writeNullableString(_text, out);
+	}
+
+	static Link readExternal(final DataInput in) throws IOException {
+		try {
+			return new Link(
+				new URI(IO.readNullableString(in)),
+				IO.readNullableString(in),
+				IO.readNullableString(in)
+			);
+		} catch (URISyntaxException e) {
+			throw (InvalidObjectException)
+				new InvalidObjectException(e.getMessage()).initCause(e);
+		}
+	}
+
+	static void writeExternals(final Collection<Link> links, final DataOutput out)
+		throws IOException
+	{
+		out.writeInt(links.size());
+		for (Link link : links) {
+			link.writeExternal(out);
+		}
+	}
+
+	static List<Link> readExternals(final DataInput in) throws IOException {
+		final int length = in.readInt();
+		final List<Link> links = new ArrayList<>(length);
+		for (int i = 0; i < length; ++i) {
+			links.add(readExternal(in));
+		}
+		return links;
 	}
 
 	/* *************************************************************************

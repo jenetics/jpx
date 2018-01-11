@@ -24,11 +24,14 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -691,53 +694,67 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final String name;
-		private final String comment;
-		private final String description;
-		private final String source;
-		private final Link[] links;
-		private final UInt number;
-		private final String type;
-		private final TrackSegment[] segments;
+		private Track _object;
 
-		private SerializationProxy(final Track track) {
-			name = track._name;
-			comment = track._comment;
-			description = track._description;
-			source = track._source;
-			links = track._links.isEmpty()
-				? null : track._links.toArray(new Link[0]);
-			number = track._number;
-			type = track._type;
-			segments = track._segments.isEmpty()
-				? null : track._segments.toArray(new TrackSegment[0]);
+		public Ser() {
+		}
+
+		private Ser(final Track object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new Track(
-				name,
-				comment,
-				description,
-				source,
-				links != null ? Arrays.asList(links) : null,
-				number,
-				type,
-				segments != null ? Arrays.asList(segments) : null
-			);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+			_object = Track.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final ObjectOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullableString(_comment, out);
+		IO.writeNullableString(_description, out);
+		IO.writeNullableString(_source, out);
+		Link.writeExternals(_links, out);
+		UInt.writeNullable(_number, out);
+		IO.writeNullableString(_type, out);
+		TrackSegment.writeExternals(_segments, out);
+	}
+
+	static Track readExternal(final ObjectInput in)
+		throws IOException, ClassNotFoundException
+	{
+		return new Track(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			Link.readExternals(in),
+			UInt.readNullable(in),
+			IO.readNullableString(in),
+			TrackSegment.readExternals(in)
+		);
 	}
 
 	/* *************************************************************************

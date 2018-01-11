@@ -28,6 +28,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -118,7 +119,11 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	@Test//(invocationCount = 20)
 	public void serialize() throws IOException, ClassNotFoundException {
 		final Object object = nextWayPoint(new Random());
+		Serialization.test(object);
+
+		/*
 		Serialization.test(WayPoint.of(1, 2));
+		Serialization.test(ZonedDateTime.now());
 
 		WayPoint wp = WayPoint.of(1.0/3.0, 1.0/3.0);
 
@@ -131,6 +136,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
+		*/
 	}
 
 }

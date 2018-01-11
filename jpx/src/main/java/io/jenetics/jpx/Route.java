@@ -24,11 +24,15 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -720,53 +724,87 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final String name;
-		private final String comment;
-		private final String description;
-		private final String source;
-		private final Link[] links;
-		private final UInt number;
-		private final String type;
-		private final WayPoint[] points;
+		private Route _object;
 
-		private SerializationProxy(final Route route) {
-			name = route._name;
-			comment = route._comment;
-			description = route._description;
-			source = route._source;
-			links = route._links.isEmpty()
-				? null : route._links.toArray(new Link[0]);
-			number = route._number;
-			type = route._type;
-			points = route._points.isEmpty()
-				? null : route._points.toArray(new WayPoint[0]);
+		public Ser() {
+		}
+
+		private Ser(final Route object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new Route(
-				name,
-				comment,
-				description,
-				source,
-				links != null ? Arrays.asList(links) : null,
-				number,
-				type,
-				points != null ? Arrays.asList(points) : null
-			);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in)
+			throws IOException, ClassNotFoundException
+		{
+			_object = Route.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final ObjectOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullableString(_comment, out);
+		IO.writeNullableString(_description, out);
+		IO.writeNullableString(_source, out);
+		Link.writeExternals(_links, out);
+		UInt.writeNullable(_number, out);
+		IO.writeNullableString(_type, out);
+		WayPoint.writeExternals(_points, out);
+	}
+
+	static Route readExternal(final ObjectInput in)
+		throws IOException, ClassNotFoundException
+	{
+		return new Route(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			Link.readExternals(in),
+			UInt.readNullable(in),
+			IO.readNullableString(in),
+			WayPoint.readExternals(in)
+		);
+	}
+
+	static void writeExternals(final Collection<Route> routes, final ObjectOutput out)
+		throws IOException
+	{
+		out.writeInt(routes.size());
+		for (Route route : routes) {
+			route.writeExternal(out);
+		}
+	}
+
+	static List<Route> readExternals(final ObjectInput in) throws IOException, ClassNotFoundException {
+		final int length = in.readInt();
+		final List<Route> routes = new ArrayList<>(length);
+		for (int i = 0; i < length; ++i) {
+			routes.add(readExternal(in));
+		}
+		return routes;
 	}
 
 	/* *************************************************************************

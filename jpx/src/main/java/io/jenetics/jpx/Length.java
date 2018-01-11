@@ -227,30 +227,32 @@ public final class Length
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class Ser implements Externalizable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private double value;
+		private Length _object;
 
 		public Ser() {
 		}
 
-		private Ser(final Length length) {
-			value = length._value;
+		private Ser(final Length object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new Length(value);
+			return _object;
 		}
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			out.writeDouble(value);
+			_object.writeExternal(out);
 		}
 
 		@Override
-		public void readExternal(final ObjectInput in) throws IOException {
-			value = in.readDouble();
+		public void readExternal(final ObjectInput in)
+			throws IOException, ClassNotFoundException
+		{
+			_object = Length.readExternal(in);
 		}
 	}
 

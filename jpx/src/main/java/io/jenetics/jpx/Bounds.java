@@ -25,8 +25,14 @@ import static io.jenetics.jpx.Parsers.toLatitude;
 import static io.jenetics.jpx.Parsers.toLongitude;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -192,39 +198,55 @@ public final class Bounds implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final double minLatitude;
-		private final double minLongitude;
-		private final double maxLatitude;
-		private final double maxLongitude;
+		private Bounds _object;
 
-		private SerializationProxy(Bounds bounds) {
-			minLatitude = bounds._minLatitude.toDegrees();
-			minLongitude = bounds._minLongitude.toDegrees();
-			maxLatitude = bounds._maxLatitude.toDegrees();
-			maxLongitude = bounds._maxLongitude.toDegrees();
+		public Ser() {
+		}
+
+		private Ser(final Bounds object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return Bounds.of(
-				minLatitude,
-				minLongitude,
-				maxLatitude,
-				maxLongitude
-			);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = Bounds.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		out.writeDouble(_minLatitude.toDegrees());
+		out.writeDouble(_minLongitude.toDegrees());
+		out.writeDouble(_maxLatitude.toDegrees());
+		out.writeDouble(_maxLongitude.toDegrees());
+	}
+
+	static Bounds readExternal(final DataInput in) throws IOException {
+		return Bounds.of(
+			in.readDouble(), in.readDouble(),
+			in.readDouble(), in.readDouble()
+		);
 	}
 
 	/* *************************************************************************

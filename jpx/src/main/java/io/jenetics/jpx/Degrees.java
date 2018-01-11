@@ -181,29 +181,27 @@ public final class Degrees
 	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private double value;
+		private Degrees _object;
 
 		public Ser() {
 		}
 
-		Ser(final Degrees degrees) {
-			value = degrees._value;
+		private Ser(final Degrees object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new Degrees(value);
+			return _object;
 		}
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			out.writeDouble(value);
+			_object.writeExternal(out);
 		}
 
 		@Override
-		public void readExternal(final ObjectInput in)
-			throws IOException
-		{
-			value = in.readDouble();
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = Degrees.readExternal(in);
 		}
 	}
 

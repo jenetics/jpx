@@ -72,7 +72,7 @@ enum ZonedDateTimeFormat {
 	private final DateTimeFormatter _formatter;
 	private final Pattern[] _patterns;
 
-	private ZonedDateTimeFormat(final DateTimeFormatter formatter, final String... patterns) {
+	ZonedDateTimeFormat(final DateTimeFormatter formatter, final String... patterns) {
 		_formatter = requireNonNull(formatter);
 		_patterns = Stream.of(patterns)
 			.map(Pattern::compile)

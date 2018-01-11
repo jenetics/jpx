@@ -47,7 +47,8 @@ public class Serialization {
 		System.out.println("Length: " + data.length);
 		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		try (ObjectInputStream oin = new ObjectInputStream(bin)) {
-			Assert.assertEquals(oin.readObject(), object);
+			final Object obj = oin.readObject();
+			Assert.assertEquals(obj, object);
 		}
 	}
 

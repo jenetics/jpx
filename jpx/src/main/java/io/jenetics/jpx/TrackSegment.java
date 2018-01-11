@@ -24,11 +24,20 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -315,29 +324,69 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final WayPoint[] points;
+		private TrackSegment _object;
 
-		private SerializationProxy(final TrackSegment segment) {
-			points = segment._points.isEmpty()
-				? null : segment._points.toArray(new WayPoint[0]);
+		public Ser() {
+		}
+
+		private Ser(final TrackSegment object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new TrackSegment(points != null ? Arrays.asList(points) : null);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+			_object = TrackSegment.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final ObjectOutput out) throws IOException {
+		WayPoint.writeExternals(_points, out);
+	}
+
+	static TrackSegment readExternal(final ObjectInput in)
+		throws IOException, ClassNotFoundException
+	{
+		return new TrackSegment(WayPoint.readExternals(in));
+	}
+
+	static void writeExternals(final Collection<TrackSegment> segments, final ObjectOutput out)
+		throws IOException
+	{
+		out.writeInt(segments.size());
+		for (TrackSegment segment : segments) {
+			segment.writeExternal(out);
+		}
+	}
+
+	static List<TrackSegment> readExternals(final ObjectInput in) throws IOException, ClassNotFoundException {
+		final int length = in.readInt();
+		final List<TrackSegment> segments = new ArrayList<>(length);
+		for (int i = 0; i < length; ++i) {
+			segments.add(readExternal(in));
+		}
+		return segments;
 	}
 
 

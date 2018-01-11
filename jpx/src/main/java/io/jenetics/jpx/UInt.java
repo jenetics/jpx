@@ -21,8 +21,14 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -127,34 +133,39 @@ public final class UInt
 		return new UInt(value);
 	}
 
-	static UInt box(final int value) {
-		return value != -1 ? new UInt(value) : null;
-	}
-
-	static int unbox(final UInt uint) {
-		return uint != null ? uint._value : -1;
-	}
-
 	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final int value;
+		private UInt _object;
 
-		private SerializationProxy(final UInt uint) {
-			value = uint._value;
+		public Ser() {
+		}
+
+		private Ser(final UInt object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new UInt(value);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = UInt.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
@@ -162,4 +173,28 @@ public final class UInt
 	{
 		throw new InvalidObjectException("Proxy required.");
 	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		out.writeInt(_value);
+	}
+
+	static UInt readExternal(final DataInput in) throws IOException {
+		return new UInt(in.readInt());
+	}
+
+	static void writeNullable(final UInt value, final DataOutput out)
+		throws IOException
+	{
+		if (value != null) {
+			value.writeExternal(out);
+		} else {
+			out.writeInt(-1);
+		}
+	}
+
+	static UInt readNullable(final DataInput in) throws IOException {
+		final int value = in.readInt();
+		return value != -1 ? new UInt(value) : null;
+	}
+
 }

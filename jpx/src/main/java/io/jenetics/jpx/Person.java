@@ -19,8 +19,14 @@
  */
 package io.jenetics.jpx;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -179,32 +185,57 @@ public final class Person implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final String name;
-		private final Email email;
-		private final Link link;
+		private Person _object;
 
-		private SerializationProxy(final Person person) {
-			name = person._name;
-			email = person._email;
-			link = person._link;
+		public Ser() {
+		}
+
+		private Ser(final Person object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new Person(name, email, link);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = Person.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		out.writeBoolean(_email != null);
+		if (_email != null) _email.writeExternal(out);
+		out.writeBoolean(_link != null);
+		if (_link != null) _link.writeExternal(out);
+	}
+
+	static Person readExternal(final DataInput in) throws IOException {
+		return new Person(
+			IO.readNullableString(in),
+			in.readBoolean() ? Email.readExternal(in) : null,
+			in.readBoolean() ? Link.readExternal(in) : null
+		);
 	}
 
 

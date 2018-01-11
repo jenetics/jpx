@@ -28,18 +28,20 @@ import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.Externalizable;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -965,48 +967,64 @@ public final class GPX implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final String version;
-		private final String creator;
-		private final Metadata metadata;
-		private final WayPoint[] wayPoints;;
-		private final Route[] routes;
-		private final Track[] tracks;
+		private GPX _object;
 
-		private SerializationProxy(final GPX gpx) {
-			version = gpx._version;
-			creator = gpx._creator;
-			metadata = gpx._metadata;
-			wayPoints = gpx._wayPoints.isEmpty()
-				? null : gpx._wayPoints.toArray(new WayPoint[0]);
-			routes = gpx._routes.isEmpty()
-				? null : gpx._routes.toArray(new Route[0]);
-			tracks = gpx._tracks.isEmpty()
-				? null : gpx._tracks.toArray(new Track[0]);
+		public Ser() {
+		}
+
+		private Ser(final GPX object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new GPX(
-				version,
-				creator,
-				metadata,
-				wayPoints != null ? Arrays.asList(wayPoints) : null,
-				routes != null ? Arrays.asList(routes): null,
-				tracks != null ? Arrays.asList(tracks) : null
-			);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+			_object = GPX.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final ObjectOutput out) throws IOException {
+		IO.writeNullableString(_version, out);
+		IO.writeNullableString(_creator, out);
+		out.writeBoolean(_metadata != null);
+		if (_metadata != null) _metadata.writeExternal(out);
+		WayPoint.writeExternals(_wayPoints, out);
+		Route.writeExternals(_routes, out);
+		IO.writes(_tracks, Track::writeExternal, out);
+	}
+
+	static GPX readExternal(final ObjectInput in)
+		throws IOException, ClassNotFoundException
+	{
+		return new GPX(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			in.readBoolean() ? Metadata.readExternal(in) : null,
+			IO.reads(WayPoint::readExternal, in),
+			IO.reads(Route::readExternal, in),
+			IO.reads(Track::readExternal, in)
+		);
 	}
 
 	/* *************************************************************************

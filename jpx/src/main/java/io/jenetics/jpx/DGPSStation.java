@@ -21,8 +21,14 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -137,28 +143,49 @@ public final class DGPSStation
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final short value;
+		private DGPSStation _object;
 
-		private SerializationProxy(final DGPSStation station) {
-			value = station.shortValue();
+		public Ser() {
+		}
+
+		private Ser(final DGPSStation object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new DGPSStation(value);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = DGPSStation.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		out.writeShort(_value);
+	}
+
+	static DGPSStation readExternal(final DataInput in) throws IOException {
+		return new DGPSStation(in.readShort());
 	}
 
 }

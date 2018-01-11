@@ -23,15 +23,19 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
-import java.net.URISyntaxException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -549,52 +553,69 @@ public final class Metadata implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final String name;
-		private final String description;
-		private final Person author;
-		private final Copyright copyright;
-		private final Link[] links;
-		private final ZonedDateTime time;
-		private final String keywords;
-		private final Bounds bounds;
+		private Metadata _object;
 
-		private SerializationProxy(final Metadata metadata) {
-			name = metadata._name;
-			description = metadata._description;
-			author = metadata._author;
-			copyright = metadata._copyright;
-			links = metadata._links.isEmpty()
-				? null : metadata._links.toArray(new Link[0]);
-			time = metadata._time;
-			keywords = metadata._keywords;
-			bounds = metadata._bounds;
+		public Ser() {
+		}
+
+		private Ser(final Metadata object) {
+			_object = object;
 		}
 
 		private Object readResolve() {
-			return new Metadata(
-				name,
-				description,
-				author,
-				copyright,
-				links != null ? Arrays.asList(links) : null,
-				time,
-				keywords,
-				bounds
-			);
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = Metadata.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullableString(_description, out);
+		out.writeBoolean(_author != null);
+		if (_author != null) _author.writeExternal(out);
+		out.writeBoolean(_copyright != null);
+		if (_copyright != null) _copyright.writeExternal(out);
+		Link.writeExternals(_links, out);
+		out.writeBoolean(_time != null);
+		if (_time != null) IO.writeZonedDateTime(_time, out);
+		IO.writeNullableString(_keywords, out);
+		out.writeBoolean(_bounds != null);
+		if (_bounds != null) _bounds.writeExternal(out);
+	}
+
+	static Metadata readExternal(final DataInput in) throws IOException {
+		return new Metadata(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			in.readBoolean() ? Person.readExternal(in) : null,
+			in.readBoolean() ? Copyright.readExternal(in) : null,
+			Link.readExternals(in),
+			in.readBoolean() ? IO.readZonedDateTime(in) : null,
+			IO.readNullableString(in),
+			in.readBoolean() ? Bounds.readExternal(in) : null
+		);
 	}
 
 

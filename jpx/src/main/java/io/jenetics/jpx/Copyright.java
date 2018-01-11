@@ -24,8 +24,14 @@ import static io.jenetics.jpx.Parsers.toURI;
 import static io.jenetics.jpx.Parsers.toYear;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -233,38 +239,63 @@ public final class Copyright implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final String author;
-		private final Year year;
-		private final String license;
+		private Copyright _object;
 
-		private SerializationProxy(final Copyright copyright) {
-			author = copyright._author;
-			year = copyright._year;
-			license = copyright._license != null
-				? copyright._license.toString()
-				: null;
+		public Ser() {
 		}
 
-		private Object readResolve() throws URISyntaxException {
-			return new Copyright(
-				author,
-				year,
-				license == null ? null : new URI(license)
-			);
+		private Ser(final Copyright object) {
+			_object = object;
+		}
+
+		private Object readResolve() {
+			return _object;
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			_object.writeExternal(out);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = Copyright.readExternal(in);
 		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		IO.writeNullableString(_author, out);
+		out.writeInt(_year != null ? _year.getValue() : Year.MIN_VALUE - 1);
+		IO.writeNullableString(_license != null ? _license.toString() : null, out);
+	}
+
+	static Copyright readExternal(final DataInput in) throws IOException {
+		final String author = IO.readNullableString(in);
+		final int year = in.readInt();
+		final String license = IO.readNullableString(in);
+		try {
+			return new Copyright(
+				author,
+				year == Year.MAX_VALUE - 1 ? null : Year.of(year),
+				new URI(license)
+			);
+		} catch (URISyntaxException e) {
+			throw (InvalidObjectException)
+				new InvalidObjectException(e.getMessage()).initCause(e);
+		}
 	}
 
 	/* *************************************************************************
