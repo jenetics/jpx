@@ -28,15 +28,10 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
 import java.time.Duration;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
-
-import javax.xml.stream.XMLOutputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;

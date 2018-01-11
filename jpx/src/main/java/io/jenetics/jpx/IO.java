@@ -22,8 +22,6 @@ package io.jenetics.jpx;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
