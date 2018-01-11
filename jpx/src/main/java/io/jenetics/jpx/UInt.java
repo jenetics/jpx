@@ -155,12 +155,12 @@ public final class UInt
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = UInt.readExternal(in);
+			_object = UInt.read(in);
 		}
 	}
 
@@ -174,11 +174,11 @@ public final class UInt
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		out.writeInt(_value);
 	}
 
-	static UInt readExternal(final DataInput in) throws IOException {
+	static UInt read(final DataInput in) throws IOException {
 		return new UInt(in.readInt());
 	}
 
@@ -186,7 +186,7 @@ public final class UInt
 		throws IOException
 	{
 		if (value != null) {
-			value.writeExternal(out);
+			value.write(out);
 		} else {
 			out.writeInt(-1);
 		}

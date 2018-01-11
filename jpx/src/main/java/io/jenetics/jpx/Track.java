@@ -24,6 +24,8 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -712,12 +714,12 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
-		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-			_object = Track.readExternal(in);
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = Track.read(in);
 		}
 	}
 
@@ -731,29 +733,27 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final ObjectOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		IO.writeNullableString(_name, out);
 		IO.writeNullableString(_comment, out);
 		IO.writeNullableString(_description, out);
 		IO.writeNullableString(_source, out);
-		Link.writeExternals(_links, out);
+		IO.writes(_links, Link::write, out);
 		UInt.writeNullable(_number, out);
 		IO.writeNullableString(_type, out);
-		TrackSegment.writeExternals(_segments, out);
+		IO.writes(_segments, TrackSegment::write, out);
 	}
 
-	static Track readExternal(final ObjectInput in)
-		throws IOException, ClassNotFoundException
-	{
+	static Track read(final DataInput in) throws IOException {
 		return new Track(
 			IO.readNullableString(in),
 			IO.readNullableString(in),
 			IO.readNullableString(in),
 			IO.readNullableString(in),
-			Link.readExternals(in),
+			IO.reads(Link::read, in),
 			UInt.readNullable(in),
 			IO.readNullableString(in),
-			TrackSegment.readExternals(in)
+			IO.reads(TrackSegment::read, in)
 		);
 	}
 

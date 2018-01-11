@@ -55,10 +55,22 @@ final class IO {
 		if (value == null) {
 			out.writeInt(-1);
 		} else {
-			final byte[] bytes = value.getBytes("UTF-8");
-			out.writeInt(bytes.length);
-			out.write(bytes);
+			writeString(value, out);
 		}
+	}
+
+	static void writeString(final String value, final DataOutput out)
+		throws IOException
+	{
+		final byte[] bytes = value.getBytes("UTF-8");
+		out.writeInt(bytes.length);
+		out.write(bytes);
+	}
+
+	static String readString(final DataInput in) throws IOException {
+		final byte[] bytes = new byte[in.readInt()];
+		in.readFully(bytes);
+		return new String(bytes, "UTF-8");
 	}
 
 	static void writeZonedDateTime(final ZonedDateTime time, final DataOutput out)
@@ -116,19 +128,17 @@ final class IO {
 	}
 
 	interface Writer<T> {
-		void write(final T value, final ObjectOutput out)
-			throws IOException;
+		void write(final T value, final DataOutput out) throws IOException;
 	}
 
 	interface Reader<T> {
-		T read(final ObjectInput in)
-			throws IOException, ClassNotFoundException;
+		T read(final DataInput in) throws IOException;
 	}
 
 	static <T> void writes(
 		final Collection<? extends T> elements,
 		final Writer<? super T> writer,
-		final ObjectOutput out
+		final DataOutput out
 	)
 		throws IOException
 	{
@@ -140,9 +150,9 @@ final class IO {
 
 	static <T> List<T> reads(
 		final Reader<? extends T> reader,
-		final ObjectInput in
+		final DataInput in
 	)
-		throws IOException, ClassNotFoundException
+		throws IOException
 	{
 		final int length = in.readInt();
 		final List<T> elements = new ArrayList<>(length);

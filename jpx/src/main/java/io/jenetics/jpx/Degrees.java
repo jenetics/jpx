@@ -196,12 +196,12 @@ public final class Degrees
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Degrees.readExternal(in);
+			_object = Degrees.read(in);
 		}
 	}
 
@@ -215,11 +215,11 @@ public final class Degrees
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		out.writeDouble(_value);
 	}
 
-	static Degrees readExternal(final DataInput in) throws IOException {
+	static Degrees read(final DataInput in) throws IOException {
 		return new Degrees(in.readDouble());
 	}
 

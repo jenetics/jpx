@@ -227,12 +227,12 @@ public final class Speed
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Speed.readExternal(in);
+			_object = Speed.read(in);
 		}
 	}
 
@@ -246,11 +246,11 @@ public final class Speed
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		out.writeDouble(_value);
 	}
 
-	static Speed readExternal(final DataInput in) throws IOException {
+	static Speed read(final DataInput in) throws IOException {
 		return new Speed(in.readDouble());
 	}
 

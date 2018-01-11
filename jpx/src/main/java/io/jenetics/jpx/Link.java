@@ -34,9 +34,6 @@ import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -213,12 +210,12 @@ public final class Link implements Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Link.readExternal(in);
+			_object = Link.read(in);
 		}
 	}
 
@@ -232,16 +229,16 @@ public final class Link implements Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
-		IO.writeNullableString(_href.toString(), out);
+	void write(final DataOutput out) throws IOException {
+		IO.writeString(_href.toString(), out);
 		IO.writeNullableString(_text, out);
-		IO.writeNullableString(_text, out);
+		IO.writeNullableString(_type, out);
 	}
 
-	static Link readExternal(final DataInput in) throws IOException {
+	static Link read(final DataInput in) throws IOException {
 		try {
 			return new Link(
-				new URI(IO.readNullableString(in)),
+				new URI(IO.readString(in)),
 				IO.readNullableString(in),
 				IO.readNullableString(in)
 			);
@@ -249,24 +246,6 @@ public final class Link implements Serializable {
 			throw (InvalidObjectException)
 				new InvalidObjectException(e.getMessage()).initCause(e);
 		}
-	}
-
-	static void writeExternals(final Collection<Link> links, final DataOutput out)
-		throws IOException
-	{
-		out.writeInt(links.size());
-		for (Link link : links) {
-			link.writeExternal(out);
-		}
-	}
-
-	static List<Link> readExternals(final DataInput in) throws IOException {
-		final int length = in.readInt();
-		final List<Link> links = new ArrayList<>(length);
-		for (int i = 0; i < length; ++i) {
-			links.add(readExternal(in));
-		}
-		return links;
 	}
 
 	/* *************************************************************************

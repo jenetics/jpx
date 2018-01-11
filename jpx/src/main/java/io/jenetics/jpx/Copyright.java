@@ -257,12 +257,12 @@ public final class Copyright implements Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Copyright.readExternal(in);
+			_object = Copyright.read(in);
 		}
 	}
 
@@ -276,21 +276,21 @@ public final class Copyright implements Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		IO.writeNullableString(_author, out);
 		out.writeInt(_year != null ? _year.getValue() : Year.MIN_VALUE - 1);
 		IO.writeNullableString(_license != null ? _license.toString() : null, out);
 	}
 
-	static Copyright readExternal(final DataInput in) throws IOException {
+	static Copyright read(final DataInput in) throws IOException {
 		final String author = IO.readNullableString(in);
 		final int year = in.readInt();
 		final String license = IO.readNullableString(in);
 		try {
 			return new Copyright(
 				author,
-				year == Year.MAX_VALUE - 1 ? null : Year.of(year),
-				new URI(license)
+				year == Year.MIN_VALUE - 1 ? null : Year.of(year),
+				license != null ? new URI(license) : null
 			);
 		} catch (URISyntaxException e) {
 			throw (InvalidObjectException)

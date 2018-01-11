@@ -121,8 +121,8 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 		final Object object = nextWayPoint(new Random());
 		Serialization.test(object);
 
-		/*
 		Serialization.test(WayPoint.of(1, 2));
+		/*
 		Serialization.test(ZonedDateTime.now());
 
 		WayPoint wp = WayPoint.of(1.0/3.0, 1.0/3.0);

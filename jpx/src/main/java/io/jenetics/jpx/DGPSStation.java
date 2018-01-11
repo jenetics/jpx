@@ -161,12 +161,12 @@ public final class DGPSStation
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = DGPSStation.readExternal(in);
+			_object = DGPSStation.read(in);
 		}
 	}
 
@@ -180,11 +180,11 @@ public final class DGPSStation
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		out.writeShort(_value);
 	}
 
-	static DGPSStation readExternal(final DataInput in) throws IOException {
+	static DGPSStation read(final DataInput in) throws IOException {
 		return new DGPSStation(in.readShort());
 	}
 

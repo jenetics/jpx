@@ -225,16 +225,16 @@ public final class Person implements Serializable {
 	void writeExternal(final DataOutput out) throws IOException {
 		IO.writeNullableString(_name, out);
 		out.writeBoolean(_email != null);
-		if (_email != null) _email.writeExternal(out);
+		if (_email != null) _email.write(out);
 		out.writeBoolean(_link != null);
-		if (_link != null) _link.writeExternal(out);
+		if (_link != null) _link.write(out);
 	}
 
 	static Person readExternal(final DataInput in) throws IOException {
 		return new Person(
 			IO.readNullableString(in),
-			in.readBoolean() ? Email.readExternal(in) : null,
-			in.readBoolean() ? Link.readExternal(in) : null
+			in.readBoolean() ? Email.read(in) : null,
+			in.readBoolean() ? Link.read(in) : null
 		);
 	}
 

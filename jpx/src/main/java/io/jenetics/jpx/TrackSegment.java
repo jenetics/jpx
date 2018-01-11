@@ -33,11 +33,7 @@ import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutput;
 import java.io.Serializable;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -342,12 +338,12 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
-		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
-			_object = TrackSegment.readExternal(in);
+		public void readExternal(final ObjectInput in) throws IOException {
+			_object = TrackSegment.read(in);
 		}
 	}
 
@@ -361,32 +357,12 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final ObjectOutput out) throws IOException {
-		WayPoint.writeExternals(_points, out);
+	void write(final DataOutput out) throws IOException {
+		IO.writes(_points, WayPoint::write, out);
 	}
 
-	static TrackSegment readExternal(final ObjectInput in)
-		throws IOException, ClassNotFoundException
-	{
-		return new TrackSegment(WayPoint.readExternals(in));
-	}
-
-	static void writeExternals(final Collection<TrackSegment> segments, final ObjectOutput out)
-		throws IOException
-	{
-		out.writeInt(segments.size());
-		for (TrackSegment segment : segments) {
-			segment.writeExternal(out);
-		}
-	}
-
-	static List<TrackSegment> readExternals(final ObjectInput in) throws IOException, ClassNotFoundException {
-		final int length = in.readInt();
-		final List<TrackSegment> segments = new ArrayList<>(length);
-		for (int i = 0; i < length; ++i) {
-			segments.add(readExternal(in));
-		}
-		return segments;
+	static TrackSegment read(final DataInput in) throws IOException {
+		return new TrackSegment(IO.reads(WayPoint::read, in));
 	}
 
 

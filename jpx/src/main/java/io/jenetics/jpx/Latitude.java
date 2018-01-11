@@ -173,12 +173,12 @@ public final class Latitude extends Number implements Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Latitude.readExternal(in);
+			_object = Latitude.read(in);
 		}
 	}
 
@@ -192,11 +192,11 @@ public final class Latitude extends Number implements Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		out.writeDouble(_value);
 	}
 
-	static Latitude readExternal(final DataInput in) throws IOException {
+	static Latitude read(final DataInput in) throws IOException {
 		return new Latitude(in.readDouble());
 	}
 

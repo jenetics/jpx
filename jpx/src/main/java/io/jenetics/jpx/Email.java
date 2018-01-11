@@ -192,12 +192,12 @@ public final class Email implements Comparable<Email>, Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Email.readExternal(in);
+			_object = Email.read(in);
 		}
 	}
 
@@ -211,11 +211,11 @@ public final class Email implements Comparable<Email>, Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		IO.writeNullableString(getAddress(), out);
 	}
 
-	static Email readExternal(final DataInput in) throws IOException {
+	static Email read(final DataInput in) throws IOException {
 		return Email.of(IO.readNullableString(in));
 	}
 

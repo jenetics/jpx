@@ -596,13 +596,13 @@ public final class Metadata implements Serializable {
 		out.writeBoolean(_author != null);
 		if (_author != null) _author.writeExternal(out);
 		out.writeBoolean(_copyright != null);
-		if (_copyright != null) _copyright.writeExternal(out);
-		Link.writeExternals(_links, out);
+		if (_copyright != null) _copyright.write(out);
+		IO.writes(_links, Link::write, out);
 		out.writeBoolean(_time != null);
 		if (_time != null) IO.writeZonedDateTime(_time, out);
 		IO.writeNullableString(_keywords, out);
 		out.writeBoolean(_bounds != null);
-		if (_bounds != null) _bounds.writeExternal(out);
+		if (_bounds != null) _bounds.write(out);
 	}
 
 	static Metadata readExternal(final DataInput in) throws IOException {
@@ -610,11 +610,11 @@ public final class Metadata implements Serializable {
 			IO.readNullableString(in),
 			IO.readNullableString(in),
 			in.readBoolean() ? Person.readExternal(in) : null,
-			in.readBoolean() ? Copyright.readExternal(in) : null,
-			Link.readExternals(in),
+			in.readBoolean() ? Copyright.read(in) : null,
+			IO.reads(Link::read, in),
 			in.readBoolean() ? IO.readZonedDateTime(in) : null,
 			IO.readNullableString(in),
-			in.readBoolean() ? Bounds.readExternal(in) : null
+			in.readBoolean() ? Bounds.read(in) : null
 		);
 	}
 

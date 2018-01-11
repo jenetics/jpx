@@ -51,7 +51,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -1610,14 +1609,14 @@ public final class WayPoint implements Point, Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in)
 			throws IOException, ClassNotFoundException
 		{
-			_object = WayPoint.readExternal(in);
+			_object = WayPoint.read(in);
 		}
 	}
 
@@ -1631,7 +1630,7 @@ public final class WayPoint implements Point, Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final ObjectOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		int existing = 0;
 		if (_elevation != null) existing |= 1 << 0;
 		if (_speed != null) existing |= 1 << 1;
@@ -1656,74 +1655,52 @@ public final class WayPoint implements Point, Serializable {
 		out.writeInt(existing);
 		out.writeDouble(_latitude.toDegrees());
 		out.writeDouble(_longitude.toDegrees());
-		if (_elevation != null) _elevation.writeExternal(out);
-		if (_speed != null) _speed.writeExternal(out);
-		if (_time != null) out.writeObject(_time);
-		if (_magneticVariation != null) out.writeObject(_magneticVariation);
-		if (_geoidHeight != null) _geoidHeight.writeExternal(out);
-		if (_name != null) out.writeUTF(_name);
-		if (_comment != null) out.writeUTF(_comment);
-		if (_description != null) out.writeUTF(_description);
-		if (_source != null) out.writeUTF(_source);
-		if (_links != null && !_links.isEmpty()) IO.writes(_links, Link::writeExternal, out);
-		if (_symbol != null) out.writeUTF(_symbol);
-		if (_type != null) out.writeUTF(_type);
-		if (_fix != null) out.writeObject(_fix);
-		if (_sat != null) out.writeObject(_sat);
+		if (_elevation != null) _elevation.write(out);
+		if (_speed != null) _speed.write(out);
+		if (_time != null) IO.writeZonedDateTime(_time, out);
+		if (_magneticVariation != null) _magneticVariation.write(out);
+		if (_geoidHeight != null) _geoidHeight.write(out);
+		if (_name != null) IO.writeString(_name, out);
+		if (_comment != null)IO.writeString(_comment, out);
+		if (_description != null) IO.writeString(_description, out);
+		if (_source != null) IO.writeString(_source, out);
+		if (_links != null && !_links.isEmpty()) IO.writes(_links, Link::write, out);
+		if (_symbol != null) IO.writeString(_symbol, out);
+		if (_type != null) IO.writeString(_type, out);
+		if (_fix != null) IO.writeString(_fix.name(), out);
+		if (_sat != null) _sat.write(out);
 		if (_hdop != null) out.writeDouble(_hdop);
 		if (_vdop != null) out.writeDouble(_vdop);
 		if (_pdop != null) out.writeDouble(_pdop);
 		if (_ageOfGPSData != null) out.writeLong(_ageOfGPSData.toMillis());
-		if (_dgpsID != null) out.writeShort(_dgpsID.shortValue());
+		if (_dgpsID != null) _dgpsID.write(out);
 	}
 
-	static WayPoint readExternal(final ObjectInput in)
-		throws IOException, ClassNotFoundException
-	{
+	static WayPoint read(final DataInput in) throws IOException {
 		final int existing = in.readInt();
 		return new WayPoint(
 			Latitude.ofDegrees(in.readDouble()),
 			Longitude.ofDegrees(in.readDouble()),
-			((existing & (1 <<  0)) != 0) ? Length.readExternal(in) : null,
-			((existing & (1 <<  1)) != 0) ? Speed.readExternal(in) : null,
-			((existing & (1 <<  2)) != 0) ? (ZonedDateTime)in.readObject() : null,
-			((existing & (1 <<  3)) != 0) ? Degrees.readExternal(in) : null,
-			((existing & (1 <<  4)) != 0) ? Length.readExternal(in) : null,
-			((existing & (1 <<  5)) != 0) ? in.readUTF() : null,
-			((existing & (1 <<  6)) != 0) ? in.readUTF() : null,
-			((existing & (1 <<  7)) != 0) ? in.readUTF() : null,
-			((existing & (1 <<  8)) != 0) ? in.readUTF() : null,
-			((existing & (1 <<  9)) != 0) ? IO.reads(Link::readExternal, in) : null,
-			((existing & (1 << 10)) != 0) ? in.readUTF() : null,
-			((existing & (1 << 11)) != 0) ? in.readUTF() : null,
-			((existing & (1 << 12)) != 0) ? (Fix)in.readObject() : null,
-			((existing & (1 << 13)) != 0) ? (UInt)in.readObject() : null,
+			((existing & (1 <<  0)) != 0) ? Length.read(in) : null,
+			((existing & (1 <<  1)) != 0) ? Speed.read(in) : null,
+			((existing & (1 <<  2)) != 0) ? IO.readZonedDateTime(in) : null,
+			((existing & (1 <<  3)) != 0) ? Degrees.read(in) : null,
+			((existing & (1 <<  4)) != 0) ? Length.read(in) : null,
+			((existing & (1 <<  5)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  6)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  7)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  8)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  9)) != 0) ? IO.reads(Link::read, in) : null,
+			((existing & (1 << 10)) != 0) ? IO.readString(in) : null,
+			((existing & (1 << 11)) != 0) ? IO.readString(in) : null,
+			((existing & (1 << 12)) != 0) ? Fix.valueOf(IO.readString(in)) : null,
+			((existing & (1 << 13)) != 0) ? UInt.read(in) : null,
 			((existing & (1 << 14)) != 0) ? in.readDouble() : null,
 			((existing & (1 << 15)) != 0) ? in.readDouble() : null,
 			((existing & (1 << 16)) != 0) ? in.readDouble() : null,
 			((existing & (1 << 17)) != 0) ? Duration.ofMillis(in.readLong()) : null,
-			((existing & (1 << 18)) != 0) ? DGPSStation.of(in.readShort()) : null
+			((existing & (1 << 18)) != 0) ? DGPSStation.read(in) : null
 		);
-	}
-
-	static void writeExternals(final Collection<WayPoint> points, final ObjectOutput out)
-		throws IOException
-	{
-		out.writeInt(points.size());
-		for (WayPoint point : points) {
-			point.writeExternal(out);
-		}
-	}
-
-	static List<WayPoint> readExternals(final ObjectInput in)
-		throws IOException, ClassNotFoundException
-	{
-		final int length = in.readInt();
-		final List<WayPoint> points = new ArrayList<>(length);
-		for (int i = 0; i < length; ++i) {
-			points.add(readExternal(in));
-		}
-		return points;
 	}
 
 	/* *************************************************************************

@@ -1009,9 +1009,9 @@ public final class GPX implements Serializable {
 		IO.writeNullableString(_creator, out);
 		out.writeBoolean(_metadata != null);
 		if (_metadata != null) _metadata.writeExternal(out);
-		WayPoint.writeExternals(_wayPoints, out);
-		Route.writeExternals(_routes, out);
-		IO.writes(_tracks, Track::writeExternal, out);
+		IO.writes(_wayPoints, WayPoint::write, out);
+		IO.writes(_routes, Route::write, out);
+		IO.writes(_tracks, Track::write, out);
 	}
 
 	static GPX readExternal(final ObjectInput in)
@@ -1021,9 +1021,9 @@ public final class GPX implements Serializable {
 			IO.readNullableString(in),
 			IO.readNullableString(in),
 			in.readBoolean() ? Metadata.readExternal(in) : null,
-			IO.reads(WayPoint::readExternal, in),
-			IO.reads(Route::readExternal, in),
-			IO.reads(Track::readExternal, in)
+			IO.reads(WayPoint::read, in),
+			IO.reads(Route::read, in),
+			IO.reads(Track::read, in)
 		);
 	}
 
