@@ -434,12 +434,13 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof WayPoint &&
+		return obj == this ||
+			obj instanceof WayPoint &&
 			Objects.equals(((WayPoint)obj)._latitude, _latitude) &&
 			Objects.equals(((WayPoint)obj)._longitude, _longitude) &&
 			Objects.equals(((WayPoint)obj)._elevation, _elevation) &&
 			Objects.equals(((WayPoint)obj)._speed, _speed) &&
-			ZonedDateTimeFormat.equals(((WayPoint)obj)._time, _time) &&
+			ZonedDateTimes.equals(((WayPoint)obj)._time, _time) &&
 			Objects.equals(((WayPoint)obj)._magneticVariation, _magneticVariation) &&
 			Objects.equals(((WayPoint)obj)._geoidHeight, _geoidHeight) &&
 			Objects.equals(((WayPoint)obj)._name, _name) &&
@@ -1654,25 +1655,25 @@ public final class WayPoint implements Point, Serializable {
 		out.writeInt(existing);
 		out.writeDouble(_latitude.toDegrees());
 		out.writeDouble(_longitude.toDegrees());
-		if (_elevation != null) _elevation.write(out);
-		if (_speed != null) _speed.write(out);
-		if (_time != null) IO.writeZonedDateTime(_time, out);
-		if (_magneticVariation != null) _magneticVariation.write(out);
-		if (_geoidHeight != null) _geoidHeight.write(out);
-		if (_name != null) IO.writeString(_name, out);
-		if (_comment != null)IO.writeString(_comment, out);
-		if (_description != null) IO.writeString(_description, out);
-		if (_source != null) IO.writeString(_source, out);
-		if (_links != null && !_links.isEmpty()) IO.writes(_links, Link::write, out);
-		if (_symbol != null) IO.writeString(_symbol, out);
-		if (_type != null) IO.writeString(_type, out);
-		if (_fix != null) IO.writeString(_fix.name(), out);
-		if (_sat != null) _sat.write(out);
-		if (_hdop != null) out.writeDouble(_hdop);
-		if (_vdop != null) out.writeDouble(_vdop);
-		if (_pdop != null) out.writeDouble(_pdop);
-		if (_ageOfGPSData != null) out.writeLong(_ageOfGPSData.toMillis());
-		if (_dgpsID != null) _dgpsID.write(out);
+		if ((existing & (1 <<  0)) != 0) _elevation.write(out);
+		if ((existing & (1 <<  1)) != 0) _speed.write(out);
+		if ((existing & (1 <<  2)) != 0) ZonedDateTimes.write(_time, out);
+		if ((existing & (1 <<  3)) != 0) _magneticVariation.write(out);
+		if ((existing & (1 <<  4)) != 0) _geoidHeight.write(out);
+		if ((existing & (1 <<  5)) != 0) IO.writeString(_name, out);
+		if ((existing & (1 <<  6)) != 0) IO.writeString(_comment, out);
+		if ((existing & (1 <<  7)) != 0) IO.writeString(_description, out);
+		if ((existing & (1 <<  8)) != 0) IO.writeString(_source, out);
+		if ((existing & (1 <<  9)) != 0) IO.writes(_links, Link::write, out);
+		if ((existing & (1 << 10)) != 0) IO.writeString(_symbol, out);
+		if ((existing & (1 << 11)) != 0) IO.writeString(_type, out);
+		if ((existing & (1 << 12)) != 0) IO.writeString(_fix.name(), out);
+		if ((existing & (1 << 13)) != 0) _sat.write(out);
+		if ((existing & (1 << 14)) != 0) out.writeDouble(_hdop);
+		if ((existing & (1 << 15)) != 0) out.writeDouble(_vdop);
+		if ((existing & (1 << 16)) != 0) out.writeDouble(_pdop);
+		if ((existing & (1 << 17)) != 0) out.writeLong(_ageOfGPSData.toMillis());
+		if ((existing & (1 << 18)) != 0) _dgpsID.write(out);
 	}
 
 	static WayPoint read(final DataInput in) throws IOException {
@@ -1682,7 +1683,7 @@ public final class WayPoint implements Point, Serializable {
 			Longitude.ofDegrees(in.readDouble()),
 			((existing & (1 <<  0)) != 0) ? Length.read(in) : null,
 			((existing & (1 <<  1)) != 0) ? Speed.read(in) : null,
-			((existing & (1 <<  2)) != 0) ? IO.readZonedDateTime(in) : null,
+			((existing & (1 <<  2)) != 0) ? ZonedDateTimes.read(in) : null,
 			((existing & (1 <<  3)) != 0) ? Degrees.read(in) : null,
 			((existing & (1 <<  4)) != 0) ? Length.read(in) : null,
 			((existing & (1 <<  5)) != 0) ? IO.readString(in) : null,

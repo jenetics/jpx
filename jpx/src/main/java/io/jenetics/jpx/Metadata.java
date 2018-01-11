@@ -255,7 +255,7 @@ public final class Metadata implements Serializable {
 			Objects.equals(((Metadata)obj)._author, _author) &&
 			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
 			Lists.equals(((Metadata)obj)._links, _links) &&
-			ZonedDateTimeFormat.equals(((Metadata)obj)._time, _time) &&
+			ZonedDateTimes.equals(((Metadata)obj)._time, _time) &&
 			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
 			Objects.equals(((Metadata)obj)._bounds, _bounds);
 	}
@@ -596,7 +596,7 @@ public final class Metadata implements Serializable {
 		IO.writeNullable(_author, Person::write, out);
 		IO.writeNullable(_copyright, Copyright::write, out);
 		IO.writes(_links, Link::write, out);
-		IO.writeNullable(_time, IO::writeZonedDateTime, out);
+		IO.writeNullable(_time, ZonedDateTimes::write, out);
 		IO.writeNullableString(_keywords, out);
 		IO.writeNullable(_bounds, Bounds::write, out);
 	}
@@ -608,7 +608,7 @@ public final class Metadata implements Serializable {
 			IO.readNullable(Person::read, in),
 			IO.readNullable(Copyright::read, in),
 			IO.reads(Link::read, in),
-			IO.readNullable(IO::readZonedDateTime, in),
+			IO.readNullable(ZonedDateTimes::read, in),
 			IO.readNullableString(in),
 			IO.readNullable(Bounds::read, in)
 		);
