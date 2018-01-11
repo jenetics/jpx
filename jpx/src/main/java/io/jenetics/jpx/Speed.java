@@ -22,8 +22,14 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -203,28 +209,49 @@ public final class Speed
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	private static final class SerializationProxy implements Serializable {
+	private static final class Ser implements Externalizable {
 		private static final long serialVersionUID = 1L;
 
-		private final double value;
+		private double value;
 
-		private SerializationProxy(final Speed speed) {
+		public Ser() {
+		}
+
+		private Ser(final Speed speed) {
 			value = speed._value;
 		}
 
 		private Object readResolve() {
 			return new Speed(value);
 		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			out.writeDouble(value);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in) throws IOException {
+			value = in.readDouble();
+		}
 	}
 
 	private Object writeReplace() {
-		return new SerializationProxy(this);
+		return new Ser(this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
 		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Speed readExternal(final DataInput in) throws IOException {
+		return new Speed(in.readDouble());
 	}
 
 }
