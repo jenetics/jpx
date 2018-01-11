@@ -37,8 +37,12 @@ import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
@@ -1588,9 +1592,10 @@ public final class WayPoint implements Point, Serializable {
 	private static final class SerializationProxy implements Serializable {
 		private static final long serialVersionUID = 1L;
 
-		private final double latitude;
-		private final double longitude;
+		private double latitude;
+		private double longitude;
 
+		/*
 		private final Length elevation;
 		private final Speed speed;
 		private final ZonedDateTime time;
@@ -1610,10 +1615,35 @@ public final class WayPoint implements Point, Serializable {
 		private final Double pdop;
 		private final Duration ageOfGPSData;
 		private final DGPSStation dgpsID;
+		*/
 
-		private SerializationProxy(final WayPoint point) {
+		private transient byte[] data;
+
+		private SerializationProxy(final WayPoint point) throws IOException {
 			latitude = point._latitude.toDegrees();
 			longitude = point._longitude.toDegrees();
+			data = toBytes(
+				point._elevation,
+				point._speed,
+				point._time,
+				point._magneticVariation,
+				point._geoidHeight,
+				point._name,
+				point._comment,
+				point._description,
+				point._source,
+				point._links.isEmpty() ? null : point._links.toArray(new Link[0]),
+				point._symbol,
+				point._type,
+				point._fix,
+				point._sat,
+				point._hdop,
+				point._vdop,
+				point._pdop,
+				point._ageOfGPSData,
+				point._dgpsID
+			);
+			/*
 			elevation = point._elevation;
 			speed = point._speed;
 			time = point._time;
@@ -1633,12 +1663,34 @@ public final class WayPoint implements Point, Serializable {
 			pdop = point._pdop;
 			ageOfGPSData = point._ageOfGPSData;
 			dgpsID = point._dgpsID;
+			*/
 		}
 
-		private Object readResolve() {
+		private Object readResolve() throws IOException, ClassNotFoundException {
+			final Object[] objects = fromBytes(data);
 			return new WayPoint(
 				Latitude.ofDegrees(latitude),
 				Longitude.ofDegrees(longitude),
+				(Length) objects[0],
+				(Speed)objects[1],
+				(ZonedDateTime)objects[2],
+				(Degrees) objects[3],
+				(Length) objects[4],
+				(String)objects[5],
+				(String)objects[6],
+				(String)objects[7],
+				(String)objects[8],
+				objects[9]  != null ? Arrays.asList((Link[])objects[9]) : null,
+				(String)objects[10],
+				(String)objects[11],
+				(Fix)objects[12],
+				(UInt)objects[13],
+				(Double)objects[14],
+				(Double)objects[15],
+				(Double)objects[16],
+				(Duration)objects[17],
+				(DGPSStation)objects[18]
+				/*
 				elevation,
 				speed,
 				time,
@@ -1658,11 +1710,72 @@ public final class WayPoint implements Point, Serializable {
 				pdop,
 				ageOfGPSData,
 				dgpsID
+				*/
 			);
 		}
+
+
+		static byte[] toBytes(final Object... objects) throws IOException {
+			int existing = 0;
+			for (int i = 0; i < objects.length; ++i) {
+				if (objects[i] != null) {
+					existing |= 1 << i;
+				}
+			}
+
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			try (ObjectOutputStream oout = new ObjectOutputStream(bout)) {
+				oout.writeInt(objects.length);
+				oout.writeInt(existing);
+				for (Object object : objects) {
+					if (object != null) {
+						oout.writeObject(object);
+					}
+				}
+			}
+
+			return bout.toByteArray();
+		}
+
+		static Object[] fromBytes(final byte[] data) throws IOException, ClassNotFoundException {
+			final ByteArrayInputStream bin = new ByteArrayInputStream(data);
+			try (ObjectInputStream oin = new ObjectInputStream(bin)) {
+				final int length = oin.readInt();
+				final int existing = oin.readInt();
+
+				final Object[] objects = new Object[length];
+				for (int i = 0; i < length; ++i) {
+					final boolean exists = (existing & 1 << i) != 0;
+					if (exists) {
+						objects[i] = oin.readObject();
+					}
+				}
+
+				return objects;
+			}
+		}
+
+		private void writeObject(final ObjectOutputStream out)
+			throws IOException
+		{
+			System.out.println(data.length);
+			out.writeDouble(latitude);
+			out.writeDouble(longitude);
+			out.write(data);
+		}
+
+		private void readObject(final ObjectInputStream in)
+			throws IOException, ClassNotFoundException
+		{
+			latitude = in.readDouble();
+			longitude = in.readDouble();
+			data = in.readAllBytes();
+			System.out.println(data.length);
+		}
+
 	}
 
-	private Object writeReplace() {
+	private Object writeReplace() throws IOException {
 		return new SerializationProxy(this);
 	}
 

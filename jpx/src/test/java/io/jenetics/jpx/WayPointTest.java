@@ -33,6 +33,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -111,10 +115,22 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 		EqualsVerifier.forClass(WayPoint.class).verify();
 	}
 
-	@Test(invocationCount = 20)
+	@Test//(invocationCount = 20)
 	public void serialize() throws IOException, ClassNotFoundException {
 		final Object object = nextWayPoint(new Random());
-		Serialization.test(object);
+		Serialization.test(WayPoint.of(1, 2));
+
+		WayPoint wp = WayPoint.of(1.0/3.0, 1.0/3.0);
+
+		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
+
+		try {
+			final XMLStreamWriter writer = factory.createXMLStreamWriter(System.out, "UTF-8");
+
+			wp.write("wpt", writer);
+		} catch (XMLStreamException e) {
+			throw new IOException(e);
+		}
 	}
 
 }

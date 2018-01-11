@@ -209,6 +209,14 @@ public final class Length
 		return new Length(Unit.METER.convert(length, unit));
 	}
 
+	static double unbox(final Length length) {
+		return length != null ? length._value : Double.NaN;
+	}
+
+	static Length box(final double value) {
+		return Double.isNaN(value) ? null : new Length(value);
+	}
+
 	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/

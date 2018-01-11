@@ -110,6 +110,30 @@ public final class DGPSStation
 	}
 
 	/* *************************************************************************
+	 *  Static object creation methods
+	 * ************************************************************************/
+
+	/**
+	 * Create a new {@code DGPSStation} object.
+	 *
+	 * @param value the differential GPS station number
+	 * @return a new {@code DGPSStation} object
+	 * @throws IllegalArgumentException if the given station number is not in the
+	 *         range of {@code [0..1023]}
+	 */
+	public static DGPSStation of(final int value) {
+		return new DGPSStation(value);
+	}
+
+	static short unbox(final DGPSStation station) {
+		return station != null ? (short)station._value : -1;
+	}
+
+	static DGPSStation box(final int value) {
+		return value != -1 ? new DGPSStation(value) : null;
+	}
+
+	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/
 
@@ -137,19 +161,4 @@ public final class DGPSStation
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	/* *************************************************************************
-	 *  Static object creation methods
-	 * ************************************************************************/
-
-	/**
-	 * Create a new {@code DGPSStation} object.
-	 *
-	 * @param value the differential GPS station number
-	 * @return a new {@code DGPSStation} object
-	 * @throws IllegalArgumentException if the given station number is not in the
-	 *         range of {@code [0..1023]}
-	 */
-	public static DGPSStation of(final int value) {
-		return new DGPSStation(value);
-	}
 }

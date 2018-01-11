@@ -127,6 +127,13 @@ public final class UInt
 		return new UInt(value);
 	}
 
+	static UInt box(final int value) {
+		return value != -1 ? new UInt(value) : null;
+	}
+
+	static int unbox(final UInt uint) {
+		return uint != null ? uint._value : -1;
+	}
 
 	/* *************************************************************************
 	 *  Java object serialization

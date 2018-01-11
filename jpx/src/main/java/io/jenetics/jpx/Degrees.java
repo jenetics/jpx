@@ -21,8 +21,14 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.Externalizable;
+import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.io.ObjectInput;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -131,34 +137,6 @@ public final class Degrees
 
 
 	/* *************************************************************************
-	 *  Java object serialization
-	 * ************************************************************************/
-
-	private static final class SerializationProxy implements Serializable {
-		private static final long serialVersionUID = 1L;
-
-		private final double value;
-
-		private SerializationProxy(final Degrees degrees) {
-			value = degrees._value;
-		}
-
-		private Object readResolve() {
-			return new Degrees(value);
-		}
-	}
-
-	private Object writeReplace() {
-		return new SerializationProxy(this);
-	}
-
-	private void readObject(final ObjectInputStream stream)
-		throws InvalidObjectException
-	{
-		throw new InvalidObjectException("Proxy required.");
-	}
-
-	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
 
@@ -186,4 +164,65 @@ public final class Degrees
 	public static Degrees ofRadians(final double radians) {
 		return new Degrees(Math.toDegrees(radians));
 	}
+
+	static double unbox(final Degrees degrees) {
+		return degrees != null ? degrees._value : Double.NaN;
+	}
+
+	static Degrees box(final double value) {
+		return Double.isNaN(value) ? null : new Degrees(value);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	static final class Ser implements Externalizable {
+		private static final long serialVersionUID = 1L;
+
+		private double value;
+
+		public Ser() {
+		}
+
+		Ser(final Degrees degrees) {
+			value = degrees._value;
+		}
+
+		private Object readResolve() {
+			return new Degrees(value);
+		}
+
+		@Override
+		public void writeExternal(final ObjectOutput out) throws IOException {
+			out.writeDouble(value);
+		}
+
+		@Override
+		public void readExternal(final ObjectInput in)
+			throws IOException
+		{
+			value = in.readDouble();
+		}
+	}
+
+	private Object writeReplace() {
+		return new Ser(this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Proxy required.");
+	}
+
+	void writeExternal(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Degrees readExternal(final DataInput in) throws IOException {
+		return new Degrees(in.readDouble());
+	}
+
 }

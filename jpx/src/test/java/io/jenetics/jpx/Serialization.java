@@ -43,9 +43,51 @@ public class Serialization {
 			oout.writeObject(object);
 		}
 
-		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+		final byte[] data = bout.toByteArray();
+		System.out.println("Length: " + data.length);
+		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		try (ObjectInputStream oin = new ObjectInputStream(bin)) {
 			Assert.assertEquals(oin.readObject(), object);
+		}
+	}
+
+	static byte[] toBytes(final Object... objects) throws IOException {
+		int existing = 0;
+		for (int i = 0; i < objects.length; ++i) {
+			if (objects[i] != null) {
+				existing |= 1 << i;
+			}
+		}
+
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		try (ObjectOutputStream oout = new ObjectOutputStream(bout)) {
+			oout.writeInt(objects.length);
+			oout.writeInt(existing);
+			for (Object object : objects) {
+				if (object != null) {
+					oout.writeObject(object);
+				}
+			}
+		}
+
+		return bout.toByteArray();
+	}
+
+	static Object[] fromBytes(final byte[] data) throws IOException, ClassNotFoundException {
+		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
+		try (ObjectInputStream oin = new ObjectInputStream(bin)) {
+			final int length = oin.readInt();
+			final int existing = oin.readInt();
+
+			final Object[] objects = new Object[length];
+			for (int i = 0; i < length; ++i) {
+				final boolean exists = (existing & 1 << i) != 0;
+				if (exists) {
+					objects[i] = oin.readObject();
+				}
+			}
+
+			return objects;
 		}
 	}
 
