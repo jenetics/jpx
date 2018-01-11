@@ -203,12 +203,12 @@ public final class Person implements Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Person.readExternal(in);
+			_object = Person.read(in);
 		}
 	}
 
@@ -222,19 +222,17 @@ public final class Person implements Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		IO.writeNullableString(_name, out);
-		out.writeBoolean(_email != null);
-		if (_email != null) _email.write(out);
-		out.writeBoolean(_link != null);
-		if (_link != null) _link.write(out);
+		IO.writeNullable(_email, Email::write, out);
+		IO.writeNullable(_link, Link::write, out);
 	}
 
-	static Person readExternal(final DataInput in) throws IOException {
+	static Person read(final DataInput in) throws IOException {
 		return new Person(
 			IO.readNullableString(in),
-			in.readBoolean() ? Email.read(in) : null,
-			in.readBoolean() ? Link.read(in) : null
+			IO.readNullable(Email::read, in),
+			IO.readNullable(Link::read, in)
 		);
 	}
 

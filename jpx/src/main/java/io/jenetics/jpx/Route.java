@@ -768,7 +768,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		IO.writeNullableString(_description, out);
 		IO.writeNullableString(_source, out);
 		IO.writes(_links, Link::write, out);
-		UInt.writeNullable(_number, out);
+		IO.writeNullable(_number, UInt::write, out);
 		IO.writeNullableString(_type, out);
 		IO.writes(_points, WayPoint::write, out);
 	}
@@ -780,7 +780,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			IO.readNullableString(in),
 			IO.readNullableString(in),
 			IO.reads(Link::read, in),
-			UInt.readNullable(in),
+			IO.readNullable(UInt::read, in),
 			IO.readNullableString(in),
 			IO.reads(WayPoint::read, in)
 		);

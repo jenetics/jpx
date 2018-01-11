@@ -182,19 +182,4 @@ public final class UInt
 		return new UInt(in.readInt());
 	}
 
-	static void writeNullable(final UInt value, final DataOutput out)
-		throws IOException
-	{
-		if (value != null) {
-			value.write(out);
-		} else {
-			out.writeInt(-1);
-		}
-	}
-
-	static UInt readNullable(final DataInput in) throws IOException {
-		final int value = in.readInt();
-		return value != -1 ? new UInt(value) : null;
-	}
-
 }

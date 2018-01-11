@@ -165,14 +165,6 @@ public final class Degrees
 		return new Degrees(Math.toDegrees(radians));
 	}
 
-	static double unbox(final Degrees degrees) {
-		return degrees != null ? degrees._value : Double.NaN;
-	}
-
-	static Degrees box(final double value) {
-		return Double.isNaN(value) ? null : new Degrees(value);
-	}
-
 
 	/* *************************************************************************
 	 *  Java object serialization

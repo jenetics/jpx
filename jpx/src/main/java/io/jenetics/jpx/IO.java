@@ -19,10 +19,13 @@
  */
 package io.jenetics.jpx;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.time.Instant;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -36,25 +39,41 @@ import java.util.List;
  */
 final class IO {
 
-	static String readNullableString(final DataInput in) throws IOException {
-		final int length = in.readInt();
-		String result = null;
-		if (length >= 0) {
-			final byte[] bytes = new byte[length];
-			in.readFully(bytes);
-			result = new String(bytes, "UTF-8");
+	static <T> void writeNullable(
+		final T value,
+		final Writer<? super T> writer,
+		final DataOutput out
+	)
+		throws IOException
+	{
+		out.writeBoolean(value != null);
+		if (value != null) {
+			writer.write(value, out);
 		}
-		return result;
+	}
+
+	static <T> T readNullable(
+		final Reader<? extends T> reader,
+		final DataInput in
+	)
+		throws IOException
+	{
+		T value = null;
+		if (in.readBoolean()) {
+			value = reader.read(in);
+		}
+
+		return value;
 	}
 
 	static void writeNullableString(final String value, final DataOutput out)
 		throws IOException
 	{
-		if (value == null) {
-			out.writeInt(-1);
-		} else {
-			writeString(value, out);
-		}
+		writeNullable(value, IO::writeString, out);
+	}
+
+	static String readNullableString(final DataInput in) throws IOException {
+		return readNullable(IO::readString, in);
 	}
 
 	static void writeString(final String value, final DataOutput out)
@@ -84,7 +103,10 @@ final class IO {
 		out.writeByte(time.getSecond());
 		writeZoneOffset(time.getOffset(), out);
 		*/
-		out.writeLong(time.toInstant().toEpochMilli());
+		//out.writeLong(time.toInstant().toEpochMilli());
+		final byte[] data = toByteArray(time);
+		out.writeInt(data.length);
+		out.write(data);
 	}
 
 	static ZonedDateTime readZonedDateTime(final DataInput in) throws IOException {
@@ -103,8 +125,31 @@ final class IO {
 		);
 		*/
 
-		final Instant instant = Instant.ofEpochMilli(in.readLong());
-		return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+		//final Instant instant = Instant.ofEpochMilli(in.readLong());
+		//return ZonedDateTime.ofInstant(instant, ZoneOffset.systemDefault());
+		final byte[] data = new byte[in.readInt()];
+		in.readFully(data);
+		try {
+			return (ZonedDateTime)fromByteArray(data);
+		} catch (ClassNotFoundException e) {
+			throw new IOException(e);
+		}
+	}
+
+	public static byte[] toByteArray(final Object object) throws IOException {
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		try (ObjectOutputStream oout = new ObjectOutputStream(bout)) {
+			oout.writeObject(object);
+		}
+
+		return bout.toByteArray();
+	}
+
+	public static Object fromByteArray(final byte[] data) throws IOException, ClassNotFoundException {
+		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
+		try (ObjectInputStream oin = new ObjectInputStream(bin)) {
+			return oin.readObject();
+		}
 	}
 
 	private static void writeZoneOffset(final ZoneOffset offset, final DataOutput out)

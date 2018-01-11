@@ -571,12 +571,12 @@ public final class Metadata implements Serializable {
 
 		@Override
 		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
+			_object.write(out);
 		}
 
 		@Override
 		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Metadata.readExternal(in);
+			_object = Metadata.read(in);
 		}
 	}
 
@@ -590,31 +590,27 @@ public final class Metadata implements Serializable {
 		throw new InvalidObjectException("Proxy required.");
 	}
 
-	void writeExternal(final DataOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		IO.writeNullableString(_name, out);
 		IO.writeNullableString(_description, out);
-		out.writeBoolean(_author != null);
-		if (_author != null) _author.writeExternal(out);
-		out.writeBoolean(_copyright != null);
-		if (_copyright != null) _copyright.write(out);
+		IO.writeNullable(_author, Person::write, out);
+		IO.writeNullable(_copyright, Copyright::write, out);
 		IO.writes(_links, Link::write, out);
-		out.writeBoolean(_time != null);
-		if (_time != null) IO.writeZonedDateTime(_time, out);
+		IO.writeNullable(_time, IO::writeZonedDateTime, out);
 		IO.writeNullableString(_keywords, out);
-		out.writeBoolean(_bounds != null);
-		if (_bounds != null) _bounds.write(out);
+		IO.writeNullable(_bounds, Bounds::write, out);
 	}
 
-	static Metadata readExternal(final DataInput in) throws IOException {
+	static Metadata read(final DataInput in) throws IOException {
 		return new Metadata(
 			IO.readNullableString(in),
 			IO.readNullableString(in),
-			in.readBoolean() ? Person.readExternal(in) : null,
-			in.readBoolean() ? Copyright.read(in) : null,
+			IO.readNullable(Person::read, in),
+			IO.readNullable(Copyright::read, in),
 			IO.reads(Link::read, in),
-			in.readBoolean() ? IO.readZonedDateTime(in) : null,
+			IO.readNullable(IO::readZonedDateTime, in),
 			IO.readNullableString(in),
-			in.readBoolean() ? Bounds.read(in) : null
+			IO.readNullable(Bounds::read, in)
 		);
 	}
 

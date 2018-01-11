@@ -108,7 +108,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 		EqualsVerifier.forClass(Metadata.class).verify();
 	}
 
-	@Test(invocationCount = 10)
+	@Test(invocationCount = 1)
 	public void serialize() throws IOException, ClassNotFoundException {
 		final Object object = nextMetadata(new Random());
 		Serialization.test(object);

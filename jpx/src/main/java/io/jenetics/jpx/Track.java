@@ -739,7 +739,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		IO.writeNullableString(_description, out);
 		IO.writeNullableString(_source, out);
 		IO.writes(_links, Link::write, out);
-		UInt.writeNullable(_number, out);
+		IO.writeNullable(_number, UInt::write, out);
 		IO.writeNullableString(_type, out);
 		IO.writes(_segments, TrackSegment::write, out);
 	}
@@ -751,7 +751,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			IO.readNullableString(in),
 			IO.readNullableString(in),
 			IO.reads(Link::read, in),
-			UInt.readNullable(in),
+			IO.readNullable(UInt::read, in),
 			IO.readNullableString(in),
 			IO.reads(TrackSegment::read, in)
 		);

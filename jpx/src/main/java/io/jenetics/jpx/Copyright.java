@@ -277,19 +277,20 @@ public final class Copyright implements Serializable {
 	}
 
 	void write(final DataOutput out) throws IOException {
-		IO.writeNullableString(_author, out);
-		out.writeInt(_year != null ? _year.getValue() : Year.MIN_VALUE - 1);
+		IO.writeString(_author, out);
+		out.writeBoolean(_year != null);
+		if (_year != null) out.writeInt(_year.getValue());
 		IO.writeNullableString(_license != null ? _license.toString() : null, out);
 	}
 
 	static Copyright read(final DataInput in) throws IOException {
-		final String author = IO.readNullableString(in);
-		final int year = in.readInt();
+		final String author = IO.readString(in);
+		final Year year = in.readBoolean() ? Year.of(in.readInt()) : null;
 		final String license = IO.readNullableString(in);
 		try {
 			return new Copyright(
 				author,
-				year == Year.MIN_VALUE - 1 ? null : Year.of(year),
+				year,
 				license != null ? new URI(license) : null
 			);
 		} catch (URISyntaxException e) {
