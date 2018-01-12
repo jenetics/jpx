@@ -360,7 +360,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Test(invocationCount = 5)
 	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextGPX(new Random());
+		final GPX object = nextGPX(new Random());
 		Serialization.test(object);
 	}
 

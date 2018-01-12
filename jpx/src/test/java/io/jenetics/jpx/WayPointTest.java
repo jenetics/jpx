@@ -111,27 +111,10 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 		EqualsVerifier.forClass(WayPoint.class).verify();
 	}
 
-	@Test//(invocationCount = 20)
+	@Test(invocationCount = 20)
 	public void serialize() throws IOException, ClassNotFoundException {
 		final Object object = nextWayPoint(new Random(1));
 		Serialization.test(object);
-
-		Serialization.test(WayPoint.of(1, 2));
-		/*
-		Serialization.test(ZonedDateTime.now());
-
-		WayPoint wp = WayPoint.of(1.0/3.0, 1.0/3.0);
-
-		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-
-		try {
-			final XMLStreamWriter writer = factory.createXMLStreamWriter(System.out, "UTF-8");
-
-			wp.write("wpt", writer);
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		}
-		*/
 	}
 
 }
