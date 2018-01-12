@@ -212,11 +212,11 @@ public final class Email implements Comparable<Email>, Serializable {
 	}
 
 	void write(final DataOutput out) throws IOException {
-		IO.writeNullableString(getAddress(), out);
+		IO.writeString(getAddress(), out);
 	}
 
 	static Email read(final DataInput in) throws IOException {
-		return Email.of(IO.readNullableString(in));
+		return Email.of(IO.readString(in));
 	}
 
 	/* *************************************************************************
