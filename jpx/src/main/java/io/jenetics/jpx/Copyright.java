@@ -23,6 +23,8 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Parsers.toURI;
 import static io.jenetics.jpx.Parsers.toYear;
 import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.XMLWriter.elem;
+import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -45,7 +47,7 @@ import javax.xml.stream.XMLStreamWriter;
  * public domain or grant additional usage rights.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!s
  * @since 1.0
  */
 public final class Copyright implements Serializable {
@@ -280,12 +282,14 @@ public final class Copyright implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("copyright",
-			xml.attr("author", _author),
-			xml.elem("year", _year),
-			xml.elem("license", _license)
+	static XMLWriter<Copyright> writer() {
+		return elem("copyright",
+			XMLWriter.attr("author").map(cr -> cr._author),
+			XMLWriter.elem("year", text()).map(cr -> cr._year),
+			XMLWriter.elem("license", text()).map(cr -> cr._license)
 		);
 	}
 

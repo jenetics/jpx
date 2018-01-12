@@ -362,11 +362,15 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx = nextGPX(random);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.write(gpx, bout);
+			GPX.write(gpx, bout, "    ");
 
 			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 			final GPX read = GPX.read(bin);
 
+
+			if (!read.equals(gpx)) {
+				System.out.println(new String(bout.toByteArray()));
+			}
 			Assert.assertEquals(read, gpx);
 		}
 	}

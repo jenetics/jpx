@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -95,8 +96,8 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final XMLStreamWriter streamWriter = XMLOutputFactory.newInstance()
-			.createXMLStreamWriter(out);
+		final XMLStreamWriter streamWriter = new IndentingXMLWriter(
+			XMLOutputFactory.newInstance().createXMLStreamWriter(out, "UTF-8"), "    ");
 
 		writer.write(value, streamWriter);
 		return out.toByteArray();

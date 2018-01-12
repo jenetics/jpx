@@ -25,6 +25,7 @@ import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1007,16 +1008,18 @@ public final class GPX implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("gpx",
-			xml.ns("http://www.topografix.com/GPX/1/1"),
-			xml.attr("version", _version),
-			xml.attr("creator", _creator),
-			xml.elem(_metadata, Metadata::write),
-			xml.elems(_wayPoints, (p, w) -> p.write("wpt", w)),
-			xml.elems(_routes, Route::write),
-			xml.elems(_tracks, Track::write)
+	static XMLWriter<GPX> writer() {
+		return elem("gpx",
+			XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
+			XMLWriter.attr("version").map(gpx -> gpx._version),
+			XMLWriter.attr("creator").map(gpx -> gpx._creator),
+			Metadata.writer().map(gpx -> gpx._metadata),
+			XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
+			XMLWriter.elems(Route.writer()).map(gpx -> gpx._routes),
+			XMLWriter.elems(Track.writer()).map(gpx -> gpx._tracks)
 		);
 	}
 

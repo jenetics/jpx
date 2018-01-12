@@ -23,6 +23,8 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.XMLWriter.elem;
+import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -738,17 +740,19 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("trk",
-			xml.elem("name", _name),
-			xml.elem("cmt", _comment),
-			xml.elem("desc", _description),
-			xml.elem("src", _source),
-			xml.elems(_links, Link::write),
-			xml.elem("number", _number),
-			xml.elem("type", _type),
-			xml.elems(_segments, TrackSegment::write)
+	static XMLWriter<Track> writer() {
+		return elem("trk",
+			XMLWriter.elem("name", text()).map(r -> r._name),
+			XMLWriter.elem("cmt", text()).map(r -> r._comment),
+			XMLWriter.elem("desc", text()).map(r -> r._description),
+			XMLWriter.elem("src", text()).map(r -> r._source),
+			XMLWriter.elems(Link.writer()).map(r -> r._links),
+			XMLWriter.elem("number", text()).map(r -> r._number),
+			XMLWriter.elem("type", text()).map(r -> r._type),
+			XMLWriter.elems(TrackSegment.writer()).map(r -> r._segments)
 		);
 	}
 

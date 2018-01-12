@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -347,10 +348,12 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("trkseg",
-			xml.elems(_points, (p, w) -> p.write("trkpt", w))
+	static XMLWriter<TrackSegment> writer() {
+		return elem("trkseg",
+			XMLWriter.elems(WayPoint.writer("trkpt")).map(ts -> ts._points)
 		);
 	}
 

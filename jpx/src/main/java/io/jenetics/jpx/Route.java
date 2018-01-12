@@ -23,6 +23,8 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.XMLWriter.elem;
+import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -767,17 +769,19 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("rte",
-			xml.elem("name", _name),
-			xml.elem("cmt", _comment),
-			xml.elem("desc", _description),
-			xml.elem("src", _source),
-			xml.elems(_links, Link::write),
-			xml.elem("number", _number),
-			xml.elem("type", _type),
-			xml.elems(_points, (p, w) -> p.write("rtept", w))
+	static XMLWriter<Route> writer() {
+		return elem("rte",
+			XMLWriter.elem("name", text()).map(r -> r._name),
+			XMLWriter.elem("cmt", text()).map(r -> r._comment),
+			XMLWriter.elem("desc", text()).map(r -> r._description),
+			XMLWriter.elem("src", text()).map(r -> r._source),
+			XMLWriter.elems(Link.writer()).map(r -> r._links),
+			XMLWriter.elem("number", text()).map(r -> r._number),
+			XMLWriter.elem("type", text()).map(r -> r._type),
+			XMLWriter.elems(WayPoint.writer("rtept")).map(r -> r._points)
 		);
 	}
 

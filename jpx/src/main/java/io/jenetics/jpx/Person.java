@@ -19,6 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.XMLWriter.elem;
+import static io.jenetics.jpx.XMLWriter.text;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -35,7 +38,7 @@ import javax.xml.stream.XMLStreamWriter;
  * A person or organization.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Person implements Serializable {
@@ -219,12 +222,14 @@ public final class Person implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer(name).write(writer, this);
+	}
 
-		xml.write(name,
-			xml.elem("name", _name),
-			xml.elem(_email, Email::write),
-			xml.elem(_link, Link::write)
+	static XMLWriter<Person> writer(final String name) {
+		return elem(name,
+			XMLWriter.elem("name", text()).map(person -> person._name),
+			Email.writer().map(person -> person._email),
+			Link.writer().map(person -> person._link)
 		);
 	}
 

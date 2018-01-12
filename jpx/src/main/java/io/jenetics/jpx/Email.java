@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -39,7 +40,7 @@ import javax.xml.stream.XMLStreamWriter;
  * harvesting.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Email implements Comparable<Email>, Serializable {
@@ -200,11 +201,13 @@ public final class Email implements Comparable<Email>, Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("email",
-			xml.attr("id", _id),
-			xml.attr("domain", _domain)
+	static XMLWriter<Email> writer() {
+		return elem("email",
+			XMLWriter.attr("id").map(email -> email._id),
+			XMLWriter.attr("domain").map(email -> email._domain)
 		);
 	}
 

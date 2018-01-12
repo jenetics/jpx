@@ -36,6 +36,9 @@ import static io.jenetics.jpx.Parsers.toSpeed;
 import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.XMLWriter.elem;
+import static io.jenetics.jpx.XMLWriter.number;
+import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -1684,30 +1687,32 @@ public final class WayPoint implements Point, Serializable {
 	void write(final String name, final XMLStreamWriter writer)
 		throws XMLStreamException
 	{
-		final XMLWriter xml = new XMLWriter(writer);
+		writer(name).write(writer, this);
+	}
 
-		xml.write(name,
-			xml.attr("lat", _latitude),
-			xml.attr("lon", _longitude),
-			xml.elem("ele", _elevation, Length::doubleValue),
-			xml.elem("speed", _speed ,Speed::doubleValue),
-			xml.elem("time", ZonedDateTimeFormat.format(_time)),
-			xml.elem("magvar", _magneticVariation, Degrees::doubleValue),
-			xml.elem("geoidheight", _geoidHeight, Length::doubleValue),
-			xml.elem("name", _name),
-			xml.elem("cmt", _comment),
-			xml.elem("desc", _description),
-			xml.elem("src", _source),
-			xml.elems(_links, Link::write),
-			xml.elem("sym", _symbol),
-			xml.elem("type", _type),
-			xml.elem("fix", _fix, Fix::getValue),
-			xml.elem("sat", _sat),
-			xml.elem("hdop", _hdop),
-			xml.elem("vdop", _vdop),
-			xml.elem("pdop", _pdop),
-			xml.elem("ageofdgpsdata", _ageOfGPSData, Duration::getSeconds),
-			xml.elem("dgpsid", _dgpsID)
+	static XMLWriter<WayPoint> writer(final String name) {
+		return elem(name,
+			XMLWriter.attr("lat").map(wp -> wp._latitude),
+			XMLWriter.attr("lon").map(wp -> wp._longitude),
+			XMLWriter.elem("ele", number()).map(wp -> wp._elevation),
+			XMLWriter.elem("speed", number()).map(wp -> wp._speed),
+			XMLWriter.elem("time", text()).map(wp -> ZonedDateTimeFormat.format(wp._time)),
+			XMLWriter.elem("magvar", text()).map(wp -> wp._magneticVariation),
+			XMLWriter.elem("geoidheight", number()).map(wp -> wp._geoidHeight),
+			XMLWriter.elem("name", text()).map(wp -> wp._name),
+			XMLWriter.elem("cmt", text()).map(wp -> wp._comment),
+			XMLWriter.elem("desc", text()).map(wp -> wp._description),
+			XMLWriter.elem("src", text()).map(wp -> wp._source),
+			XMLWriter.elems(Link.writer()).map(wp -> wp._links),
+			XMLWriter.elem("sym", text()).map(wp -> wp._symbol),
+			XMLWriter.elem("type", text()).map(wp -> wp._type),
+			XMLWriter.elem("fix", text()).map(wp -> wp._fix != null ? wp._fix.getValue() : null),
+			XMLWriter.elem("sat", text()).map(wp -> wp._sat),
+			XMLWriter.elem("hdop", text()).map(wp -> wp._hdop),
+			XMLWriter.elem("vdop", text()).map(wp -> wp._vdop),
+			XMLWriter.elem("pdop", text()).map(wp -> wp._pdop),
+			XMLWriter.elem("ageofdgpsdata", text()).map(wp -> wp._ageOfGPSData != null ? wp._ageOfGPSData.getSeconds() : null),
+			XMLWriter.elem("dgpsid", text()).map(wp -> wp._dgpsID)
 		);
 	}
 

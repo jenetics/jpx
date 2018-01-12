@@ -23,7 +23,7 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Parsers.toLatitude;
 import static io.jenetics.jpx.Parsers.toLongitude;
-import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -40,7 +40,7 @@ import javax.xml.stream.XMLStreamWriter;
  * Two lat/lon pairs defining the extent of an element.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Bounds implements Serializable {
@@ -230,13 +230,15 @@ public final class Bounds implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("bounds",
-			xml.attr("minlat", _minLatitude),
-			xml.attr("minlon", _minLongitude),
-			xml.attr("maxlat", _maxLatitude),
-			xml.attr("maxlon", _maxLongitude)
+	static XMLWriter<Bounds> writer() {
+		return elem("bounds",
+			XMLWriter.attr("minlat").map(Bounds::getMinLatitude),
+			XMLWriter.attr("minlon").map(Bounds::getMinLongitude),
+			XMLWriter.attr("maxlat").map(Bounds::getMaxLatitude),
+			XMLWriter.attr("maxlon").map(Bounds::getMaxLongitude)
 		);
 	}
 
@@ -249,8 +251,10 @@ public final class Bounds implements Serializable {
 		);
 
 		return XMLReader.of(creator, "bounds",
-			attr("minlat"), attr("minlon"),
-			attr("maxlat"), attr("maxlon")
+			XMLReader.attr("minlat"),
+			XMLReader.attr("minlon"),
+			XMLReader.attr("maxlat"),
+			XMLReader.attr("maxlon")
 		);
 	}
 

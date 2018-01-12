@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.XMLWriter.elem;
+import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -596,17 +598,19 @@ public final class Metadata implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("metadata",
-			xml.elem("name", _name),
-			xml.elem("desc", _description),
-			xml.elem(_author, (a, w) -> a.write("author", w)),
-			xml.elem(_copyright, Copyright::write),
-			xml.elems(_links, Link::write),
-			xml.elem("time", ZonedDateTimeFormat.format(_time)),
-			xml.elem("keywords", _keywords),
-			xml.elem(_bounds, Bounds::write)
+	static XMLWriter<Metadata> writer() {
+		return elem("metadata",
+			XMLWriter.elem("name", text()).map(md -> md._name),
+			XMLWriter.elem("desc", text()).map(md -> md._description),
+			Person.writer("author").map(md -> md._author),
+			Copyright.writer().map(md -> md._copyright),
+			XMLWriter.elems(Link.writer()).map(md -> md._links),
+			XMLWriter.elem("time", text()).map(md -> ZonedDateTimeFormat.format(md._time)),
+			XMLWriter.elem("keywords", text()).map(md -> md._keywords),
+			Bounds.writer().map(md -> md._bounds)
 		);
 	}
 

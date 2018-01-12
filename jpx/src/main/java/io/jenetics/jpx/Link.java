@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.XMLWriter.elem;
+import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -42,7 +44,7 @@ import javax.xml.stream.XMLStreamWriter;
  * clip, etc) with additional information.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Link implements Serializable {
@@ -229,12 +231,14 @@ public final class Link implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+		writer().write(writer, this);
+	}
 
-		xml.write("link",
-			xml.attr("href", _href),
-			xml.elem("text", _text),
-			xml.elem("type", _type)
+	static XMLWriter<Link> writer() {
+		return elem("link",
+			XMLWriter.attr("href").map(link -> link._href),
+			XMLWriter.elem("text", text()).map(link -> link._text),
+			XMLWriter.elem("type", text()).map(link -> link._type)
 		);
 	}
 
