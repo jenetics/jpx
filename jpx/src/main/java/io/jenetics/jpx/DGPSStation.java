@@ -181,11 +181,11 @@ public final class DGPSStation
 	}
 
 	void write(final DataOutput out) throws IOException {
-		out.writeShort(_value);
+		IO.writeInt(_value, out);
 	}
 
 	static DGPSStation read(final DataInput in) throws IOException {
-		return new DGPSStation(in.readShort());
+		return new DGPSStation(IO.readInt(in));
 	}
 
 }

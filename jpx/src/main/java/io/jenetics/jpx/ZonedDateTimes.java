@@ -43,7 +43,7 @@ final class ZonedDateTimes {
 	static void write(final ZonedDateTime time, final DataOutput out)
 		throws IOException
 	{
-		out.writeInt(time.getYear());
+		IO.writeInt(time.getYear(), out);
 		out.writeByte(time.getMonthValue());
 		out.writeByte(time.getDayOfMonth());
 		out.writeByte(time.getHour());
@@ -60,12 +60,12 @@ final class ZonedDateTimes {
 		int offsetByte = offsetSecs % 900 == 0 ? offsetSecs / 900 : 127;
 		out.writeByte(offsetByte);
 		if (offsetByte == 127) {
-			out.writeInt(offsetSecs);
+			IO.writeInt(offsetSecs, out);
 		}
 	}
 
 	static ZonedDateTime read(final DataInput in) throws IOException {
-		final int year = in.readInt();
+		final int year = IO.readInt(in);
 		final int month = in.readByte();
 		final int day = in.readByte();
 		final int hour = in.readByte();
@@ -84,7 +84,7 @@ final class ZonedDateTimes {
 	{
 		int offsetByte = in.readByte();
 		return offsetByte == 127
-			? ZoneOffset.ofTotalSeconds(in.readInt())
+			? ZoneOffset.ofTotalSeconds(IO.readInt(in))
 			: ZoneOffset.ofTotalSeconds(offsetByte * 900);
 	}
 

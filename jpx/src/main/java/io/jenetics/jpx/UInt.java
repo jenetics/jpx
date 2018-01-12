@@ -175,11 +175,11 @@ public final class UInt
 	}
 
 	void write(final DataOutput out) throws IOException {
-		out.writeInt(_value);
+		IO.writeInt(_value, out);
 	}
 
 	static UInt read(final DataInput in) throws IOException {
-		return new UInt(in.readInt());
+		return new UInt(IO.readInt(in));
 	}
 
 }

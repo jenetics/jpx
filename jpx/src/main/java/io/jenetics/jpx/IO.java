@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -82,12 +83,12 @@ final class IO {
 		throws IOException
 	{
 		final byte[] bytes = value.getBytes("UTF-8");
-		out.writeInt(bytes.length);
+		writeInt(bytes.length, out);
 		out.write(bytes);
 	}
 
 	static String readString(final DataInput in) throws IOException {
-		final byte[] bytes = new byte[in.readInt()];
+		final byte[] bytes = new byte[readInt(in)];
 		in.readFully(bytes);
 		return new String(bytes, "UTF-8");
 	}
@@ -99,7 +100,7 @@ final class IO {
 	)
 		throws IOException
 	{
-		out.writeInt(elements.size());
+		writeInt(elements.size(), out);
 		for (T element : elements) {
 			writer.write(element, out);
 		}
@@ -111,12 +112,61 @@ final class IO {
 	)
 		throws IOException
 	{
-		final int length = in.readInt();
+		final int length = readInt(in);
 		final List<T> elements = new ArrayList<>(length);
 		for (int i = 0; i < length; ++i) {
 			elements.add(reader.read(in));
 		}
 		return elements;
+	}
+
+
+	static void writeInt(final int value, final DataOutput out) throws IOException {
+		int n = (value << 1)^(value >> 31);
+		if ((n & ~0x7F) != 0) {
+			out.write((byte)((n | 0x80) & 0xFF));
+			n >>>= 7;
+			if (n > 0x7F) {
+				out.write((byte)((n | 0x80) & 0xFF));
+				n >>>= 7;
+				if (n > 0x7F) {
+					out.write((byte)((n | 0x80) & 0xFF));
+					n >>>= 7;
+					if (n > 0x7F) {
+						out.write((byte)((n | 0x80) & 0xFF));
+						n >>>= 7;
+					}
+				}
+			}
+		}
+		out.write((byte)n);
+	}
+
+	static int readInt(final DataInput in) throws IOException {
+		int b = in.readByte() & 0xff;
+		int n = b & 0x7f;
+
+		if (b > 0x7f) {
+			b = in.readByte() & 0xff;
+			n ^= (b & 0x7f) << 7;
+			if (b > 0x7f) {
+				b = in.readByte() & 0xff;
+				n ^= (b & 0x7f) << 14;
+				if (b > 0x7f) {
+					b = in.readByte() & 0xff;
+					n ^= (b & 0x7f) << 21;
+					if (b > 0x7f) {
+						b = in.readByte() & 0xff;
+						n ^= (b & 0x7f) << 28;
+						if (b > 0x7f) {
+							throw new IOException("Invalid int encoding");
+						}
+					}
+				}
+			}
+		}
+
+		return (n >>> 1) ^ -(n & 1);
 	}
 
 }

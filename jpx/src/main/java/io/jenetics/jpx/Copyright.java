@@ -279,13 +279,13 @@ public final class Copyright implements Serializable {
 	void write(final DataOutput out) throws IOException {
 		IO.writeString(_author, out);
 		out.writeBoolean(_year != null);
-		if (_year != null) out.writeInt(_year.getValue());
+		if (_year != null) IO.writeInt(_year.getValue(), out);
 		IO.writeNullableString(_license != null ? _license.toString() : null, out);
 	}
 
 	static Copyright read(final DataInput in) throws IOException {
 		final String author = IO.readString(in);
-		final Year year = in.readBoolean() ? Year.of(in.readInt()) : null;
+		final Year year = in.readBoolean() ? Year.of(IO.readInt(in)) : null;
 		final String license = IO.readNullableString(in);
 		try {
 			return new Copyright(

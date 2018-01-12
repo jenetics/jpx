@@ -113,7 +113,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 	@Test//(invocationCount = 20)
 	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextWayPoint(new Random());
+		final Object object = nextWayPoint(new Random(1));
 		Serialization.test(object);
 
 		Serialization.test(WayPoint.of(1, 2));
