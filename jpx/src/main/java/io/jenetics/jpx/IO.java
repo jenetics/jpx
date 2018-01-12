@@ -35,14 +35,36 @@ import java.util.List;
  */
 final class IO {
 
+	/**
+	 * Object writer interface.
+	 *
+	 * @param <T> the object type
+	 */
 	interface Writer<T> {
 		void write(final T value, final DataOutput out) throws IOException;
 	}
 
+	/**
+	 * Object reader interface
+	 *
+	 * @param <T> the object type
+	 */
 	interface Reader<T> {
 		T read(final DataInput in) throws IOException;
 	}
 
+	/**
+	 * Write the given, possible {@code null}, {@code value} to the data output
+	 * using the given {@code writer}.
+	 *
+	 * @param value the, possible {@code null}, value to write
+	 * @param writer the object writer
+	 * @param out the data output
+	 * @param <T> the object type
+	 * @throws NullPointerException if the {@code writer} or data output is
+	 *         {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static <T> void writeNullable(
 		final T value,
 		final Writer<? super T> writer,
@@ -56,6 +78,16 @@ final class IO {
 		}
 	}
 
+	/**
+	 * Reads a possible {@code null} value from the given data input.
+	 *
+	 * @param reader the object reader
+	 * @param in the data input
+	 * @param <T> the object type
+	 * @return the read object
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static <T> T readNullable(
 		final Reader<? extends T> reader,
 		final DataInput in
@@ -70,16 +102,14 @@ final class IO {
 		return value;
 	}
 
-	static void writeNullableString(final String value, final DataOutput out)
-		throws IOException
-	{
-		writeNullable(value, IO::writeString, out);
-	}
-
-	static String readNullableString(final DataInput in) throws IOException {
-		return readNullable(IO::readString, in);
-	}
-
+	/**
+	 * Write the given string {@code value} to the given data output.
+	 *
+	 * @param value the string value to write
+	 * @param out the data output
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static void writeString(final String value, final DataOutput out)
 		throws IOException
 	{
@@ -88,12 +118,57 @@ final class IO {
 		out.write(bytes);
 	}
 
+	/**
+	 * Reads a string value from the given data input.
+	 *
+	 * @param in the data input
+	 * @return the read string value
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static String readString(final DataInput in) throws IOException {
 		final byte[] bytes = new byte[readInt(in)];
 		in.readFully(bytes);
 		return new String(bytes, "UTF-8");
 	}
 
+	/**
+	 * Write the given string, possible {@code null}, {@code value} to the given
+	 * data output.
+	 *
+	 * @param value the string value to write
+	 * @param out the data output
+	 * @throws NullPointerException if the given data output is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static void writeNullableString(final String value, final DataOutput out)
+		throws IOException
+	{
+		writeNullable(value, IO::writeString, out);
+	}
+
+	/**
+	 * Reads a, possible {@code null}, string value from the given data input.
+	 *
+	 * @param in the data input
+	 * @return the read string value
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static String readNullableString(final DataInput in) throws IOException {
+		return readNullable(IO::readString, in);
+	}
+
+	/**
+	 * Write the given elements to the data output.
+	 *
+	 * @param elements the elements to write
+	 * @param writer the element writer
+	 * @param out the data output
+	 * @param <T> the element type
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static <T> void writes(
 		final Collection<? extends T> elements,
 		final Writer<? super T> writer,
@@ -107,6 +182,16 @@ final class IO {
 		}
 	}
 
+	/**
+	 * Reads a list of elements from the given data input.
+	 *
+	 * @param reader the element reader
+	 * @param in the data input
+	 * @param <T> the element type
+	 * @return the read element list
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static <T> List<T> reads(
 		final Reader<? extends T> reader,
 		final DataInput in
@@ -121,7 +206,17 @@ final class IO {
 		return elements;
 	}
 
-
+	/**
+	 * Writes an int value to a series of bytes. The written number of bytes is
+	 * between 1 and 5.
+	 *
+	 * @see #readInt(DataInput)
+	 *
+	 * @param value the integer value to write
+	 * @param out the data output the integer value is written to
+	 * @throws NullPointerException if the given data output is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static void writeInt(final int value, final DataOutput out) throws IOException {
 		int n = (value << 1)^(value >> 31);
 		if ((n & ~0x7F) != 0) {
@@ -143,6 +238,17 @@ final class IO {
 		out.write((byte)n);
 	}
 
+	/**
+	 * Reads an int value from the given data input. The integer value must have
+	 * been written by the {@link #writeInt(int, DataOutput)} before.
+	 *
+	 * @see #writeInt(int, DataOutput)
+	 *
+	 * @param in the data input where the integer value is read from
+	 * @return the read integer value
+	 * @throws NullPointerException if the given data input is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static int readInt(final DataInput in) throws IOException {
 		int b = in.readByte() & 0xFF;
 		int n = b & 0x7F;
@@ -170,6 +276,17 @@ final class IO {
 		return (n >>> 1) ^ -(n & 1);
 	}
 
+	/**
+	 * Writes a long value to a series of bytes. The written number of bytes is
+	 * between 1 and 10.
+	 *
+	 * @see #readLong(DataInput)
+	 *
+	 * @param value the long value to write
+	 * @param out the data output the integer value is written to
+	 * @throws NullPointerException if the given data output is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static void writeLong(final long value, final DataOutput out)
 		throws IOException
 	{
@@ -213,6 +330,17 @@ final class IO {
 		out.write((byte)n);
 	}
 
+	/**
+	 * Reads a long value from the given data input. The integer value must have
+	 * been written by the {@link #writeInt(int, DataOutput)} before.
+	 *
+	 * @see #writeLong(long, DataOutput)
+	 *
+	 * @param in the data input where the integer value is read from
+	 * @return the read long value
+	 * @throws NullPointerException if the given data input is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
 	static long readLong(final DataInput in) throws IOException {
 		int b = in.readByte() & 0xFF;
 		int n = b & 0x7F;
