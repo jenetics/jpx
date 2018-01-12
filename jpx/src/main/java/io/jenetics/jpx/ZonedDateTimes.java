@@ -50,7 +50,7 @@ final class ZonedDateTimes {
 		throws IOException
 	{
 		final int offsetSecs = os.getTotalSeconds();
-		int offsetByte = offsetSecs % 900 == 0 ? offsetSecs / 900 : 127;
+		int offsetByte = offsetSecs%900 == 0 ? offsetSecs/900 : 127;
 		out.writeByte(offsetByte);
 		if (offsetByte == 127) {
 			IO.writeInt(offsetSecs, out);
@@ -69,7 +69,7 @@ final class ZonedDateTimes {
 		int offsetByte = in.readByte();
 		return offsetByte == 127
 			? ZoneOffset.ofTotalSeconds(IO.readInt(in))
-			: ZoneOffset.ofTotalSeconds(offsetByte * 900);
+			: ZoneOffset.ofTotalSeconds(offsetByte*900);
 	}
 
 	/**
