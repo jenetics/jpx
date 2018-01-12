@@ -24,8 +24,6 @@ import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;

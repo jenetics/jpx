@@ -23,12 +23,9 @@ import static java.lang.String.format;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**

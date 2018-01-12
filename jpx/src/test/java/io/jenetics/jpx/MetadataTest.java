@@ -25,7 +25,6 @@ import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
-import java.time.ZonedDateTime;
 import java.util.Random;
 import java.util.function.Supplier;
 
