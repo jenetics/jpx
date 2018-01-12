@@ -74,10 +74,6 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
 	@Test(invocationCount = 10)
 	public void marshalling() throws Exception {
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final XMLStreamWriter writer = XMLOutputFactory.newInstance()
-			.createXMLStreamWriter(out);
-
 		final Params<T> params = params(_random);
 
 		final T expected = params.supplier.get();
@@ -96,8 +92,9 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 		final XMLStreamWriter streamWriter = new IndentingXMLWriter(
-			XMLOutputFactory.newInstance().createXMLStreamWriter(out, "UTF-8"), "    ");
+			factory.createXMLStreamWriter(out, "UTF-8"), "    ");
 
 		writer.write(value, streamWriter);
 		return out.toByteArray();
