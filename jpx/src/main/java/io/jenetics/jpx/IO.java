@@ -214,19 +214,19 @@ final class IO {
 	}
 
 	static long readLong(final DataInput in) throws IOException {
-		int b = in.readByte() & 0xff;
-		int n = b & 0x7f;
+		int b = in.readByte() & 0xFF;
+		int n = b & 0x7F;
 		long l;
-		if (b > 0x7f) {
-			b = in.readByte() & 0xff;
-			n ^= (b & 0x7f) << 7;
-			if (b > 0x7f) {
-				b = in.readByte() & 0xff;
-				n ^= (b & 0x7f) << 14;
-				if (b > 0x7f) {
-					b = in.readByte() & 0xff;
-					n ^= (b & 0x7f) << 21;
-					if (b > 0x7f) {
+		if (b > 0x7F) {
+			b = in.readByte() & 0xFF;
+			n ^= (b & 0x7F) << 7;
+			if (b > 0x7F) {
+				b = in.readByte() & 0xFF;
+				n ^= (b & 0x7F) << 14;
+				if (b > 0x7F) {
+					b = in.readByte() & 0xFF;
+					n ^= (b & 0x7F) << 21;
+					if (b > 0x7F) {
 						l = innerLongDecode((long)n, in);
 					} else {
 						l = n;
@@ -246,24 +246,24 @@ final class IO {
 	private static long innerLongDecode(long l, final DataInput in)
 		throws IOException
 	{
-		int b = in.readByte() & 0xff;
-		l ^= (b & 0x7fL) << 28;
-		if (b > 0x7f) {
-			b = in.readByte() & 0xff;
-			l ^= (b & 0x7fL) << 35;
-			if (b > 0x7f) {
-				b = in.readByte() & 0xff;
-				l ^= (b & 0x7fL) << 42;
-				if (b > 0x7f) {
-					b = in.readByte() & 0xff;
-					l ^= (b & 0x7fL) << 49;
-					if (b > 0x7f) {
-						b = in.readByte() & 0xff;
-						l ^= (b & 0x7fL) << 56;
-						if (b > 0x7f) {
-							b = in.readByte() & 0xff;
-							l ^= (b & 0x7fL) << 63;
-							if (b > 0x7f) {
+		int b = in.readByte() & 0xFF;
+		l ^= (b & 0x7FL) << 28;
+		if (b > 0x7F) {
+			b = in.readByte() & 0xFF;
+			l ^= (b & 0x7FL) << 35;
+			if (b > 0x7F) {
+				b = in.readByte() & 0xFF;
+				l ^= (b & 0x7FL) << 42;
+				if (b > 0x7F) {
+					b = in.readByte() & 0xFF;
+					l ^= (b & 0x7FL) << 49;
+					if (b > 0x7F) {
+						b = in.readByte() & 0xFF;
+						l ^= (b & 0x7FL) << 56;
+						if (b > 0x7F) {
+							b = in.readByte() & 0xFF;
+							l ^= (b & 0x7FL) << 63;
+							if (b > 0x7F) {
 								throw new IOException("Invalid long encoding");
 							}
 						}
