@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,7 +40,7 @@ public class ZonedDateTimesTest {
 	private static final int MIN_OFFSET = ZoneOffset.MIN.getTotalSeconds();
 	private static final int MAX_OFFSET = ZoneOffset.MAX.getTotalSeconds();
 
-	private static ZonedDateTime nextZonedDataTime(final Random random) {
+	public static ZonedDateTime nextZonedDataTime(final Random random) {
 		final int seconds = Math.abs(random.nextInt());
 		final ZoneOffset offset = ZoneOffset.ofTotalSeconds(
 			random.nextInt(MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET

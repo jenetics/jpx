@@ -26,8 +26,16 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -332,6 +340,38 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
+	@Test
+	public void readWriteRandomIndentedGPX() throws IOException {
+		final Random random = new Random(1234);
+		for (int i = 0; i < 10; ++i) {
+			final GPX gpx = nextGPX(random);
+
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			GPX.write(gpx, bout, "    ");
+
+			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+			final GPX read = GPX.read(bin);
+
+			Assert.assertEquals(read, gpx);
+		}
+	}
+
+	@Test
+	public void readWriteRandomNonIndentedGPX() throws IOException {
+		final Random random = new Random(1234);
+		for (int i = 0; i < 10; ++i) {
+			final GPX gpx = nextGPX(random);
+
+			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+			GPX.write(gpx, bout);
+
+			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+			final GPX read = GPX.read(bin);
+
+			Assert.assertEquals(read, gpx);
+		}
+	}
+
 	@Test(dataProvider = "readWriteGPX")
 	public void readWrite(final String resource) throws IOException {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
@@ -362,6 +402,47 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void serialize() throws IOException, ClassNotFoundException {
 		final GPX object = nextGPX(new Random());
 		Serialization.test(object);
+	}
+
+	@Test
+	public void compatibleSerialization() throws IOException, ClassNotFoundException {
+		final String baseDir = "src/test/resources/io/jenetics/jpx/serialization";
+
+		final Random random = new Random(123);
+		for (int i = 0; i < 15; ++i) {
+			final GPX gpx = nextGPX(random);
+
+			final GPX read = GPX.read(Paths.get(baseDir, format("gpx_%d.xml", i)));
+			try {
+				Assert.assertEquals(read, gpx);
+			} catch (AssertionError e) {
+				GPX.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)), "    ");
+			}
+
+
+			try (InputStream fin = new FileInputStream(new File(baseDir, format("gpx_%d.obj", i)));
+				 ObjectInputStream oin = new ObjectInputStream(fin))
+			{
+				Assert.assertEquals(oin.readObject(), gpx);
+			}
+		}
+	}
+
+	public static void main(final String[] args) throws IOException {
+		final String baseDir = "jpx/src/test/resources/io/jenetics/jpx/serialization";
+
+		final Random random = new Random(123);
+		for (int i = 0; i < 15; ++i) {
+			final GPX gpx = nextGPX(random);
+
+			GPX.write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)), "    ");
+
+			try (OutputStream fout = new FileOutputStream(new File(baseDir, format("gpx_%d.obj", i)));
+				 ObjectOutputStream oout = new ObjectOutputStream(fout))
+			{
+				oout.writeObject(gpx);
+			}
+		}
 	}
 
 }

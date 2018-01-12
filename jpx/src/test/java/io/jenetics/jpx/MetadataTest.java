@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -67,7 +68,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 				: null,
 			LinkTest.nextLinks(random),
 			random.nextBoolean()
-				? ZonedDateTime.now()
+				? nextZonedDataTime(random)
 				: null,
 			random.nextBoolean()
 				? format("keywords_%s", random.nextInt(100))

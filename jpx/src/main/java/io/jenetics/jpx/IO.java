@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -152,7 +152,6 @@ final class IO {
 			n ^= (b & 0x7F) << 7;
 			if (b > 0x7F) {
 				b = in.readByte() & 0xFF;
-				n ^= (b & 0x7F) << 14;
 				n ^= (b & 0x7F) << 14;
 				if (b > 0x7F) {
 					b = in.readByte() & 0xFF;
