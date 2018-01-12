@@ -243,7 +243,7 @@ public final class Speed
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
-		throw new InvalidObjectException("Proxy required.");
+		throw new InvalidObjectException("Serialization proxy required.");
 	}
 
 	void write(final DataOutput out) throws IOException {

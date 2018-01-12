@@ -354,7 +354,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
-		throw new InvalidObjectException("Proxy required.");
+		throw new InvalidObjectException("Serialization proxy required.");
 	}
 
 	void write(final DataOutput out) throws IOException {

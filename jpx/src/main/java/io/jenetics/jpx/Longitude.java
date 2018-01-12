@@ -189,7 +189,7 @@ public final class Longitude extends Number implements Serializable {
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
-		throw new InvalidObjectException("Proxy required.");
+		throw new InvalidObjectException("Serialization proxy required.");
 	}
 
 	void write(final DataOutput out) throws IOException {

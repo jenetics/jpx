@@ -1001,7 +1001,7 @@ public final class GPX implements Serializable {
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
-		throw new InvalidObjectException("Proxy required.");
+		throw new InvalidObjectException("Serialization proxy required.");
 	}
 
 	void writeExternal(final ObjectOutput out) throws IOException {
