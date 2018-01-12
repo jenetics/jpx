@@ -155,35 +155,8 @@ public final class Latitude extends Number implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	static final class Ser implements Externalizable {
-		private static final long serialVersionUID = 1L;
-
-		private Latitude _object;
-
-		public Ser() {
-		}
-
-		private Ser(final Latitude object) {
-			_object = object;
-		}
-
-		private Object readResolve() {
-			return _object;
-		}
-
-		@Override
-		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.write(out);
-		}
-
-		@Override
-		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Latitude.read(in);
-		}
-	}
-
 	private Object writeReplace() {
-		return new Ser(this);
+		return new Serial(Serial.LATITUDE, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

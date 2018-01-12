@@ -25,12 +25,9 @@ import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -553,35 +550,8 @@ public final class Metadata implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	static final class Ser implements Externalizable {
-		private static final long serialVersionUID = 1L;
-
-		private Metadata _object;
-
-		public Ser() {
-		}
-
-		private Ser(final Metadata object) {
-			_object = object;
-		}
-
-		private Object readResolve() {
-			return _object;
-		}
-
-		@Override
-		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.write(out);
-		}
-
-		@Override
-		public void readExternal(final ObjectInput in) throws IOException {
-			_object = Metadata.read(in);
-		}
-	}
-
 	private Object writeReplace() {
-		return new Ser(this);
+		return new Serial(Serial.METADATA, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

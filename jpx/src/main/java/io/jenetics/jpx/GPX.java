@@ -28,15 +28,14 @@ import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.Externalizable;
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InvalidObjectException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -967,35 +966,8 @@ public final class GPX implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	static final class Ser implements Externalizable {
-		private static final long serialVersionUID = 1L;
-
-		private GPX _object;
-
-		public Ser() {
-		}
-
-		private Ser(final GPX object) {
-			_object = object;
-		}
-
-		private Object readResolve() {
-			return _object;
-		}
-
-		@Override
-		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.writeExternal(out);
-		}
-
-		@Override
-		public void readExternal(final ObjectInput in) throws IOException {
-			_object = GPX.readExternal(in);
-		}
-	}
-
 	private Object writeReplace() {
-		return new Ser(this);
+		return new Serial(Serial.GPX_TYPE, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
@@ -1004,7 +976,7 @@ public final class GPX implements Serializable {
 		throw new InvalidObjectException("Serialization proxy required.");
 	}
 
-	void writeExternal(final ObjectOutput out) throws IOException {
+	void write(final DataOutput out) throws IOException {
 		IO.writeString(_version, out);
 		IO.writeString(_creator, out);
 		IO.writeNullable(_metadata, Metadata::write, out);
@@ -1013,7 +985,7 @@ public final class GPX implements Serializable {
 		IO.writes(_tracks, Track::write, out);
 	}
 
-	static GPX readExternal(final ObjectInput in) throws IOException {
+	static GPX read(final DataInput in) throws IOException {
 		return new GPX(
 			IO.readString(in),
 			IO.readString(in),

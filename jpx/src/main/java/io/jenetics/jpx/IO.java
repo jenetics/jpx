@@ -207,8 +207,10 @@ final class IO {
 	}
 
 	/**
-	 * Writes an int value to a series of bytes. The written number of bytes is
-	 * between 1 and 5.
+	 * Writes an int value to a series of bytes. The values are written using
+	 * <a href="http://lucene.apache.org/core/3_5_0/fileformats.html#VInt">variable-length</a>
+	 * <a href="https://developers.google.com/protocol-buffers/docs/encoding?csw=1#types">zig-zag</a>
+	 * coding. Each {@code int} value is written in 1 to 5 bytes.
 	 *
 	 * @see #readInt(DataInput)
 	 *
@@ -218,6 +220,7 @@ final class IO {
 	 * @throws IOException if an I/O error occurs
 	 */
 	static void writeInt(final int value, final DataOutput out) throws IOException {
+		// Zig-zag encoding.
 		int n = (value << 1)^(value >> 31);
 		if ((n & ~0x7F) != 0) {
 			out.write((byte)((n | 0x80) & 0xFF));
@@ -277,8 +280,10 @@ final class IO {
 	}
 
 	/**
-	 * Writes a long value to a series of bytes. The written number of bytes is
-	 * between 1 and 10.
+	 * Writes a long value to a series of bytes. The values are written using
+	 * <a href="http://lucene.apache.org/core/3_5_0/fileformats.html#VInt">variable-length</a>
+	 * <a href="https://developers.google.com/protocol-buffers/docs/encoding?csw=1#types">zig-zag</a>
+	 * coding. Each {@code long} value is written in 1 to 10 bytes.
 	 *
 	 * @see #readLong(DataInput)
 	 *
@@ -290,6 +295,7 @@ final class IO {
 	static void writeLong(final long value, final DataOutput out)
 		throws IOException
 	{
+		// Zig-zag encoding.
 		long n = (value << 1)^(value >> 63);
 		if ((n & ~0x7FL) != 0) {
 			out.write((byte)((n | 0x80) & 0xFF));

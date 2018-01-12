@@ -23,12 +23,9 @@ import static java.lang.String.format;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 
 /**
@@ -143,35 +140,8 @@ public final class DGPSStation
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	static final class Ser implements Externalizable {
-		private static final long serialVersionUID = 1L;
-
-		private DGPSStation _object;
-
-		public Ser() {
-		}
-
-		private Ser(final DGPSStation object) {
-			_object = object;
-		}
-
-		private Object readResolve() {
-			return _object;
-		}
-
-		@Override
-		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.write(out);
-		}
-
-		@Override
-		public void readExternal(final ObjectInput in) throws IOException {
-			_object = DGPSStation.read(in);
-		}
-	}
-
 	private Object writeReplace() {
-		return new Ser(this);
+		return new Serial(Serial.DGPS_STATION, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

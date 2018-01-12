@@ -39,12 +39,9 @@ import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.Externalizable;
 import java.io.IOException;
 import java.io.InvalidObjectException;
-import java.io.ObjectInput;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
@@ -1591,37 +1588,8 @@ public final class WayPoint implements Point, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
-	static final class Ser implements Externalizable {
-		private static final long serialVersionUID = 1L;
-
-		private WayPoint _object;
-
-		public Ser() {
-		}
-
-		private Ser(final WayPoint object) {
-			_object = object;
-		}
-
-		private Object readResolve() {
-			return _object;
-		}
-
-		@Override
-		public void writeExternal(final ObjectOutput out) throws IOException {
-			_object.write(out);
-		}
-
-		@Override
-		public void readExternal(final ObjectInput in)
-			throws IOException, ClassNotFoundException
-		{
-			_object = WayPoint.read(in);
-		}
-	}
-
 	private Object writeReplace() throws IOException {
-		return new Ser(this);
+		return new Serial(Serial.WAY_POINT, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
