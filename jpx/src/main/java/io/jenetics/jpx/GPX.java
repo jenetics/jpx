@@ -989,7 +989,7 @@ public final class GPX implements Serializable {
 		}
 
 		@Override
-		public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+		public void readExternal(final ObjectInput in) throws IOException {
 			_object = GPX.readExternal(in);
 		}
 	}
@@ -1007,20 +1007,17 @@ public final class GPX implements Serializable {
 	void writeExternal(final ObjectOutput out) throws IOException {
 		IO.writeNullableString(_version, out);
 		IO.writeNullableString(_creator, out);
-		out.writeBoolean(_metadata != null);
-		if (_metadata != null) _metadata.write(out);
+		IO.writeNullable(_metadata, Metadata::write, out);
 		IO.writes(_wayPoints, WayPoint::write, out);
 		IO.writes(_routes, Route::write, out);
 		IO.writes(_tracks, Track::write, out);
 	}
 
-	static GPX readExternal(final ObjectInput in)
-		throws IOException, ClassNotFoundException
-	{
+	static GPX readExternal(final ObjectInput in) throws IOException {
 		return new GPX(
 			IO.readNullableString(in),
 			IO.readNullableString(in),
-			in.readBoolean() ? Metadata.read(in) : null,
+			IO.readNullable(Metadata::read, in),
 			IO.reads(WayPoint::read, in),
 			IO.reads(Route::read, in),
 			IO.reads(Track::read, in)

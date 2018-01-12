@@ -44,7 +44,7 @@ public class Serialization {
 		}
 
 		final byte[] data = bout.toByteArray();
-		//System.out.println("Length: " + data.length);
+		System.out.println("Length: " + data.length);
 		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		try (ObjectInputStream oin = new ObjectInputStream(bin)) {
 			final Object obj = oin.readObject();
