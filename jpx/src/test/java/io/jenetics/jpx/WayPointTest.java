@@ -116,11 +116,13 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 		final Object object = nextWayPoint(new Random(1));
 		Serialization.test(object);
 
+		/*
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		final DataOutputStream dout = new DataOutputStream(out);
 		WayPoint.of(1.1, 1.1).write(dout);
 		dout.flush();
 		System.out.println(out.size());
+		*/
 	}
 
 }
