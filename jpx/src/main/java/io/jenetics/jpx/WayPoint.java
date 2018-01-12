@@ -37,6 +37,11 @@ import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.Duration;
 import java.time.Instant;
@@ -49,7 +54,6 @@ import java.util.Optional;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
@@ -427,12 +431,13 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof WayPoint &&
+		return obj == this ||
+			obj instanceof WayPoint &&
 			Objects.equals(((WayPoint)obj)._latitude, _latitude) &&
 			Objects.equals(((WayPoint)obj)._longitude, _longitude) &&
 			Objects.equals(((WayPoint)obj)._elevation, _elevation) &&
 			Objects.equals(((WayPoint)obj)._speed, _speed) &&
-			ZonedDateTimeFormat.equals(((WayPoint)obj)._time, _time) &&
+			ZonedDateTimes.equals(((WayPoint)obj)._time, _time) &&
 			Objects.equals(((WayPoint)obj)._magneticVariation, _magneticVariation) &&
 			Objects.equals(((WayPoint)obj)._geoidHeight, _geoidHeight) &&
 			Objects.equals(((WayPoint)obj)._name, _name) &&
@@ -1578,6 +1583,93 @@ public final class WayPoint implements Point, Serializable {
 		);
 	}
 
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() throws IOException {
+		return new Serial(Serial.WAY_POINT, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		int existing = 0;
+		if (_elevation != null) existing |= 1 << 0;
+		if (_speed != null) existing |= 1 << 1;
+		if (_time != null) existing |= 1 << 2;
+		if (_magneticVariation != null) existing |= 1 << 3;
+		if (_geoidHeight != null) existing |= 1 << 4;
+		if (_name != null) existing |= 1 << 5;
+		if (_comment != null) existing |= 1 << 6;
+		if (_description != null) existing |= 1 << 7;
+		if (_source != null) existing |= 1 << 8;
+		if (_links != null && !_links.isEmpty()) existing |= 1 << 9;
+		if (_symbol != null) existing |= 1 << 10;
+		if (_type != null) existing |= 1 << 11;
+		if (_fix != null) existing |= 1 << 12;
+		if (_sat != null) existing |= 1 << 13;
+		if (_hdop != null) existing |= 1 << 14;
+		if (_vdop != null) existing |= 1 << 15;
+		if (_pdop != null) existing |= 1 << 16;
+		if (_ageOfGPSData != null) existing |= 1 << 17;
+		if (_dgpsID != null) existing |= 1 << 18;
+
+		out.writeInt(existing);
+		out.writeDouble(_latitude.toDegrees());
+		out.writeDouble(_longitude.toDegrees());
+		if ((existing & (1 <<  0)) != 0) _elevation.write(out);
+		if ((existing & (1 <<  1)) != 0) _speed.write(out);
+		if ((existing & (1 <<  2)) != 0) ZonedDateTimes.write(_time, out);
+		if ((existing & (1 <<  3)) != 0) _magneticVariation.write(out);
+		if ((existing & (1 <<  4)) != 0) _geoidHeight.write(out);
+		if ((existing & (1 <<  5)) != 0) IO.writeString(_name, out);
+		if ((existing & (1 <<  6)) != 0) IO.writeString(_comment, out);
+		if ((existing & (1 <<  7)) != 0) IO.writeString(_description, out);
+		if ((existing & (1 <<  8)) != 0) IO.writeString(_source, out);
+		if ((existing & (1 <<  9)) != 0) IO.writes(_links, Link::write, out);
+		if ((existing & (1 << 10)) != 0) IO.writeString(_symbol, out);
+		if ((existing & (1 << 11)) != 0) IO.writeString(_type, out);
+		if ((existing & (1 << 12)) != 0) IO.writeString(_fix.name(), out);
+		if ((existing & (1 << 13)) != 0) _sat.write(out);
+		if ((existing & (1 << 14)) != 0) out.writeDouble(_hdop);
+		if ((existing & (1 << 15)) != 0) out.writeDouble(_vdop);
+		if ((existing & (1 << 16)) != 0) out.writeDouble(_pdop);
+		if ((existing & (1 << 17)) != 0) out.writeLong(_ageOfGPSData.toMillis());
+		if ((existing & (1 << 18)) != 0) _dgpsID.write(out);
+	}
+
+	static WayPoint read(final DataInput in) throws IOException {
+		final int existing = in.readInt();
+		return new WayPoint(
+			Latitude.ofDegrees(in.readDouble()),
+			Longitude.ofDegrees(in.readDouble()),
+			((existing & (1 <<  0)) != 0) ? Length.read(in) : null,
+			((existing & (1 <<  1)) != 0) ? Speed.read(in) : null,
+			((existing & (1 <<  2)) != 0) ? ZonedDateTimes.read(in) : null,
+			((existing & (1 <<  3)) != 0) ? Degrees.read(in) : null,
+			((existing & (1 <<  4)) != 0) ? Length.read(in) : null,
+			((existing & (1 <<  5)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  6)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  7)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  8)) != 0) ? IO.readString(in) : null,
+			((existing & (1 <<  9)) != 0) ? IO.reads(Link::read, in) : null,
+			((existing & (1 << 10)) != 0) ? IO.readString(in) : null,
+			((existing & (1 << 11)) != 0) ? IO.readString(in) : null,
+			((existing & (1 << 12)) != 0) ? Fix.valueOf(IO.readString(in)) : null,
+			((existing & (1 << 13)) != 0) ? UInt.read(in) : null,
+			((existing & (1 << 14)) != 0) ? in.readDouble() : null,
+			((existing & (1 << 15)) != 0) ? in.readDouble() : null,
+			((existing & (1 << 16)) != 0) ? in.readDouble() : null,
+			((existing & (1 << 17)) != 0) ? Duration.ofMillis(in.readLong()) : null,
+			((existing & (1 << 18)) != 0) ? DGPSStation.read(in) : null
+		);
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

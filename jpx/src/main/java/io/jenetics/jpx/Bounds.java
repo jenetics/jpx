@@ -25,6 +25,11 @@ import static io.jenetics.jpx.Parsers.toLatitude;
 import static io.jenetics.jpx.Parsers.toLongitude;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -183,6 +188,34 @@ public final class Bounds implements Serializable {
 			Longitude.ofDegrees(minLongitudeDegree),
 			Latitude.ofDegrees(maxLatitudeDegree),
 			Longitude.ofDegrees(maxLongitudeDegree)
+		);
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.BOUNDS, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_minLatitude.toDegrees());
+		out.writeDouble(_minLongitude.toDegrees());
+		out.writeDouble(_maxLatitude.toDegrees());
+		out.writeDouble(_maxLongitude.toDegrees());
+	}
+
+	static Bounds read(final DataInput in) throws IOException {
+		return Bounds.of(
+			in.readDouble(), in.readDouble(),
+			in.readDouble(), in.readDouble()
 		);
 	}
 

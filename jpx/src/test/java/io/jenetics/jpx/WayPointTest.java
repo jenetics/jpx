@@ -20,12 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.time.Instant.ofEpochMilli;
-import static java.time.ZoneOffset.UTC;
-import static java.time.ZonedDateTime.ofInstant;
+import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +61,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			.ele(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
 			.speed(random.nextBoolean() ? Speed.of(random.nextDouble()*100, Speed.Unit.METERS_PER_SECOND) : null)
 			.time(random.nextBoolean()
-				? ofInstant(ofEpochMilli(random.nextInt(10000)), UTC)
+				? nextZonedDataTime(random)
 				: null)
 			.magvar(random.nextBoolean() ? Degrees.ofDegrees(random.nextDouble()*10) : null)
 			.geoidheight(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
@@ -108,6 +107,20 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(WayPoint.class).verify();
+	}
+
+	@Test(invocationCount = 1)
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextWayPoint(new Random(1));
+		Serialization.test(object);
+
+		/*
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final DataOutputStream dout = new DataOutputStream(out);
+		WayPoint.of(1.1, 1.1).write(dout);
+		dout.flush();
+		System.out.println(out.size());
+		*/
 	}
 
 }

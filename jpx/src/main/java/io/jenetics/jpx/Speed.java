@@ -22,6 +22,11 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -188,4 +193,35 @@ public final class Speed
 		requireNonNull(unit);
 		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
+
+	static double unbox(final Speed speed) {
+		return speed != null ? speed._value : Double.NaN;
+	}
+
+	static Speed box(final double value) {
+		return Double.isNaN(value) ? null : new Speed(value);
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.SPEED, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Speed read(final DataInput in) throws IOException {
+		return new Speed(in.readDouble());
+	}
+
 }

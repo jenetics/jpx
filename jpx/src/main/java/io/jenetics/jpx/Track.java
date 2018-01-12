@@ -24,6 +24,11 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -683,6 +688,44 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		);
 	}
 
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.TRACK, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullableString(_comment, out);
+		IO.writeNullableString(_description, out);
+		IO.writeNullableString(_source, out);
+		IO.writes(_links, Link::write, out);
+		IO.writeNullable(_number, UInt::write, out);
+		IO.writeNullableString(_type, out);
+		IO.writes(_segments, TrackSegment::write, out);
+	}
+
+	static Track read(final DataInput in) throws IOException {
+		return new Track(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.reads(Link::read, in),
+			IO.readNullable(UInt::read, in),
+			IO.readNullableString(in),
+			IO.reads(TrackSegment::read, in)
+		);
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

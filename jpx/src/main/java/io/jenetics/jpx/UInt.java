@@ -21,6 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -124,4 +129,27 @@ public final class UInt
 	public static UInt of(final int value) {
 		return new UInt(value);
 	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.UINT, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeInt(_value, out);
+	}
+
+	static UInt read(final DataInput in) throws IOException {
+		return new UInt(IO.readInt(in));
+	}
+
 }

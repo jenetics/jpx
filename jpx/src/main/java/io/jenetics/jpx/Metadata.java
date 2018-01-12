@@ -23,6 +23,11 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -247,7 +252,7 @@ public final class Metadata implements Serializable {
 			Objects.equals(((Metadata)obj)._author, _author) &&
 			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
 			Lists.equals(((Metadata)obj)._links, _links) &&
-			ZonedDateTimeFormat.equals(((Metadata)obj)._time, _time) &&
+			ZonedDateTimes.equals(((Metadata)obj)._time, _time) &&
 			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
 			Objects.equals(((Metadata)obj)._bounds, _bounds);
 	}
@@ -537,6 +542,45 @@ public final class Metadata implements Serializable {
 			time,
 			keywords,
 			bounds
+		);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.METADATA, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullableString(_description, out);
+		IO.writeNullable(_author, Person::write, out);
+		IO.writeNullable(_copyright, Copyright::write, out);
+		IO.writes(_links, Link::write, out);
+		IO.writeNullable(_time, ZonedDateTimes::write, out);
+		IO.writeNullableString(_keywords, out);
+		IO.writeNullable(_bounds, Bounds::write, out);
+	}
+
+	static Metadata read(final DataInput in) throws IOException {
+		return new Metadata(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullable(Person::read, in),
+			IO.readNullable(Copyright::read, in),
+			IO.reads(Link::read, in),
+			IO.readNullable(ZonedDateTimes::read, in),
+			IO.readNullableString(in),
+			IO.readNullable(Bounds::read, in)
 		);
 	}
 

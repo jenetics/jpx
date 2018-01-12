@@ -28,10 +28,14 @@ import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -165,7 +169,7 @@ public final class GPX implements Serializable {
 	private final String _creator;
 	private final String _version;
 	private final Metadata _metadata;
-	private final List<WayPoint> _wayPoints;;
+	private final List<WayPoint> _wayPoints;
 	private final List<Route> _routes;
 	private final List<Track> _tracks;
 
@@ -957,6 +961,40 @@ public final class GPX implements Serializable {
 		);
 	}
 
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.GPX_TYPE, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeString(_version, out);
+		IO.writeString(_creator, out);
+		IO.writeNullable(_metadata, Metadata::write, out);
+		IO.writes(_wayPoints, WayPoint::write, out);
+		IO.writes(_routes, Route::write, out);
+		IO.writes(_tracks, Track::write, out);
+	}
+
+	static GPX read(final DataInput in) throws IOException {
+		return new GPX(
+			IO.readString(in),
+			IO.readString(in),
+			IO.readNullable(Metadata::read, in),
+			IO.reads(WayPoint::read, in),
+			IO.reads(Route::read, in),
+			IO.reads(Track::read, in)
+		);
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

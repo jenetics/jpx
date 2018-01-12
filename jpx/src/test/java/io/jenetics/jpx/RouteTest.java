@@ -19,11 +19,12 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.ListsTest.revert;
 import static java.lang.String.format;
+import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -151,6 +152,12 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Route.class).verify();
+	}
+
+	@Test(invocationCount = 10)
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextRoute(new Random());
+		Serialization.test(object);
 	}
 
 }

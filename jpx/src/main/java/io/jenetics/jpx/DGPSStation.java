@@ -21,6 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -107,7 +112,6 @@ public final class DGPSStation
 		return Integer.toString(_value);
 	}
 
-
 	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
@@ -123,4 +127,35 @@ public final class DGPSStation
 	public static DGPSStation of(final int value) {
 		return new DGPSStation(value);
 	}
+
+	static short unbox(final DGPSStation station) {
+		return station != null ? (short)station._value : -1;
+	}
+
+	static DGPSStation box(final int value) {
+		return value != -1 ? new DGPSStation(value) : null;
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.DGPS_STATION, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeInt(_value, out);
+	}
+
+	static DGPSStation read(final DataInput in) throws IOException {
+		return new DGPSStation(IO.readInt(in));
+	}
+
 }

@@ -21,6 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -156,4 +161,28 @@ public final class Degrees
 	public static Degrees ofRadians(final double radians) {
 		return new Degrees(Math.toDegrees(radians));
 	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.DEGREES, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Degrees read(final DataInput in) throws IOException {
+		return new Degrees(in.readDouble());
+	}
+
 }

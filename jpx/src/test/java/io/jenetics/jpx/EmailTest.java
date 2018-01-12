@@ -26,6 +26,7 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -52,6 +53,34 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 		return Email.of(
 			format("id_%s", random.nextInt(100)),
 			format("domain_%s", random.nextInt(100))
+		);
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromEmptyAddress() {
+		Email.of("");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress1() {
+		Email.of("@");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress2() {
+		Email.of("a@");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress3() {
+		Email.of("@b");
+	}
+
+	@Test
+	public void fromAddress() {
+		Assert.assertEquals(
+			Email.of("a@b"),
+			Email.of("a", "b")
 		);
 	}
 

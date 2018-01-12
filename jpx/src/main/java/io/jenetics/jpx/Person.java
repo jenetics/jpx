@@ -19,6 +19,11 @@
  */
 package io.jenetics.jpx;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -171,6 +176,36 @@ public final class Person implements Serializable {
 	public static Person of() {
 		return new Person(null, null, null);
 	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.PERSON, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullable(_email, Email::write, out);
+		IO.writeNullable(_link, Link::write, out);
+	}
+
+	static Person read(final DataInput in) throws IOException {
+		return new Person(
+			IO.readNullableString(in),
+			IO.readNullable(Email::read, in),
+			IO.readNullable(Link::read, in)
+		);
+	}
+
 
 	/* *************************************************************************
 	 *  XML stream object serialization

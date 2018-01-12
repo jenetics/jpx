@@ -60,5 +60,4 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 		EqualsVerifier.forClass(Bounds.class).verify();
 	}
 
-
 }

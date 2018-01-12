@@ -29,7 +29,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0.1
  */
 @Test
 public class LongitudeTest extends ObjectTester<Longitude> {

@@ -24,6 +24,11 @@ import static io.jenetics.jpx.Parsers.toURI;
 import static io.jenetics.jpx.Parsers.toYear;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -227,6 +232,42 @@ public final class Copyright implements Serializable {
 		return new Copyright(author, null, null);
 	}
 
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.COPYRIGHT, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeString(_author, out);
+		out.writeBoolean(_year != null);
+		if (_year != null) IO.writeInt(_year.getValue(), out);
+		IO.writeNullableString(_license != null ? _license.toString() : null, out);
+	}
+
+	static Copyright read(final DataInput in) throws IOException {
+		final String author = IO.readString(in);
+		final Year year = in.readBoolean() ? Year.of(IO.readInt(in)) : null;
+		final String license = IO.readNullableString(in);
+		try {
+			return new Copyright(
+				author,
+				year,
+				license != null ? new URI(license) : null
+			);
+		} catch (URISyntaxException e) {
+			throw (InvalidObjectException)
+				new InvalidObjectException(e.getMessage()).initCause(e);
+		}
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

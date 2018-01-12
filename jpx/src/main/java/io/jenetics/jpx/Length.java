@@ -22,6 +22,11 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -206,4 +211,35 @@ public final class Length
 		requireNonNull(unit);
 		return new Length(Unit.METER.convert(length, unit));
 	}
+
+	static double unbox(final Length length) {
+		return length != null ? length._value : Double.NaN;
+	}
+
+	static Length box(final double value) {
+		return Double.isNaN(value) ? null : new Length(value);
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.LENGTH, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Length read(final DataInput in) throws IOException {
+		return new Length(in.readDouble());
+	}
+
 }

@@ -23,6 +23,11 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -180,6 +185,38 @@ public final class Link implements Serializable {
 		}
 	}
 
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.LINK, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeString(_href.toString(), out);
+		IO.writeNullableString(_text, out);
+		IO.writeNullableString(_type, out);
+	}
+
+	static Link read(final DataInput in) throws IOException {
+		try {
+			return new Link(
+				new URI(IO.readString(in)),
+				IO.readNullableString(in),
+				IO.readNullableString(in)
+			);
+		} catch (URISyntaxException e) {
+			throw (InvalidObjectException)
+				new InvalidObjectException(e.getMessage()).initCause(e);
+		}
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization

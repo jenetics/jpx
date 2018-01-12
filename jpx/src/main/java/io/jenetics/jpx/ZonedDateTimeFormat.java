@@ -23,13 +23,11 @@ import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.Objects.requireNonNull;
 
-import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DateTimeParseException;
 import java.time.format.ResolverStyle;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -72,7 +70,7 @@ enum ZonedDateTimeFormat {
 	private final DateTimeFormatter _formatter;
 	private final Pattern[] _patterns;
 
-	private ZonedDateTimeFormat(final DateTimeFormatter formatter, final String... patterns) {
+	ZonedDateTimeFormat(final DateTimeFormatter formatter, final String... patterns) {
 		_formatter = requireNonNull(formatter);
 		_patterns = Stream.of(patterns)
 			.map(Pattern::compile)
@@ -121,20 +119,6 @@ enum ZonedDateTimeFormat {
 		return Stream.of(values())
 			.filter(tf -> tf.matches(time))
 			.findFirst();
-	}
-
-	/**
-	 * Tests if the given date times represents the same point on the time-line.
-	 *
-	 * @param a the first date time
-	 * @param b the second date time
-	 * @return {@code true} if the two date times represents the same point on
-	 *         the time-line, {@code false} otherwise
-	 */
-	static boolean equals(final ZonedDateTime a, final ZonedDateTime b) {
-		final Instant i1 = a != null ? a.toInstant() : null;
-		final Instant i2 = b != null ? b.toInstant() : null;
-		return Objects.equals(i1, i2);
 	}
 
 }
