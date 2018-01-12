@@ -23,8 +23,6 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -43,12 +41,7 @@ final class ZonedDateTimes {
 	static void write(final ZonedDateTime time, final DataOutput out)
 		throws IOException
 	{
-		IO.writeInt(time.getYear(), out);
-		out.writeByte(time.getMonthValue());
-		out.writeByte(time.getDayOfMonth());
-		out.writeByte(time.getHour());
-		out.writeByte(time.getMinute());
-		out.writeByte(time.getSecond());
+		IO.writeLong(time.toEpochSecond(), out);
 		writeZoneOffset(time.getOffset(), out);
 	}
 
@@ -65,18 +58,9 @@ final class ZonedDateTimes {
 	}
 
 	static ZonedDateTime read(final DataInput in) throws IOException {
-		final int year = IO.readInt(in);
-		final int month = in.readByte();
-		final int day = in.readByte();
-		final int hour = in.readByte();
-		final int minute = in.readByte();
-		final int second = in.readByte();
+		final long seconds = IO.readLong(in);
 		final ZoneOffset offset = readZoneOffset(in);
-
-		final LocalDate date = LocalDate.of(year, month, day);
-		final LocalTime time = LocalTime.of(hour, minute, second, 0);
-
-		return ZonedDateTime.of(date, time, offset);
+		return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds), offset);
 	}
 
 	private static ZoneOffset readZoneOffset(final DataInput in)

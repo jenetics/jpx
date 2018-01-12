@@ -21,13 +21,14 @@ package io.jenetics.jpx;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
+ * Helper methods needed for implementing the Java serializations.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
@@ -143,9 +144,80 @@ final class IO {
 	}
 
 	static int readInt(final DataInput in) throws IOException {
+		int b = in.readByte() & 0xFF;
+		int n = b & 0x7F;
+
+		if (b > 0x7F) {
+			b = in.readByte() & 0xFF;
+			n ^= (b & 0x7F) << 7;
+			if (b > 0x7F) {
+				b = in.readByte() & 0xFF;
+				n ^= (b & 0x7F) << 14;
+				n ^= (b & 0x7F) << 14;
+				if (b > 0x7F) {
+					b = in.readByte() & 0xFF;
+					n ^= (b & 0x7F) << 21;
+					if (b > 0x7F) {
+						b = in.readByte() & 0xFF;
+						n ^= (b & 0x7F) << 28;
+						if (b > 0x7F) {
+							throw new IOException("Invalid int encoding");
+						}
+					}
+				}
+			}
+		}
+
+		return (n >>> 1) ^ -(n & 1);
+	}
+
+	static void writeLong(final long value, final DataOutput out)
+		throws IOException
+	{
+		long n = (value << 1)^(value >> 63);
+		if ((n & ~0x7FL) != 0) {
+			out.write((byte)((n | 0x80) & 0xFF));
+			n >>>= 7;
+			if (n > 0x7F) {
+				out.write((byte)((n | 0x80) & 0xFF));
+				n >>>= 7;
+				if (n > 0x7F) {
+					out.write((byte)((n | 0x80) & 0xFF));
+					n >>>= 7;
+					if (n > 0x7F) {
+						out.write((byte)((n | 0x80) & 0xFF));
+						n >>>= 7;
+						if (n > 0x7F) {
+							out.write((byte)((n | 0x80) & 0xFF));
+							n >>>= 7;
+							if (n > 0x7F) {
+								out.write((byte)((n | 0x80) & 0xFF));
+								n >>>= 7;
+								if (n > 0x7F) {
+									out.write((byte)((n | 0x80) & 0xFF));
+									n >>>= 7;
+									if (n > 0x7F) {
+										out.write((byte)((n | 0x80) & 0xFF));
+										n >>>= 7;
+										if (n > 0x7F) {
+											out.write((byte)((n | 0x80) & 0xFF));
+											n >>>= 7;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		out.write((byte)n);
+	}
+
+	static long readLong(final DataInput in) throws IOException {
 		int b = in.readByte() & 0xff;
 		int n = b & 0x7f;
-
+		long l;
 		if (b > 0x7f) {
 			b = in.readByte() & 0xff;
 			n ^= (b & 0x7f) << 7;
@@ -156,17 +228,51 @@ final class IO {
 					b = in.readByte() & 0xff;
 					n ^= (b & 0x7f) << 21;
 					if (b > 0x7f) {
+						l = innerLongDecode((long)n, in);
+					} else {
+						l = n;
+					}
+				} else {
+					l = n;
+				}
+			} else {
+				l = n;
+			}
+		} else {
+			l = n;
+		}
+		return (l >>> 1)^-(l & 1);
+	}
+
+	private static long innerLongDecode(long l, final DataInput in)
+		throws IOException
+	{
+		int b = in.readByte() & 0xff;
+		l ^= (b & 0x7fL) << 28;
+		if (b > 0x7f) {
+			b = in.readByte() & 0xff;
+			l ^= (b & 0x7fL) << 35;
+			if (b > 0x7f) {
+				b = in.readByte() & 0xff;
+				l ^= (b & 0x7fL) << 42;
+				if (b > 0x7f) {
+					b = in.readByte() & 0xff;
+					l ^= (b & 0x7fL) << 49;
+					if (b > 0x7f) {
 						b = in.readByte() & 0xff;
-						n ^= (b & 0x7f) << 28;
+						l ^= (b & 0x7fL) << 56;
 						if (b > 0x7f) {
-							throw new IOException("Invalid int encoding");
+							b = in.readByte() & 0xff;
+							l ^= (b & 0x7fL) << 63;
+							if (b > 0x7f) {
+								throw new IOException("Invalid long encoding");
+							}
 						}
 					}
 				}
 			}
 		}
-
-		return (n >>> 1) ^ -(n & 1);
+		return l;
 	}
 
 }
