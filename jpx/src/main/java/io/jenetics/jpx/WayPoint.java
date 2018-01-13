@@ -60,7 +60,7 @@ import java.util.Optional;
  */
 public final class WayPoint implements Point, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final Latitude _latitude;
 	private final Longitude _longitude;

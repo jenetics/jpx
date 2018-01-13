@@ -40,7 +40,7 @@ import java.util.Objects;
  */
 public final class Email implements Comparable<Email>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _id;
 	private final String _domain;

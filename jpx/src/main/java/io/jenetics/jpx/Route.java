@@ -63,7 +63,7 @@ import java.util.stream.Stream;
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final String _comment;

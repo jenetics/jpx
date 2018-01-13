@@ -37,7 +37,7 @@ import java.util.Optional;
  */
 public final class Person implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final Email _email;

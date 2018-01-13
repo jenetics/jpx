@@ -39,7 +39,7 @@ import java.util.Objects;
  */
 public final class Bounds implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final Latitude _minLatitude;
 	private final Longitude _minLongitude;

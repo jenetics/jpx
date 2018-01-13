@@ -38,7 +38,7 @@ import java.io.Serializable;
  */
 public final class Longitude extends Number implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final double _value;
 

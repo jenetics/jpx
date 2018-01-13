@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.parseURI;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -29,7 +30,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -43,7 +43,7 @@ import java.util.Optional;
  */
 public final class Link implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final URI _href;
 	private final String _text;
@@ -146,11 +146,7 @@ public final class Link implements Serializable {
 	 *         URL
 	 */
 	public static Link of(final String href, final String text, final String type) {
-		try {
-			return new Link(new URI(requireNonNull(href)), text, type);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return new Link(parseURI(requireNonNull(href)), text, type);
 	}
 
 	/**
@@ -174,11 +170,7 @@ public final class Link implements Serializable {
 	 *         URL
 	 */
 	public static Link of(final String href) {
-		try {
-			return new Link(new URI(requireNonNull(href)), null, null);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return new Link(parseURI(requireNonNull(href)), null, null);
 	}
 
 	/* *************************************************************************
@@ -202,16 +194,11 @@ public final class Link implements Serializable {
 	}
 
 	static Link read(final DataInput in) throws IOException {
-		try {
-			return new Link(
-				new URI(IO.readString(in)),
-				IO.readNullableString(in),
-				IO.readNullableString(in)
-			);
-		} catch (URISyntaxException e) {
-			throw (InvalidObjectException)
-				new InvalidObjectException(e.getMessage()).initCause(e);
-		}
+		return new Link(
+			parseURI((IO.readString(in))),
+			IO.readNullableString(in),
+			IO.readNullableString(in)
+		);
 	}
 
 	/* *************************************************************************
@@ -225,11 +212,7 @@ public final class Link implements Serializable {
 	);
 
 	static final XMLReader<Link> READER = XMLReader.elem(
-		v -> Link.of(
-			(URI)v[0],
-			(String)v[1],
-			(String)v[2]
-		),
+		v -> Link.of((URI)v[0], (String)v[1], (String)v[2]),
 		"link",
 		XMLReader.attr("href").map(Format::parseURI),
 		XMLReader.elem("text"),

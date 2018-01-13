@@ -269,7 +269,7 @@ final class IO {
 						b = in.readByte() & 0xFF;
 						n ^= (b & 0x7F) << 28;
 						if (b > 0x7F) {
-							throw new IOException("Invalid int encoding");
+							throw new IOException("Invalid int encoding.");
 						}
 					}
 				}
@@ -398,7 +398,7 @@ final class IO {
 							b = in.readByte() & 0xFF;
 							l ^= (b & 0x7FL) << 63;
 							if (b > 0x7F) {
-								throw new IOException("Invalid long encoding");
+								throw new IOException("Invalid long encoding.");
 							}
 						}
 					}

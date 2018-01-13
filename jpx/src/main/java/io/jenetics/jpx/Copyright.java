@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.parseURI;
 import static io.jenetics.jpx.Format.uriString;
 import static io.jenetics.jpx.Format.yearString;
 
@@ -30,7 +31,6 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Year;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,7 +46,7 @@ import java.util.Optional;
  */
 public final class Copyright implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _author;
 	private final Year _year;
@@ -171,14 +171,7 @@ public final class Copyright implements Serializable {
 		final int year,
 		final String license
 	) {
-		final URI uri;
-		try {
-			uri = license != null ? new URI(license) : null;
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
-
-		return new Copyright(author, Year.of(year), uri);
+		return new Copyright(author, Year.of(year), parseURI(license));
 	}
 
 	/**
@@ -250,19 +243,11 @@ public final class Copyright implements Serializable {
 	}
 
 	static Copyright read(final DataInput in) throws IOException {
-		final String author = IO.readString(in);
-		final Year year = in.readBoolean() ? Year.of(IO.readInt(in)) : null;
-		final String license = IO.readNullableString(in);
-		try {
-			return new Copyright(
-				author,
-				year,
-				license != null ? new URI(license) : null
-			);
-		} catch (URISyntaxException e) {
-			throw (InvalidObjectException)
-				new InvalidObjectException(e.getMessage()).initCause(e);
-		}
+		return new Copyright(
+			IO.readString(in),
+			in.readBoolean() ? Year.of(IO.readInt(in)) : null,
+			parseURI(IO.readNullableString(in))
+		);
 	}
 
 	/* *************************************************************************
