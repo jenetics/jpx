@@ -23,7 +23,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
 
-import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
