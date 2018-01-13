@@ -36,9 +36,6 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Represents a link to an external resource (Web page, digital photo, video
  * clip, etc) with additional information.
@@ -223,16 +220,6 @@ public final class Link implements Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
-	}
 
 	static final XMLWriter<Link> WRITER = elem("link",
 		XMLWriter.attr("href").map(link -> link._href),

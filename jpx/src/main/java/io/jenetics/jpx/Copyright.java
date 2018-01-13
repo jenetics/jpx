@@ -38,9 +38,6 @@ import java.time.Year;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Information about the copyright holder and any license governing use of this
  * file. By linking to an appropriate license, you may place your data into the
@@ -275,23 +272,11 @@ public final class Copyright implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
-	}
-
-	static XMLWriter<Copyright> writer() {
-		return elem("copyright",
-			XMLWriter.attr("author").map(cr -> cr._author),
-			XMLWriter.elem("year", text()).map(cr -> cr._year),
-			XMLWriter.elem("license", text()).map(cr -> cr._license)
-		);
-	}
+	static final XMLWriter<Copyright> WRITER =  elem("copyright",
+		XMLWriter.attr("author").map(cr -> cr._author),
+		XMLWriter.elem("year", text()).map(cr -> cr._year),
+		XMLWriter.elem("license", text()).map(cr -> cr._license)
+	);
 
 	static XMLReader<Copyright> reader() {
 		final XML.Function<Object[], Copyright> creator = a -> Copyright.of(

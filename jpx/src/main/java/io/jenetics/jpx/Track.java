@@ -43,9 +43,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Represents a GPX track - an ordered list of points describing a path.
  * <p>
@@ -66,7 +63,7 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Track implements Iterable<TrackSegment>, Serializable {
@@ -732,16 +729,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
-	}
 
 	static final XMLWriter<Track> WRITER = elem("trk",
 		XMLWriter.elem("name", text()).map(r -> r._name),

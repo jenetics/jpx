@@ -64,7 +64,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		return new Params<>(
 			() -> nextGPX(random),
 			GPX.reader(),
-			GPX::write
+			GPX.WRITER
 		);
 	}
 

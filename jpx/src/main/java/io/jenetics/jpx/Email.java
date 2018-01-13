@@ -32,9 +32,6 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * An email address. Broken into two parts (id and domain) to help prevent email
  * harvesting.
@@ -193,16 +190,6 @@ public final class Email implements Comparable<Email>, Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
-	}
 
 	static final XMLWriter<Email> WRITER = elem("email",
 		XMLWriter.attr("id").map(email -> email._id),

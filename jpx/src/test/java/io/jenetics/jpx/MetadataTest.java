@@ -47,7 +47,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 		return new Params<>(
 			() -> nextMetadata(random),
 			Metadata.reader(),
-			Metadata::write
+			Metadata.WRITER
 		);
 	}
 

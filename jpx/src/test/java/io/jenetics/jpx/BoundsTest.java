@@ -42,7 +42,7 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 		return new Params<>(
 			() -> nextBounds(random),
 			Bounds.reader(),
-			Bounds::write
+			Bounds.WRITER
 		);
 	}
 

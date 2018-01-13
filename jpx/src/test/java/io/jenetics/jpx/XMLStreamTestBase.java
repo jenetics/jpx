@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -41,10 +40,6 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
-
-	public static interface XMLWriter<T> {
-		void write(T value, final XMLStreamWriter writer) throws XMLStreamException;
-	}
 
 	public static final class Params<T> {
 		public final Supplier<T> supplier;
@@ -96,7 +91,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		final XMLStreamWriter streamWriter = new IndentingXMLWriter(
 			factory.createXMLStreamWriter(out, "UTF-8"), "    ");
 
-		writer.write(value, streamWriter);
+		writer.write(streamWriter, value);
 		return out.toByteArray();
 	}
 

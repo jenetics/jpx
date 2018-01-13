@@ -31,9 +31,6 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * A person or organization.
  *
@@ -213,17 +210,6 @@ public final class Person implements Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param name the name of the {@code Person} tag
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
-		writer(name).write(writer, this);
-	}
 
 	static XMLWriter<Person> writer(final String name) {
 		return elem(name,

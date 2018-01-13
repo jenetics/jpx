@@ -47,7 +47,7 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 		return new Params<>(
 			() -> nextCopyright(random),
 			Copyright.reader(),
-			Copyright::write
+			Copyright.WRITER
 		);
 	}
 

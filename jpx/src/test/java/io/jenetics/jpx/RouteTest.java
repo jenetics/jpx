@@ -49,7 +49,7 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 		return new Params<>(
 			() -> nextRoute(random),
 			Route.reader(),
-			Route::write
+			Route.WRITER
 		);
 	}
 

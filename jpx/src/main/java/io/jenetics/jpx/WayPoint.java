@@ -70,7 +70,7 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.1
+ * @version !__version__!
  * @since 1.0
  */
 public final class WayPoint implements Point, Serializable {
@@ -1677,18 +1677,6 @@ public final class WayPoint implements Point, Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final String name, final XMLStreamWriter writer)
-		throws XMLStreamException
-	{
-		writer(name).write(writer, this);
-	}
 
 	static XMLWriter<WayPoint> writer(final String name) {
 		return elem(name,

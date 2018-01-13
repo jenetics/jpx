@@ -33,9 +33,6 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Two lat/lon pairs defining the extent of an element.
  *
@@ -222,16 +219,6 @@ public final class Bounds implements Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
-	}
 
 	static final XMLWriter<Bounds> WRITER = elem("bounds",
 		XMLWriter.attr("minlat").map(Bounds::getMinLatitude),

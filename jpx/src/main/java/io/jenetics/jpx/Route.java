@@ -43,9 +43,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Represents a route - an ordered list of way-points representing a series of
  * turn points leading to a destination.
@@ -62,7 +59,7 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
@@ -761,16 +758,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
-	}
 
 	static final XMLWriter<Route> WRITER = elem("rte",
 		XMLWriter.elem("name", text()).map(r -> r._name),

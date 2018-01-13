@@ -1015,7 +1015,7 @@ public final class GPX implements Serializable {
 		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
 		XMLWriter.attr("version").map(gpx -> gpx._version),
 		XMLWriter.attr("creator").map(gpx -> gpx._creator),
-		Metadata.writer().map(gpx -> gpx._metadata),
+		Metadata.WRITER.map(gpx -> gpx._metadata),
 		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
 		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
 		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)

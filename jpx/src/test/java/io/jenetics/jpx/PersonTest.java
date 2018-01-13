@@ -44,7 +44,7 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 		return new Params<>(
 			() -> nextPerson(random),
 			Person.reader("author"),
-			(a, w) -> a.write("author", w)
+			Person.writer("author")
 		);
 	}
 

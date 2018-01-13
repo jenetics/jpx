@@ -49,7 +49,7 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 		return new Params<>(
 			() -> nextTrack(random),
 			Track.reader(),
-			Track::write
+			Track.WRITER
 		);
 	}
 

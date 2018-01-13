@@ -45,7 +45,7 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 		return new Params<>(
 			() -> nextEmail(random),
 			Email.reader(),
-			Email::write
+			Email.WRITER
 		);
 	}
 

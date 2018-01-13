@@ -46,7 +46,7 @@ public class LinkTest extends XMLStreamTestBase<Link> {
 		return new Params<>(
 			() -> nextLink(random),
 			Link.reader(),
-			Link::write
+			Link.WRITER
 		);
 	}
 

@@ -24,6 +24,7 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.XMLWriter.elem;
 import static io.jenetics.jpx.XMLWriter.text;
+import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -39,9 +40,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Information about the GPX file, author, and copyright restrictions goes in
  * the metadata section. Providing rich, meaningful information about your GPX
@@ -56,7 +54,7 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Metadata implements Serializable {
@@ -591,28 +589,16 @@ public final class Metadata implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
-	}
-
-	static XMLWriter<Metadata> writer() {
-		return elem("metadata",
-			XMLWriter.elem("name", text()).map(md -> md._name),
-			XMLWriter.elem("desc", text()).map(md -> md._description),
-			Person.writer("author").map(md -> md._author),
-			Copyright.writer().map(md -> md._copyright),
-			XMLWriter.elems(Link.WRITER).map(md -> md._links),
-			XMLWriter.elem("time", text()).map(md -> ZonedDateTimeFormat.format(md._time)),
-			XMLWriter.elem("keywords", text()).map(md -> md._keywords),
-			Bounds.WRITER.map(md -> md._bounds)
-		);
-	}
+	static final XMLWriter<Metadata> WRITER = elem("metadata",
+		XMLWriter.elem("name", text()).map(md -> md._name),
+		XMLWriter.elem("desc", text()).map(md -> md._description),
+		Person.writer("author").map(md -> md._author),
+		Copyright.WRITER.map(md -> md._copyright),
+		XMLWriter.elems(Link.WRITER).map(md -> md._links),
+		XMLWriter.elem("time", text()).map(md -> format(md._time)),
+		XMLWriter.elem("keywords", text()).map(md -> md._keywords),
+		Bounds.WRITER.map(md -> md._bounds)
+	);
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Metadata> reader() {

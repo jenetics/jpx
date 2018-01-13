@@ -41,9 +41,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * A Track Segment holds a list of Track Points which are logically connected in
  * order. To represent a single GPS track where GPS reception was lost, or the
@@ -51,7 +48,7 @@ import javax.xml.stream.XMLStreamWriter;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.1
+ * @version !__version__!
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
@@ -340,16 +337,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
-
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
-	}
 
 	static final XMLWriter<TrackSegment> WRITER = elem("trkseg",
 		XMLWriter.elems(WayPoint.writer("trkpt")).map(ts -> ts._points)

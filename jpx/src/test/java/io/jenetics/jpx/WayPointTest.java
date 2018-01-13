@@ -52,7 +52,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 		return new Params<>(
 			() -> nextWayPoint(random),
 			WayPoint.reader("wpt"),
-			(p, writer) -> p.write("wpt", writer)
+			WayPoint.writer("wpt")
 		);
 	}
 
