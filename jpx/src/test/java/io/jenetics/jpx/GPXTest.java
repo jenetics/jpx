@@ -204,7 +204,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 		Assert.assertEquals(
 			point.getTime(),
-			Optional.of(Parsers.toZonedDateTime("2009-05-19T04:00:30Z"))
+			Optional.of(ZonedDateTimeFormat.parse("2009-05-19T04:00:30Z"))
 		);
 		Assert.assertEquals(
 			point.getFix(),

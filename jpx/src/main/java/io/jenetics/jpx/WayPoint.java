@@ -24,16 +24,6 @@ import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Parsers.toDGPSStation;
-import static io.jenetics.jpx.Parsers.toDegrees;
-import static io.jenetics.jpx.Parsers.toDouble;
-import static io.jenetics.jpx.Parsers.toDuration;
-import static io.jenetics.jpx.Parsers.toFix;
-import static io.jenetics.jpx.Parsers.toLatitude;
-import static io.jenetics.jpx.Parsers.toLength;
-import static io.jenetics.jpx.Parsers.toLongitude;
-import static io.jenetics.jpx.Parsers.toSpeed;
-import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.XMLReader.attr;
 import static io.jenetics.jpx.XMLWriter.elem;
 import static io.jenetics.jpx.XMLWriter.number;
@@ -1032,7 +1022,7 @@ public final class WayPoint implements Point, Serializable {
 		 *         following values: [none, 2d, 3d, dgps, pps]
 		 */
 		public Builder fix(final String fix) {
-			_fix = toFix(fix, "WayPoint.fix");
+			_fix = Fix.parse(fix);
 			return this;
 		}
 
@@ -1686,12 +1676,12 @@ public final class WayPoint implements Point, Serializable {
 			XMLWriter.elems(Link.WRITER).map(wp -> wp._links),
 			XMLWriter.elem("sym", text()).map(wp -> wp._symbol),
 			XMLWriter.elem("type", text()).map(wp -> wp._type),
-			XMLWriter.elem("fix", text()).map(wp -> wp._fix != null ? wp._fix.getValue() : null),
+			XMLWriter.elem("fix", text()).map(wp -> Fix.format(wp._fix)),
 			XMLWriter.elem("sat", text()).map(wp -> wp._sat),
 			XMLWriter.elem("hdop", text()).map(wp -> wp._hdop),
 			XMLWriter.elem("vdop", text()).map(wp -> wp._vdop),
 			XMLWriter.elem("pdop", text()).map(wp -> wp._pdop),
-			XMLWriter.elem("ageofdgpsdata", text()).map(wp -> wp._ageOfGPSData != null ? wp._ageOfGPSData.getSeconds() : null),
+			XMLWriter.elem("ageofdgpsdata", text()).map(wp -> Parsers.formatDuration(wp._ageOfGPSData)),
 			XMLWriter.elem("dgpsid", text()).map(wp -> wp._dgpsID)
 		);
 	}
@@ -1723,13 +1713,13 @@ public final class WayPoint implements Point, Serializable {
 				(DGPSStation)v[20]
 			),
 			name,
-			attr("lat").map(v -> toLatitude(v, "WayPoint.lat")),
-			attr("lon").map(v -> toLongitude(v, "WayPoint.lon")),
-			XMLReader.elem("ele", XMLReader.text().map(v -> toLength(v, "WayPoint.ele"))),
-			XMLReader.elem("speed", XMLReader.text().map(v -> toSpeed(v, "WayPoint.speed"))),
-			XMLReader.elem("time", XMLReader.text().map(Parsers::toZonedDateTime)),
-			XMLReader.elem("magvar", XMLReader.text().map(v -> toDegrees(v, "WayPoint.magvar"))),
-			XMLReader.elem("geoidheight", XMLReader.text().map(v -> toLength(v, "WayPoint.geoidheight"))),
+			attr("lat").map(Latitude::parse),
+			attr("lon").map(Longitude::parse),
+			XMLReader.elem("ele", XMLReader.text().map(Length::parse)),
+			XMLReader.elem("speed", XMLReader.text().map(Speed::parse)),
+			XMLReader.elem("time", XMLReader.text().map(ZonedDateTimeFormat::parse)),
+			XMLReader.elem("magvar", XMLReader.text().map(Degrees::parse)),
+			XMLReader.elem("geoidheight", XMLReader.text().map(Length::parse)),
 			XMLReader.elem("name", XMLReader.text()),
 			XMLReader.elem("cmt", XMLReader.text()),
 			XMLReader.elem("desc", XMLReader.text()),
@@ -1737,13 +1727,13 @@ public final class WayPoint implements Point, Serializable {
 			XMLReader.elems(Link.READER),
 			XMLReader.elem("sym", XMLReader.text()),
 			XMLReader.elem("type", XMLReader.text()),
-			XMLReader.elem("fix", XMLReader.text().map(v -> toFix(v, "WayPoint.fix"))),
-			XMLReader.elem("sat", XMLReader.text().map(v -> toUInt(v, "WayPoint.sat"))),
-			XMLReader.elem("hdop", XMLReader.text().map(v -> toDouble(v, "WayPoint.hdop"))),
-			XMLReader.elem("vdop", XMLReader.text().map(v -> toDouble(v, "WayPoint.vdop"))),
-			XMLReader.elem("pdop", XMLReader.text().map(v -> toDouble(v, "WayPoint.pdop"))),
-			XMLReader.elem("ageofdgpsdata", XMLReader.text().map(v -> toDuration(v, "WayPoint.ageofdgpsdata"))),
-			XMLReader.elem("dgpsid", XMLReader.text().map(v -> toDGPSStation(v, "WayPoint.dgpsid")))
+			XMLReader.elem("fix", XMLReader.text().map(Fix::parse)),
+			XMLReader.elem("sat", XMLReader.text().map(UInt::parse)),
+			XMLReader.elem("hdop", XMLReader.text().map(Double::parseDouble)),
+			XMLReader.elem("vdop", XMLReader.text().map(Double::parseDouble)),
+			XMLReader.elem("pdop", XMLReader.text().map(Double::parseDouble)),
+			XMLReader.elem("ageofdgpsdata", XMLReader.text().map(Parsers::parseDuration)),
+			XMLReader.elem("dgpsid", XMLReader.text().map(DGPSStation::parse))
 		);
 	}
 

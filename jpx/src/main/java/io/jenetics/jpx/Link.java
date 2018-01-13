@@ -21,10 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.toMandatoryString;
-import static io.jenetics.jpx.Parsers.toURI;
-import static io.jenetics.jpx.XMLWriter.elem;
-import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -222,10 +218,10 @@ public final class Link implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Link> WRITER = elem("link",
+	static final XMLWriter<Link> WRITER = XMLWriter.elem("link",
 		XMLWriter.attr("href").map(link -> link._href),
-		XMLWriter.elem("text", text()).map(link -> link._text),
-		XMLWriter.elem("type", text()).map(link -> link._type)
+		XMLWriter.elem("text", XMLWriter.text()).map(link -> link._text),
+		XMLWriter.elem("type", XMLWriter.text()).map(link -> link._type)
 	);
 
 	static final XMLReader<Link> READER = XMLReader.elem(
@@ -235,9 +231,7 @@ public final class Link implements Serializable {
 			(String)v[2]
 		),
 		"link",
-		XMLReader.attr("href")
-			.map(v -> toMandatoryString(v, "Link.href"))
-			.map(v -> toURI(v, "Link.href")),
+		XMLReader.attr("href").map(Parsers::parseURI),
 		XMLReader.elem("text", XMLReader.text()),
 		XMLReader.elem("type", XMLReader.text())
 	);

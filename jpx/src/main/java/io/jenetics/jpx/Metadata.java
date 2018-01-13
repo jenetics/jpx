@@ -22,8 +22,6 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.XMLWriter.elem;
-import static io.jenetics.jpx.XMLWriter.text;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
 import java.io.DataInput;
@@ -589,14 +587,14 @@ public final class Metadata implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Metadata> WRITER = elem("metadata",
-		XMLWriter.elem("name", text()).map(md -> md._name),
-		XMLWriter.elem("desc", text()).map(md -> md._description),
+	static final XMLWriter<Metadata> WRITER = XMLWriter.elem("metadata",
+		XMLWriter.elem("name", XMLWriter.text()).map(md -> md._name),
+		XMLWriter.elem("desc", XMLWriter.text()).map(md -> md._description),
 		Person.writer("author").map(md -> md._author),
 		Copyright.WRITER.map(md -> md._copyright),
 		XMLWriter.elems(Link.WRITER).map(md -> md._links),
-		XMLWriter.elem("time", text()).map(md -> format(md._time)),
-		XMLWriter.elem("keywords", text()).map(md -> md._keywords),
+		XMLWriter.elem("time", XMLWriter.text()).map(md -> format(md._time)),
+		XMLWriter.elem("keywords", XMLWriter.text()).map(md -> md._keywords),
 		Bounds.WRITER.map(md -> md._bounds)
 	);
 
@@ -618,7 +616,7 @@ public final class Metadata implements Serializable {
 		Person.reader("author"),
 		Copyright.READER,
 		XMLReader.elems(Link.READER),
-		XMLReader.elem("time", XMLReader.text().map(Parsers::toZonedDateTime)),
+		XMLReader.elem("time", XMLReader.text().map(ZonedDateTimeFormat::parse)),
 		XMLReader.elem("keywords", XMLReader.text()),
 		Bounds.READER
 	);

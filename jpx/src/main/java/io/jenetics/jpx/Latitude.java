@@ -148,6 +148,12 @@ public final class Latitude extends Number implements Serializable {
 		return new Latitude(Math.toDegrees(radians));
 	}
 
+	static Latitude parse(final String string) {
+		return string != null
+			? Latitude.ofDegrees(Double.parseDouble(string))
+			: null;
+	}
+
 	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/

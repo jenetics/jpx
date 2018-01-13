@@ -194,12 +194,10 @@ public final class Speed
 		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
 
-	static double unbox(final Speed speed) {
-		return speed != null ? speed._value : Double.NaN;
-	}
-
-	static Speed box(final double value) {
-		return Double.isNaN(value) ? null : new Speed(value);
+	static Speed parse(final String string) {
+		return string != null
+			? Speed.of(Double.parseDouble(string), Unit.METERS_PER_SECOND)
+			: null;
 	}
 
 	/* *************************************************************************

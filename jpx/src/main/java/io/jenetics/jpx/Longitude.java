@@ -148,6 +148,12 @@ public final class Longitude extends Number implements Serializable {
 		return new Longitude(Math.toDegrees(radians));
 	}
 
+	static Longitude parse(final String string) {
+		return string != null
+			? Longitude.ofDegrees(Double.parseDouble(string))
+			: null;
+	}
+
 	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/

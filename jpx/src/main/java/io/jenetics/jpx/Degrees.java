@@ -35,7 +35,7 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Degrees
@@ -162,6 +162,11 @@ public final class Degrees
 		return new Degrees(Math.toDegrees(radians));
 	}
 
+	static Degrees parse(final String string) {
+		return string != null
+			? Degrees.ofDegrees(Double.parseDouble(string))
+			: null;
+	}
 
 	/* *************************************************************************
 	 *  Java object serialization

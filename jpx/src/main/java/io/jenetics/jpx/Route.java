@@ -23,7 +23,6 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.XMLWriter.elem;
 import static io.jenetics.jpx.XMLWriter.text;
 
@@ -789,8 +788,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		XMLReader.elem("desc", XMLReader.text()),
 		XMLReader.elem("src", XMLReader.text()),
 		XMLReader.elems(Link.READER),
-		XMLReader.elem("number", XMLReader.text()
-			.map(v -> toUInt(v, "Route.number"))),
+		XMLReader.elem("number", XMLReader.text().map(UInt::parse)),
 		XMLReader.elem("type", XMLReader.text()),
 		XMLReader.elems(WayPoint.reader("rtept"))
 	);

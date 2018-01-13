@@ -135,8 +135,13 @@ abstract class XMLReader<T> {
 				try {
 					return mapper.apply(XMLReader.this.read(xml, lenient));
 				} catch (RuntimeException e) {
-					if (!lenient) throw new XMLStreamException(e);
-					else return null;
+					if (!lenient) {
+						throw new XMLStreamException(format(
+							"Invalid value for '%s'.", _name), e
+						);
+					} else {
+						return null;
+					}
 				}
 			}
 		};
@@ -548,8 +553,13 @@ final class ElemReader<T> extends XMLReader<T> {
 										.toArray()
 								);
 							} catch (IllegalArgumentException|NullPointerException e) {
-								if (!lenient) throw new XMLStreamException(e);
-								else return null;
+								if (!lenient) {
+									throw new XMLStreamException(format(
+										"Invalid value for '%s'.", name()), e
+									);
+								} else {
+									return null;
+								}
 							}
 						}
 				}

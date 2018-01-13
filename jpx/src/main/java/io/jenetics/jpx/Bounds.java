@@ -21,9 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.toLatitude;
-import static io.jenetics.jpx.Parsers.toLongitude;
-import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -220,7 +217,7 @@ public final class Bounds implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Bounds> WRITER = elem("bounds",
+	static final XMLWriter<Bounds> WRITER = XMLWriter.elem("bounds",
 		XMLWriter.attr("minlat").map(Bounds::getMinLatitude),
 		XMLWriter.attr("minlon").map(Bounds::getMinLongitude),
 		XMLWriter.attr("maxlat").map(Bounds::getMaxLatitude),
@@ -229,16 +226,14 @@ public final class Bounds implements Serializable {
 
 	static final XMLReader<Bounds> READER = XMLReader.elem(
 		v -> Bounds.of(
-			toLatitude(v[0], "Bounds.minlat"),
-			toLongitude(v[1], "Bounds.minlon"),
-			toLatitude(v[2], "Bounds.maxlat"),
-			toLongitude(v[3], "Bounds.maxlon")
+			(Latitude)v[0], (Longitude)v[1],
+			(Latitude)v[2], (Longitude)v[3]
 		),
 		"bounds",
-		XMLReader.attr("minlat"),
-		XMLReader.attr("minlon"),
-		XMLReader.attr("maxlat"),
-		XMLReader.attr("maxlon")
+		XMLReader.attr("minlat").map(Latitude::parse),
+		XMLReader.attr("minlon").map(Longitude::parse),
+		XMLReader.attr("maxlat").map(Latitude::parse),
+		XMLReader.attr("maxlon").map(Longitude::parse)
 	);
 
 }

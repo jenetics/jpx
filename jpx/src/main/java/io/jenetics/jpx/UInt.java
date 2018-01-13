@@ -130,6 +130,12 @@ public final class UInt
 		return new UInt(value);
 	}
 
+	static UInt parse(final String string) {
+		return string != null
+			? UInt.of(Integer.parseInt(string))
+			: null;
+	}
+
 	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/

@@ -23,7 +23,6 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.BufferedInputStream;
@@ -1031,8 +1030,8 @@ public final class GPX implements Serializable {
 			(List<Track>)a[5]
 		),
 		"gpx",
-		XMLReader.attr("version").map(v -> toMandatoryString(v, "GPX.version")),
-		XMLReader.attr("creator").map(v -> toMandatoryString(v, "GPX.creator")),
+		XMLReader.attr("version"),
+		XMLReader.attr("creator"),
 		Metadata.READER,
 		XMLReader.elems(WayPoint.reader("wpt")),
 		XMLReader.elems(Route.READER),

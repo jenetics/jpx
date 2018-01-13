@@ -128,12 +128,10 @@ public final class DGPSStation
 		return new DGPSStation(value);
 	}
 
-	static short unbox(final DGPSStation station) {
-		return station != null ? (short)station._value : -1;
-	}
-
-	static DGPSStation box(final int value) {
-		return value != -1 ? new DGPSStation(value) : null;
+	static DGPSStation parse(final String string) {
+		return string != null
+			? DGPSStation.of(Integer.parseInt(string))
+			: null;
 	}
 
 	/* *************************************************************************
