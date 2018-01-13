@@ -8,7 +8,6 @@
 
 Beside the basic functionality of reading and writing GPX files, the library also allows to manipulate the read GPX object in a functional way.
 
- The comprehensive Javadoc of the library can be [here](http://jenetics.io/javadoc/jpx/1.2/index.html).
 
 ## Requirements
 
