@@ -749,7 +749,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			XMLWriter.elem("cmt", text()).map(r -> r._comment),
 			XMLWriter.elem("desc", text()).map(r -> r._description),
 			XMLWriter.elem("src", text()).map(r -> r._source),
-			XMLWriter.elems(Link.writer()).map(r -> r._links),
+			XMLWriter.elems(Link.WRITER).map(r -> r._links),
 			XMLWriter.elem("number", text()).map(r -> r._number),
 			XMLWriter.elem("type", text()).map(r -> r._type),
 			XMLWriter.elems(TrackSegment.writer()).map(r -> r._segments)

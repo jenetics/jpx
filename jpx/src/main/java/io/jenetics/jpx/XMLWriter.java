@@ -23,6 +23,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.function.Function;
 
+import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -45,7 +46,7 @@ interface XMLWriter<T> {
 	 * @throws XMLStreamException if writing the data fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public void write(final XMLStreamWriter xml, final T data)
+	void write(final XMLStreamWriter xml, final T data)
 		throws XMLStreamException;
 
 	/**
@@ -58,7 +59,7 @@ interface XMLWriter<T> {
 	 * @param <B> the new data type of returned writer
 	 * @return a writer with changed type
 	 */
-	public default <B> XMLWriter<B>
+	default <B> XMLWriter<B>
 	map(final Function<? super B, ? extends T> mapper) {
 		return (xml, data) -> {
 			if (data != null) {
@@ -69,7 +70,6 @@ interface XMLWriter<T> {
 			}
 		};
 	}
-
 
 	/* *************************************************************************
 	 * *************************************************************************
@@ -96,7 +96,7 @@ interface XMLWriter<T> {
 	 * @return a new writer instance
 	 * @throws NullPointerException if the attribute {@code name} is {@code null}
 	 */
-	public static <T> XMLWriter<T> attr(final String name) {
+	static <T> XMLWriter<T> attr(final String name) {
 		requireNonNull(name);
 
 		return (xml, data) -> {
@@ -120,7 +120,7 @@ interface XMLWriter<T> {
 	 * @return a new writer instance
 	 * @throws NullPointerException if one of the {@code name} is {@code null}
 	 */
-	public static <T> XMLWriter<T> attr(
+	static <T> XMLWriter<T> attr(
 		final String name,
 		final Object value
 	) {
@@ -149,7 +149,7 @@ interface XMLWriter<T> {
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	@SafeVarargs
-	public static <T> XMLWriter<T> elem(
+	static <T> XMLWriter<T> elem(
 		final String name,
 		final XMLWriter<? super T>... children
 	) {
@@ -158,11 +158,13 @@ interface XMLWriter<T> {
 
 		return (xml, data) -> {
 			if (data != null) {
-				xml.writeStartElement(name);
-				for (XMLWriter<? super T> child : children) {
-					child.write(xml, data);
+				if (children.length > 0) {
+					xml.writeStartElement(name);
+					for (XMLWriter<? super T> child : children) {
+						child.write(xml, data);
+					}
+					xml.writeEndElement();
 				}
-				xml.writeEndElement();
 			}
 		};
 	}
@@ -174,7 +176,7 @@ interface XMLWriter<T> {
 	 * @param <T> the data type, which is written as string to the outer element
 	 * @return a new text writer
 	 */
-	public static <T> XMLWriter<T> text() {
+	static <T> XMLWriter<T> text() {
 		return (xml, data) -> {
 			if (data != null) {
 				xml.writeCharacters(data.toString());
@@ -182,7 +184,7 @@ interface XMLWriter<T> {
 		};
 	}
 
-	public static <N extends Number> XMLWriter<N> number() {
+	static <N extends Number> XMLWriter<N> number() {
 		return (xml, data) -> {
 			if (data != null) {
 				xml.writeCharacters(Double.toString(data.doubleValue()));
@@ -200,7 +202,7 @@ interface XMLWriter<T> {
 	 * @return a new writer instance
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public static <T> XMLWriter<Iterable<T>> elems(
+	static <T> XMLWriter<Iterable<T>> elems(
 		final String name,
 		final XMLWriter<? super T> writer
 	) {
@@ -229,7 +231,7 @@ interface XMLWriter<T> {
 	 * @return a new writer instance
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public static <T> XMLWriter<Iterable<T>> elems(final XMLWriter<? super T> writer) {
+	static <T> XMLWriter<Iterable<T>> elems(final XMLWriter<? super T> writer) {
 		requireNonNull(writer);
 
 		return (xml, data) -> {
@@ -262,35 +264,5 @@ interface XMLWriter<T> {
 			xml.writeEndDocument();
 		};
 	}
-
-
-	/* *************************************************************************
-	 * Service lookup
-	 * ************************************************************************/
-
-
-	/*
-	public static abstract class Provider<T> {
-		private static final Map<Class<?>, Object>
-			PROVIDERS = new ConcurrentHashMap<>();
-
-		public abstract Class<T> type();
-		public abstract XMLWriter<T> writer();
-
-		@SuppressWarnings({"unchecked", "rawtypes"})
-		public static <T> Optional<Provider<T>> of(final Class<T> type) {
-			requireNonNull(type);
-
-			return (Optional<Provider<T>>)PROVIDERS.computeIfAbsent(type, t -> {
-				final ServiceLoader<Provider> loader =
-					ServiceLoader.load(Provider.class);
-
-				return StreamSupport.stream(loader.spliterator(), false)
-					.filter(p -> p.type() == type)
-					.findFirst();
-			});
-		}
-	}
-	*/
 
 }

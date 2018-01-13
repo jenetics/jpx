@@ -54,10 +54,10 @@ public class LinkTest extends XMLStreamTestBase<Link> {
 		return Link.of(
 			format("http://link_%d", random.nextInt(100)),
 			random.nextBoolean()
-				? format("text_%s", random.nextInt(100))
+				? null //format("text_%s", random.nextInt(100))
 				: null,
 			random.nextBoolean()
-				? format("type_%s", random.nextInt(100))
+				? null //format("type_%s", random.nextInt(100))
 				: null
 		);
 	}

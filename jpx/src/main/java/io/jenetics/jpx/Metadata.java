@@ -607,7 +607,7 @@ public final class Metadata implements Serializable {
 			XMLWriter.elem("desc", text()).map(md -> md._description),
 			Person.writer("author").map(md -> md._author),
 			Copyright.writer().map(md -> md._copyright),
-			XMLWriter.elems(Link.writer()).map(md -> md._links),
+			XMLWriter.elems(Link.WRITER).map(md -> md._links),
 			XMLWriter.elem("time", text()).map(md -> ZonedDateTimeFormat.format(md._time)),
 			XMLWriter.elem("keywords", text()).map(md -> md._keywords),
 			Bounds.writer().map(md -> md._bounds)

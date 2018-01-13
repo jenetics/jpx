@@ -229,7 +229,7 @@ public final class Person implements Serializable {
 		return elem(name,
 			XMLWriter.elem("name", text()).map(person -> person._name),
 			Email.writer().map(person -> person._email),
-			Link.writer().map(person -> person._link)
+			Link.WRITER.map(person -> person._link)
 		);
 	}
 

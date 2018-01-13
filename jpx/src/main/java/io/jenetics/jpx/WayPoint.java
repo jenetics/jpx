@@ -1703,7 +1703,7 @@ public final class WayPoint implements Point, Serializable {
 			XMLWriter.elem("cmt", text()).map(wp -> wp._comment),
 			XMLWriter.elem("desc", text()).map(wp -> wp._description),
 			XMLWriter.elem("src", text()).map(wp -> wp._source),
-			XMLWriter.elems(Link.writer()).map(wp -> wp._links),
+			XMLWriter.elems(Link.WRITER).map(wp -> wp._links),
 			XMLWriter.elem("sym", text()).map(wp -> wp._symbol),
 			XMLWriter.elem("type", text()).map(wp -> wp._type),
 			XMLWriter.elem("fix", text()).map(wp -> wp._fix != null ? wp._fix.getValue() : null),

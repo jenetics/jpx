@@ -231,16 +231,14 @@ public final class Link implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
+		WRITER.write(writer, this);
 	}
 
-	static XMLWriter<Link> writer() {
-		return elem("link",
-			XMLWriter.attr("href").map(link -> link._href),
-			XMLWriter.elem("text", text()).map(link -> link._text),
-			XMLWriter.elem("type", text()).map(link -> link._type)
-		);
-	}
+	static final XMLWriter<Link> WRITER = elem("link",
+		XMLWriter.attr("href").map(link -> link._href),
+		XMLWriter.elem("text", text()).map(link -> link._text),
+		XMLWriter.elem("type", text()).map(link -> link._type)
+	);
 
 	static XMLReader<Link> reader() {
 		final XML.Function<Object[], Link> creator = a -> Link.of(
