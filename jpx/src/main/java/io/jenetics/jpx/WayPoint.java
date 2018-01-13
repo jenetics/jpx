@@ -22,12 +22,11 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.doubleString;
+import static io.jenetics.jpx.Format.durationString;
+import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.XMLReader.attr;
-import static io.jenetics.jpx.XMLWriter.elem;
-import static io.jenetics.jpx.XMLWriter.number;
-import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -1661,28 +1660,28 @@ public final class WayPoint implements Point, Serializable {
 	 * ************************************************************************/
 
 	static XMLWriter<WayPoint> writer(final String name) {
-		return elem(name,
+		return XMLWriter.elem(name,
 			XMLWriter.attr("lat").map(wp -> wp._latitude),
 			XMLWriter.attr("lon").map(wp -> wp._longitude),
-			XMLWriter.elem("ele", number()).map(wp -> wp._elevation),
-			XMLWriter.elem("speed", number()).map(wp -> wp._speed),
-			XMLWriter.elem("time", text()).map(wp -> ZonedDateTimeFormat.format(wp._time)),
-			XMLWriter.elem("magvar", text()).map(wp -> wp._magneticVariation),
-			XMLWriter.elem("geoidheight", number()).map(wp -> wp._geoidHeight),
-			XMLWriter.elem("name", text()).map(wp -> wp._name),
-			XMLWriter.elem("cmt", text()).map(wp -> wp._comment),
-			XMLWriter.elem("desc", text()).map(wp -> wp._description),
-			XMLWriter.elem("src", text()).map(wp -> wp._source),
+			XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)),
+			XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)),
+			XMLWriter.elem("time").map(wp -> ZonedDateTimeFormat.format(wp._time)),
+			XMLWriter.elem("magvar").map(wp -> doubleString(wp._magneticVariation)),
+			XMLWriter.elem("geoidheight").map(wp -> doubleString(wp._geoidHeight)),
+			XMLWriter.elem("name").map(wp -> wp._name),
+			XMLWriter.elem("cmt").map(wp -> wp._comment),
+			XMLWriter.elem("desc").map(wp -> wp._description),
+			XMLWriter.elem("src").map(wp -> wp._source),
 			XMLWriter.elems(Link.WRITER).map(wp -> wp._links),
-			XMLWriter.elem("sym", text()).map(wp -> wp._symbol),
-			XMLWriter.elem("type", text()).map(wp -> wp._type),
-			XMLWriter.elem("fix", text()).map(wp -> Fix.format(wp._fix)),
-			XMLWriter.elem("sat", text()).map(wp -> wp._sat),
-			XMLWriter.elem("hdop", text()).map(wp -> wp._hdop),
-			XMLWriter.elem("vdop", text()).map(wp -> wp._vdop),
-			XMLWriter.elem("pdop", text()).map(wp -> wp._pdop),
-			XMLWriter.elem("ageofdgpsdata", text()).map(wp -> Format.formatDuration(wp._ageOfGPSData)),
-			XMLWriter.elem("dgpsid", text()).map(wp -> wp._dgpsID)
+			XMLWriter.elem("sym").map(wp -> wp._symbol),
+			XMLWriter.elem("type").map(wp -> wp._type),
+			XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)),
+			XMLWriter.elem("sat").map(wp -> intString(wp._sat)),
+			XMLWriter.elem("hdop").map(wp -> doubleString(wp._hdop)),
+			XMLWriter.elem("vdop").map(wp -> doubleString(wp._vdop)),
+			XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)),
+			XMLWriter.elem("ageofdgpsdata").map(wp -> durationString(wp._ageOfGPSData)),
+			XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID))
 		);
 	}
 
@@ -1713,8 +1712,8 @@ public final class WayPoint implements Point, Serializable {
 				(DGPSStation)v[20]
 			),
 			name,
-			attr("lat").map(Latitude::parse),
-			attr("lon").map(Longitude::parse),
+			XMLReader.attr("lat").map(Latitude::parse),
+			XMLReader.attr("lon").map(Longitude::parse),
 			XMLReader.elem("ele").map(Length::parse),
 			XMLReader.elem("speed").map(Speed::parse),
 			XMLReader.elem("time").map(ZonedDateTimeFormat::parse),

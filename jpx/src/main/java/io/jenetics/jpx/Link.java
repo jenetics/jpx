@@ -220,8 +220,8 @@ public final class Link implements Serializable {
 
 	static final XMLWriter<Link> WRITER = XMLWriter.elem("link",
 		XMLWriter.attr("href").map(link -> link._href),
-		XMLWriter.elem("text", XMLWriter.text()).map(link -> link._text),
-		XMLWriter.elem("type", XMLWriter.text()).map(link -> link._type)
+		XMLWriter.elem("text").map(link -> link._text),
+		XMLWriter.elem("type").map(link -> link._type)
 	);
 
 	static final XMLReader<Link> READER = XMLReader.elem(
@@ -232,8 +232,8 @@ public final class Link implements Serializable {
 		),
 		"link",
 		XMLReader.attr("href").map(Format::parseURI),
-		XMLReader.elem("text", XMLReader.text()),
-		XMLReader.elem("type", XMLReader.text())
+		XMLReader.elem("text"),
+		XMLReader.elem("type")
 	);
 
 }

@@ -20,6 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.uriString;
+import static io.jenetics.jpx.Format.yearString;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -269,8 +271,8 @@ public final class Copyright implements Serializable {
 
 	static final XMLWriter<Copyright> WRITER =  XMLWriter.elem("copyright",
 		XMLWriter.attr("author").map(cr -> cr._author),
-		XMLWriter.elem("year", XMLWriter.text()).map(cr -> cr._year),
-		XMLWriter.elem("license", XMLWriter.text()).map(cr -> cr._license)
+		XMLWriter.elem("year").map(cr -> yearString(cr._year)),
+		XMLWriter.elem("license").map(cr -> uriString(cr._license))
 	);
 
 	static final XMLReader<Copyright> READER = XMLReader.elem(
@@ -281,8 +283,8 @@ public final class Copyright implements Serializable {
 		),
 		"copyright",
 		XMLReader.attr("author"),
-		XMLReader.elem("year", XMLReader.text().map(Format::parseYear)),
-		XMLReader.elem("license", XMLReader.text().map(Format::parseURI))
+		XMLReader.elem("year").map(Format::parseYear),
+		XMLReader.elem("license").map(Format::parseURI)
 	);
 
 }

@@ -33,7 +33,7 @@ import java.io.Serializable;
  * the range of {@code [-180..180]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Longitude extends Number implements Serializable {

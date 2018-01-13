@@ -210,7 +210,7 @@ public final class Person implements Serializable {
 
 	static XMLWriter<Person> writer(final String name) {
 		return XMLWriter.elem(name,
-			XMLWriter.elem("name", XMLWriter.text()).map(person -> person._name),
+			XMLWriter.elem("name").map(person -> person._name),
 			Email.WRITER.map(person -> person._email),
 			Link.WRITER.map(person -> person._link)
 		);
@@ -220,7 +220,7 @@ public final class Person implements Serializable {
 		return XMLReader.elem(
 			v -> Person.of((String)v[0], (Email)v[1], (Link)v[2]),
 			name,
-			XMLReader.elem("name", XMLReader.text()),
+			XMLReader.elem("name"),
 			Email.READER,
 			Link.READER
 		);

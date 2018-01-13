@@ -21,10 +21,9 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.XMLWriter.elem;
-import static io.jenetics.jpx.XMLWriter.text;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -730,14 +729,14 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Track> WRITER = elem("trk",
-		XMLWriter.elem("name", text()).map(r -> r._name),
-		XMLWriter.elem("cmt", text()).map(r -> r._comment),
-		XMLWriter.elem("desc", text()).map(r -> r._description),
-		XMLWriter.elem("src", text()).map(r -> r._source),
+	static final XMLWriter<Track> WRITER = XMLWriter.elem("trk",
+		XMLWriter.elem("name").map(r -> r._name),
+		XMLWriter.elem("cmt").map(r -> r._comment),
+		XMLWriter.elem("desc").map(r -> r._description),
+		XMLWriter.elem("src").map(r -> r._source),
 		XMLWriter.elems(Link.WRITER).map(r -> r._links),
-		XMLWriter.elem("number", text()).map(r -> r._number),
-		XMLWriter.elem("type", text()).map(r -> r._type),
+		XMLWriter.elem("number").map(r -> intString(r._number)),
+		XMLWriter.elem("type").map(r -> r._type),
 		XMLWriter.elems(TrackSegment.WRITER).map(r -> r._segments)
 	);
 
@@ -754,13 +753,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(List<TrackSegment>)v[7]
 		),
 		"trk",
-		XMLReader.elem("name", XMLReader.text()),
-		XMLReader.elem("cmt", XMLReader.text()),
-		XMLReader.elem("desc", XMLReader.text()),
-		XMLReader.elem("src", XMLReader.text()),
+		XMLReader.elem("name"),
+		XMLReader.elem("cmt"),
+		XMLReader.elem("desc"),
+		XMLReader.elem("src"),
 		XMLReader.elems(Link.READER),
-		XMLReader.elem("number", XMLReader.text().map(UInt::parse)),
-		XMLReader.elem("type", XMLReader.text()),
+		XMLReader.elem("number").map(UInt::parse),
+		XMLReader.elem("type"),
 		XMLReader.elems(TrackSegment.READER)
 	);
 

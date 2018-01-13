@@ -30,7 +30,7 @@ import java.util.Optional;
  * used.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public enum Fix {

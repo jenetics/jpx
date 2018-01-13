@@ -168,6 +168,11 @@ interface XMLWriter<T> {
 		};
 	}
 
+	static XMLWriter<String> elem(final String name) {
+		return elem(name, text());
+	}
+
+
 	/**
 	 * Create a new text {@code XMLWriter}, which writes the given data as string
 	 * to the outer element.

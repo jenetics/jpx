@@ -51,7 +51,7 @@ final class Format {
 			: null;
 	}
 
-	static String formatDuration(final Duration duration) {
+	static String durationString(final Duration duration) {
 		return duration != null
 			? Long.toString(duration.getSeconds())
 			: null;
@@ -66,6 +66,10 @@ final class Format {
 	 */
 	static Year parseYear(final String string) {
 		return string != null ? Year.of(Integer.parseInt(string)) : null;
+	}
+
+	static String yearString(final Year year) {
+		return year != null ? Integer.toString(year.getValue()) : null;
 	}
 
 	/**
@@ -83,6 +87,18 @@ final class Format {
 				"Invalid URI value: %s.", string
 			));
 		}
+	}
+
+	static String uriString(final URI uri) {
+		return uri != null ? uri.toString() : null;
+	}
+
+	static String doubleString(final Number number) {
+		return number != null ? Double.toString(number.doubleValue()) : null;
+	}
+
+	static String intString(final Number number) {
+		return number != null ? Integer.toString(number.intValue()) : null;
 	}
 
 }
