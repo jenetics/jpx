@@ -1,10 +1,22 @@
 ## Release notes
 
+### [1.2.2](https://github.com/jenetics/jpx/releases/tag/v1.2.2)
+
+#### Bug fixes
+
+* [#40](https://github.com/jenetics/jpx/issues/40): Improve/fix `equals` and `hashCode` methods.
+* [#43](https://github.com/jenetics/jpx/issues/43): Improve Java serialization. Make it smaller, faster and more stable [Serialization proxy](https://dzone.com/articles/serialization-proxy-pattern). This change breaks the existing serialization.
+* [#45](https://github.com/jenetics/jpx/issues/45): Update internal XML reader/writer classes; cleanup of the XML serialization code.
+
 ### [1.2.1](https://github.com/jenetics/jpx/releases/tag/v1.2.1)
+
+#### Bug fixes
 
 * [#38](https://github.com/jenetics/jpx/issues/38): Errornous marshalling of `author` metadata.
 
 ### [1.2.0](https://github.com/jenetics/jpx/releases/tag/v1.2.0)
+
+#### Improvements
 
 * [#35](https://github.com/jenetics/jpx/issues/35): Additional length units.
 
