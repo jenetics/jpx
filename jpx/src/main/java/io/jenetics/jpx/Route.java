@@ -21,9 +21,15 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,9 +41,6 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Represents a route - an ordered list of way-points representing a series of
@@ -55,12 +58,12 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final String _comment;
@@ -244,7 +247,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		hash += 17*Objects.hashCode(_comment) + 37;
 		hash += 17*Objects.hashCode(_description) + 37;
 		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 37;
+		hash += 17*Objects.hashCode(_type) + 37;
+		hash += 17*Lists.hashCode(_links) + 31;
 		hash += 17*Objects.hashCode(_number) + 37;
 		hash += 17*Objects.hashCode(_points) + 37;
 
@@ -253,13 +257,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Route &&
+		return obj == this ||
+			obj instanceof Route &&
 			Objects.equals(((Route)obj)._name, _name) &&
 			Objects.equals(((Route)obj)._comment, _comment) &&
 			Objects.equals(((Route)obj)._description, _description) &&
 			Objects.equals(((Route)obj)._source, _source) &&
-			((Route)obj)._links.size() == _links.size() &&
-			((Route)obj)._links.containsAll(_links) &&
+			Objects.equals(((Route)obj)._type, _type) &&
+			Lists.equals(((Route)obj)._links, _links) &&
 			Objects.equals(((Route)obj)._number, _number) &&
 			Objects.equals(((Route)obj)._points, _points);
 	}
@@ -710,54 +715,81 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		);
 	}
 
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.ROUTE, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullableString(_comment, out);
+		IO.writeNullableString(_description, out);
+		IO.writeNullableString(_source, out);
+		IO.writes(_links, Link::write, out);
+		IO.writeNullable(_number, UInt::write, out);
+		IO.writeNullableString(_type, out);
+		IO.writes(_points, WayPoint::write, out);
+	}
+
+	static Route read(final DataInput in) throws IOException {
+		return new Route(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.reads(Link::read, in),
+			IO.readNullable(UInt::read, in),
+			IO.readNullableString(in),
+			IO.reads(WayPoint::read, in)
+		);
+	}
+
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write("rte",
-			xml.elem("name", _name),
-			xml.elem("cmt", _comment),
-			xml.elem("desc", _description),
-			xml.elem("src", _source),
-			xml.elems(_links, Link::write),
-			xml.elem("number", _number),
-			xml.elem("type", _type),
-			xml.elems(_points, (p, w) -> p.write("rtept", w))
-		);
-	}
+	static final XMLWriter<Route> WRITER = XMLWriter.elem("rte",
+		XMLWriter.elem("name").map(r -> r._name),
+		XMLWriter.elem("cmt").map(r -> r._comment),
+		XMLWriter.elem("desc").map(r -> r._description),
+		XMLWriter.elem("src").map(r -> r._source),
+		XMLWriter.elems(Link.WRITER).map(r -> r._links),
+		XMLWriter.elem("number").map(r -> intString(r._number)),
+		XMLWriter.elem("type").map(r -> r._type),
+		XMLWriter.elems(WayPoint.writer("rtept")).map(r -> r._points)
+	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Route> reader() {
-		final XML.Function<Object[], Route> create = a -> Route.builder()
-			.name(Parsers.toString(a[0]))
-			.cmt(Parsers.toString(a[1]))
-			.desc(Parsers.toString(a[2]))
-			.src(Parsers.toString(a[3]))
-			.links((List<Link>)a[4])
-			.number(Parsers.toUInt(a[5], "Route.number"))
-			.type(Parsers.toString(a[6]))
-			.points((List<WayPoint>)a[7])
-			.build();
-
-		return XMLReader.of(create, "rte",
-			XMLReader.of("name"),
-			XMLReader.of("cmt"),
-			XMLReader.of("desc"),
-			XMLReader.of("src"),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("number"),
-			XMLReader.of("type"),
-			XMLReader.ofList(WayPoint.reader("rtept"))
-		);
-	}
+	static final XMLReader<Route> READER = XMLReader.elem(
+		v -> Route.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			(List<Link>)v[4],
+			(UInt)v[5],
+			(String)v[6],
+			(List<WayPoint>)v[7]
+		),
+		"rte",
+		XMLReader.elem("name"),
+		XMLReader.elem("cmt"),
+		XMLReader.elem("desc"),
+		XMLReader.elem("src"),
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("number").map(UInt::parse),
+		XMLReader.elem("type"),
+		XMLReader.elems(WayPoint.reader("rtept"))
+	);
 
 }

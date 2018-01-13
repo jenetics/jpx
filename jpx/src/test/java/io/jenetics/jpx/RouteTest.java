@@ -19,9 +19,12 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.ListsTest.revert;
 import static java.lang.String.format;
+import static io.jenetics.jpx.ListsTest.revert;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -45,8 +48,8 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 	protected Params<Route> params(final Random random) {
 		return new Params<>(
 			() -> nextRoute(random),
-			Route.reader(),
-			Route::write
+			Route.READER,
+			Route.WRITER
 		);
 	}
 
@@ -144,6 +147,17 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 			object.toBuilder().build(),
 			object
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Route.class).verify();
+	}
+
+	@Test(invocationCount = 10)
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextRoute(new Random());
+		Serialization.test(object);
 	}
 
 }

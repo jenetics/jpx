@@ -18,7 +18,7 @@ Beside the basic functionality of reading and writing GPX files, the library als
 ### Build time
 *  **JDK 8**: The Java [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) must be installed.
 *  **Gradle 4.x**: [Gradle](http://www.gradle.org/) is used for building the library. (Gradle is download automatically, if you are using the Gradle Wrapper script `./gradlew`, located in the base directory, for building the library.)
-*  **TestNG 6.10**: JPX uses [TestNG](http://testng.org/doc/index.html) framework for unit tests.
+*  **TestNG 6.13**: JPX uses [TestNG](http://testng.org/doc/index.html) framework for unit tests.
 
 ## Building JPX
 
@@ -223,8 +223,11 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.2.1](https://github.com/jenetics/jpx/releases/tag/v1.2.1)
+### [1.2.2](https://github.com/jenetics/jpx/releases/tag/v1.2.2)
 
-* [#38](https://github.com/jenetics/jpx/issues/38): Errornous marshalling of `author` metadata.
+#### Bug fixes
 
-_[All Release Notes](RELEASE_NOTES.md)_
+* [#40](https://github.com/jenetics/jpx/issues/40): Improve/fix `equals` and `hashCode` methods.
+* [#43](https://github.com/jenetics/jpx/issues/43): Improve Java serialization. Make it smaller, faster and more stable [Serialization proxy](https://dzone.com/articles/serialization-proxy-pattern). This change breaks the existing Java serialization.
+* [#45](https://github.com/jenetics/jpx/issues/45): Update internal XML reader/writer classes; cleanup of the XML serialization code.
+

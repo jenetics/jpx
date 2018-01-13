@@ -22,6 +22,11 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -40,7 +45,7 @@ public final class Length
 		Serializable
 {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	/**
 	 * Represents a given length unit.
@@ -178,7 +183,8 @@ public final class Length
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Length &&
+		return obj == this ||
+			obj instanceof Length &&
 			Double.compare(((Length)obj)._value, _value) == 0;
 	}
 
@@ -205,4 +211,33 @@ public final class Length
 		requireNonNull(unit);
 		return new Length(Unit.METER.convert(length, unit));
 	}
+
+	static Length parse(final String string) {
+		return string != null
+			? Length.of(Double.parseDouble(string), Unit.METER)
+			: null;
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.LENGTH, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Length read(final DataInput in) throws IOException {
+		return new Length(in.readDouble());
+	}
+
 }

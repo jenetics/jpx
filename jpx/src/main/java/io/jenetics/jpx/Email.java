@@ -19,25 +19,28 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import java.util.Objects;
 
 /**
  * An email address. Broken into two parts (id and domain) to help prevent email
  * harvesting.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Email implements Comparable<Email>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _id;
 	private final String _domain;
@@ -95,16 +98,17 @@ public final class Email implements Comparable<Email>, Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 37;
-		hash += 17*_id.hashCode() + 31;
-		hash += 17*_domain.hashCode() + 31;
+		hash += 17*Objects.hashCode(_id) + 31;
+		hash += 17*Objects.hashCode(_domain) + 31;
 		return hash;
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Email &&
-			((Email)obj)._id.equals(_id) &&
-			((Email)obj)._domain.equals(_domain);
+		return obj == this ||
+			obj instanceof Email &&
+			Objects.equals(((Email)obj)._id, _id) &&
+			Objects.equals(((Email)obj)._domain, _domain);
 	}
 
 	@Override
@@ -130,36 +134,71 @@ public final class Email implements Comparable<Email>, Serializable {
 		return new Email(id, domain);
 	}
 
+	/**
+	 * Create a new {@code Email} from the given {@code address} string.
+	 *
+	 * @param address the email address string
+	 * @return a new {@code Email} object with {@code address}
+	 * @throws NullPointerException if one of the argument is {@code null}
+	 * @throws IllegalArgumentException if the given {@code address} is invalid
+	 */
+	public static Email of(final String address) {
+		if (address.length() < 3) {
+			throw new IllegalArgumentException(format(
+				"Invalid email: '%s'.", address
+			));
+		}
+
+		final int index = address.indexOf('@');
+		if (index == -1 || index == 0 || index == address.length()) {
+			throw new IllegalArgumentException(format(
+				"Invalid email: '%s'.", address
+			));
+		}
+
+		return new Email(
+			address.substring(0, index),
+			address.substring(index + 1, address.length())
+		);
+	}
+
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.EMAIL, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeString(getAddress(), out);
+	}
+
+	static Email read(final DataInput in) throws IOException {
+		return Email.of(IO.readString(in));
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+	static final XMLWriter<Email> WRITER = XMLWriter.elem("email",
+		XMLWriter.attr("id").map(email -> email._id),
+		XMLWriter.attr("domain").map(email -> email._domain)
+	);
 
-		xml.write("email",
-			xml.attr("id", _id),
-			xml.attr("domain", _domain)
-		);
-	}
-
-	static XMLReader<Email> reader() {
-		final XML.Function<Object[], Email> creator = a -> Email.of(
-			Parsers.toMandatoryString(a[0], "Email.id"),
-			Parsers.toMandatoryString(a[1], "Email.domain")
-		);
-
-		return XMLReader.of(creator, "email",
-			attr("id"),
-			attr("domain")
-		);
-	}
+	static final XMLReader<Email> READER = XMLReader.elem(
+		v -> Email.of((String)v[0], (String)v[1]),
+		"email",
+		XMLReader.attr("id"),
+		XMLReader.attr("domain")
+	);
 
 }

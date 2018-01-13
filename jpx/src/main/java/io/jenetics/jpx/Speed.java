@@ -22,13 +22,18 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
  * Represents the GPS speed value in m/s.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Speed
@@ -38,7 +43,7 @@ public final class Speed
 		Serializable
 {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	/**
 	 * Represents a given speed unit.
@@ -160,7 +165,8 @@ public final class Speed
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Speed &&
+		return obj == this ||
+			obj instanceof Speed &&
 			Double.compare(((Speed)obj)._value, _value) == 0;
 	}
 
@@ -187,4 +193,33 @@ public final class Speed
 		requireNonNull(unit);
 		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
+
+	static Speed parse(final String string) {
+		return string != null
+			? Speed.of(Double.parseDouble(string), Unit.METERS_PER_SECOND)
+			: null;
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.SPEED, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Speed read(final DataInput in) throws IOException {
+		return new Speed(in.readDouble());
+	}
+
 }

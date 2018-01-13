@@ -20,19 +20,20 @@
 package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.toURI;
-import static io.jenetics.jpx.Parsers.toYear;
-import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.Format.parseURI;
+import static io.jenetics.jpx.Format.uriString;
+import static io.jenetics.jpx.Format.yearString;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Year;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Information about the copyright holder and any license governing use of this
@@ -40,12 +41,12 @@ import javax.xml.stream.XMLStreamWriter;
  * public domain or grant additional usage rights.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Copyright implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _author;
 	private final Year _year;
@@ -95,7 +96,7 @@ public final class Copyright implements Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 31;
-		hash += 17*_author.hashCode();
+		hash += 17*Objects.hashCode(_author) + 37;
 		hash += 17*Objects.hashCode(_year) + 37;
 		hash += 17*Objects.hashCode(_license) + 37;
 		return hash;
@@ -103,8 +104,9 @@ public final class Copyright implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Copyright &&
-			((Copyright) obj)._author.equals(_author) &&
+		return obj == this ||
+			obj instanceof Copyright &&
+			Objects.equals(((Copyright) obj)._author, _author) &&
 			Objects.equals(((Copyright) obj)._year, _year) &&
 			Objects.equals(((Copyright) obj)._license, _license);
 	}
@@ -169,14 +171,7 @@ public final class Copyright implements Serializable {
 		final int year,
 		final String license
 	) {
-		final URI uri;
-		try {
-			uri = license != null ? new URI(license) : null;
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
-
-		return new Copyright(author, Year.of(year), uri);
+		return new Copyright(author, Year.of(year), parseURI(license));
 	}
 
 	/**
@@ -226,39 +221,55 @@ public final class Copyright implements Serializable {
 		return new Copyright(author, null, null);
 	}
 
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.COPYRIGHT, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeString(_author, out);
+		out.writeBoolean(_year != null);
+		if (_year != null) IO.writeInt(_year.getValue(), out);
+		IO.writeNullableString(_license != null ? _license.toString() : null, out);
+	}
+
+	static Copyright read(final DataInput in) throws IOException {
+		return new Copyright(
+			IO.readString(in),
+			in.readBoolean() ? Year.of(IO.readInt(in)) : null,
+			parseURI(IO.readNullableString(in))
+		);
+	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+	static final XMLWriter<Copyright> WRITER =  XMLWriter.elem("copyright",
+		XMLWriter.attr("author").map(cr -> cr._author),
+		XMLWriter.elem("year").map(cr -> yearString(cr._year)),
+		XMLWriter.elem("license").map(cr -> uriString(cr._license))
+	);
 
-		xml.write("copyright",
-			xml.attr("author", _author),
-			xml.elem("year", _year),
-			xml.elem("license", _license)
-		);
-	}
-
-	static XMLReader<Copyright> reader() {
-		final XML.Function<Object[], Copyright> creator = a -> Copyright.of(
-			Parsers.toString(a[0]),
-			toYear(a[1], "Copyright.year"),
-			toURI(a[2], "Copyright.license")
-		);
-
-		return XMLReader.of(creator, "copyright",
-			attr("author"),
-			XMLReader.of("year"),
-			XMLReader.of("license")
-		);
-	}
+	static final XMLReader<Copyright> READER = XMLReader.elem(
+		v -> Copyright.of(
+			(String)v[0],
+			(Year)v[1],
+			(URI)v[2]
+		),
+		"copyright",
+		XMLReader.attr("author"),
+		XMLReader.elem("year").map(Format::parseYear),
+		XMLReader.elem("license").map(Format::parseURI)
+	);
 
 }

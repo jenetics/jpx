@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -42,7 +44,7 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 		return new Params<>(
 			() -> nextPerson(random),
 			Person.reader("author"),
-			(a, w) -> a.write("author", w)
+			Person.writer("author")
 		);
 	}
 
@@ -58,6 +60,11 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 				? LinkTest.nextLink(random)
 				: null
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Person.class).verify();
 	}
 
 }

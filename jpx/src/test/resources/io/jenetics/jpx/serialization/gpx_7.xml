@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="creator_20" creator="version_81">
+    <metadata>
+        <name>name_55</name>
+        <copyright author="author_24">
+            <year>660</year>
+        </copyright>
+        <link href="http://link_96">
+            <type>type_14</type>
+        </link>
+        <link href="http://link_84"></link>
+        <link href="http://link_92">
+            <type>type_49</type>
+        </link>
+        <link href="http://link_31">
+            <text>text_7</text>
+            <type>type_34</type>
+        </link>
+        <link href="http://link_40">
+            <text>text_73</text>
+            <type>type_11</type>
+        </link>
+        <link href="http://link_40">
+            <text>text_9</text>
+            <type>type_64</type>
+        </link>
+        <link href="http://link_68">
+            <type>type_11</type>
+        </link>
+        <link href="http://link_32">
+            <text>text_51</text>
+            <type>type_83</type>
+        </link>
+        <link href="http://link_19">
+            <text>text_42</text>
+            <type>type_83</type>
+        </link>
+        <link href="http://link_94">
+            <text>text_53</text>
+            <type>type_26</type>
+        </link>
+        <keywords>keywords_58</keywords>
+    </metadata>
+    <wpt lat="48.526744191704964" lon="17.407886046998936">
+        <speed>89.77539965767052</speed>
+        <time>1990-10-27T17:06:02Z</time>
+        <magvar>5.629339867762679</magvar>
+        <geoidheight>958.0</geoidheight>
+        <cmt>comment_24</cmt>
+        <desc>description_47</desc>
+        <hdop>2.456916636513981</hdop>
+    </wpt>
+    <wpt lat="49.391493102841935" lon="16.642576978691036">
+        <ele>272.0</ele>
+        <speed>80.38776669696682</speed>
+        <time>1995-03-15T03:04:56Z</time>
+        <magvar>2.8663315793862862</magvar>
+        <cmt>comment_5</cmt>
+        <desc>description_1</desc>
+        <src>source_40</src>
+        <link href="http://link_42">
+            <text>text_22</text>
+        </link>
+        <link href="http://link_36">
+            <type>type_37</type>
+        </link>
+        <link href="http://link_5">
+            <text>text_75</text>
+            <type>type_87</type>
+        </link>
+        <link href="http://link_39"></link>
+        <link href="http://link_58">
+            <text>text_92</text>
+        </link>
+        <link href="http://link_97"></link>
+        <link href="http://link_38"></link>
+        <type>type_91</type>
+        <hdop>2.3248055660881164</hdop>
+        <vdop>2.444397118062379</vdop>
+    </wpt>
+    <wpt lat="49.6743186787605" lon="16.07150650776063">
+        <ele>778.0</ele>
+        <geoidheight>386.0</geoidheight>
+        <name>name_19</name>
+        <cmt>comment_9</cmt>
+        <src>source_25</src>
+        <link href="http://link_24">
+            <text>text_40</text>
+        </link>
+        <link href="http://link_86"></link>
+        <link href="http://link_55">
+            <text>text_33</text>
+        </link>
+        <link href="http://link_9">
+            <text>text_91</text>
+        </link>
+        <sym>symbol_36</sym>
+        <fix>dgps</fix>
+        <hdop>2.510262211329568</hdop>
+        <vdop>2.4970824925879542</vdop>
+        <pdop>2.338376569765216</pdop>
+        <dgpsid>19</dgpsid>
+    </wpt>
+</gpx>
