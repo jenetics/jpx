@@ -769,21 +769,19 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
+		WRITER.write(writer, this);
 	}
 
-	static XMLWriter<Route> writer() {
-		return elem("rte",
-			XMLWriter.elem("name", text()).map(r -> r._name),
-			XMLWriter.elem("cmt", text()).map(r -> r._comment),
-			XMLWriter.elem("desc", text()).map(r -> r._description),
-			XMLWriter.elem("src", text()).map(r -> r._source),
-			XMLWriter.elems(Link.WRITER).map(r -> r._links),
-			XMLWriter.elem("number", text()).map(r -> r._number),
-			XMLWriter.elem("type", text()).map(r -> r._type),
-			XMLWriter.elems(WayPoint.writer("rtept")).map(r -> r._points)
-		);
-	}
+	static final XMLWriter<Route> WRITER = elem("rte",
+		XMLWriter.elem("name", text()).map(r -> r._name),
+		XMLWriter.elem("cmt", text()).map(r -> r._comment),
+		XMLWriter.elem("desc", text()).map(r -> r._description),
+		XMLWriter.elem("src", text()).map(r -> r._source),
+		XMLWriter.elems(Link.WRITER).map(r -> r._links),
+		XMLWriter.elem("number", text()).map(r -> r._number),
+		XMLWriter.elem("type", text()).map(r -> r._type),
+		XMLWriter.elems(WayPoint.writer("rtept")).map(r -> r._points)
+	);
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Route> reader() {

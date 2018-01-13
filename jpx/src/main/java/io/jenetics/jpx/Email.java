@@ -201,15 +201,13 @@ public final class Email implements Comparable<Email>, Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
+		WRITER.write(writer, this);
 	}
 
-	static XMLWriter<Email> writer() {
-		return elem("email",
-			XMLWriter.attr("id").map(email -> email._id),
-			XMLWriter.attr("domain").map(email -> email._domain)
-		);
-	}
+	static final XMLWriter<Email> WRITER = elem("email",
+		XMLWriter.attr("id").map(email -> email._id),
+		XMLWriter.attr("domain").map(email -> email._domain)
+	);
 
 	static XMLReader<Email> reader() {
 		final XML.Function<Object[], Email> creator = a -> Email.of(

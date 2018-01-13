@@ -230,17 +230,15 @@ public final class Bounds implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
+		WRITER.write(writer, this);
 	}
 
-	static XMLWriter<Bounds> writer() {
-		return elem("bounds",
-			XMLWriter.attr("minlat").map(Bounds::getMinLatitude),
-			XMLWriter.attr("minlon").map(Bounds::getMinLongitude),
-			XMLWriter.attr("maxlat").map(Bounds::getMaxLatitude),
-			XMLWriter.attr("maxlon").map(Bounds::getMaxLongitude)
-		);
-	}
+	static final XMLWriter<Bounds> WRITER = elem("bounds",
+		XMLWriter.attr("minlat").map(Bounds::getMinLatitude),
+		XMLWriter.attr("minlon").map(Bounds::getMinLongitude),
+		XMLWriter.attr("maxlat").map(Bounds::getMaxLatitude),
+		XMLWriter.attr("maxlon").map(Bounds::getMaxLongitude)
+	);
 
 	static XMLReader<Bounds> reader() {
 		final XML.Function<Object[], Bounds> creator = a -> Bounds.of(

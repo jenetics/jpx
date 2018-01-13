@@ -228,7 +228,7 @@ public final class Person implements Serializable {
 	static XMLWriter<Person> writer(final String name) {
 		return elem(name,
 			XMLWriter.elem("name", text()).map(person -> person._name),
-			Email.writer().map(person -> person._email),
+			Email.WRITER.map(person -> person._email),
 			Link.WRITER.map(person -> person._link)
 		);
 	}

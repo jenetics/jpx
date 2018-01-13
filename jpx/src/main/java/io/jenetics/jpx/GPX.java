@@ -1008,20 +1008,18 @@ public final class GPX implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
+		WRITER.write(writer, this);
 	}
 
-	static XMLWriter<GPX> writer() {
-		return elem("gpx",
-			XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
-			XMLWriter.attr("version").map(gpx -> gpx._version),
-			XMLWriter.attr("creator").map(gpx -> gpx._creator),
-			Metadata.writer().map(gpx -> gpx._metadata),
-			XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
-			XMLWriter.elems(Route.writer()).map(gpx -> gpx._routes),
-			XMLWriter.elems(Track.writer()).map(gpx -> gpx._tracks)
-		);
-	}
+	static final XMLWriter<GPX> WRITER = elem("gpx",
+		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
+		XMLWriter.attr("version").map(gpx -> gpx._version),
+		XMLWriter.attr("creator").map(gpx -> gpx._creator),
+		Metadata.writer().map(gpx -> gpx._metadata),
+		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
+		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
+		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
+	);
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<GPX> reader() {

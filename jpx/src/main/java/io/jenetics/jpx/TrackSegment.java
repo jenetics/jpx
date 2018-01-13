@@ -348,14 +348,12 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		writer().write(writer, this);
+		WRITER.write(writer, this);
 	}
 
-	static XMLWriter<TrackSegment> writer() {
-		return elem("trkseg",
-			XMLWriter.elems(WayPoint.writer("trkpt")).map(ts -> ts._points)
-		);
-	}
+	static final XMLWriter<TrackSegment> WRITER = elem("trkseg",
+		XMLWriter.elems(WayPoint.writer("trkpt")).map(ts -> ts._points)
+	);
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<TrackSegment> reader() {
