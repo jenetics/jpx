@@ -1183,7 +1183,7 @@ public final class GPX implements Serializable {
 			final XMLStreamReader reader = factory.createXMLStreamReader(input);
 			if (reader.hasNext()) {
 				reader.next();
-				return READER.read(reader);
+				return READER.read(reader, lenient);
 			} else {
 				throw new IOException("No 'gpx' element found.");
 			}

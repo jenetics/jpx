@@ -106,12 +106,14 @@ abstract class XMLReader<T> {
 	 * }</pre>
 	 *
 	 * @param xml the underlying XML stream {@code reader}
+	 * @param lenient lenient read mode
 	 * @return the data read from the XML stream, maybe {@code null}
 	 * @throws XMLStreamException if an error occurs while reading the value
 	 * @throws NullPointerException if the given {@code xml} stream reader is
 	 *         {@code null}
 	 */
-	public abstract T read(final XMLStreamReader xml) throws XMLStreamException;
+	public abstract T read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException;
 
 	/**
 	 * Create a new reader for the new mapped type {@code B}.
@@ -127,13 +129,14 @@ abstract class XMLReader<T> {
 
 		return new XMLReader<B>(_name, _type) {
 			@Override
-			public B read(final XMLStreamReader xml)
+			public B read(final XMLStreamReader xml, final boolean lenient)
 				throws XMLStreamException
 			{
 				try {
-					return mapper.apply(XMLReader.this.read(xml));
+					return mapper.apply(XMLReader.this.read(xml, lenient));
 				} catch (RuntimeException e) {
-					throw new XMLStreamException(e);
+					if (!lenient) throw new XMLStreamException(e);
+					else return null;
 				}
 			}
 		};
@@ -358,7 +361,9 @@ final class AttrReader extends XMLReader<String> {
 	}
 
 	@Override
-	public String read(final XMLStreamReader xml) throws XMLStreamException {
+	public String read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException
+	{
 		xml.require(START_ELEMENT, null, null);
 		return xml.getAttributeValue(null, name());
 	}
@@ -379,7 +384,9 @@ final class TextReader extends XMLReader<String> {
 	}
 
 	@Override
-	public String read(final XMLStreamReader xml) throws XMLStreamException {
+	public String read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException
+	{
 		final StringBuilder out = new StringBuilder();
 
 		int type = xml.getEventType();
@@ -411,9 +418,14 @@ final class ListReader<T> extends XMLReader<List<T>> {
 	}
 
 	@Override
-	public List<T> read(final XMLStreamReader xml) throws XMLStreamException {
+	public List<T> read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException
+	{
 		xml.require(START_ELEMENT, null, name());
-		return Collections.singletonList(_adoptee.read(xml));
+		final T element = _adoptee.read(xml, lenient);
+		return element != null
+			? Collections.singletonList(element)
+			: Collections.emptyList();
 	}
 }
 
@@ -466,7 +478,7 @@ final class ElemReader<T> extends XMLReader<T> {
 	}
 
 	@Override
-	public T read(final XMLStreamReader xml)
+	public T read(final XMLStreamReader xml, final boolean lenient)
 		throws XMLStreamException
 	{
 		xml.require(START_ELEMENT, null, name());
@@ -481,7 +493,11 @@ final class ElemReader<T> extends XMLReader<T> {
 
 		for (int i = 0; i < _attrReaderIndexes.length; ++i) {
 			final ReaderResult result = results.get(_attrReaderIndexes[i]);
-			result.put(result.reader().read(xml));
+			try {
+				result.put(result.reader().read(xml, lenient));
+			} catch (IllegalArgumentException|NullPointerException e) {
+				if (!lenient) throw e;
+			}
 		}
 
 		if (xml.hasNext()) {
@@ -495,7 +511,11 @@ final class ElemReader<T> extends XMLReader<T> {
 							.get(_readerIndexMapping.get(xml.getLocalName()));
 
 						if (result != null) {
-							result.put(result.reader().read(xml));
+							try {
+								result.put(result.reader().read(xml, lenient));
+							} catch (IllegalArgumentException|NullPointerException e) {
+								if (!lenient) throw e;
+							}
 							if (xml.hasNext()) {
 								hasNext = true;
 								xml.next();
@@ -508,7 +528,11 @@ final class ElemReader<T> extends XMLReader<T> {
 					case CHARACTERS:
 					case CDATA:
 						if (text != null) {
-							text.put(text.reader().read(xml));
+							try {
+								text.put(text.reader().read(xml, lenient));
+							} catch (IllegalArgumentException|NullPointerException e) {
+								if (!lenient) throw e;
+							}
 						} else {
 							xml.next();
 						}
@@ -523,8 +547,9 @@ final class ElemReader<T> extends XMLReader<T> {
 										.map(ReaderResult::value)
 										.toArray()
 								);
-							} catch (RuntimeException e) {
-								throw new XMLStreamException(e);
+							} catch (IllegalArgumentException|NullPointerException e) {
+								if (!lenient) throw new XMLStreamException(e);
+								else return null;
 							}
 						}
 				}
