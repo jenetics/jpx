@@ -231,7 +231,7 @@ public final class Link implements Serializable {
 			(String)v[2]
 		),
 		"link",
-		XMLReader.attr("href").map(Parsers::parseURI),
+		XMLReader.attr("href").map(Format::parseURI),
 		XMLReader.elem("text", XMLReader.text()),
 		XMLReader.elem("type", XMLReader.text())
 	);

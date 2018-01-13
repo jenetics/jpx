@@ -1681,7 +1681,7 @@ public final class WayPoint implements Point, Serializable {
 			XMLWriter.elem("hdop", text()).map(wp -> wp._hdop),
 			XMLWriter.elem("vdop", text()).map(wp -> wp._vdop),
 			XMLWriter.elem("pdop", text()).map(wp -> wp._pdop),
-			XMLWriter.elem("ageofdgpsdata", text()).map(wp -> Parsers.formatDuration(wp._ageOfGPSData)),
+			XMLWriter.elem("ageofdgpsdata", text()).map(wp -> Format.formatDuration(wp._ageOfGPSData)),
 			XMLWriter.elem("dgpsid", text()).map(wp -> wp._dgpsID)
 		);
 	}
@@ -1732,7 +1732,7 @@ public final class WayPoint implements Point, Serializable {
 			XMLReader.elem("hdop").map(Double::parseDouble),
 			XMLReader.elem("vdop").map(Double::parseDouble),
 			XMLReader.elem("pdop").map(Double::parseDouble),
-			XMLReader.elem("ageofdgpsdata").map(Parsers::parseDuration),
+			XMLReader.elem("ageofdgpsdata").map(Format::parseDuration),
 			XMLReader.elem("dgpsid").map(DGPSStation::parse)
 		);
 	}

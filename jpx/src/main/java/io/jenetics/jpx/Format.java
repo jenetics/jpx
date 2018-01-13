@@ -33,9 +33,9 @@ import java.time.Year;
  * @version !__version__!
  * @since 1.0
  */
-final class Parsers {
+final class Format {
 
-	private Parsers() {
+	private Format() {
 	}
 
 	/**

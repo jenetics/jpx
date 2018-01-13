@@ -281,8 +281,8 @@ public final class Copyright implements Serializable {
 		),
 		"copyright",
 		XMLReader.attr("author"),
-		XMLReader.elem("year", XMLReader.text().map(Parsers::parseYear)),
-		XMLReader.elem("license", XMLReader.text().map(Parsers::parseURI))
+		XMLReader.elem("year", XMLReader.text().map(Format::parseYear)),
+		XMLReader.elem("license", XMLReader.text().map(Format::parseURI))
 	);
 
 }
