@@ -41,7 +41,7 @@ import java.util.Optional;
  * public domain or grant additional usage rights.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.2
  * @since 1.0
  */
 public final class Copyright implements Serializable {

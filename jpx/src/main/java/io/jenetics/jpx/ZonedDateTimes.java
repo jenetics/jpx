@@ -30,8 +30,8 @@ import java.util.Objects;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class ZonedDateTimes {
 

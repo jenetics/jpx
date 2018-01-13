@@ -30,7 +30,7 @@ import java.time.Year;
  * Some helper methods for parsing GPS values.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.2
  * @since 1.0
  */
 final class Format {

@@ -48,7 +48,7 @@ import java.util.stream.Stream;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.2
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {

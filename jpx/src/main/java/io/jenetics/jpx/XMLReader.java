@@ -47,7 +47,7 @@ import io.jenetics.jpx.XMLReader.Type;
  * Simplifies the usage of the {@link XMLStreamReader}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.2
  * @since 1.0
  */
 abstract class XMLReader<T> {
@@ -360,8 +360,8 @@ abstract class XMLReader<T> {
  * Reader implementation for reading the attribute of the current node.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class AttrReader extends XMLReader<String> {
 
@@ -383,8 +383,8 @@ final class AttrReader extends XMLReader<String> {
  * Reader implementation for reading the text of the current node.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class TextReader extends XMLReader<String> {
 
@@ -414,8 +414,8 @@ final class TextReader extends XMLReader<String> {
  * @param <T> the element type
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class ListReader<T> extends XMLReader<List<T>> {
 
@@ -444,8 +444,8 @@ final class ListReader<T> extends XMLReader<List<T>> {
  * @param <T> the reader data type
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class ElemReader<T> extends XMLReader<T> {
 
@@ -582,8 +582,8 @@ final class ElemReader<T> extends XMLReader<T> {
  * Helper interface for storing the XML reader (intermediate) results.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 interface ReaderResult {
 
@@ -626,8 +626,8 @@ interface ReaderResult {
  * Result object for values read from XML elements.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class ValueResult implements ReaderResult {
 
@@ -660,8 +660,8 @@ final class ValueResult implements ReaderResult {
  * Result object for list values read from XML elements.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class ListResult implements ReaderResult {
 

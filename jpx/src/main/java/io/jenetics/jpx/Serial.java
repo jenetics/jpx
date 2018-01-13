@@ -29,8 +29,8 @@ import java.io.StreamCorruptedException;
  * The shared serialization delegate for this package.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.2
+ * @since 1.2
  */
 final class Serial implements Externalizable {
 	private static final long serialVersionUID = 1L;
