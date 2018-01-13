@@ -34,7 +34,7 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class UInt
@@ -44,7 +44,7 @@ public final class UInt
 		Serializable
 {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final int _value;
 
@@ -128,6 +128,12 @@ public final class UInt
 	 */
 	public static UInt of(final int value) {
 		return new UInt(value);
+	}
+
+	static UInt parse(final String string) {
+		return string != null
+			? UInt.of(Integer.parseInt(string))
+			: null;
 	}
 
 	/* *************************************************************************

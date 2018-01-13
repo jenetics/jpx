@@ -34,9 +34,7 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 @Test
-public class LinkTest
-	extends XMLStreamTestBase<Link>
-{
+public class LinkTest extends XMLStreamTestBase<Link> {
 
 	@Override
 	public Supplier<Link> factory(Random random) {
@@ -47,8 +45,8 @@ public class LinkTest
 	protected Params<Link> params(final Random random) {
 		return new Params<>(
 			() -> nextLink(random),
-			Link.reader(),
-			Link::write
+			Link.READER,
+			Link.WRITER
 		);
 	}
 

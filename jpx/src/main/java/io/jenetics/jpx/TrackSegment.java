@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -40,9 +41,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * A Track Segment holds a list of Track Points which are logically connected in
  * order. To represent a single GPS track where GPS reception was lost, or the
@@ -50,12 +48,12 @@ import javax.xml.stream.XMLStreamWriter;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.1
+ * @version !__version__!
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final List<WayPoint> _points;
 
@@ -340,29 +338,15 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write("trkseg",
-			xml.elems(_points, (p, w) -> p.write("trkpt", w))
-		);
-	}
+	static final XMLWriter<TrackSegment> WRITER = elem("trkseg",
+		XMLWriter.elems(WayPoint.writer("trkpt")).map(ts -> ts._points)
+	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<TrackSegment> reader() {
-		final XML.Function<Object[], TrackSegment> creator = a -> TrackSegment.of(
-			(List<WayPoint>)a[0]
-		);
-
-		return XMLReader.of(creator, "trkseg",
-			XMLReader.ofList(WayPoint.reader("trkpt"))
-		);
-	}
+	static final XMLReader<TrackSegment> READER = XMLReader.elem(
+		a -> TrackSegment.of((List<WayPoint>)a[0]),
+		"trkseg",
+		XMLReader.elems(WayPoint.reader("trkpt"))
+	);
 
 }

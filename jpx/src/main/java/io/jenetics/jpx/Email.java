@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.XMLReader.attr;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -31,20 +30,17 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * An email address. Broken into two parts (id and domain) to help prevent email
  * harvesting.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Email implements Comparable<Email>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _id;
 	private final String _domain;
@@ -193,31 +189,16 @@ public final class Email implements Comparable<Email>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+	static final XMLWriter<Email> WRITER = XMLWriter.elem("email",
+		XMLWriter.attr("id").map(email -> email._id),
+		XMLWriter.attr("domain").map(email -> email._domain)
+	);
 
-		xml.write("email",
-			xml.attr("id", _id),
-			xml.attr("domain", _domain)
-		);
-	}
-
-	static XMLReader<Email> reader() {
-		final XML.Function<Object[], Email> creator = a -> Email.of(
-			Parsers.toMandatoryString(a[0], "Email.id"),
-			Parsers.toMandatoryString(a[1], "Email.domain")
-		);
-
-		return XMLReader.of(creator, "email",
-			attr("id"),
-			attr("domain")
-		);
-	}
+	static final XMLReader<Email> READER = XMLReader.elem(
+		v -> Email.of((String)v[0], (String)v[1]),
+		"email",
+		XMLReader.attr("id"),
+		XMLReader.attr("domain")
+	);
 
 }

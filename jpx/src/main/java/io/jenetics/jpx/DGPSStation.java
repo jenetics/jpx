@@ -35,7 +35,7 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class DGPSStation
@@ -45,7 +45,7 @@ public final class DGPSStation
 		Serializable
 {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final int _value;
 
@@ -128,12 +128,10 @@ public final class DGPSStation
 		return new DGPSStation(value);
 	}
 
-	static short unbox(final DGPSStation station) {
-		return station != null ? (short)station._value : -1;
-	}
-
-	static DGPSStation box(final int value) {
-		return value != -1 ? new DGPSStation(value) : null;
+	static DGPSStation parse(final String string) {
+		return string != null
+			? DGPSStation.of(Integer.parseInt(string))
+			: null;
 	}
 
 	/* *************************************************************************

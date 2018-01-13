@@ -35,7 +35,7 @@ import java.io.Serializable;
  * "m" (metre).
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 public final class Length
@@ -45,7 +45,7 @@ public final class Length
 		Serializable
 {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	/**
 	 * Represents a given length unit.
@@ -212,12 +212,10 @@ public final class Length
 		return new Length(Unit.METER.convert(length, unit));
 	}
 
-	static double unbox(final Length length) {
-		return length != null ? length._value : Double.NaN;
-	}
-
-	static Length box(final double value) {
-		return Double.isNaN(value) ? null : new Length(value);
+	static Length parse(final String string) {
+		return string != null
+			? Length.of(Double.parseDouble(string), Unit.METER)
+			: null;
 	}
 
 	/* *************************************************************************

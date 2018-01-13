@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.Objects.requireNonNull;
@@ -119,6 +120,20 @@ enum ZonedDateTimeFormat {
 		return Stream.of(values())
 			.filter(tf -> tf.matches(time))
 			.findFirst();
+	}
+
+	/**
+	 * Parses the given object to a zoned data time object.
+	 *
+	 * @param time the string to parse
+	 * @return the parsed object
+	 */
+	static ZonedDateTime parse(final String time) {
+		return time != null
+			? ZonedDateTimeFormat.parseOptional(time).orElseThrow(() ->
+			new IllegalArgumentException(
+				String.format("Can't parse time: %s'", time)))
+			: null;
 	}
 
 }

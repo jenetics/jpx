@@ -48,8 +48,8 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 	protected Params<Route> params(final Random random) {
 		return new Params<>(
 			() -> nextRoute(random),
-			Route.reader(),
-			Route::write
+			Route.READER,
+			Route.WRITER
 		);
 	}
 

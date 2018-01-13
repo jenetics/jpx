@@ -21,7 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.Format.parseURI;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -30,24 +30,20 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Represents a link to an external resource (Web page, digital photo, video
  * clip, etc) with additional information.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Link implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final URI _href;
 	private final String _text;
@@ -150,11 +146,7 @@ public final class Link implements Serializable {
 	 *         URL
 	 */
 	public static Link of(final String href, final String text, final String type) {
-		try {
-			return new Link(new URI(requireNonNull(href)), text, type);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return new Link(parseURI(requireNonNull(href)), text, type);
 	}
 
 	/**
@@ -178,11 +170,7 @@ public final class Link implements Serializable {
 	 *         URL
 	 */
 	public static Link of(final String href) {
-		try {
-			return new Link(new URI(requireNonNull(href)), null, null);
-		} catch (URISyntaxException e) {
-			throw new IllegalArgumentException(e);
-		}
+		return new Link(parseURI(requireNonNull(href)), null, null);
 	}
 
 	/* *************************************************************************
@@ -206,50 +194,29 @@ public final class Link implements Serializable {
 	}
 
 	static Link read(final DataInput in) throws IOException {
-		try {
-			return new Link(
-				new URI(IO.readString(in)),
-				IO.readNullableString(in),
-				IO.readNullableString(in)
-			);
-		} catch (URISyntaxException e) {
-			throw (InvalidObjectException)
-				new InvalidObjectException(e.getMessage()).initCause(e);
-		}
+		return new Link(
+			parseURI((IO.readString(in))),
+			IO.readNullableString(in),
+			IO.readNullableString(in)
+		);
 	}
 
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+	static final XMLWriter<Link> WRITER = XMLWriter.elem("link",
+		XMLWriter.attr("href").map(link -> link._href),
+		XMLWriter.elem("text").map(link -> link._text),
+		XMLWriter.elem("type").map(link -> link._type)
+	);
 
-		xml.write("link",
-			xml.attr("href", _href),
-			xml.elem("text", _text),
-			xml.elem("type", _type)
-		);
-	}
-
-	static XMLReader<Link> reader() {
-		final XML.Function<Object[], Link> creator = a -> Link.of(
-			Parsers.toMandatoryURI(a[0], "Link.href"),
-			Parsers.toString(a[1]),
-			Parsers.toString(a[2])
-		);
-
-		return XMLReader.of(creator, "link",
-			attr("href"),
-			XMLReader.of("text"),
-			XMLReader.of("type")
-		);
-	}
+	static final XMLReader<Link> READER = XMLReader.elem(
+		v -> Link.of((URI)v[0], (String)v[1], (String)v[2]),
+		"link",
+		XMLReader.attr("href").map(Format::parseURI),
+		XMLReader.elem("text"),
+		XMLReader.elem("type")
+	);
 
 }

@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 
@@ -41,9 +42,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Represents a route - an ordered list of way-points representing a series of
  * turn points leading to a destination.
@@ -60,12 +58,12 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final String _comment;
@@ -760,50 +758,38 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write("rte",
-			xml.elem("name", _name),
-			xml.elem("cmt", _comment),
-			xml.elem("desc", _description),
-			xml.elem("src", _source),
-			xml.elems(_links, Link::write),
-			xml.elem("number", _number),
-			xml.elem("type", _type),
-			xml.elems(_points, (p, w) -> p.write("rtept", w))
-		);
-	}
+	static final XMLWriter<Route> WRITER = XMLWriter.elem("rte",
+		XMLWriter.elem("name").map(r -> r._name),
+		XMLWriter.elem("cmt").map(r -> r._comment),
+		XMLWriter.elem("desc").map(r -> r._description),
+		XMLWriter.elem("src").map(r -> r._source),
+		XMLWriter.elems(Link.WRITER).map(r -> r._links),
+		XMLWriter.elem("number").map(r -> intString(r._number)),
+		XMLWriter.elem("type").map(r -> r._type),
+		XMLWriter.elems(WayPoint.writer("rtept")).map(r -> r._points)
+	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Route> reader() {
-		final XML.Function<Object[], Route> create = a -> Route.builder()
-			.name(Parsers.toString(a[0]))
-			.cmt(Parsers.toString(a[1]))
-			.desc(Parsers.toString(a[2]))
-			.src(Parsers.toString(a[3]))
-			.links((List<Link>)a[4])
-			.number(Parsers.toUInt(a[5], "Route.number"))
-			.type(Parsers.toString(a[6]))
-			.points((List<WayPoint>)a[7])
-			.build();
-
-		return XMLReader.of(create, "rte",
-			XMLReader.of("name"),
-			XMLReader.of("cmt"),
-			XMLReader.of("desc"),
-			XMLReader.of("src"),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("number"),
-			XMLReader.of("type"),
-			XMLReader.ofList(WayPoint.reader("rtept"))
-		);
-	}
+	static final XMLReader<Route> READER = XMLReader.elem(
+		v -> Route.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			(List<Link>)v[4],
+			(UInt)v[5],
+			(String)v[6],
+			(List<WayPoint>)v[7]
+		),
+		"rte",
+		XMLReader.elem("name"),
+		XMLReader.elem("cmt"),
+		XMLReader.elem("desc"),
+		XMLReader.elem("src"),
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("number").map(UInt::parse),
+		XMLReader.elem("type"),
+		XMLReader.elems(WayPoint.reader("rtept"))
+	);
 
 }

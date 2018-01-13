@@ -48,8 +48,8 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 	protected Params<Track> params(final Random random) {
 		return new Params<>(
 			() -> nextTrack(random),
-			Track.reader(),
-			Track::write
+			Track.READER,
+			Track.WRITER
 		);
 	}
 

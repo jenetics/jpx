@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -37,9 +38,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * Information about the GPX file, author, and copyright restrictions goes in
  * the metadata section. Providing rich, meaningful information about your GPX
@@ -54,12 +52,12 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Metadata implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final String _description;
@@ -589,50 +587,38 @@ public final class Metadata implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write("metadata",
-			xml.elem("name", _name),
-			xml.elem("desc", _description),
-			xml.elem(_author, (a, w) -> a.write("author", w)),
-			xml.elem(_copyright, Copyright::write),
-			xml.elems(_links, Link::write),
-			xml.elem("time", ZonedDateTimeFormat.format(_time)),
-			xml.elem("keywords", _keywords),
-			xml.elem(_bounds, Bounds::write)
-		);
-	}
+	static final XMLWriter<Metadata> WRITER = XMLWriter.elem("metadata",
+		XMLWriter.elem("name").map(md -> md._name),
+		XMLWriter.elem("desc").map(md -> md._description),
+		Person.writer("author").map(md -> md._author),
+		Copyright.WRITER.map(md -> md._copyright),
+		XMLWriter.elems(Link.WRITER).map(md -> md._links),
+		XMLWriter.elem("time").map(md -> format(md._time)),
+		XMLWriter.elem("keywords").map(md -> md._keywords),
+		Bounds.WRITER.map(md -> md._bounds)
+	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Metadata> reader() {
-		final XML.Function<Object[], Metadata> create = a -> Metadata.of(
-			Parsers.toString(a[0]),
-			Parsers.toString(a[1]),
-			(Person)a[2],
-			(Copyright)a[3],
-			(List<Link>)a[4],
-			Parsers.toZonedDateTime((String)a[5]),
-			Parsers.toString(a[6]),
-			(Bounds)a[7]
-		);
-
-		return XMLReader.of(create, "metadata",
-			XMLReader.of("name"),
-			XMLReader.of("desc"),
-			Person.reader("author"),
-			Copyright.reader(),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("time"),
-			XMLReader.of("keywords"),
-			Bounds.reader()
-		);
-	}
+	static final XMLReader<Metadata> READER = XMLReader.elem(
+		v -> Metadata.of(
+			(String)v[0],
+			(String)v[1],
+			(Person)v[2],
+			(Copyright)v[3],
+			(List<Link>)v[4],
+			(ZonedDateTime)v[5],
+			(String)v[6],
+			(Bounds)v[7]
+		),
+		"metadata",
+		XMLReader.elem("name"),
+		XMLReader.elem("desc"),
+		Person.reader("author"),
+		Copyright.READER,
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
+		XMLReader.elem("keywords"),
+		Bounds.READER
+	);
 
 }

@@ -28,19 +28,16 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * A person or organization.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Person implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final Email _email;
@@ -211,32 +208,21 @@ public final class Person implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param name the name of the {@code Person} tag
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write(name,
-			xml.elem("name", _name),
-			xml.elem(_email, Email::write),
-			xml.elem(_link, Link::write)
+	static XMLWriter<Person> writer(final String name) {
+		return XMLWriter.elem(name,
+			XMLWriter.elem("name").map(person -> person._name),
+			Email.WRITER.map(person -> person._email),
+			Link.WRITER.map(person -> person._link)
 		);
 	}
 
 	static XMLReader<Person> reader(final String name) {
-		final XML.Function<Object[], Person> creator = a -> Person.of(
-			Parsers.toString(a[0]), (Email)a[1], (Link)a[2]
-		);
-
-		return XMLReader.of(creator, name,
-			XMLReader.of("name"),
-			Email.reader(),
-			Link.reader()
+		return XMLReader.elem(
+			v -> Person.of((String)v[0], (Email)v[1], (Link)v[2]),
+			name,
+			XMLReader.elem("name"),
+			Email.READER,
+			Link.READER
 		);
 	}
 

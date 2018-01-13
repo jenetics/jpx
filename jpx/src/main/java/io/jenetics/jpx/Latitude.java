@@ -33,12 +33,12 @@ import java.io.Serializable;
  * the range of {@code [-90..90]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Latitude extends Number implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final double _value;
 
@@ -146,6 +146,12 @@ public final class Latitude extends Number implements Serializable {
 	 */
 	public static Latitude ofRadians(final double radians) {
 		return new Latitude(Math.toDegrees(radians));
+	}
+
+	static Latitude parse(final String string) {
+		return string != null
+			? Latitude.ofDegrees(Double.parseDouble(string))
+			: null;
 	}
 
 	/* *************************************************************************

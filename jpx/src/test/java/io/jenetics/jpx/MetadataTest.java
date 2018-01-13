@@ -46,8 +46,8 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 	protected Params<Metadata> params(final Random random) {
 		return new Params<>(
 			() -> nextMetadata(random),
-			Metadata.reader(),
-			Metadata::write
+			Metadata.READER,
+			Metadata.WRITER
 		);
 	}
 

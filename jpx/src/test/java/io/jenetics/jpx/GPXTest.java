@@ -63,8 +63,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	protected Params<GPX> params(final Random random) {
 		return new Params<>(
 			() -> nextGPX(random),
-			GPX.reader(),
-			GPX::write
+			GPX.READER,
+			GPX.WRITER
 		);
 	}
 
@@ -204,7 +204,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 		Assert.assertEquals(
 			point.getTime(),
-			Optional.of(Parsers.toZonedDateTime("2009-05-19T04:00:30Z"))
+			Optional.of(ZonedDateTimeFormat.parse("2009-05-19T04:00:30Z"))
 		);
 		Assert.assertEquals(
 			point.getFix(),
@@ -362,11 +362,15 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx = nextGPX(random);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.write(gpx, bout);
+			GPX.write(gpx, bout, "    ");
 
 			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 			final GPX read = GPX.read(bin);
 
+
+			if (!read.equals(gpx)) {
+				System.out.println(new String(bout.toByteArray()));
+			}
 			Assert.assertEquals(read, gpx);
 		}
 	}
