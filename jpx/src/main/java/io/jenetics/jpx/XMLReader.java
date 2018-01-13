@@ -21,84 +21,122 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Lists.immutable;
+import static javax.xml.stream.XMLStreamConstants.CDATA;
+import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
+import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
+import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
+import io.jenetics.jpx.XMLReader.Type;
 
 /**
  * Simplifies the usage of the {@link XMLStreamReader}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 abstract class XMLReader<T> {
 
 	/**
-	 * Represents an XML attribute, by its name.
+	 * Represents the XML element type.
 	 */
-	static final class Attr {
+	static enum Type {
 
 		/**
-		 * The Attribute name.
+		 * Denotes a element reader.
 		 */
-		final String name;
+		ELEM,
 
-		private Attr(final String name) {
-			this.name = requireNonNull(name);
-			if (name.isEmpty()) {
-				throw new IllegalArgumentException(
-					"Attribute must not be empty."
-				);
-			}
-		}
+		/**
+		 * Denotes a element attribute reader.
+		 */
+		ATTR,
 
-		@Override
-		public int hashCode() {
-			return name.hashCode();
-		}
+		/**
+		 * Denotes a reader of elements of the same type.
+		 */
+		LIST,
 
-		@Override
-		public boolean equals(final Object object) {
-			return object instanceof Attr &&
-				((Attr)object).name.equals(name);
-		}
+		/**
+		 * Denotes a reader of the text of a element.
+		 */
+		TEXT
 
-		@Override
-		public String toString() {
-			return name;
-		}
+	}
 
+	private final String _name;
+	private final Type _type;
+
+	/**
+	 * Create a new XML reader with the given name and type.
+	 *
+	 * @param name the element name of the reader
+	 * @param type the element type of the reader
+	 * @throws NullPointerException if one of the give arguments is {@code null}
+	 */
+	XMLReader(final String name, final Type type) {
+		_name = requireNonNull(name);
+		_type = requireNonNull(type);
 	}
 
 	/**
-	 * Create a new XML attribute with the given {@code name}.
+	 * Read the given type from the underlying XML stream {@code reader}.
 	 *
-	 * @param name the attribute name.
-	 * @return a new attribute with the given {@code name}
-	 * @throws NullPointerException if the given {@code name} is {@code null}
-	 * @throws IllegalArgumentException if the given {@code name} is empty
+	 * <pre>{@code
+	 * try (AutoCloseableXMLStreamReader xml = XML.reader(in)) {
+	 *     // Move XML stream to first element.
+	 *     xml.next();
+	 *     return reader.read(xml);
+	 * }
+	 * }</pre>
+	 *
+	 * @param xml the underlying XML stream {@code reader}
+	 * @return the data read from the XML stream, maybe {@code null}
+	 * @throws XMLStreamException if an error occurs while reading the value
+	 * @throws NullPointerException if the given {@code xml} stream reader is
+	 *         {@code null}
 	 */
-	static Attr attr(final String name) {
-		return new Attr(name);
-	}
+	public abstract T read(final XMLStreamReader xml) throws XMLStreamException;
 
+	/**
+	 * Create a new reader for the new mapped type {@code B}.
+	 *
+	 * @param mapper the mapper function
+	 * @param <B> the target type of the new reader
+	 * @return a new reader
+	 * @throws NullPointerException if the given {@code mapper} function is
+	 *         {@code null}
+	 */
+	public <B> XMLReader<B> map(final Function<? super T, ? extends B> mapper) {
+		requireNonNull(mapper);
 
-	private final String _name;
-	private final List<Attr> _attrs;
-
-	XMLReader(final String name, final List<Attr> attrs) {
-		_name = requireNonNull(name);
-		_attrs = immutable(attrs);
+		return new XMLReader<B>(_name, _type) {
+			@Override
+			public B read(final XMLStreamReader xml)
+				throws XMLStreamException
+			{
+				try {
+					return mapper.apply(XMLReader.this.read(xml));
+				} catch (RuntimeException e) {
+					throw new XMLStreamException(e);
+				}
+			}
+		};
 	}
 
 	/**
@@ -106,266 +144,392 @@ abstract class XMLReader<T> {
 	 *
 	 * @return the element name the reader is processing
 	 */
-	public String name() {
+	String name() {
 		return _name;
 	}
 
 	/**
-	 * Return the list of element attributes to read.
+	 * Return the element type of the reader.
 	 *
-	 * @return the list of element attributes to read
+	 * @return the element type of the reader
 	 */
-	List<Attr> attrs() {
-		return _attrs;
+	Type type() {
+		return _type;
 	}
 
 	@Override
 	public String toString() {
-		return format("XMLReader[%s]", name());
+		return format("Reader[%s, %s]", name(), type());
 	}
 
 
-	/**
-	 * Read the given type from the underlying XML stream {@code reader}.
-	 *
-	 * @param reader the underlying XML stream {@code reader}
-	 * @return the read type, maybe {@code null}
-	 * @throws XMLStreamException if an error occurs while reading the value
-	 */
-	public abstract T read(final XMLStreamReader reader, final boolean lenient)
-		throws XMLStreamException;
+	/* *************************************************************************
+	 * Static reader factory methods.
+	 * ************************************************************************/
 
 	/**
-	 * Create a new {@code XMLReader} with the given elements.
+	 * Return a {@code Reader} for reading an attribute of an element.
+	 * <p>
+	 * <b>XML</b>
+	 * <pre> {@code <element length="3"/>}</pre>
 	 *
-	 * @param creator creates the final object from the read arguments
-	 * @param name the element name
-	 * @param attrs the element attributes
-	 * @param children the child element readers
-	 * @param <T> the object type
-	 * @return the reader for the given element
-	 */
-	public static <T> XMLReader<T> of(
-		final XML.Function<Object[], T> creator,
-		final String name,
-		final List<Attr> attrs,
-		final XMLReader<?>... children
-	) {
-		return new XMLReaderImpl<T>(name, attrs, asList(children), creator);
-	}
-
-	/**
-	 * Create a new {@code XMLReader} with the given elements.
+	 * <b>Reader definition</b>
 	 * <pre>{@code
-	 * XMLReader.of(
-	 *     a -> Link.of((String)a[0], (String)a[1], (String)a[2]),
-	 *     "link", attr("href"),
-	 *     XMLReader.of("text"),
-	 *     XMLReader.of("type")
-	 * )
+	 * final Reader<Integer> reader =
+	 *     elem(
+	 *         v -> (Integer)v[0],
+	 *         "element",
+	 *         attr("length").map(Integer::parseInt)
+	 *     );
 	 * }</pre>
 	 *
-	 * @param creator creates the final object from the read arguments
-	 * @param name the element name
-	 * @param attr the element attribute
-	 * @param children the child element readers
-	 * @param <T> the object type
-	 * @return the reader for the given element
+	 * @param name the attribute name
+	 * @return an attribute reader
+	 * @throws NullPointerException if the given {@code name} is {@code null}
 	 */
-	public static <T> XMLReader<T> of(
-		final XML.Function<Object[], T> creator,
-		final String name,
-		final Attr attr,
-		final XMLReader<?>... children
-	) {
-		return of(creator, name, singletonList(attr), children);
+	public static XMLReader<String> attr(final String name) {
+		return new AttrReader(name);
 	}
 
 	/**
-	 * Create a new {@code XMLReader} with the given elements.
+	 * Return a {@code Reader} for reading the text of an element.
+	 * <p>
+	 * <b>XML</b>
+	 * <pre> {@code <element>1234<element>}</pre>
+	 *
+	 * <b>Reader definition</b>
 	 * <pre>{@code
-	 * XMLReader.of(
-	 *     a -> Link.of((String)a[0], (String)a[1], (String)a[2]), (String)a[3],
-	 *     "link",
-	 *     attr("href"),
-	 *     attr("img"),
-	 *     XMLReader.of("text"),
-	 *     XMLReader.of("type")
-	 * )
+	 * final Reader<Integer> reader =
+	 *     elem(
+	 *         v -> (Integer)v[0],
+	 *         "element",
+	 *         text().map(Integer::parseInt)
+	 *     );
 	 * }</pre>
 	 *
-	 * @param creator creates the final object from the read arguments
-	 * @param name the element name
-	 * @param attr1 the first element attribute
-	 * @param attr2 the second element attribute
-	 * @param children the child element readers
-	 * @param <T> the object type
-	 * @return the reader for the given element
+	 * @return an element text reader
 	 */
-	public static <T> XMLReader<T> of(
-		final XML.Function<Object[], T> creator,
-		final String name,
-		final Attr attr1,
-		final Attr attr2,
-		final XMLReader<?>... children
-	) {
-		return of(creator, name, asList(attr1, attr2), children);
+	public static XMLReader<String> text() {
+		return new TextReader();
 	}
 
 	/**
-	 * Create a new {@code XMLReader} with the given elements.
+	 * Return a {@code Reader} for reading an object of type {@code T} from the
+	 * XML element with the given {@code name}.
 	 *
-	 * @param creator creates the final object from the read arguments
-	 * @param name the element name
-	 * @param attr1 the first element attribute
-	 * @param attr2 the second element attribute
-	 * @param attr3 the third element attribute
-	 * @param attr4 the fourth element attribute
-	 * @param <T> the object type
-	 * @return the reader for the given element
-	 */
-	public static <T> XMLReader<T> of(
-		final XML.Function<Object[], T> creator,
-		final String name,
-		final Attr attr1,
-		final Attr attr2,
-		final Attr attr3,
-		final Attr attr4
-	) {
-		return of(creator, name, asList(attr1, attr2, attr3, attr4));
-	}
-
-	/**
-	 * Create a new {@code XMLReader} with the given elements.
+	 * <p>
+	 * <b>XML</b>
+	 * <pre> {@code <property name="size">1234<property>}</pre>
 	 *
-	 * @param creator creates the final object from the read arguments
-	 * @param name the element name
-	 * @param children the child element readers
-	 * @param <T> the object type
-	 * @return the reader for the given element
+	 * <b>Reader definition</b>
+	 * <pre>{@code
+	 * final XMLReader<Property> reader =
+	 *     elem(
+	 *         v -> {
+	 *             final String name = (String)v[0];
+	 *             final Integer value = (Integer)v[1];
+	 *             return Property.of(name, value);
+	 *         },
+	 *         "property",
+	 *         attr("name"),
+	 *         text().map(Integer::parseInt)
+	 *     );
+	 * }</pre>
+	 *
+	 * @param generator the generator function, which build the result object
+	 *        from the given parameter array
+	 * @param name the name of the root (sub-tree) element
+	 * @param children the child element reader, which creates the values
+	 *        forwarded to the {@code generator} function
+	 * @param <T> the reader result type
+	 * @return a node reader
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IllegalArgumentException if the given child readers contains more
+	 *         than one <em>text</em> reader
 	 */
-	public static <T> XMLReader<T> of(
-		final XML.Function<Object[], T> creator,
+	public static <T> XMLReader<T> elem(
+		final Function<Object[], T> generator,
 		final String name,
 		final XMLReader<?>... children
 	) {
-		return of(creator, name, emptyList(), children);
+		requireNonNull(name);
+		requireNonNull(generator);
+		Stream.of(requireNonNull(children)).forEach(Objects::requireNonNull);
+
+		return new ElemReader<>(name, generator, asList(children), Type.ELEM);
 	}
 
 	/**
-	 * Create a reader for a leaf element with the given {@code name}.
+	 * Return a {@code Reader} which reads the value from the child elements of
+	 * the given parent element {@code name}.
+	 * <p>
+	 * <b>XML</b>
+	 * <pre> {@code <min><property name="size">1234<property></min>}</pre>
 	 *
-	 * @param name the element
-	 * @return the reader for the given element
+	 * <b>Reader definition</b>
+	 * <pre>{@code
+	 * final XMLReader<Property> reader =
+	 *     elem("min",
+	 *         elem(
+	 *             v -> {
+	 *                 final String name = (String)v[0];
+	 *                 final Integer value = (Integer)v[1];
+	 *                 return Property.of(name, value);
+	 *             },
+	 *             "property",
+	 *             attr("name"),
+	 *             text().map(Integer::parseInt)
+	 *         )
+	 *     );
+	 * }</pre>
+	 *
+	 * @param name the parent element name
+	 * @param reader the child elements reader
+	 * @param <T> the result type
+	 * @return a node reader
+	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
-	public static XMLReader<String> of(final String name) {
-		return new XMLTextReader(name, emptyList());
+	public static <T> XMLReader<T> elem(
+		final String name,
+		final XMLReader<? extends T> reader
+	) {
+		requireNonNull(name);
+		requireNonNull(reader);
+
+		return elem(
+			v -> {
+				@SuppressWarnings("unchecked")
+				T value = v.length > 0 ? (T)v[0] : null;
+				return value;
+			},
+			name,
+			reader
+		);
 	}
 
 	/**
-	 * Create a reader for a leaf element with the given {@code name}.
+	 * Return a {@code XMLReader} which collects the elements, read by the given
+	 * child {@code reader}, and returns it as list of these elements.
+	 * <p>
+	 * <b>XML</b>
+	 * <pre> {@code
+	 * <properties length="3">
+	 *     <property>-1878762439</property>
+	 *     <property>-957346595</property>
+	 *     <property>-88668137</property>
+	 * </properties>
+	 * }</pre>
 	 *
-	 * @param name the element
-	 * @param attrs the element attributes
-	 * @return the reader for the given element
+	 * <b>Reader definition</b>
+	 * <pre>{@code
+	 * XMLReader<List<Integer>> reader =
+	 *     elem(
+	 *         v -> (List<Integer>)v[0],
+	 *         "properties",
+	 *         elems(elem("property", text().map(Integer::parseInt)))
+	 *     );
+	 * }</pre>
+	 *
+	 * @param reader the child element reader
+	 * @param <T> the element type
+	 * @return a list reader
 	 */
-	public static XMLReader<String> of(final String name, final Attr... attrs) {
-		return new XMLTextReader(name, asList(attrs));
+	public static <T> XMLReader<List<T>> elems(final XMLReader<? extends T> reader) {
+		return new ListReader<T>(reader);
+	}
+}
+
+
+/* *****************************************************************************
+ * XML reader implementations.
+ * ****************************************************************************/
+
+/**
+ * Reader implementation for reading the attribute of the current node.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
+ */
+final class AttrReader extends XMLReader<String> {
+
+	AttrReader(final String name) {
+		super(name, Type.ATTR);
 	}
 
-	/**
-	 * Return a reader which reads a list of elements.
-	 *
-	 * @param reader the basic element reader
-	 * @param <T> the object type
-	 * @return the reader for the given elements
-	 */
-	public static <T> XMLReader<List<T>> ofList(final XMLReader<T> reader) {
-		return new XMLListReader<T>(reader);
+	@Override
+	public String read(final XMLStreamReader xml) throws XMLStreamException {
+		xml.require(START_ELEMENT, null, null);
+		return xml.getAttributeValue(null, name());
 	}
 
 }
 
 /**
- * The main XML reader implementation.
+ * Reader implementation for reading the text of the current node.
  *
- * @param <T> the object type
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
  */
-final class XMLReaderImpl<T> extends XMLReader<T> {
+final class TextReader extends XMLReader<String> {
 
+	TextReader() {
+		super("", Type.TEXT);
+	}
+
+	@Override
+	public String read(final XMLStreamReader xml) throws XMLStreamException {
+		final StringBuilder out = new StringBuilder();
+
+		int type = xml.getEventType();
+		do {
+			out.append(xml.getText());
+		} while (xml.hasNext() && (type = xml.next()) == CHARACTERS || type == CDATA);
+
+
+		return out.toString();
+	}
+}
+
+/**
+ * Reader implementation for reading list of elements.
+ *
+ * @param <T> the element type
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
+ */
+final class ListReader<T> extends XMLReader<List<T>> {
+
+	private final XMLReader<? extends T> _adoptee;
+
+	ListReader(final XMLReader<? extends T> adoptee) {
+		super(adoptee.name(), Type.LIST);
+		_adoptee = adoptee;
+	}
+
+	@Override
+	public List<T> read(final XMLStreamReader xml) throws XMLStreamException {
+		xml.require(START_ELEMENT, null, name());
+		return Collections.singletonList(_adoptee.read(xml));
+	}
+}
+
+/**
+ * The main XML element reader implementation.
+ *
+ * @param <T> the reader data type
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
+ */
+final class ElemReader<T> extends XMLReader<T> {
+
+	// Given parameters.
+	private final Function<Object[], T> _creator;
 	private final List<XMLReader<?>> _children;
-	private final Map<String, XMLReader<?>> _childMap = new HashMap<>();
-	private final XML.Function<Object[], T> _creator;
 
-	XMLReaderImpl(
+	// Derived parameters.
+	private final Map<String, Integer> _readerIndexMapping = new HashMap<>();
+	private final int[] _attrReaderIndexes;
+	private final int[] _textReaderIndex;
+
+	ElemReader(
 		final String name,
-		final List<Attr> attrs,
+		final Function<Object[], T> creator,
 		final List<XMLReader<?>> children,
-		final XML.Function<Object[], T> creator
+		final Type type
 	) {
-		super(name, attrs);
+		super(name, type);
+
 		_creator = requireNonNull(creator);
-
 		_children = requireNonNull(children);
-		for (XMLReader<?> child : children) {
-			_childMap.put(child.name(), child);
+
+		for (int i = 0; i < _children.size(); ++i) {
+			_readerIndexMapping.put(_children.get(i).name(), i);
+		}
+		_attrReaderIndexes = IntStream.range(0, _children.size())
+			.filter(i -> _children.get(i).type() == Type.ATTR)
+			.toArray();
+		_textReaderIndex = IntStream.range(0, _children.size())
+			.filter(i -> _children.get(i).type() == Type.TEXT)
+			.toArray();
+
+		if (_textReaderIndex.length > 1) {
+			throw new IllegalArgumentException(
+				"Found more than one TEXT reader."
+			);
 		}
 	}
 
 	@Override
-	public T read(final XMLStreamReader reader, final boolean lenient)
+	public T read(final XMLStreamReader xml)
 		throws XMLStreamException
 	{
-		final Map<String, Object> param = new HashMap<>();
-		for (Attr attr : attrs()) {
-			final Object value = reader.getAttributeValue(null, attr.name);
-			param.put(attr.name, value);
+		xml.require(START_ELEMENT, null, name());
+
+		final List<ReaderResult> results = _children.stream()
+			.map(ReaderResult::of)
+			.collect(Collectors.toList());
+
+		final ReaderResult text = _textReaderIndex.length == 1
+			? results.get(_textReaderIndex[0])
+			: null;
+
+		for (int i = 0; i < _attrReaderIndexes.length; ++i) {
+			final ReaderResult result = results.get(_attrReaderIndexes[i]);
+			result.put(result.reader().read(xml));
 		}
 
-		while (reader.hasNext()) {
-			switch (reader.next()) {
-				case XMLStreamReader.START_ELEMENT:
-					final XMLReader<?> child = _childMap.get(reader.getLocalName());
-					try {
-						// Special handling for XML list readers.
-						if (child instanceof XMLListReader<?>) {
-							@SuppressWarnings("unchecked")
-							final List<Object> result = (List<Object>)param
-								.computeIfAbsent(
-									child.name(), key -> new ArrayList<>());
+		if (xml.hasNext()) {
+			xml.next();
 
-							result.add(
-								((XMLListReader<?>)child)
-									.adoptee()
-									.read(reader, lenient)
-							);
+			boolean hasNext = false;
+			do {
+				switch (xml.getEventType()) {
+					case START_ELEMENT:
+						final ReaderResult result = results
+							.get(_readerIndexMapping.get(xml.getLocalName()));
 
-						} else if (child != null) {
-							param.put(child.name(), child.read(reader, lenient));
-						}
-					} catch (XMLStreamException e) {
-						if (!lenient) {
-							throw e;
-						}
-					}
-
-					break;
-				case XMLStreamReader.END_ELEMENT:
-					if (name().equals(reader.getLocalName())) {
-						final int size = attrs().size() + _children.size();
-						final Object[] args = new Object[size];
-
-						for (int i = 0; i < attrs().size(); ++i) {
-							args[i] = param.get(attrs().get(i).name);
-						}
-						for (int i = 0; i < _children.size(); ++i) {
-							args[attrs().size() + i] =
-								param.get(_children.get(i).name());
+						if (result != null) {
+							result.put(result.reader().read(xml));
+							if (xml.hasNext()) {
+								hasNext = true;
+								xml.next();
+							} else {
+								hasNext = false;
+							}
 						}
 
-						return _creator.apply(args);
-					}
-			}
+						break;
+					case CHARACTERS:
+					case CDATA:
+						if (text != null) {
+							text.put(text.reader().read(xml));
+						} else {
+							xml.next();
+						}
+						hasNext = true;
+
+						break;
+					case END_ELEMENT:
+						if (name().equals(xml.getLocalName())) {
+							try {
+								return _creator.apply(
+									results.stream()
+										.map(ReaderResult::value)
+										.toArray()
+								);
+							} catch (RuntimeException e) {
+								throw new XMLStreamException(e);
+							}
+						}
+				}
+
+			} while (hasNext);
 		}
 
 		throw new XMLStreamException(format(
@@ -376,62 +540,116 @@ final class XMLReaderImpl<T> extends XMLReader<T> {
 }
 
 /**
- * Special reader implementation for reading text content of leaf nodes.
- */
-final class XMLTextReader extends XMLReader<String> {
-
-	XMLTextReader(final String name, final List<Attr> attrs) {
-		super(name, attrs);
-	}
-
-	@Override
-	public String read(final XMLStreamReader reader, final boolean lenient)
-		throws XMLStreamException
-	{
-		final StringBuilder result = new StringBuilder();
-		while (reader.hasNext()) {
-			switch (reader.next()) {
-				case XMLStreamReader.CHARACTERS:
-				case XMLStreamReader.CDATA:
-					result.append(reader.getText());
-					break;
-				case XMLStreamReader.END_ELEMENT:
-					if (name().equals(reader.getLocalName())) {
-						return result.toString();
-					}
-			}
-		}
-
-		throw new XMLStreamException(format(
-			"Premature end of file while reading '%s'.", name()
-		));
-	}
-
-}
-
-/**
- * List element reader.
+ * Helper interface for storing the XML reader (intermediate) results.
  *
- * @param <T> the object type.
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
  */
-final class XMLListReader<T> extends XMLReader<List<T>>  {
+interface ReaderResult {
 
-	private final XMLReader<T> _adoptee;
+	/**
+	 * Return the underlying XML reader, which reads the result.
+	 *
+	 * @return return the underlying XML reader
+	 */
+	XMLReader<?> reader();
 
-	XMLListReader(final XMLReader<T> adoptee) {
-		super(adoptee.name(), emptyList());
-		_adoptee = requireNonNull(adoptee);
+	/**
+	 * Put the given {@code value} to the reader result.
+	 *
+	 * @param value the reader result
+	 */
+	void put(final Object value);
+
+	/**
+	 * Return the current reader result value.
+	 *
+	 * @return the current reader result value
+	 */
+	Object value();
+
+	/**
+	 * Create a reader result for the given XML reader
+	 *
+	 * @param reader the XML reader
+	 * @return a reader result for the given reader
+	 */
+	static ReaderResult of(final XMLReader<?> reader) {
+		return reader.type() == Type.LIST
+			? new ListResult(reader)
+			: new ValueResult(reader);
 	}
 
-	XMLReader<T> adoptee() {
-		return _adoptee;
+}
+
+/**
+ * Result object for values read from XML elements.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
+ */
+final class ValueResult implements ReaderResult {
+
+	private final XMLReader<?> _reader;
+	private Object _value;
+
+	ValueResult(final XMLReader<?> reader) {
+		_reader = reader;
 	}
 
 	@Override
-	public List<T> read(final XMLStreamReader reader, final boolean lenient)
-		throws XMLStreamException
-	{
-		throw new UnsupportedOperationException();
+	public void put(final Object value) {
+		_value = value;
+	}
+
+	@Override
+	public XMLReader<?> reader() {
+		return _reader;
+	}
+
+
+	@Override
+	public Object value() {
+		return _value;
+	}
+
+}
+
+/**
+ * Result object for list values read from XML elements.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
+ */
+final class ListResult implements ReaderResult {
+
+	private final XMLReader<?> _reader;
+	private final List<Object> _value = new ArrayList<>();
+
+	ListResult(final XMLReader<?> reader) {
+		_reader = reader;
+	}
+
+	@Override
+	public void put(final Object value) {
+		if (value instanceof List<?>) {
+			_value.addAll((List<?>)value);
+		} else {
+			_value.add(value);
+		}
+	}
+
+	@Override
+	public XMLReader<?> reader() {
+		return _reader;
+	}
+
+	@Override
+	public List<Object> value() {
+		return _value;
 	}
 
 }

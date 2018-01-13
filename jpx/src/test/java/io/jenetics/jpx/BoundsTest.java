@@ -41,7 +41,7 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 	protected Params<Bounds> params(final Random random) {
 		return new Params<>(
 			() -> nextBounds(random),
-			Bounds.reader(),
+			Bounds.READER,
 			Bounds.WRITER
 		);
 	}

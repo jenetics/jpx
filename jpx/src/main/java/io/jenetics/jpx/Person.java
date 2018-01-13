@@ -19,9 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.XMLWriter.elem;
-import static io.jenetics.jpx.XMLWriter.text;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -212,22 +209,20 @@ public final class Person implements Serializable {
 	 * ************************************************************************/
 
 	static XMLWriter<Person> writer(final String name) {
-		return elem(name,
-			XMLWriter.elem("name", text()).map(person -> person._name),
+		return XMLWriter.elem(name,
+			XMLWriter.elem("name", XMLWriter.text()).map(person -> person._name),
 			Email.WRITER.map(person -> person._email),
 			Link.WRITER.map(person -> person._link)
 		);
 	}
 
 	static XMLReader<Person> reader(final String name) {
-		final XML.Function<Object[], Person> creator = a -> Person.of(
-			Parsers.toString(a[0]), (Email)a[1], (Link)a[2]
-		);
-
-		return XMLReader.of(creator, name,
-			XMLReader.of("name"),
-			Email.reader(),
-			Link.reader()
+		return XMLReader.elem(
+			v -> Person.of((String)v[0], (Email)v[1], (Link)v[2]),
+			name,
+			XMLReader.elem("name", XMLReader.text()),
+			Email.READER,
+			Link.READER
 		);
 	}
 

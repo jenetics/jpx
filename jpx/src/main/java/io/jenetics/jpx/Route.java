@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.XMLWriter.elem;
 import static io.jenetics.jpx.XMLWriter.text;
 
@@ -771,28 +772,27 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Route> reader() {
-		final XML.Function<Object[], Route> create = a -> Route.builder()
-			.name(Parsers.toString(a[0]))
-			.cmt(Parsers.toString(a[1]))
-			.desc(Parsers.toString(a[2]))
-			.src(Parsers.toString(a[3]))
-			.links((List<Link>)a[4])
-			.number(Parsers.toUInt(a[5], "Route.number"))
-			.type(Parsers.toString(a[6]))
-			.points((List<WayPoint>)a[7])
-			.build();
-
-		return XMLReader.of(create, "rte",
-			XMLReader.of("name"),
-			XMLReader.of("cmt"),
-			XMLReader.of("desc"),
-			XMLReader.of("src"),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("number"),
-			XMLReader.of("type"),
-			XMLReader.ofList(WayPoint.reader("rtept"))
-		);
-	}
+	static final XMLReader<Route> READER = XMLReader.elem(
+		v -> Route.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			(List<Link>)v[4],
+			(UInt)v[5],
+			(String)v[6],
+			(List<WayPoint>)v[7]
+		),
+		"rte",
+		XMLReader.elem("name", XMLReader.text()),
+		XMLReader.elem("cmt", XMLReader.text()),
+		XMLReader.elem("desc", XMLReader.text()),
+		XMLReader.elem("src", XMLReader.text()),
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("number", XMLReader.text()
+			.map(v -> toUInt(v, "Route.number"))),
+		XMLReader.elem("type", XMLReader.text()),
+		XMLReader.elems(WayPoint.reader("rtept"))
+	);
 
 }

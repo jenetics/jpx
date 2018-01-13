@@ -343,14 +343,10 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<TrackSegment> reader() {
-		final XML.Function<Object[], TrackSegment> creator = a -> TrackSegment.of(
-			(List<WayPoint>)a[0]
-		);
-
-		return XMLReader.of(creator, "trkseg",
-			XMLReader.ofList(WayPoint.reader("trkpt"))
-		);
-	}
+	static final XMLReader<TrackSegment> READER = XMLReader.elem(
+		a -> TrackSegment.of((List<WayPoint>)a[0]),
+		"trkseg",
+		XMLReader.elems(WayPoint.reader("trkpt"))
+	);
 
 }

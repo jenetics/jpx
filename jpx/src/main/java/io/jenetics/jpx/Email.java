@@ -21,7 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.Parsers.toMandatoryString;
 import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
@@ -196,16 +196,11 @@ public final class Email implements Comparable<Email>, Serializable {
 		XMLWriter.attr("domain").map(email -> email._domain)
 	);
 
-	static XMLReader<Email> reader() {
-		final XML.Function<Object[], Email> creator = a -> Email.of(
-			Parsers.toMandatoryString(a[0], "Email.id"),
-			Parsers.toMandatoryString(a[1], "Email.domain")
-		);
-
-		return XMLReader.of(creator, "email",
-			attr("id"),
-			attr("domain")
-		);
-	}
+	static final XMLReader<Email> READER = XMLReader.elem(
+		v -> Email.of((String)v[0], (String)v[1]),
+		"email",
+		XMLReader.attr("id").map(v -> toMandatoryString(v, "Email.id")),
+		XMLReader.attr("domain").map(v -> toMandatoryString(v, "Email.domain"))
+	);
 
 }

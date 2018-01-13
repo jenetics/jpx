@@ -20,9 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.toURI;
-import static io.jenetics.jpx.Parsers.toYear;
-import static io.jenetics.jpx.XMLReader.attr;
 import static io.jenetics.jpx.XMLWriter.elem;
 import static io.jenetics.jpx.XMLWriter.text;
 
@@ -44,7 +41,7 @@ import java.util.Optional;
  * public domain or grant additional usage rights.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!s
+ * @version !__version__!
  * @since 1.0
  */
 public final class Copyright implements Serializable {
@@ -278,18 +275,18 @@ public final class Copyright implements Serializable {
 		XMLWriter.elem("license", text()).map(cr -> cr._license)
 	);
 
-	static XMLReader<Copyright> reader() {
-		final XML.Function<Object[], Copyright> creator = a -> Copyright.of(
-			Parsers.toString(a[0]),
-			toYear(a[1], "Copyright.year"),
-			toURI(a[2], "Copyright.license")
-		);
-
-		return XMLReader.of(creator, "copyright",
-			attr("author"),
-			XMLReader.of("year"),
-			XMLReader.of("license")
-		);
-	}
+	static final XMLReader<Copyright> READER = XMLReader.elem(
+		v -> Copyright.of(
+			(String)v[0],
+			(Year)v[1],
+			(URI)v[2]
+		),
+		"copyright",
+		XMLReader.attr("author").map(Parsers::toString),
+		XMLReader.elem("year", XMLReader.text()
+			.map(v -> Parsers.toYear(v, "Copyright year"))),
+		XMLReader.elem("license", XMLReader.text()
+			.map(v -> Parsers.toURI(v, "License")))
+	);
 
 }

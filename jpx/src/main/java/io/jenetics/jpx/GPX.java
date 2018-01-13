@@ -24,7 +24,6 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.Parsers.toMandatoryString;
-import static io.jenetics.jpx.XMLReader.attr;
 import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.BufferedInputStream;
@@ -1022,25 +1021,23 @@ public final class GPX implements Serializable {
 	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<GPX> reader() {
-		final XML.Function<Object[], GPX> creator = a -> GPX.of(
-			toMandatoryString(a[0], "GPX.version"),
-			toMandatoryString(a[1], "GPX.creator"),
+	static final XMLReader<GPX> READER = XMLReader.elem(
+		a -> GPX.of(
+			(String)a[0],
+			(String)a[1],
 			(Metadata)a[2],
 			(List<WayPoint>)a[3],
 			(List<Route>)a[4],
 			(List<Track>)a[5]
-		);
-
-		return XMLReader.of(creator, "gpx",
-			attr("version"),
-			attr("creator"),
-			Metadata.reader(),
-			XMLReader.ofList(WayPoint.reader("wpt")),
-			XMLReader.ofList(Route.reader()),
-			XMLReader.ofList(Track.reader())
-		);
-	}
+		),
+		"gpx",
+		XMLReader.attr("version").map(v -> toMandatoryString(v, "GPX.version")),
+		XMLReader.attr("creator").map(v -> toMandatoryString(v, "GPX.creator")),
+		Metadata.READER,
+		XMLReader.elems(WayPoint.reader("wpt")),
+		XMLReader.elems(Route.READER),
+		XMLReader.elems(Track.READER)
+	);
 
 	/* *************************************************************************
 	 *  Load GPX from file.
@@ -1186,7 +1183,7 @@ public final class GPX implements Serializable {
 			final XMLStreamReader reader = factory.createXMLStreamReader(input);
 			if (reader.hasNext()) {
 				reader.next();
-				return reader().read(reader, lenient);
+				return READER.read(reader);
 			} else {
 				throw new IOException("No 'gpx' element found.");
 			}

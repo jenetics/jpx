@@ -45,7 +45,7 @@ public class LinkTest extends XMLStreamTestBase<Link> {
 	protected Params<Link> params(final Random random) {
 		return new Params<>(
 			() -> nextLink(random),
-			Link.reader(),
+			Link.READER,
 			Link.WRITER
 		);
 	}

@@ -601,28 +601,26 @@ public final class Metadata implements Serializable {
 	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Metadata> reader() {
-		final XML.Function<Object[], Metadata> create = a -> Metadata.of(
-			Parsers.toString(a[0]),
-			Parsers.toString(a[1]),
-			(Person)a[2],
-			(Copyright)a[3],
-			(List<Link>)a[4],
-			Parsers.toZonedDateTime((String)a[5]),
-			Parsers.toString(a[6]),
-			(Bounds)a[7]
-		);
-
-		return XMLReader.of(create, "metadata",
-			XMLReader.of("name"),
-			XMLReader.of("desc"),
-			Person.reader("author"),
-			Copyright.reader(),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("time"),
-			XMLReader.of("keywords"),
-			Bounds.reader()
-		);
-	}
+	static final XMLReader<Metadata> READER = XMLReader.elem(
+		v -> Metadata.of(
+			(String)v[0],
+			(String)v[1],
+			(Person)v[2],
+			(Copyright)v[3],
+			(List<Link>)v[4],
+			(ZonedDateTime)v[5],
+			(String)v[6],
+			(Bounds)v[7]
+		),
+		"metadata",
+		XMLReader.elem("name", XMLReader.text()),
+		XMLReader.elem("desc", XMLReader.text()),
+		Person.reader("author"),
+		Copyright.READER,
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("time", XMLReader.text().map(Parsers::toZonedDateTime)),
+		XMLReader.elem("keywords", XMLReader.text()),
+		Bounds.READER
+	);
 
 }

@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Parsers.toUInt;
 import static io.jenetics.jpx.XMLWriter.elem;
 import static io.jenetics.jpx.XMLWriter.text;
 
@@ -742,28 +743,27 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Track> reader() {
-		final XML.Function<Object[], Track> create = a -> Track.of(
-			Parsers.toString(a[0]),
-			Parsers.toString(a[1]),
-			Parsers.toString(a[2]),
-			Parsers.toString(a[3]),
-			(List<Link>)a[4],
-			Parsers.toUInt(a[5], "Track.number"),
-			Parsers.toString(a[6]),
-			(List<TrackSegment>)a[7]
-		);
-
-		return XMLReader.of(create, "trk",
-			XMLReader.of("name"),
-			XMLReader.of("cmt"),
-			XMLReader.of("desc"),
-			XMLReader.of("src"),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("number"),
-			XMLReader.of("type"),
-			XMLReader.ofList(TrackSegment.reader())
-		);
-	}
+	static final XMLReader<Track> READER = XMLReader.elem(
+		v -> Track.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			(List<Link>)v[4],
+			(UInt)v[5],
+			(String)v[6],
+			(List<TrackSegment>)v[7]
+		),
+		"trk",
+		XMLReader.elem("name", XMLReader.text()),
+		XMLReader.elem("cmt", XMLReader.text()),
+		XMLReader.elem("desc", XMLReader.text()),
+		XMLReader.elem("src", XMLReader.text()),
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("number", XMLReader.text()
+			.map(v -> toUInt(v, "Route.number"))),
+		XMLReader.elem("type", XMLReader.text()),
+		XMLReader.elems(TrackSegment.READER)
+	);
 
 }

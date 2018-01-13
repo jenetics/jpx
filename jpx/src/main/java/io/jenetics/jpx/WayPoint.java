@@ -34,7 +34,6 @@ import static io.jenetics.jpx.Parsers.toLength;
 import static io.jenetics.jpx.Parsers.toLongitude;
 import static io.jenetics.jpx.Parsers.toSpeed;
 import static io.jenetics.jpx.Parsers.toUInt;
-import static io.jenetics.jpx.Parsers.toZonedDateTime;
 import static io.jenetics.jpx.XMLReader.attr;
 import static io.jenetics.jpx.XMLWriter.elem;
 import static io.jenetics.jpx.XMLWriter.number;
@@ -54,9 +53,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
@@ -1036,11 +1032,7 @@ public final class WayPoint implements Point, Serializable {
 		 *         following values: [none, 2d, 3d, dgps, pps]
 		 */
 		public Builder fix(final String fix) {
-			try {
-				_fix = toFix(fix, "WayPoint.fix");
-			} catch (XMLStreamException e) {
-				throw new IllegalArgumentException(e);
-			}
+			_fix = toFix(fix, "WayPoint.fix");
 			return this;
 		}
 
@@ -1706,52 +1698,52 @@ public final class WayPoint implements Point, Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final String name) {
-		final XML.Function<Object[], WayPoint> create = a -> WayPoint.builder()
-			.ele(toLength(a[2], "WayPoint.ele"))
-			.speed(toSpeed(a[3], "WayPoint.speed"))
-			.time(toZonedDateTime((String)a[4]))
-			.magvar(toDegrees(a[5], "WayPoint.magvar"))
-			.geoidheight(toLength(a[6], "WayPoint.geoidheight"))
-			.name(Parsers.toString(a[7]))
-			.cmt(Parsers.toString(a[8]))
-			.desc(Parsers.toString(a[9]))
-			.src(Parsers.toString(a[10]))
-			.links((List<Link>)a[11])
-			.sym(Parsers.toString(a[12]))
-			.type(Parsers.toString(a[13]))
-			.fix(toFix(a[14], "WayPoint.fix"))
-			.sat(toUInt(a[15], "WayPoint.sat"))
-			.hdop(toDouble(a[16], "WayPoint.hdop"))
-			.vdop(toDouble(a[17], "WayPoint.vdop"))
-			.pdop(toDouble(a[18], "WayPoint.pdop"))
-			.ageofdgpsdata(toDuration(a[19], "WayPoint.ageofdgpsdata"))
-			.dgpsid(toDGPSStation(a[20], "WayPoint.dgpsid"))
-			.build(
-				toLatitude(a[0], "WayPoint.lat"),
-				toLongitude(a[1], "WayPoint.lon"));
-
-		return XMLReader.of(create, name,
-			attr("lat"),
-			attr("lon"),
-			XMLReader.of("ele"),
-			XMLReader.of("speed"),
-			XMLReader.of("time"),
-			XMLReader.of("magvar"),
-			XMLReader.of("geoidheight"),
-			XMLReader.of("name"),
-			XMLReader.of("cmt"),
-			XMLReader.of("desc"),
-			XMLReader.of("src"),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("sym"),
-			XMLReader.of("type"),
-			XMLReader.of("fix"),
-			XMLReader.of("sat"),
-			XMLReader.of("hdop"),
-			XMLReader.of("vdop"),
-			XMLReader.of("pdop"),
-			XMLReader.of("ageofdgpsdata"),
-			XMLReader.of("dgpsid")
+		return XMLReader.elem(
+			v -> WayPoint.of(
+				(Latitude)v[0],
+				(Longitude)v[1],
+				(Length)v[2],
+				(Speed)v[3],
+				(ZonedDateTime)v[4],
+				(Degrees)v[5],
+				(Length)v[6],
+				(String)v[7],
+				(String)v[8],
+				(String)v[9],
+				(String)v[10],
+				(List<Link>)v[11],
+				(String)v[12],
+				(String)v[13],
+				(Fix)v[14],
+				(UInt)v[15],
+				(Double)v[16],
+				(Double)v[17],
+				(Double)v[18],
+				(Duration)v[19],
+				(DGPSStation)v[20]
+			),
+			name,
+			attr("lat").map(v -> toLatitude(v, "WayPoint.lat")),
+			attr("lon").map(v -> toLongitude(v, "WayPoint.lon")),
+			XMLReader.elem("ele", XMLReader.text().map(v -> toLength(v, "WayPoint.ele"))),
+			XMLReader.elem("speed", XMLReader.text().map(v -> toSpeed(v, "WayPoint.speed"))),
+			XMLReader.elem("time", XMLReader.text().map(Parsers::toZonedDateTime)),
+			XMLReader.elem("magvar", XMLReader.text().map(v -> toDegrees(v, "WayPoint.magvar"))),
+			XMLReader.elem("geoidheight", XMLReader.text().map(v -> toLength(v, "WayPoint.geoidheight"))),
+			XMLReader.elem("name", XMLReader.text()),
+			XMLReader.elem("cmt", XMLReader.text()),
+			XMLReader.elem("desc", XMLReader.text()),
+			XMLReader.elem("src", XMLReader.text()),
+			XMLReader.elems(Link.READER),
+			XMLReader.elem("sym", XMLReader.text()),
+			XMLReader.elem("type", XMLReader.text()),
+			XMLReader.elem("fix", XMLReader.text().map(v -> toFix(v, "WayPoint.fix"))),
+			XMLReader.elem("sat", XMLReader.text().map(v -> toUInt(v, "WayPoint.sat"))),
+			XMLReader.elem("hdop", XMLReader.text().map(v -> toDouble(v, "WayPoint.hdop"))),
+			XMLReader.elem("vdop", XMLReader.text().map(v -> toDouble(v, "WayPoint.vdop"))),
+			XMLReader.elem("pdop", XMLReader.text().map(v -> toDouble(v, "WayPoint.pdop"))),
+			XMLReader.elem("ageofdgpsdata", XMLReader.text().map(v -> toDuration(v, "WayPoint.ageofdgpsdata"))),
+			XMLReader.elem("dgpsid", XMLReader.text().map(v -> toDGPSStation(v, "WayPoint.dgpsid")))
 		);
 	}
 

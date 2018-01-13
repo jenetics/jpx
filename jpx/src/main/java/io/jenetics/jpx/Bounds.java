@@ -227,20 +227,18 @@ public final class Bounds implements Serializable {
 		XMLWriter.attr("maxlon").map(Bounds::getMaxLongitude)
 	);
 
-	static XMLReader<Bounds> reader() {
-		final XML.Function<Object[], Bounds> creator = a -> Bounds.of(
-			toLatitude(a[0], "Bounds.minlat"),
-			toLongitude(a[1], "Bounds.minlon"),
-			toLatitude(a[2], "Bounds.maxlat"),
-			toLongitude(a[3], "Bounds.maxlon")
-		);
-
-		return XMLReader.of(creator, "bounds",
-			XMLReader.attr("minlat"),
-			XMLReader.attr("minlon"),
-			XMLReader.attr("maxlat"),
-			XMLReader.attr("maxlon")
-		);
-	}
+	static final XMLReader<Bounds> READER = XMLReader.elem(
+		v -> Bounds.of(
+			toLatitude(v[0], "Bounds.minlat"),
+			toLongitude(v[1], "Bounds.minlon"),
+			toLatitude(v[2], "Bounds.maxlat"),
+			toLongitude(v[3], "Bounds.maxlon")
+		),
+		"bounds",
+		XMLReader.attr("minlat"),
+		XMLReader.attr("minlon"),
+		XMLReader.attr("maxlat"),
+		XMLReader.attr("maxlon")
+	);
 
 }

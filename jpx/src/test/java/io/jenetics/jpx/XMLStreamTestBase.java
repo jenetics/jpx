@@ -104,7 +104,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 			.createXMLStreamReader(in);
 
 		streamReader.next();
-		return reader.read(streamReader, false);
+		return reader.read(streamReader);
 	}
 
 }

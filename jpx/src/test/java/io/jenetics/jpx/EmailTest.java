@@ -44,7 +44,7 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 	protected Params<Email> params(final Random random) {
 		return new Params<>(
 			() -> nextEmail(random),
-			Email.reader(),
+			Email.READER,
 			Email.WRITER
 		);
 	}
