@@ -315,6 +315,10 @@ abstract class XMLReader<T> {
 		);
 	}
 
+	public static XMLReader<String> elem(final String name) {
+		return elem(name, text());
+	}
+
 	/**
 	 * Return a {@code XMLReader} which collects the elements, read by the given
 	 * child {@code reader}, and returns it as list of these elements.
