@@ -65,13 +65,12 @@ public class LinkTest extends XMLStreamTestBase<Link> {
 	}
 
 	public static List<Link> nextLinks(final Random random) {
-		return nextLinks(random, 20);
-	}
+		final List<Link> links = new ArrayList<>();
+		for (int i = 0, n = random.nextInt(20); i < n; ++i) {
+			links.add(LinkTest.nextLink(random));
+		}
 
-	public static List<Link> nextLinks(final Random random, final int count) {
-		return Stream.generate(() -> nextLink(random))
-			.limit(count)
-			.collect(Collectors.toList());
+		return links;
 	}
 
 	@Test

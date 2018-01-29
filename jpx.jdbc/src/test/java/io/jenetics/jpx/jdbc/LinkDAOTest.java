@@ -43,7 +43,7 @@ public class LinkDAOTest extends DAOTestBase<Link> {
 		return LinkTest.nextLink(random);
 	}
 
-	private final List<Link> objects = nextObjects(new Random(123), 20);
+	private final List<Link> objects = nextObjects(new Random(1234), 10);
 
 	@Test
 	public void insert() throws SQLException {

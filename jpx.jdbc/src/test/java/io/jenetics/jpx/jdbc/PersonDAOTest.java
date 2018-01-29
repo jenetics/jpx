@@ -44,7 +44,7 @@ public class PersonDAOTest extends DAOTestBase<Person> {
 		return nextPerson(random);
 	}
 
-	private final List<Person> objects = nextObjects(new Random(123), 20);
+	private final List<Person> objects = nextObjects(new Random(123), 2);
 
 	@Test
 	public void insert() throws SQLException {

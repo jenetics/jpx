@@ -69,9 +69,9 @@ public class FiltersTest {
 
 		final GPX merged = gpx.toBuilder()
 			.trackFilter()
-				.listMap(Filters::mergeTracks)
-				.filter(Track::nonEmpty)
-				.build()
+			.listMap(Filters::mergeTracks)
+			.filter(Track::nonEmpty)
+			.build()
 			.build();
 
 		Assert.assertEquals(merged.getTracks().size(), 1);
@@ -80,7 +80,7 @@ public class FiltersTest {
 			.mapToInt(t -> t.getSegments().size())
 			.sum();
 
-		Assert.assertEquals(segments, 19);
+		Assert.assertEquals(segments, 38);
 	}
 
 	@Test
