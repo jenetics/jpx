@@ -413,13 +413,14 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final Random random = new Random(123);
 		for (int i = 0; i < 15; ++i) {
+			System.out.println(i);
 			final GPX gpx = nextGPX(random);
 
 			final GPX read = GPX.read(Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try {
 				Assert.assertEquals(read, gpx);
 			} catch (AssertionError e) {
-				GPX.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)), "    ");
+				GPX.write(gpx, Paths.get(baseDir, format("gpx_%d(1).xml", i)), "    ");
 			}
 
 

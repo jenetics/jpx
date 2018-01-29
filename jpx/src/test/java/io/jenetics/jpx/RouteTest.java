@@ -55,13 +55,13 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 
 	public static Route nextRoute(final Random random) {
 		return Route.builder()
-			.name(format("name_%s", Math.abs(random.nextLong())))
-			.cmt(random.nextBoolean() ? format("comment_%s", Math.abs(random.nextLong())) : null)
-			.desc(random.nextBoolean() ? format("description_%s", Math.abs(random.nextLong())) : null)
-			.src(random.nextBoolean() ? format("source_%s", Math.abs(random.nextLong())) : null)
+			.name(random.nextBoolean() ? format("name_%s", random.nextInt(100)) : null)
+			.cmt(random.nextBoolean() ? format("comment_%s", random.nextInt(100)) : null)
+			.desc(random.nextBoolean() ? format("description_%s", random.nextInt(100)) : null)
+			.src(random.nextBoolean() ? format("source_%s", random.nextInt(100)) : null)
 			.links(LinkTest.nextLinks(random))
-			.number(random.nextBoolean() ? UInt.of(Math.abs(random.nextInt())) : null)
-			.type(random.nextBoolean() ? format("type_%s", Math.abs(random.nextLong())) : null)
+			.number(random.nextBoolean() ? UInt.of(random.nextInt(10)) : null)
+			.type(random.nextBoolean() ? format("type_%s", random.nextInt(100)) : null)
 			.points(WayPointTest.nextWayPoints(random))
 			.build();
 	}

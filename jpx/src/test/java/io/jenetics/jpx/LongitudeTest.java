@@ -69,9 +69,4 @@ public class LongitudeTest extends ObjectTester<Longitude> {
 		EqualsVerifier.forClass(Longitude.class).verify();
 	}
 
-	public static Longitude nextLongitude(final Random random) {
-		final double value = random.nextDouble();
-		return Longitude.ofDegrees(value*360 - 180);
-	}
-
 }

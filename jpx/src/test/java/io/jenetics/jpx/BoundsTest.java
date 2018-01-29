@@ -48,10 +48,10 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 
 	public static Bounds nextBounds(final Random random) {
 		return Bounds.of(
-			LatitudeTest.nextLatitude(random),
-			LongitudeTest.nextLongitude(random),
-			LatitudeTest.nextLatitude(random),
-			LongitudeTest.nextLongitude(random)
+			Latitude.ofDegrees(random.nextInt(90)),
+			Longitude.ofDegrees(random.nextInt(90)),
+			Latitude.ofDegrees(random.nextInt(90)),
+			Longitude.ofDegrees(random.nextInt(90))
 		);
 	}
 

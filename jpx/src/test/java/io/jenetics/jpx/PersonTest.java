@@ -23,6 +23,8 @@ import static java.lang.String.format;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -59,7 +61,9 @@ public class PersonTest extends XMLStreamTestBase<Person> {
 
 	public static Person nextPerson(final Random random) {
 		return Person.of(
-			format("name_%s", Math.abs(random.nextLong())),
+			random.nextBoolean()
+				? format("name_%s", random.nextInt(100))
+				: null,
 			random.nextBoolean()
 				? EmailTest.nextEmail(random)
 				: null,

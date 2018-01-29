@@ -57,7 +57,7 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 
 	public static Copyright nextCopyright(final Random random) {
 		return Copyright.of(
-			format("author_%s", Math.abs(random.nextLong())),
+			format("author_%s", random.nextInt(100)),
 			random.nextBoolean()
 				? Year.of(random.nextInt(1000))
 				: null,
