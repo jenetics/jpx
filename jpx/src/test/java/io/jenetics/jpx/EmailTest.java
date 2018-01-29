@@ -21,9 +21,12 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 /**
@@ -41,8 +44,8 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 	protected Params<Email> params(final Random random) {
 		return new Params<>(
 			() -> nextEmail(random),
-			Email.reader(),
-			Email::write
+			Email.READER,
+			Email.WRITER
 		);
 	}
 
@@ -51,6 +54,39 @@ public class EmailTest extends XMLStreamTestBase<Email> {
 			format("id_%s", random.nextInt(100)),
 			format("domain_%s", random.nextInt(100))
 		);
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromEmptyAddress() {
+		Email.of("");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress1() {
+		Email.of("@");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress2() {
+		Email.of("a@");
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void fromShortAddress3() {
+		Email.of("@b");
+	}
+
+	@Test
+	public void fromAddress() {
+		Assert.assertEquals(
+			Email.of("a@b"),
+			Email.of("a", "b")
+		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Email.class).verify();
 	}
 
 }

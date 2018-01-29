@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -29,7 +30,7 @@ import java.util.Optional;
  * used.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public enum Fix {
@@ -72,5 +73,17 @@ public enum Fix {
 			case "pps": return Optional.of(Fix.PPS);
 			default: return Optional.empty();
 		}
+	}
+
+	static String format(final Fix fix) {
+		return fix != null ? fix._value : null;
+	}
+
+	static Fix parse(final String string) {
+		return string != null
+			? Fix.ofName(string).orElseThrow(() ->
+				new IllegalArgumentException(String.format(
+					"Invalid value for: '%s'.", string)))
+			: null;
 	}
 }

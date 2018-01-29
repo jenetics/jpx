@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -27,7 +29,6 @@ import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0.1
  */
 @Test
 public class LongitudeTest extends ObjectTester<Longitude> {
@@ -61,6 +62,11 @@ public class LongitudeTest extends ObjectTester<Longitude> {
 			Longitude.ofDegrees(1).toDegrees(),
 			Longitude.ofRadians(Math.toRadians(1)).toDegrees()
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Longitude.class).verify();
 	}
 
 	public static Longitude nextLongitude(final Random random) {

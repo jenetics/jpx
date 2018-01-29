@@ -21,25 +21,25 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Parsers.toLatitude;
-import static io.jenetics.jpx.Parsers.toLongitude;
-import static io.jenetics.jpx.XMLReader.attr;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
+import java.util.Objects;
 
 /**
  * Two lat/lon pairs defining the extent of an element.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Bounds implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final Latitude _minLatitude;
 	private final Longitude _minLongitude;
@@ -106,20 +106,21 @@ public final class Bounds implements Serializable {
 	@Override
 	public int hashCode() {
 		int hash = 17;
-		hash += 31*_minLatitude.hashCode() + 37;
-		hash += 31*_minLongitude.hashCode() + 37;
-		hash += 31*_maxLatitude.hashCode() + 37;
-		hash += 31*_maxLongitude.hashCode() + 37;
+		hash += 31*Objects.hashCode(_minLatitude) + 37;
+		hash += 31*Objects.hashCode(_minLongitude) + 37;
+		hash += 31*Objects.hashCode(_maxLatitude) + 37;
+		hash += 31*Objects.hashCode(_maxLongitude) + 37;
 		return hash;
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof  Bounds &&
-			((Bounds)obj)._minLatitude.equals(_minLatitude) &&
-			((Bounds)obj)._minLongitude.equals(_minLongitude) &&
-			((Bounds)obj)._maxLatitude.equals(_maxLatitude) &&
-			((Bounds)obj)._maxLongitude.equals(_maxLongitude);
+		return obj == this ||
+			obj instanceof  Bounds &&
+			Objects.equals(((Bounds)obj)._minLatitude, _minLatitude) &&
+			Objects.equals(((Bounds)obj)._minLongitude, _minLongitude) &&
+			Objects.equals(((Bounds)obj)._maxLatitude, _maxLatitude) &&
+			Objects.equals(((Bounds)obj)._maxLongitude, _maxLongitude);
 	}
 
 	@Override
@@ -185,38 +186,54 @@ public final class Bounds implements Serializable {
 	}
 
 	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.BOUNDS, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_minLatitude.toDegrees());
+		out.writeDouble(_minLongitude.toDegrees());
+		out.writeDouble(_maxLatitude.toDegrees());
+		out.writeDouble(_maxLongitude.toDegrees());
+	}
+
+	static Bounds read(final DataInput in) throws IOException {
+		return Bounds.of(
+			in.readDouble(), in.readDouble(),
+			in.readDouble(), in.readDouble()
+		);
+	}
+
+	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
+	static final XMLWriter<Bounds> WRITER = XMLWriter.elem("bounds",
+		XMLWriter.attr("minlat").map(Bounds::getMinLatitude),
+		XMLWriter.attr("minlon").map(Bounds::getMinLongitude),
+		XMLWriter.attr("maxlat").map(Bounds::getMaxLatitude),
+		XMLWriter.attr("maxlon").map(Bounds::getMaxLongitude)
+	);
 
-		xml.write("bounds",
-			xml.attr("minlat", _minLatitude),
-			xml.attr("minlon", _minLongitude),
-			xml.attr("maxlat", _maxLatitude),
-			xml.attr("maxlon", _maxLongitude)
-		);
-	}
-
-	static XMLReader<Bounds> reader() {
-		final XML.Function<Object[], Bounds> creator = a -> Bounds.of(
-			toLatitude(a[0], "Bounds.minlat"),
-			toLongitude(a[1], "Bounds.minlon"),
-			toLatitude(a[2], "Bounds.maxlat"),
-			toLongitude(a[3], "Bounds.maxlon")
-		);
-
-		return XMLReader.of(creator, "bounds",
-			attr("minlat"), attr("minlon"),
-			attr("maxlat"), attr("maxlon")
-		);
-	}
+	static final XMLReader<Bounds> READER = XMLReader.elem(
+		v -> Bounds.of(
+			(Latitude)v[0], (Longitude)v[1],
+			(Latitude)v[2], (Longitude)v[3]
+		),
+		"bounds",
+		XMLReader.attr("minlat").map(Latitude::parse),
+		XMLReader.attr("minlon").map(Longitude::parse),
+		XMLReader.attr("maxlat").map(Latitude::parse),
+		XMLReader.attr("maxlon").map(Longitude::parse)
+	);
 
 }

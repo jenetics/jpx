@@ -20,9 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static io.jenetics.jpx.Format.parseURI;
+
+import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.time.Year;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -44,17 +46,13 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 	protected Params<Copyright> params(final Random random) {
 		return new Params<>(
 			() -> nextCopyright(random),
-			Copyright.reader(),
-			Copyright::write
+			Copyright.READER,
+			Copyright.WRITER
 		);
 	}
 
 	private static URI uri(final Random random) {
-		try {
-			return new URI(format("http://uri.com/%s", random.nextInt(100)));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
+		return parseURI(format("http://uri.com/%s", random.nextInt(100)));
 	}
 
 	public static Copyright nextCopyright(final Random random) {
@@ -72,6 +70,11 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 	@Test
 	public void nullURIString() {
 		Copyright.of("author", 23, (String)null);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Copyright.class).verify();
 	}
 
 }

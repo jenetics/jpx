@@ -19,23 +19,25 @@
  */
 package io.jenetics.jpx;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * A person or organization.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Person implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final Email _email;
@@ -114,7 +116,8 @@ public final class Person implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Person &&
+		return obj == this ||
+			obj instanceof Person &&
 			Objects.equals(((Person)obj)._name, _name) &&
 			Objects.equals(((Person)obj)._email, _email) &&
 			Objects.equals(((Person)obj)._link, _link);
@@ -171,36 +174,55 @@ public final class Person implements Serializable {
 		return new Person(null, null, null);
 	}
 
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.PERSON, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullable(_email, Email::write, out);
+		IO.writeNullable(_link, Link::write, out);
+	}
+
+	static Person read(final DataInput in) throws IOException {
+		return new Person(
+			IO.readNullableString(in),
+			IO.readNullable(Email::read, in),
+			IO.readNullable(Link::read, in)
+		);
+	}
+
+
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param name the name of the {@code Person} tag
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final String name, final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write(name,
-			xml.elem("name", _name),
-			xml.elem(_email, Email::write),
-			xml.elem(_link, Link::write)
+	static XMLWriter<Person> writer(final String name) {
+		return XMLWriter.elem(name,
+			XMLWriter.elem("name").map(person -> person._name),
+			Email.WRITER.map(person -> person._email),
+			Link.WRITER.map(person -> person._link)
 		);
 	}
 
 	static XMLReader<Person> reader(final String name) {
-		final XML.Function<Object[], Person> creator = a -> Person.of(
-			Parsers.toString(a[0]), (Email)a[1], (Link)a[2]
-		);
-
-		return XMLReader.of(creator, name,
-			XMLReader.of("name"),
-			Email.reader(),
-			Link.reader()
+		return XMLReader.elem(
+			v -> Person.of((String)v[0], (Email)v[1], (Link)v[2]),
+			name,
+			XMLReader.elem("name"),
+			Email.READER,
+			Link.READER
 		);
 	}
 

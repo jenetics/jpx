@@ -21,6 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -30,7 +35,7 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Degrees
@@ -40,7 +45,7 @@ public final class Degrees
 		Serializable
 {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final double _value;
 
@@ -117,7 +122,8 @@ public final class Degrees
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Degrees &&
+		return obj == this ||
+			obj instanceof Degrees &&
 			Double.compare(((Degrees)obj)._value, _value) == 0;
 	}
 
@@ -155,4 +161,33 @@ public final class Degrees
 	public static Degrees ofRadians(final double radians) {
 		return new Degrees(Math.toDegrees(radians));
 	}
+
+	static Degrees parse(final String string) {
+		return string != null
+			? Degrees.ofDegrees(Double.parseDouble(string))
+			: null;
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.DEGREES, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Degrees read(final DataInput in) throws IOException {
+		return new Degrees(in.readDouble());
+	}
+
 }

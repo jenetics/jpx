@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -33,6 +35,11 @@ public class DGPSStationTest extends ObjectTester<DGPSStation> {
 	@Override
 	Supplier<DGPSStation> factory(final Random random) {
 		return () -> DGPSStation.of(random.nextInt(1023));
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(DGPSStation.class).verify();
 	}
 
 }

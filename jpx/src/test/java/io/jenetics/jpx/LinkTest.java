@@ -21,6 +21,9 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -33,9 +36,7 @@ import org.testng.annotations.Test;
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 @Test
-public class LinkTest
-	extends XMLStreamTestBase<Link>
-{
+public class LinkTest extends XMLStreamTestBase<Link> {
 
 	@Override
 	public Supplier<Link> factory(final Random random) {
@@ -46,8 +47,8 @@ public class LinkTest
 	protected Params<Link> params(final Random random) {
 		return new Params<>(
 			() -> nextLink(random),
-			Link.reader(),
-			Link::write
+			Link.READER,
+			Link.WRITER
 		);
 	}
 
@@ -71,6 +72,11 @@ public class LinkTest
 		return Stream.generate(() -> nextLink(random))
 			.limit(count)
 			.collect(Collectors.toList());
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Link.class).verify();
 	}
 
 }

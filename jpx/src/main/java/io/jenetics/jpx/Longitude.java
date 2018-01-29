@@ -21,6 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 
 /**
@@ -28,12 +33,12 @@ import java.io.Serializable;
  * the range of {@code [-180..180]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
-public class Longitude extends Number implements Serializable {
+public final class Longitude extends Number implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final double _value;
 
@@ -104,7 +109,8 @@ public class Longitude extends Number implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Longitude &&
+		return obj == this ||
+			obj instanceof Longitude &&
 			Double.compare(((Longitude)obj)._value, _value) == 0;
 	}
 
@@ -141,4 +147,33 @@ public class Longitude extends Number implements Serializable {
 	public static Longitude ofRadians(final double radians) {
 		return new Longitude(Math.toDegrees(radians));
 	}
+
+	static Longitude parse(final String string) {
+		return string != null
+			? Longitude.ofDegrees(Double.parseDouble(string))
+			: null;
+	}
+
+	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.LONGITUDE, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		out.writeDouble(_value);
+	}
+
+	static Longitude read(final DataInput in) throws IOException {
+		return new Longitude(in.readDouble());
+	}
+
 }

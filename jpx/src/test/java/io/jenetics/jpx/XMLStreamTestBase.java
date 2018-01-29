@@ -41,10 +41,6 @@ import org.testng.annotations.Test;
  */
 public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
-	public static interface XMLWriter<T> {
-		void write(T value, final XMLStreamWriter writer) throws XMLStreamException;
-	}
-
 	public static final class Params<T> {
 		public final Supplier<T> supplier;
 		public final XMLReader<T> reader;
@@ -73,10 +69,6 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
 	@Test(invocationCount = 10)
 	public void marshalling() throws Exception {
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final XMLStreamWriter writer = XMLOutputFactory.newInstance()
-			.createXMLStreamWriter(out);
-
 		final Params<T> params = params(_random);
 
 		final T expected = params.supplier.get();
@@ -95,10 +87,11 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final XMLStreamWriter streamWriter = XMLOutputFactory.newInstance()
-			.createXMLStreamWriter(out);
+		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
+		final XMLStreamWriter streamWriter = new IndentingXMLWriter(
+			factory.createXMLStreamWriter(out, "UTF-8"), "    ");
 
-		writer.write(value, streamWriter);
+		writer.write(streamWriter, value);
 		return out.toByteArray();
 	}
 

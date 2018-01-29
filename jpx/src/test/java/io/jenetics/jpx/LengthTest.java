@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -80,6 +82,11 @@ public class LengthTest extends ObjectTester<Length> {
 			{Unit.MILE, 1_609.344},
 			{Unit.YARD, 0.9144}
 		};
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Length.class).verify();
 	}
 
 }

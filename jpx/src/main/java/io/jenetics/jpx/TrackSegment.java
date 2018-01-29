@@ -23,7 +23,13 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.XMLWriter.elem;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,9 +41,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-
 /**
  * A Track Segment holds a list of Track Points which are logically connected in
  * order. To represent a single GPS track where GPS reception was lost, or the
@@ -45,12 +48,12 @@ import javax.xml.stream.XMLStreamWriter;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final List<WayPoint> _points;
 
@@ -126,13 +129,14 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public int hashCode() {
-		return _points.hashCode();
+		return Objects.hashCode(_points);
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof TrackSegment &&
-			((TrackSegment)obj)._points.equals(_points);
+		return obj == this ||
+			obj instanceof TrackSegment &&
+			Objects.equals(((TrackSegment)obj)._points, _points);
 	}
 
 	@Override
@@ -308,32 +312,41 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 
 	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.TRACK_SEGMENT, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writes(_points, WayPoint::write, out);
+	}
+
+	static TrackSegment read(final DataInput in) throws IOException {
+		return new TrackSegment(IO.reads(WayPoint::read, in));
+	}
+
+
+	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write("trkseg",
-			xml.elems(_points, (p, w) -> p.write("trkpt", w))
-		);
-	}
+	static final XMLWriter<TrackSegment> WRITER = elem("trkseg",
+		XMLWriter.elems(WayPoint.writer("trkpt")).map(ts -> ts._points)
+	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<TrackSegment> reader() {
-		final XML.Function<Object[], TrackSegment> creator = a -> TrackSegment.of(
-			(List<WayPoint>)a[0]
-		);
-
-		return XMLReader.of(creator, "trkseg",
-			XMLReader.ofList(WayPoint.reader("trkpt"))
-		);
-	}
+	static final XMLReader<TrackSegment> READER = XMLReader.elem(
+		a -> TrackSegment.of((List<WayPoint>)a[0]),
+		"trkseg",
+		XMLReader.elems(WayPoint.reader("trkpt"))
+	);
 
 }

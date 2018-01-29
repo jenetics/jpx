@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
+
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -77,6 +79,11 @@ public class SpeedTest extends ObjectTester<Speed> {
 			{Unit.MILES_PER_HOUR, 0.44704},
 			{Unit.MACH, 331.3}
 		};
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Speed.class).verify();
 	}
 
 }

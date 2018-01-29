@@ -23,15 +23,18 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.Parsers.toMandatoryString;
-import static io.jenetics.jpx.XMLReader.attr;
+import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
@@ -145,12 +148,12 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.1
+ * @version 1.2
  * @since 1.0
  */
 public final class GPX implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	/**
 	 * The default version number: 1.1.
@@ -165,7 +168,7 @@ public final class GPX implements Serializable {
 	private final String _creator;
 	private final String _version;
 	private final Metadata _metadata;
-	private final List<WayPoint> _wayPoints;;
+	private final List<WayPoint> _wayPoints;
 	private final List<Route> _routes;
 	private final List<Track> _tracks;
 
@@ -321,7 +324,8 @@ public final class GPX implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof GPX &&
+		return obj == this ||
+			obj instanceof GPX &&
 			Objects.equals(((GPX)obj)._creator, _creator) &&
 			Objects.equals(((GPX)obj)._version, _version) &&
 			Objects.equals(((GPX)obj)._metadata, _metadata) &&
@@ -958,6 +962,40 @@ public final class GPX implements Serializable {
 
 
 	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.GPX_TYPE, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeString(_version, out);
+		IO.writeString(_creator, out);
+		IO.writeNullable(_metadata, Metadata::write, out);
+		IO.writes(_wayPoints, WayPoint::write, out);
+		IO.writes(_routes, Route::write, out);
+		IO.writes(_tracks, Track::write, out);
+	}
+
+	static GPX read(final DataInput in) throws IOException {
+		return new GPX(
+			IO.readString(in),
+			IO.readString(in),
+			IO.readNullable(Metadata::read, in),
+			IO.reads(WayPoint::read, in),
+			IO.reads(Route::read, in),
+			IO.reads(Track::read, in)
+		);
+	}
+
+	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
@@ -968,39 +1006,37 @@ public final class GPX implements Serializable {
 	 * @throws XMLStreamException if an error occurs
 	 */
 	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write("gpx",
-			xml.ns("http://www.topografix.com/GPX/1/1"),
-			xml.attr("version", _version),
-			xml.attr("creator", _creator),
-			xml.elem(_metadata, Metadata::write),
-			xml.elems(_wayPoints, (p, w) -> p.write("wpt", w)),
-			xml.elems(_routes, Route::write),
-			xml.elems(_tracks, Track::write)
-		);
+		WRITER.write(writer, this);
 	}
 
+	static final XMLWriter<GPX> WRITER = elem("gpx",
+		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
+		XMLWriter.attr("version").map(gpx -> gpx._version),
+		XMLWriter.attr("creator").map(gpx -> gpx._creator),
+		Metadata.WRITER.map(gpx -> gpx._metadata),
+		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
+		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
+		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
+	);
+
 	@SuppressWarnings("unchecked")
-	static XMLReader<GPX> reader() {
-		final XML.Function<Object[], GPX> creator = a -> GPX.of(
-			toMandatoryString(a[0], "GPX.version"),
-			toMandatoryString(a[1], "GPX.creator"),
+	static final XMLReader<GPX> READER = XMLReader.elem(
+		a -> GPX.of(
+			(String)a[0],
+			(String)a[1],
 			(Metadata)a[2],
 			(List<WayPoint>)a[3],
 			(List<Route>)a[4],
 			(List<Track>)a[5]
-		);
-
-		return XMLReader.of(creator, "gpx",
-			attr("version"),
-			attr("creator"),
-			Metadata.reader(),
-			XMLReader.ofList(WayPoint.reader("wpt")),
-			XMLReader.ofList(Route.reader()),
-			XMLReader.ofList(Track.reader())
-		);
-	}
+		),
+		"gpx",
+		XMLReader.attr("version"),
+		XMLReader.attr("creator"),
+		Metadata.READER,
+		XMLReader.elems(WayPoint.reader("wpt")),
+		XMLReader.elems(Route.READER),
+		XMLReader.elems(Track.READER)
+	);
 
 	/* *************************************************************************
 	 *  Load GPX from file.
@@ -1146,7 +1182,7 @@ public final class GPX implements Serializable {
 			final XMLStreamReader reader = factory.createXMLStreamReader(input);
 			if (reader.hasNext()) {
 				reader.next();
-				return reader().read(reader, lenient);
+				return READER.read(reader, lenient);
 			} else {
 				throw new IOException("No 'gpx' element found.");
 			}

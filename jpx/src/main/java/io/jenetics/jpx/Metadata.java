@@ -22,7 +22,13 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -31,9 +37,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 /**
  * Information about the GPX file, author, and copyright restrictions goes in
@@ -49,12 +52,12 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.2
  * @since 1.0
  */
 public final class Metadata implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2L;
 
 	private final String _name;
 	private final String _description;
@@ -231,7 +234,7 @@ public final class Metadata implements Serializable {
 		hash += 17*Objects.hashCode(_description) + 31;
 		hash += 17*Objects.hashCode(_author) + 31;
 		hash += 17*Objects.hashCode(_copyright) + 31;
-		hash += 17*_links.stream().mapToInt(Objects::hashCode).sum() + 31;
+		hash += 17*Lists.hashCode(_links) + 31;
 		hash += 17*Objects.hashCode(_time) + 31;
 		hash += 17*Objects.hashCode(_keywords) + 31;
 		hash += 17*Objects.hashCode(_bounds) + 31;
@@ -240,14 +243,14 @@ public final class Metadata implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Metadata &&
+		return obj == this ||
+			obj instanceof Metadata &&
 			Objects.equals(((Metadata)obj)._name, _name) &&
 			Objects.equals(((Metadata)obj)._description, _description) &&
 			Objects.equals(((Metadata)obj)._author, _author) &&
 			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
-			((Metadata)obj)._links.size() == _links.size() &&
-			((Metadata)obj)._links.containsAll(_links) &&
-			ZonedDateTimeFormat.equals(((Metadata)obj)._time, _time) &&
+			Lists.equals(((Metadata)obj)._links, _links) &&
+			ZonedDateTimes.equals(((Metadata)obj)._time, _time) &&
 			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
 			Objects.equals(((Metadata)obj)._bounds, _bounds);
 	}
@@ -542,53 +545,80 @@ public final class Metadata implements Serializable {
 
 
 	/* *************************************************************************
+	 *  Java object serialization
+	 * ************************************************************************/
+
+	private Object writeReplace() {
+		return new Serial(Serial.METADATA, this);
+	}
+
+	private void readObject(final ObjectInputStream stream)
+		throws InvalidObjectException
+	{
+		throw new InvalidObjectException("Serialization proxy required.");
+	}
+
+	void write(final DataOutput out) throws IOException {
+		IO.writeNullableString(_name, out);
+		IO.writeNullableString(_description, out);
+		IO.writeNullable(_author, Person::write, out);
+		IO.writeNullable(_copyright, Copyright::write, out);
+		IO.writes(_links, Link::write, out);
+		IO.writeNullable(_time, ZonedDateTimes::write, out);
+		IO.writeNullableString(_keywords, out);
+		IO.writeNullable(_bounds, Bounds::write, out);
+	}
+
+	static Metadata read(final DataInput in) throws IOException {
+		return new Metadata(
+			IO.readNullableString(in),
+			IO.readNullableString(in),
+			IO.readNullable(Person::read, in),
+			IO.readNullable(Copyright::read, in),
+			IO.reads(Link::read, in),
+			IO.readNullable(ZonedDateTimes::read, in),
+			IO.readNullableString(in),
+			IO.readNullable(Bounds::read, in)
+		);
+	}
+
+
+	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		final XMLWriter xml = new XMLWriter(writer);
-
-		xml.write("metadata",
-			xml.elem("name", _name),
-			xml.elem("desc", _description),
-			xml.elem(_author, (a, w) -> a.write("author", w)),
-			xml.elem(_copyright, Copyright::write),
-			xml.elems(_links, Link::write),
-			xml.elem("time", ZonedDateTimeFormat.format(_time)),
-			xml.elem("keywords", _keywords),
-			xml.elem(_bounds, Bounds::write)
-		);
-	}
+	static final XMLWriter<Metadata> WRITER = XMLWriter.elem("metadata",
+		XMLWriter.elem("name").map(md -> md._name),
+		XMLWriter.elem("desc").map(md -> md._description),
+		Person.writer("author").map(md -> md._author),
+		Copyright.WRITER.map(md -> md._copyright),
+		XMLWriter.elems(Link.WRITER).map(md -> md._links),
+		XMLWriter.elem("time").map(md -> format(md._time)),
+		XMLWriter.elem("keywords").map(md -> md._keywords),
+		Bounds.WRITER.map(md -> md._bounds)
+	);
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Metadata> reader() {
-		final XML.Function<Object[], Metadata> create = a -> Metadata.of(
-			Parsers.toString(a[0]),
-			Parsers.toString(a[1]),
-			(Person)a[2],
-			(Copyright)a[3],
-			(List<Link>)a[4],
-			Parsers.toZonedDateTime((String)a[5]),
-			Parsers.toString(a[6]),
-			(Bounds)a[7]
-		);
-
-		return XMLReader.of(create, "metadata",
-			XMLReader.of("name"),
-			XMLReader.of("desc"),
-			Person.reader("author"),
-			Copyright.reader(),
-			XMLReader.ofList(Link.reader()),
-			XMLReader.of("time"),
-			XMLReader.of("keywords"),
-			Bounds.reader()
-		);
-	}
+	static final XMLReader<Metadata> READER = XMLReader.elem(
+		v -> Metadata.of(
+			(String)v[0],
+			(String)v[1],
+			(Person)v[2],
+			(Copyright)v[3],
+			(List<Link>)v[4],
+			(ZonedDateTime)v[5],
+			(String)v[6],
+			(Bounds)v[7]
+		),
+		"metadata",
+		XMLReader.elem("name"),
+		XMLReader.elem("desc"),
+		Person.reader("author"),
+		Copyright.READER,
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
+		XMLReader.elem("keywords"),
+		Bounds.READER
+	);
 
 }

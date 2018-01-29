@@ -19,16 +19,16 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.ListsTest.revert;
 import static java.lang.String.format;
+import static io.jenetics.jpx.ListsTest.revert;
 
-import java.util.ArrayList;
+import nl.jqno.equalsverifier.EqualsVerifier;
+
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -48,8 +48,8 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 	protected Params<Track> params(final Random random) {
 		return new Params<>(
 			() -> nextTrack(random),
-			Track.reader(),
-			Track::write
+			Track.READER,
+			Track.WRITER
 		);
 	}
 
@@ -157,6 +157,17 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 			object.toBuilder().build(),
 			object
 		);
+	}
+
+	@Test
+	public void equalsVerifier() {
+		EqualsVerifier.forClass(Track.class).verify();
+	}
+
+	@Test(invocationCount = 10)
+	public void serialize() throws IOException, ClassNotFoundException {
+		final Object object = nextTrack(new Random());
+		Serialization.test(object);
 	}
 
 }
