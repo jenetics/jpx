@@ -27,7 +27,6 @@ import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.FileInputStream;
@@ -1269,17 +1268,6 @@ public final class GPX implements Serializable {
 	 */
 	public static GPX read(final String path) throws IOException {
 		return read(Paths.get(path), false);
-	}
-
-	public static GPX fromString(final String gpx, final boolean lenient)
-		throws IOException
-	{
-		final byte[] bytes = gpx.getBytes("UTF-8");
-		return read(new ByteArrayInputStream(bytes), lenient);
-	}
-
-	public static GPX fromString(final String gpx) throws IOException {
-		return fromString(gpx, false);
 	}
 
 }
