@@ -36,10 +36,12 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -393,6 +395,60 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		return new Object[][] {
 			{"/io/jenetics/jpx/ISSUE-38.gpx.xml"}
 		};
+	}
+
+	@Test(timeOut = 2000)
+	public void issue49_NPEForInvalidGPX() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
+
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			GPX.read(in);
+			Assert.assertFalse(true, "GXP.read must throw.");
+		} catch (IOException e) {
+			Assert.assertEquals(e.getCause().getClass(), XMLStreamException.class);
+			Assert.assertTrue(e.getMessage().contains("Unexpected element"));
+		}
+	}
+
+	@Test(timeOut = 2000)
+	public void issue49_NPEForInvalidGPXLenient() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in, true);
+		}
+
+		Assert.assertEquals(gpx.getWayPoints().size(), 1);
+		Assert.assertEquals(
+			gpx.getWayPoints().get(0),
+			WayPoint.builder()
+				.lat(51.39709).lon(4.501519).name("START")
+				.build()
+		);
+
+		final List<WayPoint> points = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.collect(Collectors.toList());
+
+		Assert.assertEquals(points.size(), 26);
+	}
+
+	@Test(timeOut = 2000)
+	public void issue51_XMLComment() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-51.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertTrue(gpx.getMetadata().isPresent());
+		final Metadata md = gpx.getMetadata().get();
+		Assert.assertFalse(md.getName().isPresent());
+		Assert.assertTrue(md.getLinks().isEmpty());
+		Assert.assertEquals(gpx.getWayPoints().size(), 3);
 	}
 
 	@Test

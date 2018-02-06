@@ -1,5 +1,12 @@
 ## Release notes
 
+### [1.2.3](https://github.com/jenetics/jpx/releases/tag/v1.2.3)
+
+#### Bug fixes
+
+* [#49](https://github.com/jenetics/jpx/issues/49): Improve thrown exceptions for invalid files and let the _lenient_ read ignore unknown XML tags.
+* [#51](https://github.com/jenetics/jpx/issues/51): GPX reader does not handle XML comments correctly.
+
 ### [1.2.2](https://github.com/jenetics/jpx/releases/tag/v1.2.2)
 
 #### Bug fixes
