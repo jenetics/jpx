@@ -92,7 +92,7 @@ public final class Geoid {
 	private final double F;
 
 	// The maximal iteration of the 'distance'
-	private static final int DISTANCE_ITERATION_MAX = 20;
+	private static final int DISTANCE_ITERATION_MAX = 100;
 
 	// The epsilon of the result, when to stop iteration.
 	private static final double DISTANCE_ITERATION_EPSILON = 1E-12;
