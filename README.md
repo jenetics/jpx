@@ -222,11 +222,9 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.2.2](https://github.com/jenetics/jpx/releases/tag/v1.2.2)
+### [1.2.3](https://github.com/jenetics/jpx/releases/tag/v1.2.3)
 
 #### Bug fixes
 
-* [#40](https://github.com/jenetics/jpx/issues/40): Improve/fix `equals` and `hashCode` methods.
-* [#43](https://github.com/jenetics/jpx/issues/43): Improve Java serialization. Make it smaller, faster and more stable [Serialization proxy](https://dzone.com/articles/serialization-proxy-pattern). This change breaks the existing Java serialization.
-* [#45](https://github.com/jenetics/jpx/issues/45): Update internal XML reader/writer classes; cleanup of the XML serialization code.
-
+* [#49](https://github.com/jenetics/jpx/issues/49): Improve thrown exceptions for invalid files and let the _lenient_ read ignore unknown XML tags.
+* [#51](https://github.com/jenetics/jpx/issues/51): GPX reader does not handle XML comments correctly.

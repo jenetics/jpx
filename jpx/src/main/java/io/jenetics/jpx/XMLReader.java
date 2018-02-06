@@ -24,6 +24,7 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
+import static javax.xml.stream.XMLStreamConstants.COMMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -515,16 +516,28 @@ final class ElemReader<T> extends XMLReader<T> {
 			boolean hasNext = false;
 			do {
 				switch (xml.getEventType()) {
+					case COMMENT:
+						if (xml.hasNext()) {
+							xml.next();
+						}
+						break;
 					case START_ELEMENT:
-						final ReaderResult result = results
-							.get(_readerIndexMapping.get(xml.getLocalName()));
+						final Integer index = _readerIndexMapping
+							.get(xml.getLocalName());
+
+						if (index == null && !lenient) {
+							throw new XMLStreamException(format(
+								"Unexpected element <%s>.",
+								xml.getLocalName()
+							));
+						}
+
+						final ReaderResult result = index != null
+							? results.get(index)
+							: ReaderResult.of(elem(xml.getLocalName()));
 
 						if (result != null) {
-							try {
-								result.put(result.reader().read(xml, lenient));
-							} catch (IllegalArgumentException|NullPointerException e) {
-								if (!lenient) throw e;
-							}
+							throwUnexpectedElement(xml, lenient, result);
 							if (xml.hasNext()) {
 								hasNext = true;
 								xml.next();
@@ -537,11 +550,7 @@ final class ElemReader<T> extends XMLReader<T> {
 					case CHARACTERS:
 					case CDATA:
 						if (text != null) {
-							try {
-								text.put(text.reader().read(xml, lenient));
-							} catch (IllegalArgumentException|NullPointerException e) {
-								if (!lenient) throw e;
-							}
+							throwUnexpectedElement(xml, lenient, text);
 						} else {
 							xml.next();
 						}
@@ -576,6 +585,26 @@ final class ElemReader<T> extends XMLReader<T> {
 		));
 	}
 
+	private void throwUnexpectedElement(
+		final XMLStreamReader xml,
+		final boolean lenient,
+		final ReaderResult text
+	)
+		throws XMLStreamException
+	{
+		try {
+			text.put(text.reader().read(xml, lenient));
+		} catch (IllegalArgumentException|NullPointerException e) {
+			if (!lenient) {
+				final XMLStreamException exp = new XMLStreamException(format(
+					"Unexpected element <%s>.",
+					xml.getLocalName()
+				));
+				exp.addSuppressed(e);
+				throw exp;
+			}
+		}
+	}
 }
 
 /**
