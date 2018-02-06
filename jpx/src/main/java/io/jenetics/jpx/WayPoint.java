@@ -446,10 +446,11 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public String toString() {
-		return format(
-			"[lat=%s, lon=%s, ele=%s]",
-			_latitude, _longitude, _elevation
-		);
+		return _elevation != null
+			? format("[lat=%s, lon=%s, ele=%s]",
+				_latitude, _longitude, _elevation)
+			: format("[lat=%s, lon=%s]",
+				_latitude, _longitude);
 	}
 
 
