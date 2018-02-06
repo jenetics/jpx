@@ -139,7 +139,7 @@ afterEvaluate { project ->
 					name 'JPX'
 					packaging 'pom'
 					description 'JPX - Java GPX library'
-					url 'https://jenetics.github.io/jpx'
+					url 'https://github.com/jenetics/jpx'
 					inceptionYear '2016'
 
 					scm {
