@@ -395,6 +395,22 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		};
 	}
 
+	@Test(timeOut = 2000)
+	public void issue51_XMLComment() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-51.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertTrue(gpx.getMetadata().isPresent());
+		final Metadata md = gpx.getMetadata().get();
+		Assert.assertFalse(md.getName().isPresent());
+		Assert.assertTrue(md.getLinks().isEmpty());
+		Assert.assertEquals(gpx.getWayPoints().size(), 3);
+	}
+
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(GPX.class).verify();

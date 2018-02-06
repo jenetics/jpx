@@ -24,6 +24,7 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
+import static javax.xml.stream.XMLStreamConstants.COMMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -515,6 +516,11 @@ final class ElemReader<T> extends XMLReader<T> {
 			boolean hasNext = false;
 			do {
 				switch (xml.getEventType()) {
+					case COMMENT:
+						if (xml.hasNext()) {
+							xml.next();
+						}
+						break;
 					case START_ELEMENT:
 						final ReaderResult result = results
 							.get(_readerIndexMapping.get(xml.getLocalName()));
