@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="creator_42" creator="version_7">
+	<metadata>
+		<!--
+		<name>Name of GPX</name>
+		-->
+		<author>
+			<name>Name of Author/Person</name>
+			<link href="http://author.net">
+				<text>Link of Author/Person</text>
+			</link>
+		</author>
+		<!--<link href="http://company.net">
+			<text>Link of GPX</text>
+		</link>-->
+	</metadata>
+    <wpt lat="48.12502" lon="14.86934">
+        <ele>287.0</ele>
+        <name>Amstetten</name>
+    </wpt>
+    <wpt lat="48.00214" lon="16.23091">
+        <ele>229.0</ele>
+        <name>Baden</name>
+    </wpt>
+	<!--
+
+
+    <wpt lat="48.02375" lon="16.77534">
+        <ele>156.0</ele>
+        <name>Bruck an der Leitha</name>
+    </wpt>
+
+    -->
+    <wpt lat="48.34067" lon="16.71754">
+        <ele>164.0</ele>
+        <name>Gänserndorf</name>
+    </wpt>
+</gpx>
