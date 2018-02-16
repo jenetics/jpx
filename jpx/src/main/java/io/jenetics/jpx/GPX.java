@@ -1128,9 +1128,9 @@ public final class GPX implements Serializable {
 			(String)a[0],
 			(String)a[1],
 			metadata(a),
-			(List<WayPoint>)a[10],
-			(List<Route>)a[11],
-			(List<Track>)a[12]
+			(List<WayPoint>)a[11],
+			(List<Route>)a[12],
+			(List<Track>)a[13]
 		),
 		"gpx",
 		XMLReader.attr("version"),
@@ -1163,9 +1163,9 @@ public final class GPX implements Serializable {
 			),
 			null,
 			null,
-			(ZonedDateTime)v[7],
-			(String)v[8],
-			(Bounds)v[9]
+			(ZonedDateTime)v[8],
+			(String)v[9],
+			(Bounds)v[10]
 		);
 	}
 

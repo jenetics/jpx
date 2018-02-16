@@ -1733,7 +1733,10 @@ public final class WayPoint implements Point, Serializable {
 			XMLReader.elem("vdop").map(Double::parseDouble),
 			XMLReader.elem("pdop").map(Double::parseDouble),
 			XMLReader.elem("ageofdgpsdata").map(Format::parseDuration),
-			XMLReader.elem("dgpsid").map(DGPSStation::parse)
+			XMLReader.elem("dgpsid").map(DGPSStation::parse),
+
+			// Allow GPX 1.0 element, but ignore it.
+			XMLReader.elem("course")
 		);
 	}
 

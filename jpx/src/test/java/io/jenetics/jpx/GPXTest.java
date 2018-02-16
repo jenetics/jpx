@@ -49,6 +49,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
 import io.jenetics.jpx.Length.Unit;
 
 /**
@@ -487,17 +488,33 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 	}
 
-	//@Test
+	@Test
 	public void readGPXv10() throws IOException {
 		final String resource = "/io/jenetics/jpx/GPX_10.gpx";
 
 		final GPX gpx10;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx10 = GPX.read(in);
+			gpx10 = GPX.reader(Version.v1_0).read(in);
 		}
 
 		final Optional<Metadata> md = gpx10.getMetadata();
-		System.out.println(md);
+
+		final Metadata expected = Metadata.builder()
+			.name("Five Hikes in the White Mountains")
+			.desc("Five Hikes in the White Mountains!!")
+			.author(Person.of(
+				"Franz Wilhelmstötter",
+				Email.of("franz.wilhelmstoetter@gmail.com"),
+				Link.of(
+					"https://github.com/jenetics/jpx",
+					"Visit my New Hampshire hiking website!",
+					null)))
+			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.keywords("Hiking, NH, Presidential Range")
+			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
+			.build();
+
+		Assert.assertEquals(md, Optional.of(expected));
 	}
 
 	public static void main(final String[] args) throws IOException {
