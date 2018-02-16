@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamWriter;
  * @version 1.0
  * @since 1.0
  */
-final class IndentingXMLWriter extends XMLWriterProxy {
+final class IndentingXMLWriter extends CloseableXMLStreamWriter {
 
 	private enum State {
 		SEEN_NOTHING,
