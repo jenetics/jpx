@@ -163,7 +163,7 @@ public final class GPX implements Serializable {
 	/**
 	 * The default creator string.
 	 */
-	public static final String CREATOR = "JPX - https://jenetics.github.io/jpx";
+	public static final String CREATOR = "JPX - https://github.com/jenetics/jpx";
 
 	private final String _creator;
 	private final String _version;
@@ -1010,9 +1010,9 @@ public final class GPX implements Serializable {
 	}
 
 	static final XMLWriter<GPX> WRITER = elem("gpx",
-		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
 		XMLWriter.attr("version").map(gpx -> gpx._version),
 		XMLWriter.attr("creator").map(gpx -> gpx._creator),
+		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
 		Metadata.WRITER_v1_1.map(gpx -> gpx._metadata),
 		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
 		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
