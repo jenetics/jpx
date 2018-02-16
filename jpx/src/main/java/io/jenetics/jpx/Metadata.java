@@ -621,4 +621,57 @@ public final class Metadata implements Serializable {
 		Bounds.READER
 	);
 
+	@SuppressWarnings("unchecked")
+	static final XMLReader<Metadata> READER_v1_0 = XMLReader.elem(
+		v -> Metadata.of(
+			(String)v[0],
+			(String)v[1],
+			(Person)v[2],
+			(Copyright)v[3],
+			(List<Link>)v[4],
+			(ZonedDateTime)v[5],
+			(String)v[6],
+			(Bounds)v[7]
+		),
+		"metadata",
+		XMLReader.elem("name"),
+		XMLReader.elem("desc"),
+		XMLReader.elem("author"),
+		XMLReader.elem("email"),
+		XMLReader.elem("url"),
+		XMLReader.elem("urlname"),
+		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
+		XMLReader.elem("keywords"),
+		Bounds.READER,
+
+
+		//Person.reader("author"),
+		/*
+		private final String _name;
+		private final Email _email;
+		private final Link _link;
+		 */
+		//Copyright.READER,
+		/*
+		private final String _author;
+		private final Year _year;
+		private final URI _license;
+		 */
+		XMLReader.elems(Link.READER),
+		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
+		XMLReader.elem("keywords"),
+		Bounds.READER
+	);
+	/*
+	<name>Five Hikes in the White Mountains</name>
+	<desc>Five Hikes in the White Mountains!!</desc>
+	<author>Franz Wilhelmstötter</author>
+	<email>franz.wilhelmstoetter@gmail.com</email>
+	<url>https://github.com/jenetics/jpx</url>
+	<urlname>Visit my New Hampshire hiking website!</urlname>
+	<time>2016-08-21T12:24:27Z</time>
+	<keywords>Hiking, NH, Presidential Range</keywords>
+	<bounds minLat="42.1" minlon="-71.9" maxLat="42.4" maxlon="-71.1" />
+	 */
+
 }

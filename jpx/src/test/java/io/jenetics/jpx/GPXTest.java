@@ -487,6 +487,19 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 	}
 
+	//@Test
+	public void readGPXv10() throws IOException {
+		final String resource = "/io/jenetics/jpx/GPX_10.gpx";
+
+		final GPX gpx10;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx10 = GPX.read(in);
+		}
+
+		final Optional<Metadata> md = gpx10.getMetadata();
+		System.out.println(md);
+	}
+
 	public static void main(final String[] args) throws IOException {
 		final String baseDir = "jpx/src/test/resources/io/jenetics/jpx/serialization";
 

@@ -39,6 +39,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -154,6 +155,18 @@ import javax.xml.stream.XMLStreamWriter;
 public final class GPX implements Serializable {
 
 	private static final long serialVersionUID = 2L;
+
+
+	public enum Version {
+		v1_0("1.0"),
+		v1_1("1.1");
+
+		private final String _string;
+
+		Version(final String string) {
+			_string = string;
+		}
+	}
 
 	/**
 	 * The default version number: 1.1.
@@ -892,6 +905,77 @@ public final class GPX implements Serializable {
 	}
 
 
+
+	public static final class Reader {
+		private final XMLReader<GPX> _reader;
+		private final boolean _lenient;
+
+		private Reader(final XMLReader<GPX> reader, final boolean lenient) {
+			_reader = requireNonNull(reader);
+			_lenient = lenient;
+		}
+
+		/**
+		 * Read an GPX object from the given {@code input} stream.
+		 *
+		 * @param input the input stream from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final InputStream input)
+			throws IOException
+		{
+			final XMLInputFactory factory = XMLInputFactory.newFactory();
+			try {
+				try (CloseableXMLStreamReader reader =
+					 new CloseableXMLStreamReader(factory.createXMLStreamReader(input)))
+				{
+					if (reader.hasNext()) {
+						reader.next();
+						return _reader.read(reader, _lenient);
+					} else {
+						throw new IOException("No 'gpx' element found.");
+					}
+				}
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
+		}
+
+		/**
+		 * Read an GPX object from the given {@code input} stream.
+		 *
+		 * @param path the input path from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final Path path) throws IOException {
+			try (FileInputStream in = new FileInputStream(path.toFile());
+				 BufferedInputStream bin = new BufferedInputStream(in))
+			{
+				return read(bin);
+			}
+		}
+
+		/**
+		 * Read an GPX object from the given {@code input} stream.
+		 *
+		 * @param path the input path from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final String path) throws IOException {
+			return read(Paths.get(path));
+		}
+
+	}
+
 	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
@@ -1038,8 +1122,56 @@ public final class GPX implements Serializable {
 		XMLReader.elems(Track.READER)
 	);
 
+	@SuppressWarnings("unchecked")
+	static final XMLReader<GPX> READER_v10 = XMLReader.elem(
+		a -> GPX.of(
+			(String)a[0],
+			(String)a[1],
+			metadata(a),
+			(List<WayPoint>)a[10],
+			(List<Route>)a[11],
+			(List<Track>)a[12]
+		),
+		"gpx",
+		XMLReader.attr("version"),
+		XMLReader.attr("creator"),
+
+		// Metadata
+		XMLReader.elem("name"),
+		XMLReader.elem("desc"),
+		XMLReader.elem("author"),
+		XMLReader.elem("email"),
+		XMLReader.elem("url"),
+		XMLReader.elem("urlname"),
+		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
+		XMLReader.elem("keywords"),
+		Bounds.READER,
+
+		XMLReader.elems(WayPoint.reader("wpt")),
+		XMLReader.elems(Route.READER),
+		XMLReader.elems(Track.READER)
+	);
+
+	private static Metadata metadata(final Object[] v) {
+		return Metadata.of(
+			(String)v[2],
+			(String)v[3],
+			Person.of(
+				(String)v[4],
+				v[5] != null ? Email.of((String)v[5]) : null,
+				v[6] != null ? Link.of((String)v[6], (String)v[7], null) : null
+			),
+			null,
+			null,
+			(ZonedDateTime)v[7],
+			(String)v[8],
+			(Bounds)v[9]
+		);
+	}
+
+
 	/* *************************************************************************
-	 *  Load GPX from file.
+	 *  Write and read GPX files
 	 * ************************************************************************/
 
 	/**
@@ -1161,6 +1293,37 @@ public final class GPX implements Serializable {
 	}
 
 	/**
+	 * Return a GPX reader, reading GPX files with the given version and in
+	 * lenient mode.
+	 *
+	 * @param version the GPX version to read
+	 * @param lenient the reading lenient mode
+	 * @return a new GPX reader object
+	 */
+	public static Reader reader(final Version version, final boolean lenient) {
+		final XMLReader<GPX> reader;
+		switch (version) {
+			case v1_0: reader = READER_v10; break;
+			case v1_1: reader = READER; break;
+			default: reader = READER; break;
+		}
+
+		return new Reader(reader, lenient);
+	}
+
+	public static Reader reader(final boolean lenient) {
+		return reader(Version.v1_1, lenient);
+	}
+
+	public static Reader reader(final Version version) {
+		return reader(version, false);
+	}
+
+	public static Reader reader() {
+		return reader(Version.v1_1, false);
+	}
+
+	/**
 	 * Read an GPX object from the given {@code input} stream.
 	 *
 	 * @since 1.1
@@ -1173,22 +1336,15 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
+	 *
+	 * @see #reader(boolean)
+	 * @deprecated Use {@code GPX.reader(lenient).read(input)} instead
 	 */
+	@Deprecated
 	public static GPX read(final InputStream input, final boolean lenient)
 		throws IOException
 	{
-		final XMLInputFactory factory = XMLInputFactory.newFactory();
-		try {
-			final XMLStreamReader reader = factory.createXMLStreamReader(input);
-			if (reader.hasNext()) {
-				reader.next();
-				return READER.read(reader, lenient);
-			} else {
-				throw new IOException("No 'gpx' element found.");
-			}
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		}
+		return reader(Version.v1_1, lenient).read(input);
 	}
 
 	/**
@@ -1201,7 +1357,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final InputStream input) throws IOException {
-		return read(input, false);
+		return reader(false).read(input);
 	}
 
 	/**
@@ -1215,15 +1371,15 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
+	 *
+	 * @see #reader(boolean)
+	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
 	 */
+	@Deprecated
 	public static GPX read(final Path path, final boolean lenient)
 		throws IOException
 	{
-		try (FileInputStream in = new FileInputStream(path.toFile());
-			 BufferedInputStream bin = new BufferedInputStream(in))
-		{
-			return read(bin, lenient);
-		}
+		return reader(lenient).read(path);
 	}
 
 	/**
@@ -1236,7 +1392,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return read(path, false);
+		return reader(false).read(path);
 	}
 
 	/**
@@ -1250,11 +1406,15 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
+	 *
+	 * @see #reader(boolean)
+	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
 	 */
+	@Deprecated
 	public static GPX read(final String path, final boolean lenient)
 		throws IOException
 	{
-		return read(Paths.get(path), lenient);
+		return reader(lenient).read(path);
 	}
 
 	/**
@@ -1267,7 +1427,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final String path) throws IOException {
-		return read(Paths.get(path), false);
+		return reader(false).read(path);
 	}
 
 }

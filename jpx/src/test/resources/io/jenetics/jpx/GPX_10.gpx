@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0"
+	 creator="GPSLogger 79 - http://gpslogger.mendhak.com/"
+	 xmlns="http://www.topografix.com/GPX/1/0"
+	 xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+
+	<name>Five Hikes in the White Mountains</name>
+	<desc>Five Hikes in the White Mountains!!</desc>
+	<author>Franz Wilhelmstötter</author>
+	<email>franz.wilhelmstoetter@gmail.com</email>
+	<url>https://github.com/jenetics/jpx</url>
+	<urlname>Visit my New Hampshire hiking website!</urlname>
+	<time>2016-08-21T12:24:27Z</time>
+	<keywords>Hiking, NH, Presidential Range</keywords>
+	<bounds minLat="42.1" minlon="-71.9" maxLat="42.4" maxlon="-71.1" />
+
+
+	<wpt lat="48.2033471" lon="16.3608048">
+		<time>2016-08-21T12:51:30Z</time>
+		<name>khm</name>
+		<src>network</src>
+	</wpt>
+	<trk>
+		<trkseg>
+			<trkpt lat="48.19949341" lon="16.40377444">
+				<ele>212.0</ele>
+				<time>2016-08-21T12:24:27Z</time>
+				<course>341.6</course>
+				<speed>0.67052215</speed>
+				<src>gps</src>
+				<sat>14</sat>
+			</trkpt>
+			<trkpt lat="48.19948359" lon="16.40371021">
+				<ele>212.0</ele>
+				<time>2016-08-21T12:24:31Z</time>
+				<course>298.6</course>
+				<speed>0.7424285</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>2</sat>
+				<hdop>0.7</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.1</pdop>
+			</trkpt>
+			<trkpt lat="48.19944146" lon="16.40368974">
+				<ele>213.0</ele>
+				<time>2016-08-21T12:24:35Z</time>
+				<course>304.1</course>
+				<speed>0.3324154</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>2</sat>
+				<hdop>0.7</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.1</pdop>
+			</trkpt>
+			<trkpt lat="48.19866632" lon="16.40195251">
+				<ele>239.0</ele>
+				<time>2016-08-21T12:26:47Z</time>
+				<course>272.4</course>
+				<speed>0.48754486</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>14</sat>
+				<hdop>0.7</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.0</pdop>
+			</trkpt>
+			<trkpt lat="48.19886009" lon="16.40180466">
+				<ele>238.0</ele>
+				<time>2016-08-21T12:26:54Z</time>
+				<course>315.2</course>
+				<speed>0.82079226</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>12</sat>
+				<hdop>1.0</hdop>
+				<vdop>0.9</vdop>
+				<pdop>1.3</pdop>
+			</trkpt>
+			<trkpt lat="48.1985614" lon="16.4017615">
+				<time>2016-08-21T12:27:00Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.19863731" lon="16.40171147">
+				<ele>233.0</ele>
+				<time>2016-08-21T12:27:06Z</time>
+				<course>188.2</course>
+				<speed>0.5688585</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>4</sat>
+				<hdop>0.8</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.1</pdop>
+			</trkpt>
+			<trkpt lat="48.198488" lon="16.401718">
+				<time>2016-08-21T12:27:14Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.19838011" lon="16.40136257">
+				<ele>234.0</ele>
+				<time>2016-08-21T12:27:19Z</time>
+				<course>213.9</course>
+				<speed>1.611521</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>11</sat>
+				<hdop>0.9</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.2</pdop>
+			</trkpt>
+			<trkpt lat="48.1983715" lon="16.4014238">
+				<time>2016-08-21T12:27:27Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.1984297" lon="16.4015709">
+				<time>2016-08-21T12:27:31Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.19826834" lon="16.40122479">
+				<ele>211.0</ele>
+				<time>2016-08-21T12:27:38Z</time>
+				<course>253.8</course>
+				<speed>1.034843</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>12</sat>
+				<hdop>0.9</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.2</pdop>
+			</trkpt>
+			<trkpt lat="48.1984297" lon="16.4015709">
+				<time>2016-08-21T12:27:42Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.19823063" lon="16.40124284">
+				<ele>214.0</ele>
+				<time>2016-08-21T12:27:46Z</time>
+				<course>240.0</course>
+				<speed>0.69</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>11</sat>
+				<hdop>0.8</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.2</pdop>
+			</trkpt>
+			<trkpt lat="48.1995554" lon="16.4034201">
+				<time>2016-08-21T13:44:37Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.1993188" lon="16.4036741">
+				<time>2016-08-21T13:44:52Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.1993188" lon="16.4036741">
+				<time>2016-08-21T13:45:09Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.1994377" lon="16.4034067">
+				<time>2016-08-21T13:46:09Z</time>
+				<src>network</src>
+			</trkpt>
+			<trkpt lat="48.1994377" lon="16.4034067">
+				<time>2016-08-21T17:23:29Z</time>
+				<src>network</src>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>
