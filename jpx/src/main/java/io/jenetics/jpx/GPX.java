@@ -1057,7 +1057,7 @@ public final class GPX implements Serializable {
 			try {
 				final XMLStreamWriter writer = _indent.isEmpty()
 					? factory.createXMLStreamWriter(output, "UTF-8")
-					: new IndentingXMLWriter(factory
+					: new IndentingXMLStreamWriter(factory
 						.createXMLStreamWriter(output, "UTF-8"), _indent);
 
 
@@ -1339,7 +1339,7 @@ public final class GPX implements Serializable {
 		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 		try {
 			final XMLStreamWriter writer = indent != null
-				? new IndentingXMLWriter(
+				? new IndentingXMLStreamWriter(
 					factory.createXMLStreamWriter(output, "UTF-8"), indent)
 				: factory.createXMLStreamWriter(output, "UTF-8");
 

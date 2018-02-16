@@ -88,7 +88,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-		final XMLStreamWriter streamWriter = new IndentingXMLWriter(
+		final XMLStreamWriter streamWriter = new IndentingXMLStreamWriter(
 			factory.createXMLStreamWriter(out, "UTF-8"), "    ");
 
 		writer.write(streamWriter, value);
