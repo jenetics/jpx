@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gpx xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0"
+	 creator="GPSLogger 79 - http://gpslogger.mendhak.com/"
+	 xmlns="http://www.topografix.com/GPX/1/0"
+	 xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+
+	<author>Franz Wilhelmstötter</author>
+	<email>franz.wilhelmstoetter@gmail.com</email>
+	<url>https://github.com/jenetics/jpx</url>
+	<urlname>Visit my New Hampshire hiking website!</urlname>
+	<time>2016-08-21T12:24:27Z</time>
+	<keywords>Hiking, NH, Presidential Range</keywords>
+	<bounds minlat="42.1" minlon="71.9" maxlat="42.4" maxlon="71.1" />
+
+
+	<wpt lat="48.2033471" lon="16.3608048">
+		<time>2016-08-21T12:51:30Z</time>
+		<name>khm</name>
+		<src>network</src>
+	</wpt>
+	<trk>
+		<trkseg>
+			<trkpt lat="48.19949341" lon="16.40377444">
+				<ele>212.0</ele>
+				<time>2016-08-21T12:24:27Z</time>
+				<course>341.6</course>
+				<speed>0.67052215</speed>
+				<src>gps</src>
+				<sat>14</sat>
+			</trkpt>
+			<trkpt lat="48.19948359" lon="16.40371021">
+				<ele>212.0</ele>
+				<time>2016-08-21T12:24:31Z</time>
+				<course>298.6</course>
+				<speed>0.7424285</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>2</sat>
+				<hdop>0.7</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.1</pdop>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>

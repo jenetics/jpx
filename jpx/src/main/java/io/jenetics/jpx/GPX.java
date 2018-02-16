@@ -1153,14 +1153,16 @@ public final class GPX implements Serializable {
 	);
 
 	private static Metadata metadata(final Object[] v) {
+		final Person author = Person.of(
+			(String)v[4],
+			v[5] != null ? Email.of((String)v[5]) : null,
+			v[6] != null ? Link.of((String)v[6], (String)v[7], null) : null
+		);
+
 		return Metadata.of(
 			(String)v[2],
 			(String)v[3],
-			Person.of(
-				(String)v[4],
-				v[5] != null ? Email.of((String)v[5]) : null,
-				v[6] != null ? Link.of((String)v[6], (String)v[7], null) : null
-			),
+			author.isEmpty() ? null : author,
 			null,
 			null,
 			(ZonedDateTime)v[8],
