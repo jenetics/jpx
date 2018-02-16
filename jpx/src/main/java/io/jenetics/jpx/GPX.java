@@ -1013,7 +1013,7 @@ public final class GPX implements Serializable {
 		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
 		XMLWriter.attr("version").map(gpx -> gpx._version),
 		XMLWriter.attr("creator").map(gpx -> gpx._creator),
-		Metadata.WRITER.map(gpx -> gpx._metadata),
+		Metadata.WRITER_v1_1.map(gpx -> gpx._metadata),
 		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
 		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
 		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
@@ -1032,7 +1032,7 @@ public final class GPX implements Serializable {
 		"gpx",
 		XMLReader.attr("version"),
 		XMLReader.attr("creator"),
-		Metadata.READER,
+		Metadata.READER_v1_1,
 		XMLReader.elems(WayPoint.reader("wpt")),
 		XMLReader.elems(Route.READER),
 		XMLReader.elems(Track.READER)

@@ -587,7 +587,7 @@ public final class Metadata implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Metadata> WRITER = XMLWriter.elem("metadata",
+	static final XMLWriter<Metadata> WRITER_v1_1 = XMLWriter.elem("metadata",
 		XMLWriter.elem("name").map(md -> md._name),
 		XMLWriter.elem("desc").map(md -> md._description),
 		Person.writer("author").map(md -> md._author),
@@ -599,7 +599,7 @@ public final class Metadata implements Serializable {
 	);
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<Metadata> READER = XMLReader.elem(
+	static final XMLReader<Metadata> READER_v1_1 = XMLReader.elem(
 		v -> Metadata.of(
 			(String)v[0],
 			(String)v[1],
