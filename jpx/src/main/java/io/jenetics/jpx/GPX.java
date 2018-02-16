@@ -1323,6 +1323,10 @@ public final class GPX implements Serializable {
 	/**
 	 * Return a new GPX writer with the given {@code indent}.
 	 *
+	 * @since !__version__!
+	 *
+	 * @see #writer()
+	 *
 	 * @param indent the element indentation
 	 * @return a new GPX writer
 	 */
@@ -1332,6 +1336,10 @@ public final class GPX implements Serializable {
 
 	/**
 	 * Return a new GPX writer with no indentation.
+	 *
+	 * @since !__version__!
+	 *
+	 * @see #writer(String)
 	 *
 	 * @return a new GPX writer
 	 */
@@ -1392,7 +1400,10 @@ public final class GPX implements Serializable {
 	 *        {@code null}, no pretty printing is performed.
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 *
+	 * @deprecated Use {@code GPX.writer(indent).write(gpx, output);} instead
 	 */
+	@Deprecated
 	public static void write(
 		final GPX gpx,
 		final OutputStream output,
@@ -1413,7 +1424,10 @@ public final class GPX implements Serializable {
 	 *        {@code null}, no pretty printing is performed.
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 *
+	 * @deprecated Use {@code GPX.writer(indent).write(gpx, path);} instead
 	 */
+	@Deprecated
 	public static void write(final GPX gpx, final Path path, final String indent)
 		throws IOException
 	{
@@ -1430,7 +1444,10 @@ public final class GPX implements Serializable {
 	 *        {@code null}, no pretty printing is performed.
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 *
+	 * @deprecated Use {@code GPX.writer(indent).write(gpx, path);} instead
 	 */
+	@Deprecated
 	public static void write(final GPX gpx, final String path, final String indent)
 		throws IOException
 	{
