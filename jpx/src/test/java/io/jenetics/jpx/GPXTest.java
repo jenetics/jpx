@@ -593,7 +593,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	private GPX read(final String name) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.v1_0).read(in);
+			return GPX.reader(Version.v10).read(in);
 		}
 	}
 

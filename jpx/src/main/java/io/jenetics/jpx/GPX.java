@@ -150,7 +150,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 public final class GPX implements Serializable {
@@ -168,25 +168,25 @@ public final class GPX implements Serializable {
 		/**
 		 * The GPX version 1.0. This version can only be read.
 		 */
-		v1_0("1.0"),
+		v10("1.0"),
 
 		/**
 		 * The GPX version 1.1. This is the default version and can be read and
 		 * written.
 		 */
-		v1_1("1.1");
+		v11("1.1");
 
-		private final String string;
+		private final String value;
 
-		Version(final String string) {
-			this.string = string;
+		Version(final String value) {
+			this.value = value;
 		}
 	}
 
 	/**
 	 * The default version number: 1.1.
 	 */
-	public static final String VERSION = Version.v1_1.string;
+	public static final String VERSION = Version.v11.value;
 
 	/**
 	 * The default creator string.
@@ -1472,8 +1472,8 @@ public final class GPX implements Serializable {
 	public static Reader reader(final Version version, final Mode mode) {
 		final XMLReader<GPX> reader;
 		switch (version) {
-			case v1_0: reader = READER_v10; break;
-			case v1_1: reader = READER; break;
+			case v10: reader = READER_v10; break;
+			case v11: reader = READER; break;
 			default: reader = READER; break;
 		}
 
@@ -1493,7 +1493,7 @@ public final class GPX implements Serializable {
 	 * @return a new GPX reader object
 	 */
 	public static Reader reader(final Mode mode) {
-		return reader(Version.v1_1, mode);
+		return reader(Version.v11, mode);
 	}
 
 	/**
@@ -1526,7 +1526,7 @@ public final class GPX implements Serializable {
 	 * @return a new GPX reader object
 	 */
 	public static Reader reader() {
-		return reader(Version.v1_1, Mode.STRICT);
+		return reader(Version.v11, Mode.STRICT);
 	}
 
 	/**
@@ -1550,7 +1550,7 @@ public final class GPX implements Serializable {
 	public static GPX read(final InputStream input, final boolean lenient)
 		throws IOException
 	{
-		return reader(Version.v1_1, lenient ? Mode.LENIENT : Mode.STRICT).read(input);
+		return reader(Version.v11, lenient ? Mode.LENIENT : Mode.STRICT).read(input);
 	}
 
 	/**
