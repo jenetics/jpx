@@ -33,7 +33,7 @@ import javax.xml.stream.XMLStreamWriter;
 class CloseableXMLStreamWriter implements XMLStreamWriter, AutoCloseable {
 	private final XMLStreamWriter _adoptee;
 
-	public CloseableXMLStreamWriter(final XMLStreamWriter writer) {
+	CloseableXMLStreamWriter(final XMLStreamWriter writer) {
 		_adoptee = requireNonNull(writer);
 	}
 

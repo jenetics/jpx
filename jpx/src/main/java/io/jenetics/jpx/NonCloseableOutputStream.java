@@ -1,5 +1,5 @@
 /*
- * Java GPX Library (@__identifier__@).
+ * Java Genetic Algorithm Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,65 +22,45 @@ package io.jenetics.jpx;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-final class NonCloseableInputStream extends InputStream {
+final class NonCloseableOutputStream extends OutputStream {
 
-	private final InputStream _input;
+	private final OutputStream _output;
 
-	NonCloseableInputStream(final InputStream input) {
-		_input = requireNonNull(input);
+	NonCloseableOutputStream(final OutputStream output) {
+		_output = requireNonNull(output);
 	}
 
 	@Override
-	public int read() throws IOException {
-		return _input.read();
+	public void write(final int b) throws IOException {
+		_output.write(b);
 	}
 
 	@Override
-	public int read(final byte[] b) throws IOException {
-		return _input.read(b);
+	public void write(final byte[] b) throws IOException {
+		_output.write(b);
 	}
 
 	@Override
-	public int read(final byte[] b, final int off, final int len)
+	public void write(final byte[] b, final int off, final int len)
 		throws IOException
 	{
-		return _input.read(b, off, len);
+		_output.write(b, off, len);
 	}
 
 	@Override
-	public long skip(final long n) throws IOException {
-		return _input.skip(n);
+	public void flush() throws IOException {
+		_output.flush();
 	}
 
 	@Override
-	public int available() throws IOException {
-		return _input.available();
-	}
-
-	@Override
-	public void close() {
-	}
-
-	@Override
-	public void mark(final int readlimit) {
-		_input.mark(readlimit);
-	}
-
-	@Override
-	public void reset() throws IOException {
-		_input.reset();
-	}
-
-	@Override
-	public boolean markSupported() {
-		return _input.markSupported();
+	public void close() throws IOException {
 	}
 
 }

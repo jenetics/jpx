@@ -47,7 +47,7 @@ final class IndentingXMLStreamWriter extends CloseableXMLStreamWriter {
 	private String _indent;
 	private int _depth;
 
-	public IndentingXMLStreamWriter(final XMLStreamWriter writer, final String indent) {
+	IndentingXMLStreamWriter(final XMLStreamWriter writer, final String indent) {
 		super(writer);
 		_state = State.SEEN_NOTHING;
 		_indent = indent;

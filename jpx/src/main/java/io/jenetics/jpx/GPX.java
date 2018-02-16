@@ -1029,6 +1029,16 @@ public final class GPX implements Serializable {
 
 	}
 
+	/**
+	 * Class for writing GPX files. A writer instance can be created by the
+	 * {@code GPX.writer} factory methods.
+	 *
+	 * @see GPX#writer()
+	 * @see GPX#writer(String)
+	 *
+	 * @version !__version__!
+	 * @since !__version__!
+	 */
 	public static final class Writer {
 
 		private final String _indent;
@@ -1054,12 +1064,7 @@ public final class GPX implements Serializable {
 			throws IOException
 		{
 			final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-			try {
-				final XMLStreamWriter writer = _indent.isEmpty()
-					? factory.createXMLStreamWriter(output, "UTF-8")
-					: new IndentingXMLStreamWriter(factory
-						.createXMLStreamWriter(output, "UTF-8"), _indent);
-
+			try (CloseableXMLStreamWriter writer = writer(factory, output)) {
 
 				writer.writeStartDocument("UTF-8", "1.0");
 				gpx.write(writer);
@@ -1067,6 +1072,50 @@ public final class GPX implements Serializable {
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
 			}
+		}
+
+		private CloseableXMLStreamWriter writer(
+			final XMLOutputFactory factory,
+			final OutputStream output
+		)
+			throws XMLStreamException
+		{
+			final NonCloseableOutputStream out = new NonCloseableOutputStream(output);
+			return _indent.isEmpty()
+				? new CloseableXMLStreamWriter(factory
+					.createXMLStreamWriter(out, "UTF-8"))
+				: new IndentingXMLStreamWriter(factory
+					.createXMLStreamWriter(out, "UTF-8"), _indent);
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param path the output path where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is {@code null}
+		 */
+		public void write(final GPX gpx, final Path path) throws IOException {
+			try (FileOutputStream out = new FileOutputStream(path.toFile());
+				 BufferedOutputStream bout = new BufferedOutputStream(out))
+			{
+				write(gpx, bout);
+			}
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param path the output path where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is {@code null}
+		 */
+		public void write(final GPX gpx, final String path) throws IOException {
+			write(gpx, Paths.get(path));
 		}
 
 	}
@@ -1272,6 +1321,25 @@ public final class GPX implements Serializable {
 	 * ************************************************************************/
 
 	/**
+	 * Return a new GPX writer with the given {@code indent}.
+	 *
+	 * @param indent the element indentation
+	 * @return a new GPX writer
+	 */
+	public static Writer writer(final String indent) {
+		return new Writer(indent != null ? indent : "");
+	}
+
+	/**
+	 * Return a new GPX writer with no indentation.
+	 *
+	 * @return a new GPX writer
+	 */
+	public static Writer writer() {
+		return writer("");
+	}
+
+	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
 	 *
@@ -1283,7 +1351,7 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final OutputStream output)
 		throws IOException
 	{
-		write(gpx, output, null);
+		writer().write(gpx, output);
 	}
 
 	/**
@@ -1298,11 +1366,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static void write(final GPX gpx, final Path path) throws IOException {
-		try (FileOutputStream out = new FileOutputStream(path.toFile());
-			 BufferedOutputStream bout = new BufferedOutputStream(out))
-		{
-			write(gpx, bout);
-		}
+		writer().write(gpx, path);
 	}
 
 	/**
@@ -1315,7 +1379,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static void write(final GPX gpx, final String path) throws IOException {
-		write(gpx, Paths.get(path));
+		writer().write(gpx, path);
 	}
 
 	/**
@@ -1336,19 +1400,7 @@ public final class GPX implements Serializable {
 	)
 		throws IOException
 	{
-		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-		try {
-			final XMLStreamWriter writer = indent != null
-				? new IndentingXMLStreamWriter(
-					factory.createXMLStreamWriter(output, "UTF-8"), indent)
-				: factory.createXMLStreamWriter(output, "UTF-8");
-
-			writer.writeStartDocument("UTF-8", "1.0");
-			gpx.write(writer);
-			writer.writeEndDocument();
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		}
+		writer(indent).write(gpx, output);
 	}
 
 	/**
@@ -1365,11 +1417,7 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final Path path, final String indent)
 		throws IOException
 	{
-		try (FileOutputStream out = new FileOutputStream(path.toFile());
-			 BufferedOutputStream bout = new BufferedOutputStream(out))
-		{
-			write(gpx, bout, indent);
-		}
+		writer(indent).write(gpx, path);
 	}
 
 	/**
@@ -1386,7 +1434,7 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final String path, final String indent)
 		throws IOException
 	{
-		write(gpx, Paths.get(path), indent);
+		writer(indent).write(gpx, path);
 	}
 
 	/**
