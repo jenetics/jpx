@@ -156,22 +156,36 @@ public final class GPX implements Serializable {
 
 	private static final long serialVersionUID = 2L;
 
-
+	/**
+	 * Represents the available GPX versions.
+	 *
+	 * @version !__version__!
+	 * @since !__version__!
+	 */
 	public enum Version {
+
+		/**
+		 * The GPX version 1.0. This version can only be read.
+		 */
 		v1_0("1.0"),
+
+		/**
+		 * The GPX version 1.1. This is the default version and can be read and
+		 * written.
+		 */
 		v1_1("1.1");
 
-		private final String _string;
+		private final String string;
 
 		Version(final String string) {
-			_string = string;
+			this.string = string;
 		}
 	}
 
 	/**
 	 * The default version number: 1.1.
 	 */
-	public static final String VERSION = "1.1";
+	public static final String VERSION = Version.v1_1.string;
 
 	/**
 	 * The default creator string.
@@ -905,7 +919,18 @@ public final class GPX implements Serializable {
 	}
 
 
-
+	/**
+	 * Class for reading GPX files. A reader instance can be created by the
+	 * {@code GPX.reader} factory methods.
+	 *
+	 * @see GPX#reader()
+	 * @see GPX#reader(boolean)
+	 * @see GPX#reader(Version)
+	 * @see GPX#reader(Version, boolean)
+	 *
+	 * @version !__version__!
+	 * @since !__version__!
+	 */
 	public static final class Reader {
 		private final XMLReader<GPX> _reader;
 		private final boolean _lenient;
@@ -1298,6 +1323,12 @@ public final class GPX implements Serializable {
 	 * Return a GPX reader, reading GPX files with the given version and in
 	 * lenient mode.
 	 *
+	 * @since !__version__!
+	 *
+	 * @see #reader(Version)
+	 * @see #reader(boolean)
+	 * @see #reader()
+	 *
 	 * @param version the GPX version to read
 	 * @param lenient the reading lenient mode
 	 * @return a new GPX reader object
@@ -1313,14 +1344,50 @@ public final class GPX implements Serializable {
 		return new Reader(reader, lenient);
 	}
 
+	/**
+	 * Return a GPX reader, reading GPX files (v1.1) with the given lenient mode.
+	 *
+	 * @since !__version__!
+	 *
+	 * @see #reader(Version, boolean)
+	 * @see #reader(Version)
+	 * @see #reader()
+	 *
+	 * @param lenient the reading lenient mode
+	 * @return a new GPX reader object
+	 */
 	public static Reader reader(final boolean lenient) {
 		return reader(Version.v1_1, lenient);
 	}
 
+	/**
+	 * Return a GPX reader, reading GPX files with the given version and in
+	 * lenient mode {@code false}.
+	 *
+	 * @since !__version__!
+	 *
+	 * @see #reader(Version, boolean)
+	 * @see #reader(boolean)
+	 * @see #reader()
+	 *
+	 * @param version the GPX version to read
+	 * @return a new GPX reader object
+	 */
 	public static Reader reader(final Version version) {
 		return reader(version, false);
 	}
 
+	/**
+	 * Return a GPX reader, reading GPX files (v1.1) with lenient mode {@code false}.
+	 *
+	 * @since !__version__!
+	 *
+	 * @see #reader(Version, boolean)
+	 * @see #reader(Version)
+	 * @see #reader(boolean)
+	 *
+	 * @return a new GPX reader object
+	 */
 	public static Reader reader() {
 		return reader(Version.v1_1, false);
 	}
@@ -1350,7 +1417,11 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read an GPX object from the given {@code input} stream. This method is a
+	 * shortcut for
+	 * <pre>{@code
+	 * final GPX gpx = GPX.reader().read(input);
+	 * }</pre>
 	 *
 	 * @param input the input stream from where the GPX date is read
 	 * @return the GPX object read from the input stream
@@ -1385,7 +1456,11 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read an GPX object from the given {@code input} stream. This method is a
+	 * shortcut for
+	 * <pre>{@code
+	 * final GPX gpx = GPX.reader().read(path);
+	 * }</pre>
 	 *
 	 * @param path the input path from where the GPX date is read
 	 * @return the GPX object read from the input stream
@@ -1420,7 +1495,11 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read an GPX object from the given {@code input} stream. This method is a
+	 * shortcut for
+	 * <pre>{@code
+	 * final GPX gpx = GPX.reader().read(path);
+	 * }</pre>
 	 *
 	 * @param path the input path from where the GPX date is read
 	 * @return the GPX object read from the input stream
