@@ -1029,6 +1029,48 @@ public final class GPX implements Serializable {
 
 	}
 
+	public static final class Writer {
+
+		private final String _indent;
+
+		private Writer(final String indent) {
+			_indent = requireNonNull(indent);
+		}
+
+		public String getIndent() {
+			return _indent;
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param output the output stream where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is {@code null}
+		 */
+		public void write(final GPX gpx, final OutputStream output)
+			throws IOException
+		{
+			final XMLOutputFactory factory = XMLOutputFactory.newFactory();
+			try {
+				final XMLStreamWriter writer = _indent.isEmpty()
+					? factory.createXMLStreamWriter(output, "UTF-8")
+					: new IndentingXMLWriter(factory
+						.createXMLStreamWriter(output, "UTF-8"), _indent);
+
+
+				writer.writeStartDocument("UTF-8", "1.0");
+				gpx.write(writer);
+				writer.writeEndDocument();
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
+		}
+
+	}
+
 	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
