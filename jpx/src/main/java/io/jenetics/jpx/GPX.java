@@ -53,8 +53,9 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+
+import io.jenetics.jpx.GPX.Reader.Mode;
 
 /**
  * GPX documents contain a metadata header, followed by way-points, routes, and
@@ -924,20 +925,47 @@ public final class GPX implements Serializable {
 	 * {@code GPX.reader} factory methods.
 	 *
 	 * @see GPX#reader()
-	 * @see GPX#reader(boolean)
+	 * @see GPX#reader(Reader.Mode)
 	 * @see GPX#reader(Version)
-	 * @see GPX#reader(Version, boolean)
+	 * @see GPX#reader(Version, Reader.Mode)
 	 *
 	 * @version !__version__!
 	 * @since !__version__!
 	 */
 	public static final class Reader {
-		private final XMLReader<GPX> _reader;
-		private final boolean _lenient;
 
-		private Reader(final XMLReader<GPX> reader, final boolean lenient) {
+		/**
+		 * The possible GPX reader modes.
+		 */
+		public enum Mode {
+
+			/**
+			 * In this mode the GPX reader tries to ignore invalid GPX values
+			 * and elements.
+			 */
+			LENIENT,
+
+			/**
+			 * Expects to read valid GPX files.
+			 */
+			STRICT
+		}
+
+		private final XMLReader<GPX> _reader;
+		private final Mode _mode;
+
+		private Reader(final XMLReader<GPX> reader, final Mode mode) {
 			_reader = requireNonNull(reader);
-			_lenient = lenient;
+			_mode = requireNonNull(mode);
+		}
+
+		/**
+		 * Return the current reader mode.
+		 *
+		 * @return the current reader mode
+		 */
+		public Mode getMode() {
+			return _mode;
 		}
 
 		/**
@@ -959,7 +987,7 @@ public final class GPX implements Serializable {
 				{
 					if (reader.hasNext()) {
 						reader.next();
-						return _reader.read(reader, _lenient);
+						return _reader.read(reader, _mode == Mode.LENIENT);
 					} else {
 						throw new IOException("No 'gpx' element found.");
 					}
@@ -1321,19 +1349,20 @@ public final class GPX implements Serializable {
 
 	/**
 	 * Return a GPX reader, reading GPX files with the given version and in
-	 * lenient mode.
+	 * reading mode.
 	 *
 	 * @since !__version__!
 	 *
 	 * @see #reader(Version)
-	 * @see #reader(boolean)
+	 * @see #reader(Reader.Mode)
 	 * @see #reader()
 	 *
 	 * @param version the GPX version to read
-	 * @param lenient the reading lenient mode
+	 * @param mode the reading mode
 	 * @return a new GPX reader object
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public static Reader reader(final Version version, final boolean lenient) {
+	public static Reader reader(final Version version, final Mode mode) {
 		final XMLReader<GPX> reader;
 		switch (version) {
 			case v1_0: reader = READER_v10; break;
@@ -1341,55 +1370,56 @@ public final class GPX implements Serializable {
 			default: reader = READER; break;
 		}
 
-		return new Reader(reader, lenient);
+		return new Reader(reader, mode);
 	}
 
 	/**
-	 * Return a GPX reader, reading GPX files (v1.1) with the given lenient mode.
+	 * Return a GPX reader, reading GPX files (v1.1) with the given reading mode.
 	 *
 	 * @since !__version__!
 	 *
-	 * @see #reader(Version, boolean)
+	 * @see #reader(Version, Reader.Mode)
 	 * @see #reader(Version)
 	 * @see #reader()
 	 *
-	 * @param lenient the reading lenient mode
+	 * @param mode the reading mode
 	 * @return a new GPX reader object
 	 */
-	public static Reader reader(final boolean lenient) {
-		return reader(Version.v1_1, lenient);
+	public static Reader reader(final Mode mode) {
+		return reader(Version.v1_1, mode);
 	}
 
 	/**
 	 * Return a GPX reader, reading GPX files with the given version and in
-	 * lenient mode {@code false}.
+	 * reading mode {@link Mode#STRICT}.
 	 *
 	 * @since !__version__!
 	 *
-	 * @see #reader(Version, boolean)
-	 * @see #reader(boolean)
+	 * @see #reader(Version, Reader.Mode)
+	 * @see #reader(Reader.Mode)
 	 * @see #reader()
 	 *
 	 * @param version the GPX version to read
 	 * @return a new GPX reader object
 	 */
 	public static Reader reader(final Version version) {
-		return reader(version, false);
+		return reader(version, Mode.STRICT);
 	}
 
 	/**
-	 * Return a GPX reader, reading GPX files (v1.1) with lenient mode {@code false}.
+	 * Return a GPX reader, reading GPX files (v1.1) with reading mode
+	 * {@link Mode#STRICT}.
 	 *
 	 * @since !__version__!
 	 *
-	 * @see #reader(Version, boolean)
+	 * @see #reader(Version, Reader.Mode)
 	 * @see #reader(Version)
-	 * @see #reader(boolean)
+	 * @see #reader(Reader.Mode)
 	 *
 	 * @return a new GPX reader object
 	 */
 	public static Reader reader() {
-		return reader(Version.v1_1, false);
+		return reader(Version.v1_1, Mode.STRICT);
 	}
 
 	/**
@@ -1406,14 +1436,14 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader(boolean)
-	 * @deprecated Use {@code GPX.reader(lenient).read(input)} instead
+	 * @see #reader(Reader.Mode)
+	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(input)} instead
 	 */
 	@Deprecated
 	public static GPX read(final InputStream input, final boolean lenient)
 		throws IOException
 	{
-		return reader(Version.v1_1, lenient).read(input);
+		return reader(Version.v1_1, lenient ? Mode.LENIENT : Mode.STRICT).read(input);
 	}
 
 	/**
@@ -1430,7 +1460,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final InputStream input) throws IOException {
-		return reader(false).read(input);
+		return reader(Mode.STRICT).read(input);
 	}
 
 	/**
@@ -1445,14 +1475,14 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader(boolean)
-	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
+	 * @see #reader(Reader.Mode)
+	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(path)} instead
 	 */
 	@Deprecated
 	public static GPX read(final Path path, final boolean lenient)
 		throws IOException
 	{
-		return reader(lenient).read(path);
+		return reader(lenient ? Mode.LENIENT : Mode.STRICT).read(path);
 	}
 
 	/**
@@ -1469,7 +1499,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return reader(false).read(path);
+		return reader(Mode.STRICT).read(path);
 	}
 
 	/**
@@ -1484,14 +1514,14 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader(boolean)
+	 * @see #reader(Reader.Mode)
 	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
 	 */
 	@Deprecated
 	public static GPX read(final String path, final boolean lenient)
 		throws IOException
 	{
-		return reader(lenient).read(path);
+		return reader(lenient ? Mode.LENIENT : Mode.STRICT).read(path);
 	}
 
 	/**
@@ -1508,7 +1538,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final String path) throws IOException {
-		return reader(false).read(path);
+		return reader(Mode.STRICT).read(path);
 	}
 
 }
