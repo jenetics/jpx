@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -49,6 +50,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
 import io.jenetics.jpx.Length.Unit;
 
@@ -169,7 +171,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void strictRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in, false);
+			GPX.read(in);
 		}
 	}
 
@@ -489,6 +491,23 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
+	public void readCourse() throws IOException {
+		final GPX gpx = readV10("GPX_10-1.gpx");
+
+		final List<Degrees> courses = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.filter(wp -> wp.getCourse().isPresent())
+			.map(wp -> wp.getCourse().orElseThrow(IllegalArgumentException::new))
+			.collect(Collectors.toList());
+
+		Assert.assertEquals(
+			courses,
+			asList(Degrees.ofDegrees(341.6), Degrees.ofDegrees(298.6))
+		);
+	}
+
+	@Test
 	public void readGPXv10_1() throws IOException {
 		final Metadata expected = Metadata.builder()
 			.name("Five Hikes in the White Mountains")
@@ -505,7 +524,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
 
-		Assert.assertEquals(read("GPX_10-1.gpx").getMetadata(), Optional.of(expected));
+		final GPX gpx = readV10("GPX_10-1.gpx");
+		Assert.assertEquals(gpx.getMetadata(), Optional.of(expected));
 	}
 
 	@Test
@@ -524,7 +544,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
 
-		Assert.assertEquals(read("GPX_10-2.gpx").getMetadata(), Optional.of(expected));
+		Assert.assertEquals(readV10("GPX_10-2.gpx").getMetadata(), Optional.of(expected));
 	}
 
 	@Test
@@ -542,7 +562,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
 
-		Assert.assertEquals(read("GPX_10-3.gpx").getMetadata(), Optional.of(expected));
+		Assert.assertEquals(readV10("GPX_10-3.gpx").getMetadata(), Optional.of(expected));
 	}
 
 	@Test
@@ -560,7 +580,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
 
-		Assert.assertEquals(read("GPX_10-4.gpx").getMetadata(), Optional.of(expected));
+		Assert.assertEquals(readV10("GPX_10-4.gpx").getMetadata(), Optional.of(expected));
 	}
 
 	@Test
@@ -578,7 +598,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
 
-		Assert.assertEquals(read("GPX_10-5.gpx").getMetadata(), Optional.of(expected));
+		Assert.assertEquals(readV10("GPX_10-5.gpx").getMetadata(), Optional.of(expected));
 	}
 
 	@Test
@@ -587,13 +607,13 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
 
-		Assert.assertEquals(read("GPX_10-6.gpx").getMetadata(), Optional.of(expected));
+		Assert.assertEquals(readV10("GPX_10-6.gpx").getMetadata(), Optional.of(expected));
 	}
 
-	private GPX read(final String name) throws IOException {
+	private GPX readV10(final String name) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.v10).read(in);
+			return GPX.reader(Version.v10, Mode.STRICT).read(in);
 		}
 	}
 

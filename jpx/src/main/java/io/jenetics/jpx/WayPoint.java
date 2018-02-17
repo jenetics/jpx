@@ -84,6 +84,7 @@ public final class WayPoint implements Point, Serializable {
 	private final Double _pdop;
 	private final Duration _ageOfGPSData;
 	private final DGPSStation _dgpsID;
+	private final Degrees _course;
 
 	/**
 	 * Create a new way-point with the given parameter.
@@ -123,6 +124,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param pdop position dilution of precision. (optional)
 	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
 	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @param course the Instantaneous course at the point
 	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
 	 *         is {@code null}
 	 */
@@ -147,7 +149,8 @@ public final class WayPoint implements Point, Serializable {
 		final Double vdop,
 		final Double pdop,
 		final Duration ageOfGPSData,
-		final DGPSStation dgpsID
+		final DGPSStation dgpsID,
+		final Degrees course
 	) {
 		_latitude = requireNonNull(latitude);
 		_longitude = requireNonNull(longitude);
@@ -171,6 +174,7 @@ public final class WayPoint implements Point, Serializable {
 		_pdop = pdop;
 		_ageOfGPSData = ageOfGPSData;
 		_dgpsID = dgpsID;
+		_course = course;
 	}
 
 	@Override
@@ -356,6 +360,19 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	/**
+	 * Return the instantaneous course at the point. This property is only
+	 * available when you read GPX files version 1.0. In version 1.1 this field
+	 * is always {@link Optional#empty()}.
+	 *
+	 * @since !__version__!
+	 *
+	 * @return the instantaneous course at the point
+	 */
+	public Optional<Degrees> getCourse() {
+		return Optional.ofNullable(_course);
+	}
+
+	/**
 	 * Convert the <em>immutable</em> way-point object into a <em>mutable</em>
 	 * builder initialized with the current way-point values.
 	 *
@@ -386,7 +403,8 @@ public final class WayPoint implements Point, Serializable {
 			.vdop(_vdop)
 			.pdop(_pdop)
 			.ageofdgpsdata(_ageOfGPSData)
-			.dgpsid(_dgpsID);
+			.dgpsid(_dgpsID)
+			.course(_course);
 	}
 
 	@Override
@@ -413,6 +431,7 @@ public final class WayPoint implements Point, Serializable {
 		hash += 17*Objects.hashCode(_pdop) + 31;
 		hash += 17*Objects.hashCode(_ageOfGPSData) + 31;
 		hash += 17*Objects.hashCode(_dgpsID) + 31;
+		hash += 17*Objects.hashCode(_course) + 31;
 
 		return hash;
 	}
@@ -441,7 +460,8 @@ public final class WayPoint implements Point, Serializable {
 			Objects.equals(((WayPoint)obj)._vdop, _vdop) &&
 			Objects.equals(((WayPoint)obj)._pdop, _pdop) &&
 			Objects.equals(((WayPoint)obj)._ageOfGPSData, _ageOfGPSData) &&
-			Objects.equals(((WayPoint)obj)._dgpsID, _dgpsID);
+			Objects.equals(((WayPoint)obj)._dgpsID, _dgpsID) &&
+			Objects.equals(((WayPoint)obj)._course, _course);
 	}
 
 	@Override
@@ -489,6 +509,7 @@ public final class WayPoint implements Point, Serializable {
 		private Double _pdop;
 		private Duration _ageOfDGPSData;
 		private DGPSStation _dgpsID;
+		private Degrees _course;
 
 		private Builder() {
 		}
@@ -1209,6 +1230,45 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Set the the instantaneous course at the point.
+		 *
+		 * @since !__version__!
+		 *
+		 * @param course the the instantaneous course at the point
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder course(final Degrees course) {
+			_course = course;
+			return this;
+		}
+
+		/**
+		 * Set the the instantaneous course at the point.
+		 *
+		 * @since !__version__!
+		 *
+		 * @param courseDegrees the the instantaneous course at the point
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the give value is not within the
+		 *         range of {@code [0..360]}
+		 */
+		public Builder course(final double courseDegrees) {
+			_course = Degrees.ofDegrees(courseDegrees);
+			return this;
+		}
+
+		/**
+		 * Return the instantaneous course at the point.
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the instantaneous course at the point.
+		 */
+		public Optional<Degrees> course() {
+			return Optional.ofNullable(_course);
+		}
+
+		/**
 		 * Create a new way-point with the given latitude and longitude value.
 		 *
 		 * @param latitude the latitude of the way-point
@@ -1269,7 +1329,8 @@ public final class WayPoint implements Point, Serializable {
 				_vdop,
 				_pdop,
 				_ageOfDGPSData,
-				_dgpsID
+				_dgpsID,
+				_course
 			);
 		}
 
@@ -1305,6 +1366,7 @@ public final class WayPoint implements Point, Serializable {
 		return new WayPoint(
 			latitude,
 			longitude,
+			null,
 			null,
 			null,
 			null,
@@ -1382,6 +1444,7 @@ public final class WayPoint implements Point, Serializable {
 			null,
 			null,
 			null,
+			null,
 			null
 		);
 	}
@@ -1432,6 +1495,7 @@ public final class WayPoint implements Point, Serializable {
 			elevation,
 			null,
 			time,
+			null,
 			null,
 			null,
 			null,
@@ -1519,7 +1583,11 @@ public final class WayPoint implements Point, Serializable {
 	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
 	 *         is {@code null}
 	 * @return a new {@code WayPoint}
+	 *
+	 * @deprecated Use {@link #of(Latitude, Longitude, Length, Speed, ZonedDateTime, Degrees, Length, String, String, String, String, List, String, String, Fix, UInt, Double, Double, Double, Duration, DGPSStation, Degrees)}
+	 *             instead
 	 */
+	@Deprecated
 	public static WayPoint of(
 		final Latitude latitude,
 		final Longitude longitude,
@@ -1564,7 +1632,103 @@ public final class WayPoint implements Point, Serializable {
 			vdop,
 			pdop,
 			ageOfGPSData,
-			dgpsID
+			dgpsID,
+			null
+		);
+	}
+
+	/**
+	 * Create a new way-point with the given parameter.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
+	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
+	 * @param elevation the elevation (in meters) of the point (optional)
+	 * @param speed the current GPS speed (optional)
+	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 *        8601 specification for date/time representation. Fractional seconds
+	 *        are allowed for millisecond timing in tracklogs. (optional)
+	 * @param magneticVariation the magnetic variation at the point (optional)
+	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
+	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
+	 * @param name the GPS name of the way-point. This field will be transferred
+	 *        to and from the GPS. GPX does not place restrictions on the length
+	 *        of this field or the characters contained in it. It is up to the
+	 *        receiving application to validate the field before sending it to
+	 *        the GPS. (optional)
+	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
+	 * @param description a text description of the element. Holds additional
+	 *        information about the element intended for the user, not the GPS.
+	 *        (optional)
+	 * @param source source of data. Included to give user some idea of
+	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
+	 *        Boston North", e.g. (optional)
+	 * @param links links to additional information about the way-point. May be
+	 *        empty, but not {@code null}.
+	 * @param symbol text of GPS symbol name. For interchange with other
+	 *        programs, use the exact spelling of the symbol as displayed on the
+	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
+	 * @param type type (classification) of the way-point (optional)
+	 * @param fix type of GPX fix (optional)
+	 * @param sat number of satellites used to calculate the GPX fix (optional)
+	 * @param hdop horizontal dilution of precision (optional)
+	 * @param vdop vertical dilution of precision (optional)
+	 * @param pdop position dilution of precision. (optional)
+	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
+	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @param course the Instantaneous course at the point
+	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
+	 *         is {@code null}
+	 * @return a new {@code WayPoint}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Length elevation,
+		final Speed speed,
+		final ZonedDateTime time,
+		final Degrees magneticVariation,
+		final Length geoidHeight,
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final String symbol,
+		final String type,
+		final Fix fix,
+		final UInt sat,
+		final Double hdop,
+		final Double vdop,
+		final Double pdop,
+		final Duration ageOfGPSData,
+		final DGPSStation dgpsID,
+		final Degrees course
+	) {
+		return new WayPoint(
+			latitude,
+			longitude,
+			elevation,
+			speed,
+			time,
+			magneticVariation,
+			geoidHeight,
+			name,
+			comment,
+			description,
+			source,
+			links,
+			symbol,
+			type,
+			fix,
+			sat,
+			hdop,
+			vdop,
+			pdop,
+			ageOfGPSData,
+			dgpsID,
+			course
 		);
 	}
 
@@ -1604,6 +1768,7 @@ public final class WayPoint implements Point, Serializable {
 		if (_pdop != null) existing |= 1 << 16;
 		if (_ageOfGPSData != null) existing |= 1 << 17;
 		if (_dgpsID != null) existing |= 1 << 18;
+		if (_course != null) existing |= 1 << 19;
 
 		out.writeInt(existing);
 		out.writeDouble(_latitude.toDegrees());
@@ -1627,6 +1792,7 @@ public final class WayPoint implements Point, Serializable {
 		if ((existing & (1 << 16)) != 0) out.writeDouble(_pdop);
 		if ((existing & (1 << 17)) != 0) out.writeLong(_ageOfGPSData.toMillis());
 		if ((existing & (1 << 18)) != 0) _dgpsID.write(out);
+		if ((existing & (1 << 19)) != 0) _course.write(out);
 	}
 
 	static WayPoint read(final DataInput in) throws IOException {
@@ -1652,7 +1818,8 @@ public final class WayPoint implements Point, Serializable {
 			((existing & (1 << 15)) != 0) ? in.readDouble() : null,
 			((existing & (1 << 16)) != 0) ? in.readDouble() : null,
 			((existing & (1 << 17)) != 0) ? Duration.ofMillis(in.readLong()) : null,
-			((existing & (1 << 18)) != 0) ? DGPSStation.read(in) : null
+			((existing & (1 << 18)) != 0) ? DGPSStation.read(in) : null,
+			((existing & (1 << 19)) != 0) ? Degrees.read(in) : null
 		);
 	}
 
@@ -1710,7 +1877,8 @@ public final class WayPoint implements Point, Serializable {
 				(Double)v[17],
 				(Double)v[18],
 				(Duration)v[19],
-				(DGPSStation)v[20]
+				(DGPSStation)v[20],
+				(Degrees)v[21]
 			),
 			name,
 			XMLReader.attr("lat").map(Latitude::parse),
@@ -1735,8 +1903,8 @@ public final class WayPoint implements Point, Serializable {
 			XMLReader.elem("ageofdgpsdata").map(Format::parseDuration),
 			XMLReader.elem("dgpsid").map(DGPSStation::parse),
 
-			// Allow GPX 1.0 element, but ignore it.
-			XMLReader.elem("course")
+			// Allowed GPX 1.0 element.
+			XMLReader.elem("course").map(Degrees::parse)
 		);
 	}
 
