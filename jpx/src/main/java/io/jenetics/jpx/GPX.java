@@ -1065,14 +1065,14 @@ public final class GPX implements Serializable {
 		 * @param gpx the GPX object to write to the output
 		 * @param output the output stream where the GPX object is written to
 		 * @throws IOException if the writing of the GPX object fails
-		 * @throws NullPointerException if one of the given arguments is {@code null}
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
 		 */
 		public void write(final GPX gpx, final OutputStream output)
 			throws IOException
 		{
 			final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 			try (CloseableXMLStreamWriter writer = writer(factory, output)) {
-
 				writer.writeStartDocument("UTF-8", "1.0");
 				gpx.write(writer);
 				writer.writeEndDocument();
@@ -1087,7 +1087,9 @@ public final class GPX implements Serializable {
 		)
 			throws XMLStreamException
 		{
-			final NonCloseableOutputStream out = new NonCloseableOutputStream(output);
+			final NonCloseableOutputStream out =
+				new NonCloseableOutputStream(output);
+
 			return _indent == null
 				? new CloseableXMLStreamWriter(factory
 					.createXMLStreamWriter(out, "UTF-8"))
@@ -1102,7 +1104,8 @@ public final class GPX implements Serializable {
 		 * @param gpx the GPX object to write to the output
 		 * @param path the output path where the GPX object is written to
 		 * @throws IOException if the writing of the GPX object fails
-		 * @throws NullPointerException if one of the given arguments is {@code null}
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
 		 */
 		public void write(final GPX gpx, final Path path) throws IOException {
 			try (FileOutputStream out = new FileOutputStream(path.toFile());
@@ -1119,7 +1122,8 @@ public final class GPX implements Serializable {
 		 * @param gpx the GPX object to write to the output
 		 * @param path the output path where the GPX object is written to
 		 * @throws IOException if the writing of the GPX object fails
-		 * @throws NullPointerException if one of the given arguments is {@code null}
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
 		 */
 		public void write(final GPX gpx, final String path) throws IOException {
 			write(gpx, Paths.get(path));
@@ -1248,7 +1252,7 @@ public final class GPX implements Serializable {
 		XMLWriter.attr("version").map(gpx -> gpx._version),
 		XMLWriter.attr("creator").map(gpx -> gpx._creator),
 		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
-		Metadata.WRITER_v1_1.map(gpx -> gpx._metadata),
+		Metadata.WRITER.map(gpx -> gpx._metadata),
 		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
 		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
 		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
@@ -1267,14 +1271,14 @@ public final class GPX implements Serializable {
 		"gpx",
 		XMLReader.attr("version"),
 		XMLReader.attr("creator"),
-		Metadata.READER_v1_1,
+		Metadata.READER,
 		XMLReader.elems(WayPoint.reader("wpt")),
 		XMLReader.elems(Route.READER),
 		XMLReader.elems(Track.READER)
 	);
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<GPX> READER_v10 = XMLReader.elem(
+	private static final XMLReader<GPX> READER_v10 = XMLReader.elem(
 		a -> GPX.of(
 			(String)a[0],
 			(String)a[1],
