@@ -40,7 +40,7 @@ final class CloseableXMLStreamReader implements XMLStreamReader, AutoCloseable {
 	}
 
 	@Override
-	public Object getProperty(String name) throws IllegalArgumentException {
+	public Object getProperty(final String name) throws IllegalArgumentException {
 		return _reader.getProperty(name);
 	}
 

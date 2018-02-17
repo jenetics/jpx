@@ -1044,11 +1044,18 @@ public final class GPX implements Serializable {
 		private final String _indent;
 
 		private Writer(final String indent) {
-			_indent = requireNonNull(indent);
+			_indent = indent;
 		}
 
-		public String getIndent() {
-			return _indent;
+		/**
+		 * Return the indentation string this GPX writer is using. If the
+		 * indentation string is {@link Optional#empty()}, the GPX file consists
+		 * of one line.
+		 *
+		 * @return the indentation string
+		 */
+		public Optional<String> getIndent() {
+			return Optional.ofNullable(_indent);
 		}
 
 		/**
@@ -1081,7 +1088,7 @@ public final class GPX implements Serializable {
 			throws XMLStreamException
 		{
 			final NonCloseableOutputStream out = new NonCloseableOutputStream(output);
-			return _indent.isEmpty()
+			return _indent == null
 				? new CloseableXMLStreamWriter(factory
 					.createXMLStreamWriter(out, "UTF-8"))
 				: new IndentingXMLStreamWriter(factory
@@ -1331,7 +1338,7 @@ public final class GPX implements Serializable {
 	 * @return a new GPX writer
 	 */
 	public static Writer writer(final String indent) {
-		return new Writer(indent != null ? indent : "");
+		return new Writer(indent);
 	}
 
 	/**
@@ -1344,7 +1351,7 @@ public final class GPX implements Serializable {
 	 * @return a new GPX writer
 	 */
 	public static Writer writer() {
-		return writer("");
+		return writer(null);
 	}
 
 	/**
@@ -1550,7 +1557,8 @@ public final class GPX implements Serializable {
 	public static GPX read(final InputStream input, final boolean lenient)
 		throws IOException
 	{
-		return reader(Version.v11, lenient ? Mode.LENIENT : Mode.STRICT).read(input);
+		return reader(Version.v11, lenient ? Mode.LENIENT : Mode.STRICT)
+			.read(input);
 	}
 
 	/**

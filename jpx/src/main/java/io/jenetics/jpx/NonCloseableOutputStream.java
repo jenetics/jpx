@@ -60,7 +60,7 @@ final class NonCloseableOutputStream extends OutputStream {
 	}
 
 	@Override
-	public void close() throws IOException {
+	public void close() {
 	}
 
 }
