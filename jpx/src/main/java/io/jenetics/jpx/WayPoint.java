@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -42,6 +44,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+
+import io.jenetics.jpx.GPX.Version;
 
 /**
  * A {@code WayPoint} represents a way-point, point of interest, or named
@@ -1823,88 +1828,197 @@ public final class WayPoint implements Point, Serializable {
 		);
 	}
 
+
 	/* *************************************************************************
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static XMLWriter<WayPoint> writer(final String name) {
-		return XMLWriter.elem(name,
-			XMLWriter.attr("lat").map(wp -> wp._latitude),
-			XMLWriter.attr("lon").map(wp -> wp._longitude),
-			XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)),
-			XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)),
-			XMLWriter.elem("time").map(wp -> ZonedDateTimeFormat.format(wp._time)),
-			XMLWriter.elem("magvar").map(wp -> doubleString(wp._magneticVariation)),
-			XMLWriter.elem("geoidheight").map(wp -> doubleString(wp._geoidHeight)),
-			XMLWriter.elem("name").map(wp -> wp._name),
-			XMLWriter.elem("cmt").map(wp -> wp._comment),
-			XMLWriter.elem("desc").map(wp -> wp._description),
-			XMLWriter.elem("src").map(wp -> wp._source),
-			XMLWriter.elems(Link.WRITER).map(wp -> wp._links),
-			XMLWriter.elem("sym").map(wp -> wp._symbol),
-			XMLWriter.elem("type").map(wp -> wp._type),
-			XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)),
-			XMLWriter.elem("sat").map(wp -> intString(wp._sat)),
-			XMLWriter.elem("hdop").map(wp -> doubleString(wp._hdop)),
-			XMLWriter.elem("vdop").map(wp -> doubleString(wp._vdop)),
-			XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)),
-			XMLWriter.elem("ageofdgpsdata").map(wp -> durationString(wp._ageOfGPSData)),
-			XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID))
+	private static final XMLWriter<WayPoint> URL = XMLWriter.elem("url")
+		.map(wp -> wp._links.isEmpty()
+			? null
+			: wp._links.get(0).getHref().toString());
+
+	private static final XMLWriter<WayPoint> URL_NAME = XMLWriter.elem("urlname")
+		.map(wp -> wp._links.isEmpty()
+			? null
+			: wp._links.get(0).getText().orElse(null));
+
+	private static final XMLWriter<WayPoint> COURSE = XMLWriter.elem("course")
+		.map(wp -> doubleString(wp._course));
+
+	private static final XMLWriters<WayPoint> WRITERS = new XMLWriters<WayPoint>()
+		.v00(XMLWriter.attr("lat").map(wp -> wp._latitude))
+		.v00(XMLWriter.attr("lon").map(wp -> wp._longitude))
+		.v00(XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)))
+		.v00(XMLWriter.elem("time").map(wp -> ZonedDateTimeFormat.format(wp._time)))
+		.v11(XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)))
+		.v00(XMLWriter.elem("magvar").map(wp -> doubleString(wp._magneticVariation)))
+		.v00(XMLWriter.elem("geoidheight").map(wp -> doubleString(wp._geoidHeight)))
+		.v00(XMLWriter.elem("name").map(wp -> wp._name))
+		.v00(XMLWriter.elem("cmt").map(wp -> wp._comment))
+		.v00(XMLWriter.elem("desc").map(wp -> wp._description))
+		.v00(XMLWriter.elem("src").map(wp -> wp._source))
+		.v11(XMLWriter.elems(Link.WRITER).map(wp -> wp._links))
+		.v10(URL)
+		.v10(URL_NAME)
+		.v00(XMLWriter.elem("sym").map(wp -> wp._symbol))
+		.v00(XMLWriter.elem("type").map(wp -> wp._type))
+		.v00(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)))
+		.v00(XMLWriter.elem("sat").map(wp -> intString(wp._sat)))
+		.v00(XMLWriter.elem("hdop").map(wp -> doubleString(wp._hdop)))
+		.v00(XMLWriter.elem("vdop").map(wp -> doubleString(wp._vdop)))
+		.v00(XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)))
+		.v00(XMLWriter.elem("ageofdgpsdata").map(wp -> durationString(wp._ageOfGPSData)))
+		.v00(XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID)))
+		.v10(COURSE);
+
+	static XMLWriter<WayPoint> writer(final Version version, final String name) {
+		final List<XMLWriter<WayPoint>> writers = new ArrayList<>(23);
+		writers.add(XMLWriter.attr("lat").map(wp -> wp._latitude));
+		writers.add(XMLWriter.attr("lon").map(wp -> wp._longitude));
+		writers.add(XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)));
+		writers.add(XMLWriter.elem("time")
+			.map(wp -> ZonedDateTimeFormat.format(wp._time)));
+		if (version == Version.v11) {
+			writers.add(XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)));
+		}
+		writers.add(XMLWriter.elem("magvar")
+			.map(wp -> doubleString(wp._magneticVariation)));
+		writers.add(XMLWriter.elem("geoidheight")
+			.map(wp -> doubleString(wp._geoidHeight)));
+		writers.add(XMLWriter.elem("name").map(wp -> wp._name));
+		writers.add(XMLWriter.elem("cmt").map(wp -> wp._comment));
+		writers.add(XMLWriter.elem("desc").map(wp -> wp._description));
+		writers.add(XMLWriter.elem("src").map(wp -> wp._source));
+		if (version == Version.v11) {
+			writers.add(XMLWriter.elems(Link.WRITER).map(wp -> wp._links));
+		} else {
+			writers.add(URL);
+			writers.add(URL_NAME);
+		}
+		writers.add(XMLWriter.elem("sym").map(wp -> wp._symbol));
+		writers.add(XMLWriter.elem("type").map(wp -> wp._type));
+		writers.add(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)));
+		writers.add(XMLWriter.elem("sat").map(wp -> intString(wp._sat)));
+		writers.add(XMLWriter.elem("hdop").map(wp -> doubleString(wp._hdop)));
+		writers.add(XMLWriter.elem("vdop").map(wp -> doubleString(wp._vdop)));
+		writers.add(XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)));
+		writers.add(XMLWriter.elem("ageofdgpsdata")
+			.map(wp -> durationString(wp._ageOfGPSData)));
+		writers.add(XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID)));
+		if (version == Version.v10) {
+			writers.add(COURSE);
+		}
+
+		return XMLWriter.elem(name, writers.toArray(new XMLWriter[0]));
+	}
+
+
+
+
+	@SuppressWarnings("unchecked")
+	static XMLReader<WayPoint> reader(final Version version, final String name) {
+		final Function<Object[], WayPoint> converter;
+		switch (version) {
+			case v10: converter = WayPoint::toWayPointV10; break;
+			case v11: converter = WayPoint::toWayPointV11; break;
+			default: throw new IllegalArgumentException(format(
+				"Unknown version: '%s'.", version
+			));
+		}
+
+		final List<XMLReader<?>> readers = new ArrayList<>(23);
+		readers.add(XMLReader.attr("lat").map(Latitude::parse));
+		readers.add(XMLReader.attr("lon").map(Longitude::parse));
+		readers.add(XMLReader.elem("ele").map(Length::parse));
+		readers.add(XMLReader.elem("time").map(ZonedDateTimeFormat::parse));
+		if (version == Version.v11) {
+			readers.add(XMLReader.elem("speed").map(Speed::parse));
+		}
+		readers.add(XMLReader.elem("magvar").map(Degrees::parse));
+		readers.add(XMLReader.elem("geoidheight").map(Length::parse));
+		readers.add(XMLReader.elem("name"));
+		readers.add(XMLReader.elem("cmt"));
+		readers.add(XMLReader.elem("desc"));
+		readers.add(XMLReader.elem("src"));
+
+		if (version == Version.v11) {
+			readers.add(XMLReader.elems(Link.READER));
+		} else {
+			readers.add(XMLReader.elem("url").map(Format::parseURI));
+			readers.add(XMLReader.elem("urlname"));
+		}
+		readers.add(XMLReader.elem("sym"));
+		readers.add(XMLReader.elem("type"));
+		readers.add(XMLReader.elem("fix").map(Fix::parse));
+		readers.add(XMLReader.elem("sat").map(UInt::parse));
+		readers.add(XMLReader.elem("hdop").map(Double::parseDouble));
+		readers.add(XMLReader.elem("vdop").map(Double::parseDouble));
+		readers.add(XMLReader.elem("pdop").map(Double::parseDouble));
+		readers.add(XMLReader.elem("ageofdgpsdata").map(Format::parseDuration));
+		readers.add(XMLReader.elem("dgpsid").map(DGPSStation::parse));
+		if (version == Version.v10) {
+			readers.add(XMLReader.elem("course").map(Degrees::parse));
+		}
+
+		return XMLReader.elem(
+			converter,
+			name,
+			readers.toArray(new XMLReader[0])
 		);
 	}
 
-	@SuppressWarnings("unchecked")
-	static XMLReader<WayPoint> reader(final String name) {
-		return XMLReader.elem(
-			v -> WayPoint.of(
-				(Latitude)v[0],
-				(Longitude)v[1],
-				(Length)v[2],
-				(Speed)v[3],
-				(ZonedDateTime)v[4],
-				(Degrees)v[5],
-				(Length)v[6],
-				(String)v[7],
-				(String)v[8],
-				(String)v[9],
-				(String)v[10],
-				(List<Link>)v[11],
-				(String)v[12],
-				(String)v[13],
-				(Fix)v[14],
-				(UInt)v[15],
-				(Double)v[16],
-				(Double)v[17],
-				(Double)v[18],
-				(Duration)v[19],
-				(DGPSStation)v[20],
-				(Degrees)v[21]
-			),
-			name,
-			XMLReader.attr("lat").map(Latitude::parse),
-			XMLReader.attr("lon").map(Longitude::parse),
-			XMLReader.elem("ele").map(Length::parse),
-			XMLReader.elem("speed").map(Speed::parse),
-			XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
-			XMLReader.elem("magvar").map(Degrees::parse),
-			XMLReader.elem("geoidheight").map(Length::parse),
-			XMLReader.elem("name"),
-			XMLReader.elem("cmt"),
-			XMLReader.elem("desc"),
-			XMLReader.elem("src"),
-			XMLReader.elems(Link.READER),
-			XMLReader.elem("sym"),
-			XMLReader.elem("type"),
-			XMLReader.elem("fix").map(Fix::parse),
-			XMLReader.elem("sat").map(UInt::parse),
-			XMLReader.elem("hdop").map(Double::parseDouble),
-			XMLReader.elem("vdop").map(Double::parseDouble),
-			XMLReader.elem("pdop").map(Double::parseDouble),
-			XMLReader.elem("ageofdgpsdata").map(Format::parseDuration),
-			XMLReader.elem("dgpsid").map(DGPSStation::parse),
+	private static WayPoint toWayPointV11(final Object[] v) {
+		return WayPoint.of(
+			(Latitude)v[0],
+			(Longitude)v[1],
+			(Length)v[2],
+			(Speed)v[3],
+			(ZonedDateTime)v[4],
+			(Degrees)v[5],
+			(Length)v[6],
+			(String)v[7],
+			(String)v[8],
+			(String)v[9],
+			(String)v[10],
+			(List<Link>)v[11],
+			(String)v[12],
+			(String)v[13],
+			(Fix)v[14],
+			(UInt)v[15],
+			(Double)v[16],
+			(Double)v[17],
+			(Double)v[18],
+			(Duration)v[19],
+			(DGPSStation)v[20],
+			null
+		);
+	}
 
-			// Allowed GPX 1.0 element.
-			XMLReader.elem("course").map(Degrees::parse)
+	private static WayPoint toWayPointV10(final Object[] v) {
+		return WayPoint.of(
+			(Latitude)v[0],
+			(Longitude)v[1],
+			(Length)v[2],
+			null,
+			(ZonedDateTime)v[3],
+			(Degrees)v[4],
+			(Length)v[5],
+			(String)v[6],
+			(String)v[7],
+			(String)v[8],
+			(String)v[9],
+			singletonList(Link.of((URI)v[10], (String)v[11], null)),
+			(String)v[12],
+			(String)v[13],
+			(Fix)v[14],
+			(UInt)v[15],
+			(Double)v[16],
+			(Double)v[17],
+			(Double)v[18],
+			(Duration)v[19],
+			(DGPSStation)v[20],
+			(Degrees)v[21]
 		);
 	}
 

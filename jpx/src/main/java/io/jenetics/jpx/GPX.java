@@ -37,6 +37,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
@@ -53,7 +54,6 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 
@@ -181,6 +181,27 @@ public final class GPX implements Serializable {
 		Version(final String value) {
 			this.value = value;
 		}
+
+		/**
+		 * Return the version from the given {@code version} string. Allowed
+		 * values are "1.0" and "1.1".
+		 *
+		 * @param version the version string
+		 * @return the version from the given {@code version} string
+		 * @throws IllegalArgumentException if the given {@code version} string
+		 *         is neither "1.0" nor "1.1"
+		 * @throws NullPointerException if the given {@code version} string is
+		 *         {@code null}
+		 */
+		public static Version of(final String version) {
+			switch (version) {
+				case "1.0": return v10;
+				case "1.1": return v11;
+				default: throw new IllegalArgumentException(format(
+					"Unknown version string: '%s'.", version
+				));
+			}
+		}
 	}
 
 	/**
@@ -194,7 +215,7 @@ public final class GPX implements Serializable {
 	public static final String CREATOR = "JPX - https://github.com/jenetics/jpx";
 
 	private final String _creator;
-	private final String _version;
+	private final Version _version;
 	private final Metadata _metadata;
 	private final List<WayPoint> _wayPoints;
 	private final List<Route> _routes;
@@ -215,7 +236,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	private GPX(
-		final String version,
+		final Version version,
 		final String creator,
 		final Metadata metadata,
 		final List<WayPoint> wayPoints,
@@ -236,7 +257,7 @@ public final class GPX implements Serializable {
 	 * @return the version number of the GPX file
 	 */
 	public String getVersion() {
-		return _version;
+		return _version.value;
 	}
 
 	/**
@@ -379,13 +400,13 @@ public final class GPX implements Serializable {
 	 */
 	public static final class Builder {
 		private String _creator;
-		private String _version;
+		private Version _version;
 		private Metadata _metadata;
 		private final List<WayPoint> _wayPoints = new ArrayList<>();
 		private final List<Route> _routes = new ArrayList<>();
 		private final List<Track> _tracks = new ArrayList<>();
 
-		private Builder(final String version, final String creator) {
+		private Builder(final Version version, final String creator) {
 			_version = requireNonNull(version);
 			_creator = requireNonNull(creator);
 		}
@@ -421,7 +442,7 @@ public final class GPX implements Serializable {
 		 * @return the current version value
 		 */
 		public String version() {
-			return _version;
+			return _version.value;
 		}
 
 		/**
@@ -890,13 +911,30 @@ public final class GPX implements Serializable {
 	/**
 	 * Create a new GPX builder with the given GPX version and creator string.
 	 *
-	 * @param version the GPX version string
+	 * @since !__version__!
+	 *
+	 * @param version the GPX version
 	 * @param creator the GPX creator
 	 * @return new GPX builder
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public static Builder builder(final String version, final String creator) {
+	public static Builder builder(final Version version, final String creator) {
 		return new Builder(version, creator);
+	}
+
+	/**
+	 * Create a new GPX builder with the given GPX version and creator string.
+	 *
+	 * @param version the GPX version string
+	 * @param creator the GPX creator
+	 * @return new GPX builder
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 *
+	 * @deprecated Use {@link #builder(Version, String)} instead.
+	 */
+	@Deprecated
+	public static Builder builder(final String version, final String creator) {
+		return new Builder(Version.of(version), creator);
 	}
 
 	/**
@@ -907,7 +945,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given arguments is {@code null}
 	 */
 	public static Builder builder(final String creator) {
-		return builder(VERSION, creator);
+		return builder(Version.v11, creator);
 	}
 
 	/**
@@ -916,7 +954,7 @@ public final class GPX implements Serializable {
 	 * @return new GPX builder
 	 */
 	public static Builder builder() {
-		return builder(VERSION, CREATOR);
+		return builder(Version.v11, CREATOR);
 	}
 
 
@@ -1070,10 +1108,10 @@ public final class GPX implements Serializable {
 			throws IOException
 		{
 			final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-			try (CloseableXMLStreamWriter writer = writer(factory, output)) {
-				writer.writeStartDocument("UTF-8", "1.0");
-				gpx.write(writer);
-				writer.writeEndDocument();
+			try (CloseableXMLStreamWriter xml = writer(factory, output)) {
+				xml.writeStartDocument("UTF-8", "1.0");
+				GPX.xmlWriter(gpx._version).write(xml, gpx);
+				xml.writeEndDocument();
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
 			}
@@ -1155,7 +1193,7 @@ public final class GPX implements Serializable {
 		final List<Track> tracks
 	) {
 		return new GPX(
-			VERSION,
+			Version.v11,
 			creator,
 			metadata,
 			wayPoints,
@@ -1180,7 +1218,7 @@ public final class GPX implements Serializable {
 	 *         {@code routes} or {@code tracks} is {@code null}
 	 */
 	public static GPX of(
-		final String version,
+		final Version version,
 		final String creator,
 		final Metadata metadata,
 		final List<WayPoint> wayPoints,
@@ -1189,6 +1227,43 @@ public final class GPX implements Serializable {
 	) {
 		return new GPX(
 			version,
+			creator,
+			metadata,
+			wayPoints,
+			routes,
+			tracks
+		);
+	}
+
+	/**
+	 * Create a new {@code GPX} object with the given data.
+	 *
+	 * @param creator the name or URL of the software that created your GPX
+	 *        document. This allows others to inform the creator of a GPX
+	 *        instance document that fails to validate.
+	 * @param  version the GPX version
+	 * @param metadata the metadata about the GPS file
+	 * @param wayPoints the way-points
+	 * @param routes the routes
+	 * @param tracks the tracks
+	 * @return a new {@code GPX} object with the given data
+	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
+	 *         {@code routes} or {@code tracks} is {@code null}
+	 *
+	 * @deprecated Use {@link #of(Version, String, Metadata, List, List, List)}
+	 *             instead
+	 */
+	@Deprecated
+	public static GPX of(
+		final String version,
+		final String creator,
+		final Metadata metadata,
+		final List<WayPoint> wayPoints,
+		final List<Route> routes,
+		final List<Track> tracks
+	) {
+		return new GPX(
+			Version.of(version),
 			creator,
 			metadata,
 			wayPoints,
@@ -1213,7 +1288,7 @@ public final class GPX implements Serializable {
 	}
 
 	void write(final DataOutput out) throws IOException {
-		IO.writeString(_version, out);
+		IO.writeString(_version.value, out);
 		IO.writeString(_creator, out);
 		IO.writeNullable(_metadata, Metadata::write, out);
 		IO.writes(_wayPoints, WayPoint::write, out);
@@ -1223,7 +1298,7 @@ public final class GPX implements Serializable {
 
 	static GPX read(final DataInput in) throws IOException {
 		return new GPX(
-			IO.readString(in),
+			Version.of(IO.readString(in)),
 			IO.readString(in),
 			IO.readNullable(Metadata::read, in),
 			IO.reads(WayPoint::read, in),
@@ -1236,30 +1311,100 @@ public final class GPX implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
+	static XMLWriter<GPX> xmlWriter(final Version version) {
+		switch (version) {
+			case v10: return XML_WRITER_v10;
+			case v11: return XML_WRITER_v11;
+			default: throw new IllegalArgumentException(
+				"Unknown GPX version: " + version
+			);
+		}
 	}
 
-	static final XMLWriter<GPX> WRITER = elem("gpx",
-		XMLWriter.attr("version").map(gpx -> gpx._version),
+	private static final XMLWriter<GPX> XML_WRITER_v11 = elem("gpx",
+		XMLWriter.attr("version").map(gpx -> {
+			if (gpx._version != Version.v11) {
+				throw new IllegalArgumentException(format(
+					"Incompatible GPX version. Expected '%s', but got '%s'.",
+					Version.v11, Version.v10
+				));
+			}
+			return gpx._version.value;
+		}),
 		XMLWriter.attr("creator").map(gpx -> gpx._creator),
 		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
 		Metadata.WRITER.map(gpx -> gpx._metadata),
-		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
+		XMLWriter.elems(WayPoint.writer(Version.v11,"wpt"))
+			.map(gpx -> gpx._wayPoints),
 		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
 		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
 	);
 
+	private static final XMLWriter<GPX> XML_WRITER_v10 = elem("gpx",
+		XMLWriter.attr("version").map(gpx -> {
+			if (gpx._version != Version.v10) {
+				throw new IllegalArgumentException(format(
+					"Incompatible GPX version. Expected '%s', but got '%s'.",
+					Version.v10, Version.v11
+				));
+			}
+			return gpx._version.value;
+		}),
+		XMLWriter.attr("creator").map(gpx -> gpx._creator),
+		XMLWriter.ns("http://www.topografix.com/GPX/1/0"),
+
+		XMLWriter.elem("name").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getName).orElse(null)),
+		XMLWriter.elem("desc").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getDescription).orElse(null)),
+		XMLWriter.elem("author").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getName)
+			.orElse(null)),
+		XMLWriter.elem("email").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getEmail)
+			.map(Email::getAddress)
+			.orElse(null)),
+		XMLWriter.elem("url").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getLink)
+			.map(Link::getHref)
+			.map(URI::toString)
+			.orElse(null)),
+		XMLWriter.elem("urlname").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getLink)
+			.flatMap(Link::getText)
+			.orElse(null)),
+		XMLWriter.elem("time").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getTime)
+			.map(ZonedDateTimeFormat::format)
+			.orElse(null)),
+		XMLWriter.elem("keywords").map(gpx -> gpx.getMetadata()
+			.flatMap(Metadata::getKeywords)
+			.orElse(null)),
+
+		XMLWriter.elems(WayPoint.writer(Version.v10, "wpt"))
+			.map(gpx -> gpx._wayPoints),
+		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
+		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
+	);
+
+	static XMLReader<GPX> xmlReader(final Version version) {
+		switch (version) {
+			case v10: return XML_READER_v10;
+			case v11: return XML_READER_v11;
+			default: throw new IllegalArgumentException(
+				"Unknown GPX version: " + version
+			);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
-	static final XMLReader<GPX> READER = XMLReader.elem(
+	private static final XMLReader<GPX> XML_READER_v11 = XMLReader.elem(
 		a -> GPX.of(
-			(String)a[0],
+			(Version) a[0],
 			(String)a[1],
 			(Metadata)a[2],
 			(List<WayPoint>)a[3],
@@ -1267,18 +1412,18 @@ public final class GPX implements Serializable {
 			(List<Track>)a[5]
 		),
 		"gpx",
-		XMLReader.attr("version"),
+		XMLReader.attr("version").map(Version::of),
 		XMLReader.attr("creator"),
 		Metadata.READER,
-		XMLReader.elems(WayPoint.reader("wpt")),
+		XMLReader.elems(WayPoint.reader(Version.v11, "wpt")),
 		XMLReader.elems(Route.READER),
 		XMLReader.elems(Track.READER)
 	);
 
 	@SuppressWarnings("unchecked")
-	private static final XMLReader<GPX> READER_v10 = XMLReader.elem(
+	private static final XMLReader<GPX> XML_READER_v10 = XMLReader.elem(
 		a -> GPX.of(
-			(String)a[0],
+			(Version) a[0],
 			(String)a[1],
 			metadata(a),
 			(List<WayPoint>)a[11],
@@ -1286,7 +1431,7 @@ public final class GPX implements Serializable {
 			(List<Track>)a[13]
 		),
 		"gpx",
-		XMLReader.attr("version"),
+		XMLReader.attr("version").map(Version::of),
 		XMLReader.attr("creator"),
 
 		// Metadata
@@ -1300,7 +1445,7 @@ public final class GPX implements Serializable {
 		XMLReader.elem("keywords"),
 		Bounds.READER,
 
-		XMLReader.elems(WayPoint.reader("wpt")),
+		XMLReader.elems(WayPoint.reader(Version.v10, "wpt")),
 		XMLReader.elems(Route.READER),
 		XMLReader.elems(Track.READER)
 	);
@@ -1353,7 +1498,7 @@ public final class GPX implements Serializable {
 	 * @return a new GPX writer
 	 */
 	public static Writer writer() {
-		return writer(null);
+		return new Writer(null);
 	}
 
 	/**
@@ -1477,14 +1622,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public static Reader reader(final Version version, final Mode mode) {
-		final XMLReader<GPX> reader;
-		switch (version) {
-			case v10: reader = READER_v10; break;
-			case v11: reader = READER; break;
-			default: reader = READER; break;
-		}
-
-		return new Reader(reader, mode);
+		return new Reader(xmlReader(version), mode);
 	}
 
 	/**
@@ -1555,7 +1693,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader(Reader.Mode)
+	 * @see #reader(Version, Mode)
 	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(path)} instead
 	 */
 	@Deprecated
@@ -1595,7 +1733,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader(Reader.Mode)
+	 * @see #reader(Version, Mode)
 	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
 	 */
 	@Deprecated

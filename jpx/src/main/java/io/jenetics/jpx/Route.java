@@ -42,6 +42,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * Represents a route - an ordered list of way-points representing a series of
  * turn points leading to a destination.
@@ -758,38 +760,42 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Route> WRITER = XMLWriter.elem("rte",
-		XMLWriter.elem("name").map(r -> r._name),
-		XMLWriter.elem("cmt").map(r -> r._comment),
-		XMLWriter.elem("desc").map(r -> r._description),
-		XMLWriter.elem("src").map(r -> r._source),
-		XMLWriter.elems(Link.WRITER).map(r -> r._links),
-		XMLWriter.elem("number").map(r -> intString(r._number)),
-		XMLWriter.elem("type").map(r -> r._type),
-		XMLWriter.elems(WayPoint.writer("rtept")).map(r -> r._points)
-	);
+	static XMLWriter<Route> writer(final Version version) {
+		return XMLWriter.elem("rte",
+			XMLWriter.elem("name").map(r -> r._name),
+			XMLWriter.elem("cmt").map(r -> r._comment),
+			XMLWriter.elem("desc").map(r -> r._description),
+			XMLWriter.elem("src").map(r -> r._source),
+			XMLWriter.elems(Link.WRITER).map(r -> r._links),
+			XMLWriter.elem("number").map(r -> intString(r._number)),
+			XMLWriter.elem("type").map(r -> r._type),
+			XMLWriter.elems(WayPoint.writer(version, "rtept")).map(r -> r._points)
+		);
+	}
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<Route> READER = XMLReader.elem(
-		v -> Route.of(
-			(String)v[0],
-			(String)v[1],
-			(String)v[2],
-			(String)v[3],
-			(List<Link>)v[4],
-			(UInt)v[5],
-			(String)v[6],
-			(List<WayPoint>)v[7]
-		),
-		"rte",
-		XMLReader.elem("name"),
-		XMLReader.elem("cmt"),
-		XMLReader.elem("desc"),
-		XMLReader.elem("src"),
-		XMLReader.elems(Link.READER),
-		XMLReader.elem("number").map(UInt::parse),
-		XMLReader.elem("type"),
-		XMLReader.elems(WayPoint.reader("rtept"))
-	);
+	static XMLReader<Route> reader(final Version version) {
+		return XMLReader.elem(
+			v -> Route.of(
+				(String)v[0],
+				(String)v[1],
+				(String)v[2],
+				(String)v[3],
+				(List<Link>)v[4],
+				(UInt)v[5],
+				(String)v[6],
+				(List<WayPoint>)v[7]
+			),
+			"rte",
+			XMLReader.elem("name"),
+			XMLReader.elem("cmt"),
+			XMLReader.elem("desc"),
+			XMLReader.elem("src"),
+			XMLReader.elems(Link.READER),
+			XMLReader.elem("number").map(UInt::parse),
+			XMLReader.elem("type"),
+			XMLReader.elems(WayPoint.reader(version, "rtept"))
+		);
+	}
 
 }
