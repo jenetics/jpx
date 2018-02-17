@@ -20,9 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
+import static io.jenetics.jpx.Lists.headString;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.DataInput;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -760,41 +763,73 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
+	// Define the needed writers for the different versions.
+	private static final XMLWriters<Route> WRITERS = new XMLWriters<Route>()
+		.v00(XMLWriter.elem("name").map(r -> r._name))
+		.v00(XMLWriter.elem("cmt").map(r -> r._comment))
+		.v00(XMLWriter.elem("desc").map(r -> r._description))
+		.v00(XMLWriter.elem("src").map(r -> r._source))
+		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
+		.v10(XMLWriter.elem("url").map(rt -> headString(rt._links, Link::getHref)))
+		.v10(XMLWriter.elem("urlname").map(rt -> headString(rt._links, Link::getText)))
+		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
+		.v00(XMLWriter.elem("type").map(r -> r._type))
+		.v10(XMLWriter.elems(WayPoint.writer(Version.v10, "rtept")).map(r -> r._points))
+		.v11(XMLWriter.elems(WayPoint.writer(Version.v11, "rtept")).map(r -> r._points));
+
+
+	// Define the needed readers for the different versions.
+	private static final XMLReaders READERS = new XMLReaders()
+		.v00(XMLReader.elem("name"))
+		.v00(XMLReader.elem("cmt"))
+		.v00(XMLReader.elem("desc"))
+		.v00(XMLReader.elem("src"))
+		.v11(XMLReader.elems(Link.READER))
+		.v10(XMLReader.elem("url").map(Format::parseURI))
+		.v10(XMLReader.elem("urlname"))
+		.v00(XMLReader.elem("number").map(UInt::parse))
+		.v00(XMLReader.elem("type"))
+		.v10(XMLReader.elems(WayPoint.reader(Version.v10, "rtept")))
+		.v11(XMLReader.elems(WayPoint.reader(Version.v11, "rtept")));
+
 	static XMLWriter<Route> writer(final Version version) {
-		return XMLWriter.elem("rte",
-			XMLWriter.elem("name").map(r -> r._name),
-			XMLWriter.elem("cmt").map(r -> r._comment),
-			XMLWriter.elem("desc").map(r -> r._description),
-			XMLWriter.elem("src").map(r -> r._source),
-			XMLWriter.elems(Link.WRITER).map(r -> r._links),
-			XMLWriter.elem("number").map(r -> intString(r._number)),
-			XMLWriter.elem("type").map(r -> r._type),
-			XMLWriter.elems(WayPoint.writer(version, "rtept")).map(r -> r._points)
-		);
+		return XMLWriter.elem("rte", WRITERS.writers(version));
 	}
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<Route> reader(final Version version) {
 		return XMLReader.elem(
-			v -> Route.of(
-				(String)v[0],
-				(String)v[1],
-				(String)v[2],
-				(String)v[3],
-				(List<Link>)v[4],
-				(UInt)v[5],
-				(String)v[6],
-				(List<WayPoint>)v[7]
-			),
+			version == Version.v10 ? Route::toRouteV10 : Route::toRouteV11,
 			"rte",
-			XMLReader.elem("name"),
-			XMLReader.elem("cmt"),
-			XMLReader.elem("desc"),
-			XMLReader.elem("src"),
-			XMLReader.elems(Link.READER),
-			XMLReader.elem("number").map(UInt::parse),
-			XMLReader.elem("type"),
-			XMLReader.elems(WayPoint.reader(version, "rtept"))
+			READERS.readers(version)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Route toRouteV11(final Object[] v) {
+		return Route.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			(List<Link>)v[4],
+			(UInt)v[5],
+			(String)v[6],
+			(List<WayPoint>)v[7]
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Route toRouteV10(final Object[] v) {
+		return Route.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			singletonList(Link.of((URI)v[4], (String)v[5], null)),
+			(UInt)v[6],
+			(String)v[7],
+			(List<WayPoint>)v[8]
 		);
 	}
 

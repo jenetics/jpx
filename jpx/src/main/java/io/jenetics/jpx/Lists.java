@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Helper methods for handling lists. All method handles null values correctly.
@@ -112,6 +114,20 @@ final class Lists {
 		}
 
 		return result;
+	}
+
+	static <T> Optional<T> head(final List<T> list) {
+		return list == null || list.isEmpty()
+			? Optional.empty()
+			: Optional.of(list.get(0));
+	}
+
+	static <T, B> String headString(final List<T> list, final Function<T, B> mapper) {
+		return head(list)
+			.map(mapper)
+			.map(o -> o instanceof Optional ? ((Optional<?>)o).orElse(null) : o)
+			.map(Objects::toString)
+			.orElse(null);
 	}
 
 }

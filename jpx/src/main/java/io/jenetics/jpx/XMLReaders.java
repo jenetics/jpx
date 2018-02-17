@@ -28,45 +28,45 @@ import java.util.stream.IntStream;
 import io.jenetics.jpx.GPX.Version;
 
 /**
- * XMLWriter collection for different GPX versions.
+ * XMLReader collection for different GPX versions.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-final class XMLWriters<T> {
+final class XMLReaders{
 
 	private final List<Version> _versions = new ArrayList<>();
-	private final List<XMLWriter<T>> _writers = new ArrayList<>();
+	private final List<XMLReader<?>> _readers = new ArrayList<>();
 
 
-	XMLWriters<T> v00(final XMLWriter<T> writer) {
-		requireNonNull(writer);
+	XMLReaders v00(final XMLReader<?> reader) {
+		requireNonNull(reader);
 		_versions.add(null);
-		_writers.add(writer);
+		_readers.add(reader);
 		return this;
 	}
 
-	XMLWriters<T> v10(final XMLWriter<T> writer) {
-		requireNonNull(writer);
+	XMLReaders v10(final XMLReader<?> reader) {
+		requireNonNull(reader);
 		_versions.add(Version.v10);
-		_writers.add(writer);
+		_readers.add(reader);
 		return this;
 	}
 
-	XMLWriters<T> v11(final XMLWriter<T> writer) {
-		requireNonNull(writer);
+	XMLReaders v11(final XMLReader<?> reader) {
+		requireNonNull(reader);
 		_versions.add(Version.v11);
-		_writers.add(writer);
+		_readers.add(reader);
 		return this;
 	}
 
 	@SuppressWarnings("unchecked")
-	XMLWriter<T>[] writers(final Version version) {
+	XMLReader<?>[] readers(final Version version) {
 		return IntStream.range(0, _versions.size())
 			.filter(i -> _versions.get(i) == null || _versions.get(i) == version)
-			.mapToObj(_writers::get)
-			.toArray(XMLWriter[]::new);
+			.mapToObj(_readers::get)
+			.toArray(XMLReader[]::new);
 	}
 
 }

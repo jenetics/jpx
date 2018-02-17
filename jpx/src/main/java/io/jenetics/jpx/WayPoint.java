@@ -27,6 +27,7 @@ import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
+import static io.jenetics.jpx.Lists.headString;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.DataInput;
@@ -44,7 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import io.jenetics.jpx.GPX.Version;
 
@@ -60,7 +60,7 @@ import io.jenetics.jpx.GPX.Version;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 public final class WayPoint implements Point, Serializable {
@@ -1833,19 +1833,7 @@ public final class WayPoint implements Point, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	private static final XMLWriter<WayPoint> URL = XMLWriter.elem("url")
-		.map(wp -> wp._links.isEmpty()
-			? null
-			: wp._links.get(0).getHref().toString());
-
-	private static final XMLWriter<WayPoint> URL_NAME = XMLWriter.elem("urlname")
-		.map(wp -> wp._links.isEmpty()
-			? null
-			: wp._links.get(0).getText().orElse(null));
-
-	private static final XMLWriter<WayPoint> COURSE = XMLWriter.elem("course")
-		.map(wp -> doubleString(wp._course));
-
+	// Define the needed writers for the different versions.
 	private static final XMLWriters<WayPoint> WRITERS = new XMLWriters<WayPoint>()
 		.v00(XMLWriter.attr("lat").map(wp -> wp._latitude))
 		.v00(XMLWriter.attr("lon").map(wp -> wp._longitude))
@@ -1859,8 +1847,8 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLWriter.elem("desc").map(wp -> wp._description))
 		.v00(XMLWriter.elem("src").map(wp -> wp._source))
 		.v11(XMLWriter.elems(Link.WRITER).map(wp -> wp._links))
-		.v10(URL)
-		.v10(URL_NAME)
+		.v10(XMLWriter.elem("url").map(wp -> headString(wp._links, Link::getHref)))
+		.v10(XMLWriter.elem("urlname").map(wp -> headString(wp._links, Link::getText)))
 		.v00(XMLWriter.elem("sym").map(wp -> wp._symbol))
 		.v00(XMLWriter.elem("type").map(wp -> wp._type))
 		.v00(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)))
@@ -1870,101 +1858,47 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)))
 		.v00(XMLWriter.elem("ageofdgpsdata").map(wp -> durationString(wp._ageOfGPSData)))
 		.v00(XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID)))
-		.v10(COURSE);
+		.v10(XMLWriter.elem("course").map(wp -> doubleString(wp._course)));
+
+	// Define the needed readers for the different versions.
+	private static final XMLReaders READERS = new XMLReaders()
+		.v00(XMLReader.attr("lat").map(Latitude::parse))
+		.v00(XMLReader.attr("lon").map(Longitude::parse))
+		.v00(XMLReader.elem("ele").map(Length::parse))
+		.v00(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
+		.v11(XMLReader.elem("speed").map(Speed::parse))
+		.v00(XMLReader.elem("magvar").map(Degrees::parse))
+		.v00(XMLReader.elem("geoidheight").map(Length::parse))
+		.v00(XMLReader.elem("name"))
+		.v00(XMLReader.elem("cmt"))
+		.v00(XMLReader.elem("desc"))
+		.v00(XMLReader.elem("src"))
+		.v11(XMLReader.elems(Link.READER))
+		.v10(XMLReader.elem("url").map(Format::parseURI))
+		.v10(XMLReader.elem("urlname"))
+		.v00(XMLReader.elem("sym"))
+		.v00(XMLReader.elem("type"))
+		.v00(XMLReader.elem("fix"))
+		.v00(XMLReader.elem("sat").map(UInt::parse))
+		.v00(XMLReader.elem("hdop").map(Double::parseDouble))
+		.v00(XMLReader.elem("vdop").map(Double::parseDouble))
+		.v00(XMLReader.elem("pdop").map(Double::parseDouble))
+		.v00(XMLReader.elem("ageofdgpsdata").map(Format::parseDuration))
+		.v00(XMLReader.elem("dgpsid").map(DGPSStation::parse))
+		.v10(XMLReader.elem("course").map(Degrees::parse));
 
 	static XMLWriter<WayPoint> writer(final Version version, final String name) {
-		final List<XMLWriter<WayPoint>> writers = new ArrayList<>(23);
-		writers.add(XMLWriter.attr("lat").map(wp -> wp._latitude));
-		writers.add(XMLWriter.attr("lon").map(wp -> wp._longitude));
-		writers.add(XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)));
-		writers.add(XMLWriter.elem("time")
-			.map(wp -> ZonedDateTimeFormat.format(wp._time)));
-		if (version == Version.v11) {
-			writers.add(XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)));
-		}
-		writers.add(XMLWriter.elem("magvar")
-			.map(wp -> doubleString(wp._magneticVariation)));
-		writers.add(XMLWriter.elem("geoidheight")
-			.map(wp -> doubleString(wp._geoidHeight)));
-		writers.add(XMLWriter.elem("name").map(wp -> wp._name));
-		writers.add(XMLWriter.elem("cmt").map(wp -> wp._comment));
-		writers.add(XMLWriter.elem("desc").map(wp -> wp._description));
-		writers.add(XMLWriter.elem("src").map(wp -> wp._source));
-		if (version == Version.v11) {
-			writers.add(XMLWriter.elems(Link.WRITER).map(wp -> wp._links));
-		} else {
-			writers.add(URL);
-			writers.add(URL_NAME);
-		}
-		writers.add(XMLWriter.elem("sym").map(wp -> wp._symbol));
-		writers.add(XMLWriter.elem("type").map(wp -> wp._type));
-		writers.add(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)));
-		writers.add(XMLWriter.elem("sat").map(wp -> intString(wp._sat)));
-		writers.add(XMLWriter.elem("hdop").map(wp -> doubleString(wp._hdop)));
-		writers.add(XMLWriter.elem("vdop").map(wp -> doubleString(wp._vdop)));
-		writers.add(XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)));
-		writers.add(XMLWriter.elem("ageofdgpsdata")
-			.map(wp -> durationString(wp._ageOfGPSData)));
-		writers.add(XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID)));
-		if (version == Version.v10) {
-			writers.add(COURSE);
-		}
-
-		return XMLWriter.elem(name, writers.toArray(new XMLWriter[0]));
+		return XMLWriter.elem(name, WRITERS.writers(version));
 	}
-
-
-
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final Version version, final String name) {
-		final Function<Object[], WayPoint> converter;
-		switch (version) {
-			case v10: converter = WayPoint::toWayPointV10; break;
-			case v11: converter = WayPoint::toWayPointV11; break;
-			default: throw new IllegalArgumentException(format(
-				"Unknown version: '%s'.", version
-			));
-		}
-
-		final List<XMLReader<?>> readers = new ArrayList<>(23);
-		readers.add(XMLReader.attr("lat").map(Latitude::parse));
-		readers.add(XMLReader.attr("lon").map(Longitude::parse));
-		readers.add(XMLReader.elem("ele").map(Length::parse));
-		readers.add(XMLReader.elem("time").map(ZonedDateTimeFormat::parse));
-		if (version == Version.v11) {
-			readers.add(XMLReader.elem("speed").map(Speed::parse));
-		}
-		readers.add(XMLReader.elem("magvar").map(Degrees::parse));
-		readers.add(XMLReader.elem("geoidheight").map(Length::parse));
-		readers.add(XMLReader.elem("name"));
-		readers.add(XMLReader.elem("cmt"));
-		readers.add(XMLReader.elem("desc"));
-		readers.add(XMLReader.elem("src"));
-
-		if (version == Version.v11) {
-			readers.add(XMLReader.elems(Link.READER));
-		} else {
-			readers.add(XMLReader.elem("url").map(Format::parseURI));
-			readers.add(XMLReader.elem("urlname"));
-		}
-		readers.add(XMLReader.elem("sym"));
-		readers.add(XMLReader.elem("type"));
-		readers.add(XMLReader.elem("fix").map(Fix::parse));
-		readers.add(XMLReader.elem("sat").map(UInt::parse));
-		readers.add(XMLReader.elem("hdop").map(Double::parseDouble));
-		readers.add(XMLReader.elem("vdop").map(Double::parseDouble));
-		readers.add(XMLReader.elem("pdop").map(Double::parseDouble));
-		readers.add(XMLReader.elem("ageofdgpsdata").map(Format::parseDuration));
-		readers.add(XMLReader.elem("dgpsid").map(DGPSStation::parse));
-		if (version == Version.v10) {
-			readers.add(XMLReader.elem("course").map(Degrees::parse));
-		}
-
 		return XMLReader.elem(
-			converter,
+			version == Version.v10
+				? WayPoint::toWayPointV10
+				: WayPoint::toWayPointV11,
 			name,
-			readers.toArray(new XMLReader[0])
+			READERS.readers(version)
 		);
 	}
 
