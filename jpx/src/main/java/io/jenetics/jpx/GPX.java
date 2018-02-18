@@ -1114,7 +1114,7 @@ public final class GPX implements Serializable {
 			final XMLOutputFactory factory = XMLOutputFactory.newFactory();
 			try (CloseableXMLStreamWriter xml = writer(factory, output)) {
 				xml.writeStartDocument("UTF-8", "1.0");
-				GPX.xmlWriter(gpx._version).write(xml, gpx);
+				GPX.writer(gpx._version).write(xml, gpx);
 				xml.writeEndDocument();
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
@@ -1397,90 +1397,75 @@ public final class GPX implements Serializable {
 
 	// Define the needed readers for the different versions.
 	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.attr("lat").map(Latitude::parse))
+		.v00(XMLReader.attr("version").map(Version::of))
+		.v00(XMLReader.attr("creator"))
+		.v11(Metadata.READER)
+		.v10(XMLReader.elem("name"))
+		.v10(XMLReader.elem("desc"))
+		.v10(XMLReader.elem("author"))
+		.v10(XMLReader.elem("email"))
+		.v10(XMLReader.elem("url"))
+		.v10(XMLReader.elem("urlname"))
+		.v10(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
+		.v10(XMLReader.elem("keywords"))
+		.v10(Bounds.READER)
+		.v10(XMLReader.elems(WayPoint.reader(Version.v10, "wpt")))
+		.v11(XMLReader.elems(WayPoint.reader(Version.v11, "wpt")))
+		.v10(XMLReader.elems(Route.reader(Version.v10)))
+		.v11(XMLReader.elems(Route.reader(Version.v11)))
+		.v10(XMLReader.elems(Track.reader(Version.v10)))
+		.v11(XMLReader.elems(Track.reader(Version.v11)))
 
 		;
 
 
-	static XMLWriter<GPX> xmlWriter(final Version version) {
+	static XMLWriter<GPX> writer(final Version version) {
 		return XMLWriter.elem("gpx", WRITERS.writers(version));
 	}
 
-	static XMLReader<GPX> xmlReader(final Version version) {
-		switch (version) {
-			case v10: return XML_READER_v10;
-			case v11: return XML_READER_v11;
-			default: throw new IllegalArgumentException(
-				"Unknown GPX version: " + version
-			);
-		}
+	@SuppressWarnings("unchecked")
+	static XMLReader<GPX> reader(final Version version) {
+		return XMLReader.elem(
+			version == Version.v10 ? GPX::toGPXv10 :GPX::toGPXv11,
+			"gpx",
+			READERS.readers(version)
+		);
 	}
 
 	@SuppressWarnings("unchecked")
-	private static final XMLReader<GPX> XML_READER_v11 = XMLReader.elem(
-		a -> GPX.of(
-			(Version) a[0],
-			(String)a[1],
-			(Metadata)a[2],
-			(List<WayPoint>)a[3],
-			(List<Route>)a[4],
-			(List<Track>)a[5]
-		),
-		"gpx",
-		XMLReader.attr("version").map(Version::of),
-		XMLReader.attr("creator"),
-		Metadata.READER,
-		XMLReader.elems(WayPoint.reader(Version.v11, "wpt")),
-		XMLReader.elems(Route.READER),
-		XMLReader.elems(Track.READER)
-	);
+	private static GPX toGPXv11(final Object[] v) {
+		return GPX.of(
+			(Version)v[0],
+			(String)v[1],
+			(Metadata)v[2],
+			(List<WayPoint>)v[3],
+			(List<Route>)v[4],
+			(List<Track>)v[5]
+		);
+	}
 
 	@SuppressWarnings("unchecked")
-	private static final XMLReader<GPX> XML_READER_v10 = XMLReader.elem(
-		a -> GPX.of(
-			(Version) a[0],
-			(String)a[1],
-			metadata(a),
-			(List<WayPoint>)a[11],
-			(List<Route>)a[12],
-			(List<Track>)a[13]
-		),
-		"gpx",
-		XMLReader.attr("version").map(Version::of),
-		XMLReader.attr("creator"),
-
-		// Metadata
-		XMLReader.elem("name"),
-		XMLReader.elem("desc"),
-		XMLReader.elem("author"),
-		XMLReader.elem("email"),
-		XMLReader.elem("url"),
-		XMLReader.elem("urlname"),
-		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
-		XMLReader.elem("keywords"),
-		Bounds.READER,
-
-		XMLReader.elems(WayPoint.reader(Version.v10, "wpt")),
-		XMLReader.elems(Route.READER),
-		XMLReader.elems(Track.READER)
-	);
-
-	private static Metadata metadata(final Object[] v) {
-		final Person author = Person.of(
-			(String)v[4],
-			v[5] != null ? Email.of((String)v[5]) : null,
-			v[6] != null ? Link.of((String)v[6], (String)v[7], null) : null
-		);
-
-		return Metadata.of(
-			(String)v[2],
-			(String)v[3],
-			author.isEmpty() ? null : author,
-			null,
-			null,
-			(ZonedDateTime)v[8],
-			(String)v[9],
-			(Bounds)v[10]
+	private static GPX toGPXv10(final Object[] v) {
+		return GPX.of(
+			(Version)v[0],
+			(String)v[1],
+			Metadata.of(
+				(String)v[2],
+				(String)v[3],
+				Person.of(
+					(String)v[4],
+					v[5] != null ? Email.of((String)v[5]) : null,
+					v[6] != null ? Link.of((String)v[6], (String)v[7], null) : null
+				),
+				null,
+				null,
+				(ZonedDateTime)v[8],
+				(String)v[9],
+				(Bounds)v[10]
+			),
+			(List<WayPoint>)v[11],
+			(List<Route>)v[12],
+			(List<Track>)v[13]
 		);
 	}
 
@@ -1637,7 +1622,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public static Reader reader(final Version version, final Mode mode) {
-		return new Reader(xmlReader(version), mode);
+		return new Reader(GPX.reader(version), mode);
 	}
 
 	/**

@@ -65,11 +65,11 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Override
-	protected Params<GPX> params(final Random random) {
+	protected Params<GPX> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextGPX(random),
-			GPX.READER,
-			GPX.WRITER
+			GPX.reader(version),
+			GPX.writer(version)
 		);
 	}
 

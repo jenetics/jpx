@@ -34,6 +34,8 @@ import java.util.stream.IntStream;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -46,11 +48,11 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 	}
 
 	@Override
-	protected Params<TrackSegment> params(final Random random) {
+	protected Params<TrackSegment> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextTrackSegment(random),
-			TrackSegment.READER,
-			TrackSegment.WRITER
+			TrackSegment.reader(version),
+			TrackSegment.writer(version)
 		);
 	}
 

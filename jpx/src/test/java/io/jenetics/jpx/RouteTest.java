@@ -33,6 +33,8 @@ import java.util.function.Supplier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -45,11 +47,11 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 	}
 
 	@Override
-	protected Params<Route> params(final Random random) {
+	protected Params<Route> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextRoute(random),
-			Route.READER,
-			Route.WRITER
+			Route.reader(version),
+			Route.writer(version)
 		);
 	}
 

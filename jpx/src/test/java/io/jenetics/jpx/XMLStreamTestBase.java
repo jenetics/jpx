@@ -36,6 +36,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -59,7 +61,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
 	private final Random _random = new Random(1000);
 
-	protected abstract Params<T> params(final Random random);
+	protected abstract Params<T> params(final Version version, final Random random);
 
 	public static <T> List<T> nextObjects(final Supplier<T> supplier, final Random random) {
 		return Stream.generate(supplier)
@@ -68,12 +70,20 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	}
 
 	@Test(invocationCount = 10)
-	public void marshalling() throws Exception {
-		final Params<T> params = params(_random);
+	public void marshallingV10() throws Exception {
+		marshalling(Version.v10);
+	}
+
+	@Test(invocationCount = 10)
+	public void marshallingV11() throws Exception {
+		marshalling(Version.v11);
+	}
+
+	private void marshalling(final Version version) throws Exception {
+		final Params<T> params = params(version, _random);
 
 		final T expected = params.supplier.get();
 		final byte[] marshaled = toBytes(expected, params.writer);
-		//System.out.println(new String(marshaled));
 		final T actual = fromBytes(marshaled, params.reader);
 
 		assertEquals(actual, expected);
