@@ -1839,7 +1839,7 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLWriter.attr("lon").map(wp -> wp._longitude))
 		.v00(XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)))
 		.v00(XMLWriter.elem("time").map(wp -> ZonedDateTimeFormat.format(wp._time)))
-		.v11(XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)))
+		.v00(XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)))
 		.v00(XMLWriter.elem("magvar").map(wp -> doubleString(wp._magneticVariation)))
 		.v00(XMLWriter.elem("geoidheight").map(wp -> doubleString(wp._geoidHeight)))
 		.v00(XMLWriter.elem("name").map(wp -> wp._name))
@@ -1903,56 +1903,58 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	private static WayPoint toWayPointV11(final Object[] v) {
+		int i = 0;
 		return WayPoint.of(
-			(Latitude)v[0],
-			(Longitude)v[1],
-			(Length)v[2],
-			(Speed)v[3],
-			(ZonedDateTime)v[4],
-			(Degrees)v[5],
-			(Length)v[6],
-			(String)v[7],
-			(String)v[8],
-			(String)v[9],
-			(String)v[10],
-			(List<Link>)v[11],
-			(String)v[12],
-			(String)v[13],
-			(Fix)v[14],
-			(UInt)v[15],
-			(Double)v[16],
-			(Double)v[17],
-			(Double)v[18],
-			(Duration)v[19],
-			(DGPSStation)v[20],
+			(Latitude)v[i++],
+			(Longitude)v[i++],
+			(Length)v[i++],
+			(Speed)v[i++],
+			(ZonedDateTime)v[i++],
+			(Degrees)v[i++],
+			(Length)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(List<Link>)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(Fix)v[i++],
+			(UInt)v[i++],
+			(Double)v[i++],
+			(Double)v[i++],
+			(Double)v[i++],
+			(Duration)v[i++],
+			(DGPSStation)v[i++],
 			null
 		);
 	}
 
 	private static WayPoint toWayPointV10(final Object[] v) {
+		int i = 0;
 		return WayPoint.of(
-			(Latitude)v[0],
-			(Longitude)v[1],
-			(Length)v[2],
-			null,
-			(ZonedDateTime)v[3],
-			(Degrees)v[4],
-			(Length)v[5],
-			(String)v[6],
-			(String)v[7],
-			(String)v[8],
-			(String)v[9],
-			singletonList(Link.of((URI)v[10], (String)v[11], null)),
-			(String)v[12],
-			(String)v[13],
-			(Fix)v[14],
-			(UInt)v[15],
-			(Double)v[16],
-			(Double)v[17],
-			(Double)v[18],
-			(Duration)v[19],
-			(DGPSStation)v[20],
-			(Degrees)v[21]
+			(Latitude)v[i++],
+			(Longitude)v[i++],
+			(Length)v[i++],
+			(Speed)v[i++],
+			(ZonedDateTime)v[i++],
+			(Degrees)v[i++],
+			(Length)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			singletonList(Link.of((URI)v[i++], (String)v[i++], null)),
+			(String)v[i++],
+			(String)v[i++],
+			(Fix)v[i++],
+			(UInt)v[i++],
+			(Double)v[i++],
+			(Double)v[i++],
+			(Double)v[i++],
+			(Duration)v[i++],
+			(DGPSStation)v[i++],
+			(Degrees)v[i++]
 		);
 	}
 

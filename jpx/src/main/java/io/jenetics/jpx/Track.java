@@ -20,9 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
+import static io.jenetics.jpx.Lists.headString;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.DataInput;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +44,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.jenetics.jpx.GPX.Version;
 
 /**
  * Represents a GPX track - an ordered list of points describing a path.
@@ -62,7 +67,7 @@ import java.util.stream.Stream;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 public final class Track implements Iterable<TrackSegment>, Serializable {
@@ -729,38 +734,75 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Track> WRITER = XMLWriter.elem("trk",
-		XMLWriter.elem("name").map(r -> r._name),
-		XMLWriter.elem("cmt").map(r -> r._comment),
-		XMLWriter.elem("desc").map(r -> r._description),
-		XMLWriter.elem("src").map(r -> r._source),
-		XMLWriter.elems(Link.WRITER).map(r -> r._links),
-		XMLWriter.elem("number").map(r -> intString(r._number)),
-		XMLWriter.elem("type").map(r -> r._type),
-		XMLWriter.elems(TrackSegment.WRITER).map(r -> r._segments)
-	);
+	// Define the needed writers for the different versions.
+	private static final XMLWriters<Track> WRITERS = new XMLWriters<Track>()
+		.v00(XMLWriter.elem("name").map(t -> t._name))
+		.v00(XMLWriter.elem("cmt").map(r -> r._comment))
+		.v00(XMLWriter.elem("desc").map(r -> r._description))
+		.v00(XMLWriter.elem("src").map(r -> r._source))
+		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
+		.v10(XMLWriter.elem("url").map(rt -> headString(rt._links, Link::getHref)))
+		.v10(XMLWriter.elem("urlname").map(rt -> headString(rt._links, Link::getText)))
+		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
+		.v00(XMLWriter.elem("type").map(r -> r._type))
+		.v10(XMLWriter.elems(TrackSegment.writer(Version.v10)).map(r -> r._segments))
+		.v11(XMLWriter.elems(TrackSegment.writer(Version.v11)).map(r -> r._segments));
+
+	// Define the needed readers for the different versions.
+	private static final XMLReaders READERS = new XMLReaders()
+		.v00(XMLReader.elem("name"))
+		.v00(XMLReader.elem("cmt"))
+		.v00(XMLReader.elem("desc"))
+		.v00(XMLReader.elem("src"))
+		.v11(XMLReader.elems(Link.READER))
+		.v10(XMLReader.elem("url").map(Format::parseURI))
+		.v10(XMLReader.elem("urlname"))
+		.v00(XMLReader.elem("number").map(UInt::parse))
+		.v00(XMLReader.elem("type"))
+		.v10(XMLReader.elems(TrackSegment.reader(Version.v10)))
+		.v11(XMLReader.elems(TrackSegment.reader(Version.v11)));
+
+	static XMLWriter<Track> writer(final Version version) {
+		return XMLWriter.elem("trk", WRITERS.writers(version));
+	}
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<Track> READER = XMLReader.elem(
-		v -> Track.of(
-			(String)v[0],
-			(String)v[1],
-			(String)v[2],
-			(String)v[3],
-			(List<Link>)v[4],
-			(UInt)v[5],
-			(String)v[6],
-			(List<TrackSegment>)v[7]
-		),
-		"trk",
-		XMLReader.elem("name"),
-		XMLReader.elem("cmt"),
-		XMLReader.elem("desc"),
-		XMLReader.elem("src"),
-		XMLReader.elems(Link.READER),
-		XMLReader.elem("number").map(UInt::parse),
-		XMLReader.elem("type"),
-		XMLReader.elems(TrackSegment.READER)
-	);
+	static XMLReader<Track> reader(final Version version) {
+		return XMLReader.elem(
+			version == Version.v10 ? Track::toTrackV10 : Track::toTrackV11,
+			"trk",
+			READERS.readers(version)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Track toTrackV11(final Object[] v) {
+		int i = 0;
+		return Track.of(
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(List<Link>)v[i++],
+			(UInt)v[i++],
+			(String)v[i++],
+			(List<TrackSegment>)v[i++]
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Track toTrackV10(final Object[] v) {
+		int i = 0;
+		return Track.of(
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			singletonList(Link.of((URI)v[i++], (String)v[i++], null)),
+			(UInt)v[i++],
+			(String)v[i++],
+			(List<TrackSegment>)v[i++]
+		);
+	}
 
 }

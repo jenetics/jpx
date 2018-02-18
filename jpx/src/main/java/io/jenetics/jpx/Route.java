@@ -63,7 +63,7 @@ import io.jenetics.jpx.GPX.Version;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
@@ -807,29 +807,31 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	private static Route toRouteV11(final Object[] v) {
+		int i = 0;
 		return Route.of(
-			(String)v[0],
-			(String)v[1],
-			(String)v[2],
-			(String)v[3],
-			(List<Link>)v[4],
-			(UInt)v[5],
-			(String)v[6],
-			(List<WayPoint>)v[7]
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(List<Link>)v[i++],
+			(UInt)v[i++],
+			(String)v[i++],
+			(List<WayPoint>)v[i++]
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static Route toRouteV10(final Object[] v) {
+		int i = 0;
 		return Route.of(
-			(String)v[0],
-			(String)v[1],
-			(String)v[2],
-			(String)v[3],
-			singletonList(Link.of((URI)v[4], (String)v[5], null)),
-			(UInt)v[6],
-			(String)v[7],
-			(List<WayPoint>)v[8]
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			(String)v[i++],
+			singletonList(Link.of((URI)v[i++], (String)v[i++], null)),
+			(UInt)v[i++],
+			(String)v[i++],
+			(List<WayPoint>)v[i++]
 		);
 	}
 

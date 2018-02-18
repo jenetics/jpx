@@ -21,7 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Format.doubleString;
+import static io.jenetics.jpx.Format.durationString;
+import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
+import static io.jenetics.jpx.Lists.headString;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.XMLWriter.elem;
 
@@ -1311,85 +1315,96 @@ public final class GPX implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static XMLWriter<GPX> xmlWriter(final Version version) {
-		switch (version) {
-			case v10: return XML_WRITER_v10;
-			case v11: return XML_WRITER_v11;
-			default: throw new IllegalArgumentException(
-				"Unknown GPX version: " + version
-			);
-		}
+	private static String name(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getName)
+			.orElse(null);
 	}
 
-	private static final XMLWriter<GPX> XML_WRITER_v11 = elem("gpx",
-		XMLWriter.attr("version").map(gpx -> {
-			if (gpx._version != Version.v11) {
-				throw new IllegalArgumentException(format(
-					"Incompatible GPX version. Expected '%s', but got '%s'.",
-					Version.v11, Version.v10
-				));
-			}
-			return gpx._version.value;
-		}),
-		XMLWriter.attr("creator").map(gpx -> gpx._creator),
-		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
-		Metadata.WRITER.map(gpx -> gpx._metadata),
-		XMLWriter.elems(WayPoint.writer(Version.v11,"wpt"))
-			.map(gpx -> gpx._wayPoints),
-		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
-		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
-	);
+	private static String desc(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getDescription)
+			.orElse(null);
+	}
 
-	private static final XMLWriter<GPX> XML_WRITER_v10 = elem("gpx",
-		XMLWriter.attr("version").map(gpx -> {
-			if (gpx._version != Version.v10) {
-				throw new IllegalArgumentException(format(
-					"Incompatible GPX version. Expected '%s', but got '%s'.",
-					Version.v10, Version.v11
-				));
-			}
-			return gpx._version.value;
-		}),
-		XMLWriter.attr("creator").map(gpx -> gpx._creator),
-		XMLWriter.ns("http://www.topografix.com/GPX/1/0"),
-
-		XMLWriter.elem("name").map(gpx -> gpx.getMetadata()
-			.flatMap(Metadata::getName).orElse(null)),
-		XMLWriter.elem("desc").map(gpx -> gpx.getMetadata()
-			.flatMap(Metadata::getDescription).orElse(null)),
-		XMLWriter.elem("author").map(gpx -> gpx.getMetadata()
+	private static String author(final GPX gpx) {
+		return gpx.getMetadata()
 			.flatMap(Metadata::getAuthor)
 			.flatMap(Person::getName)
-			.orElse(null)),
-		XMLWriter.elem("email").map(gpx -> gpx.getMetadata()
+			.orElse(null);
+	}
+
+	private static String email(final GPX gpx) {
+		return gpx.getMetadata()
 			.flatMap(Metadata::getAuthor)
 			.flatMap(Person::getEmail)
 			.map(Email::getAddress)
-			.orElse(null)),
-		XMLWriter.elem("url").map(gpx -> gpx.getMetadata()
+			.orElse(null);
+	}
+
+	private static String url(final GPX gpx) {
+		return gpx.getMetadata()
 			.flatMap(Metadata::getAuthor)
 			.flatMap(Person::getLink)
 			.map(Link::getHref)
 			.map(URI::toString)
-			.orElse(null)),
-		XMLWriter.elem("urlname").map(gpx -> gpx.getMetadata()
+			.orElse(null);
+	}
+
+	private static String urlname(final GPX gpx) {
+		return gpx.getMetadata()
 			.flatMap(Metadata::getAuthor)
 			.flatMap(Person::getLink)
 			.flatMap(Link::getText)
-			.orElse(null)),
-		XMLWriter.elem("time").map(gpx -> gpx.getMetadata()
+			.orElse(null);
+	}
+
+	private static String time(final GPX gpx) {
+		return gpx.getMetadata()
 			.flatMap(Metadata::getTime)
 			.map(ZonedDateTimeFormat::format)
-			.orElse(null)),
-		XMLWriter.elem("keywords").map(gpx -> gpx.getMetadata()
-			.flatMap(Metadata::getKeywords)
-			.orElse(null)),
+			.orElse(null);
+	}
 
-		XMLWriter.elems(WayPoint.writer(Version.v10, "wpt"))
-			.map(gpx -> gpx._wayPoints),
-		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
-		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
-	);
+	private static String keywords(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getKeywords)
+			.orElse(null);
+	}
+
+
+	// Define the needed writers for the different versions.
+	private static final XMLWriters<GPX> WRITERS = new XMLWriters<GPX>()
+		.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
+		.v11(XMLWriter.ns("http://www.topografix.com/GPX/1/1"))
+		.v10(XMLWriter.ns("http://www.topografix.com/GPX/1/0"))
+		.v11(Metadata.WRITER.map(gpx -> gpx._metadata))
+		.v10(XMLWriter.elem("name").map(GPX::name))
+		.v10(XMLWriter.elem("desc").map(GPX::desc))
+		.v10(XMLWriter.elem("author").map(GPX::author))
+		.v10(XMLWriter.elem("email").map(GPX::email))
+		.v10(XMLWriter.elem("url").map(GPX::url))
+		.v10(XMLWriter.elem("urlname").map(GPX::urlname))
+		.v10(XMLWriter.elem("time").map(GPX::time))
+		.v10(XMLWriter.elem("keywords").map(GPX::keywords))
+		.v10(XMLWriter.elems(WayPoint.writer(Version.v10,"wpt")).map(gpx -> gpx._wayPoints))
+		.v11(XMLWriter.elems(WayPoint.writer(Version.v11,"wpt")).map(gpx -> gpx._wayPoints))
+		.v10(XMLWriter.elems(Route.writer(Version.v10)).map(gpx -> gpx._routes))
+		.v11(XMLWriter.elems(Route.writer(Version.v11)).map(gpx -> gpx._routes))
+		.v10(XMLWriter.elems(Track.writer(Version.v10)).map(gpx -> gpx._tracks))
+		.v11(XMLWriter.elems(Track.writer(Version.v11)).map(gpx -> gpx._tracks));
+
+
+	// Define the needed readers for the different versions.
+	private static final XMLReaders READERS = new XMLReaders()
+		.v00(XMLReader.attr("lat").map(Latitude::parse))
+
+		;
+
+
+	static XMLWriter<GPX> xmlWriter(final Version version) {
+		return XMLWriter.elem("gpx", WRITERS.writers(version));
+	}
 
 	static XMLReader<GPX> xmlReader(final Version version) {
 		switch (version) {
