@@ -70,14 +70,37 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 			.collect(Collectors.toList());
 	}
 
-	//@Test(invocationCount = 10)
+	@Test(invocationCount = 10)
 	public void marshallingV10() throws Exception {
-		marshalling(Version.v10);
+		final Params<T> params = params(Version.v10, _random);
+
+		final T object = params.supplier.get();
+		byte[] marshaled = toBytes(object, params.writer);
+		final T expected = fromBytes(marshaled, params.reader);
+
+		marshaled = toBytes(expected, params.writer);
+		final T actual = fromBytes(marshaled, params.reader);
+
+		/*
+		if (!Objects.equals(actual, expected)) {
+			System.out.println(new String(marshaled));
+			System.out.println();
+			System.out.println(new String(toBytes(actual, params.writer)));
+		}
+		*/
+
+		assertEquals(actual, expected);
 	}
 
 	@Test(invocationCount = 10)
 	public void marshallingV11() throws Exception {
-		marshalling(Version.v11);
+		final Params<T> params = params(Version.v11, _random);
+
+		final T expected = params.supplier.get();
+		final byte[] marshaled = toBytes(expected, params.writer);
+		final T actual = fromBytes(marshaled, params.reader);
+
+		assertEquals(actual, expected);
 	}
 
 	private void marshalling(final Version version) throws Exception {

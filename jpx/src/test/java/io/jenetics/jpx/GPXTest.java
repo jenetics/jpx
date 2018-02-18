@@ -84,6 +84,15 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
+	//@Test
+	public void print() throws IOException {
+		final GPX gpx = nextGPX(new Random(6123)).toBuilder()
+			.version(Version.v10)
+			.build();
+
+		GPX.writer("    ").write(gpx, System.out);
+	}
+
 	@Test(dataProvider = "validEmptyElementsFiles")
 	public void validEmptyElements(final String resource, final GPX expected)
 		throws IOException

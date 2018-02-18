@@ -434,6 +434,20 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Set the GPX version.
+		 *
+		 * @since !__version__!
+		 *
+		 * @param version the GPX version
+		 * @throws NullPointerException if the given argument is {@code null}
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder version(final Version version) {
+			_version = requireNonNull(version);
+			return this;
+		}
+
+		/**
 		 * Return the current version value.
 		 *
 		 * @since 1.1
@@ -1448,8 +1462,12 @@ public final class GPX implements Serializable {
 				(String)v[3],
 				Person.of(
 					(String)v[4],
-					v[5] != null ? Email.of((String)v[5]) : null,
-					v[6] != null ? Link.of((String)v[6], (String)v[7], null) : null
+					v[5] != null
+						? Email.of((String)v[5])
+						: null,
+					v[6] != null
+						? Link.of((String)v[6], (String)v[7], null)
+						: null
 				),
 				null,
 				null,
