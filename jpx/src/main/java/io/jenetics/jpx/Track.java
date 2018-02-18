@@ -777,31 +777,31 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	private static Track toTrackV11(final Object[] v) {
-		int i = 0;
 		return Track.of(
-			(String)v[i++],
-			(String)v[i++],
-			(String)v[i++],
-			(String)v[i++],
-			(List<Link>)v[i++],
-			(UInt)v[i++],
-			(String)v[i++],
-			(List<TrackSegment>)v[i++]
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			(List<Link>)v[4],
+			(UInt)v[5],
+			(String)v[6],
+			(List<TrackSegment>)v[7]
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static Track toTrackV10(final Object[] v) {
-		int i = 0;
 		return Track.of(
-			(String)v[i++],
-			(String)v[i++],
-			(String)v[i++],
-			(String)v[i++],
-			singletonList(Link.of((URI)v[i++], (String)v[i++], null)),
-			(UInt)v[i++],
-			(String)v[i++],
-			(List<TrackSegment>)v[i++]
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			v[4] != null
+				? singletonList(Link.of((URI)v[4], (String)v[5], null))
+				: null,
+			(UInt)v[6],
+			(String)v[7],
+			(List<TrackSegment>)v[8]
 		);
 	}
 

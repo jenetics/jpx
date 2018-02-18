@@ -1375,6 +1375,7 @@ public final class GPX implements Serializable {
 
 	// Define the needed writers for the different versions.
 	private static final XMLWriters<GPX> WRITERS = new XMLWriters<GPX>()
+		.v00(XMLWriter.attr("version").map(gpx -> gpx._version.value))
 		.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
 		.v11(XMLWriter.ns("http://www.topografix.com/GPX/1/1"))
 		.v10(XMLWriter.ns("http://www.topografix.com/GPX/1/0"))

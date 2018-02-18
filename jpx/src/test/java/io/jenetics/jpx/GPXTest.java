@@ -75,8 +75,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	public static GPX nextGPX(final Random random) {
 		return GPX.of(
+			Version.v11,
 			format("creator_%s", random.nextInt(100)),
-			format("version_%s", random.nextInt(100)),
 			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
 			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
 			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
@@ -624,8 +624,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		for (int i = 0; i < 15; ++i) {
 			final GPX gpx = nextGPX(random);
 
-			GPX.write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)), "    ");
-
+			GPX.writer("    ").write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try (OutputStream fout = new FileOutputStream(new File(baseDir, format("gpx_%d.obj", i)));
 				 ObjectOutputStream oout = new ObjectOutputStream(fout))
 			{

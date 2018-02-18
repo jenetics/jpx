@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -69,7 +70,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 			.collect(Collectors.toList());
 	}
 
-	@Test(invocationCount = 10)
+	//@Test(invocationCount = 10)
 	public void marshallingV10() throws Exception {
 		marshalling(Version.v10);
 	}
@@ -86,6 +87,12 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		final byte[] marshaled = toBytes(expected, params.writer);
 		final T actual = fromBytes(marshaled, params.reader);
 
+		if (!Objects.equals(actual, expected)) {
+			System.out.println(new String(marshaled));
+			System.out.println();
+			System.out.println(new String(toBytes(actual, params.writer)));
+		}
+
 		assertEquals(actual, expected);
 	}
 
@@ -93,7 +100,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		Assert.assertEquals(actual, expected);
 	}
 
-	static <T> byte[] toBytes(final T value, final XMLWriter<T> writer)
+	private static <T> byte[] toBytes(final T value, final XMLWriter<T> writer)
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
