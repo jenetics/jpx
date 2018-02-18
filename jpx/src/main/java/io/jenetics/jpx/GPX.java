@@ -168,7 +168,7 @@ public final class GPX implements Serializable {
 	public enum Version {
 
 		/**
-		 * The GPX version 1.0. This version can only be read.
+		 * The GPX version 1.0. This version can be read and written.
 		 *
 		 * @see <a href="http://www.topografix.com/gpx_manual.asp">GPX 1.0</a>
 		 */
@@ -182,10 +182,19 @@ public final class GPX implements Serializable {
 		 */
 		V11("1.1");
 
-		private final String value;
+		private final String _value;
 
 		Version(final String value) {
-			this.value = value;
+			_value = value;
+		}
+
+		/**
+		 * Return the version string value.
+		 *
+		 * @return the version string value
+		 */
+		public String getValue() {
+			return _value;
 		}
 
 		/**
@@ -216,7 +225,7 @@ public final class GPX implements Serializable {
 	 * @deprecated Use {@link GPX.Version} instead
 	 */
 	@Deprecated
-	public static final String VERSION = Version.V11.value;
+	public static final String VERSION = Version.V11._value;
 
 	private static final String _CREATOR = "JPX - https://github.com/jenetics/jpx";
 
@@ -271,7 +280,7 @@ public final class GPX implements Serializable {
 	 * @return the version number of the GPX file
 	 */
 	public String getVersion() {
-		return _version.value;
+		return _version._value;
 	}
 
 	/**
@@ -470,7 +479,7 @@ public final class GPX implements Serializable {
 		 * @return the current version value
 		 */
 		public String version() {
-			return _version.value;
+			return _version._value;
 		}
 
 		/**
@@ -1322,7 +1331,7 @@ public final class GPX implements Serializable {
 		return new GPX(
 			version,
 			creator,
-			metadata,
+			metadata == null || metadata.isEmpty() ? null : metadata,
 			wayPoints,
 			routes,
 			tracks
@@ -1384,7 +1393,7 @@ public final class GPX implements Serializable {
 	}
 
 	void write(final DataOutput out) throws IOException {
-		IO.writeString(_version.value, out);
+		IO.writeString(_version.getValue(), out);
 		IO.writeString(_creator, out);
 		IO.writeNullable(_metadata, Metadata::write, out);
 		IO.writes(_wayPoints, WayPoint::write, out);
@@ -1467,7 +1476,7 @@ public final class GPX implements Serializable {
 
 	// Define the needed writers for the different versions.
 	private static final XMLWriters<GPX> WRITERS = new XMLWriters<GPX>()
-		.v00(XMLWriter.attr("version").map(gpx -> gpx._version.value))
+		.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
 		.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
 		.v11(XMLWriter.ns("http://www.topografix.com/GPX/1/1"))
 		.v10(XMLWriter.ns("http://www.topografix.com/GPX/1/0"))
