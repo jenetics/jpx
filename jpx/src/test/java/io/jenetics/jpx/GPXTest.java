@@ -93,6 +93,16 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		GPX.writer("    ").write(gpx, System.out);
 	}
 
+	@Test(invocationCount = 5)
+	public void toStringFromString() {
+		final GPX expected = nextGPX(new Random());
+		final String string = GPX.writer("  ").toString(expected);
+		//System.out.println(string);
+		final GPX actual = GPX.reader().fromString(string);
+
+		Assert.assertEquals(actual, expected);
+	}
+
 	@Test(dataProvider = "validEmptyElementsFiles")
 	public void validEmptyElements(final String resource, final GPX expected)
 		throws IOException

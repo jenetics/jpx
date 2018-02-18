@@ -1902,6 +1902,7 @@ public final class WayPoint implements Point, Serializable {
 		);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static WayPoint toWayPointV11(final Object[] v) {
 		return WayPoint.of(
 			(Latitude)v[0],

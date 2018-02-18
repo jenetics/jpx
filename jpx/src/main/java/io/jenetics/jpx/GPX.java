@@ -26,8 +26,11 @@ import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1018,7 +1021,7 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read an GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code input} stream.
 		 *
 		 * @param input the input stream from where the GPX date is read
 		 * @return the GPX object read from the input stream
@@ -1047,7 +1050,24 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read an GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code input} stream.
+		 *
+		 * @param file the input file from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final File file) throws IOException {
+			try (FileInputStream in = new FileInputStream(file);
+				 BufferedInputStream bin = new BufferedInputStream(in))
+			{
+				return read(bin);
+			}
+		}
+
+		/**
+		 * Read a GPX object from the given {@code input} stream.
 		 *
 		 * @param path the input path from where the GPX date is read
 		 * @return the GPX object read from the input stream
@@ -1056,15 +1076,11 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public GPX read(final Path path) throws IOException {
-			try (FileInputStream in = new FileInputStream(path.toFile());
-				 BufferedInputStream bin = new BufferedInputStream(in))
-			{
-				return read(bin);
-			}
+			return read(path.toFile());
 		}
 
 		/**
-		 * Read an GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code input} stream.
 		 *
 		 * @param path the input path from where the GPX date is read
 		 * @return the GPX object read from the input stream
@@ -1074,6 +1090,26 @@ public final class GPX implements Serializable {
 		 */
 		public GPX read(final String path) throws IOException {
 			return read(Paths.get(path));
+		}
+
+		/**
+		 * Create a GPX object from the given GPX-XML string.
+		 *
+		 * @param xml the GPX XML string
+		 * @return the GPX object created from the given XML string
+		 * @throws IllegalArgumentException if the given {@code xml} is not a
+		 *         valid GPX XML string
+		 * @throws NullPointerException if the given {@code xml} string is
+		 *         {@code null}
+		 */
+		public GPX fromString(final String xml) {
+			final byte[] bytes = xml.getBytes();
+			final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+			try {
+				return read(in);
+			} catch (IOException e) {
+				throw new IllegalArgumentException(e);
+			}
 		}
 
 	}
@@ -1151,13 +1187,13 @@ public final class GPX implements Serializable {
 		 * {@code output} stream.
 		 *
 		 * @param gpx the GPX object to write to the output
-		 * @param path the output path where the GPX object is written to
+		 * @param file the output file where the GPX object is written to
 		 * @throws IOException if the writing of the GPX object fails
 		 * @throws NullPointerException if one of the given arguments is
 		 *         {@code null}
 		 */
-		public void write(final GPX gpx, final Path path) throws IOException {
-			try (FileOutputStream out = new FileOutputStream(path.toFile());
+		public void write(final GPX gpx, final File file) throws IOException {
+			try (FileOutputStream out = new FileOutputStream(file);
 				 BufferedOutputStream bout = new BufferedOutputStream(out))
 			{
 				write(gpx, bout);
@@ -1174,8 +1210,40 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the given arguments is
 		 *         {@code null}
 		 */
+		public void write(final GPX gpx, final Path path) throws IOException {
+			write(gpx, path.toFile());
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param path the output path where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
 		public void write(final GPX gpx, final String path) throws IOException {
 			write(gpx, Paths.get(path));
+		}
+
+		/**
+		 * Create a XML string representation of the given {@code gpx} object.
+		 *
+		 * @param gpx the GPX object to convert to a string
+		 * @return the XML string representation of the given {@code gpx} object
+		 * @throws NullPointerException if the given given GPX object is
+		 *         {@code null}
+		 */
+		public String toString(final GPX gpx) {
+			final ByteArrayOutputStream out = new ByteArrayOutputStream();
+			try {
+				write(gpx, out);
+				return new String(out.toByteArray());
+			} catch (IOException e) {
+				throw new IllegalStateException("Unexpected error.", e);
+			}
 		}
 
 	}
@@ -1705,7 +1773,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader(Version, Mode)
+	 * @see GPX#reader(Version, Mode)
 	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(path)} instead
 	 */
 	@Deprecated
@@ -1745,7 +1813,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader(Version, Mode)
+	 * @see GPX#reader(Version, Mode)
 	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
 	 */
 	@Deprecated

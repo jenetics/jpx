@@ -53,6 +53,24 @@ allprojects { Project prj ->
 		sourceCompatibility = javaVersion
 		targetCompatibility = javaVersion
 	}
+
+	def XLINT_OPTIONS = [
+		'cast',
+		'classfile',
+		'deprecation',
+		'dep-ann',
+		'divzero',
+		'finally',
+		'overrides',
+		'rawtypes',
+		//'serial',
+		//'try',
+		'unchecked'
+	]
+
+	prj.tasks.withType(JavaCompile) { JavaCompile compile ->
+		compile.options.compilerArgs = ["-Xlint:${XLINT_OPTIONS.join(',')}"]
+	}
 }
 
 task wrapper(type: Wrapper) {
