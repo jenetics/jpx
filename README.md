@@ -99,6 +99,23 @@ $ [lat=48.2081743, lon=48.2081743, ele=162]
 
 ```
 
+### Reading GPX 1.0 and writing GPX 1.1
+
+By default, JPX is reading and writing the GPX files in version 1.1. But it is possible to read and write GPX files in version 1.0 as well.
+
+```java
+// Reading GPX 1.0 file.
+final GPX gpx10 = GPX.reader(GPX.Version.V10).read("track-v10.gpx");
+
+// Changing GPX version to 1.1.
+final GPX gpx11 = gpx10.toBuilder()
+	.version(GPX.Version.V11)
+	.build();
+
+// Writing GPX to file.
+GPX.write(gpx11, "track-v11.gpx");
+```
+
 ### Geodetic calculations
 
 #### Distance between two points
