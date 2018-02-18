@@ -172,7 +172,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void lenientRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx = GPX.read(in, true);
+			final GPX gpx = GPX.reader(Version.V11, Mode.LENIENT).read(in);
 
 			Assert.assertTrue(gpx.getMetadata().isPresent());
 			Assert.assertFalse(gpx.getMetadata().get().getBounds().isPresent());
@@ -370,7 +370,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx = nextGPX(random);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.write(gpx, bout, "    ");
+			GPX.writer("    ").write(gpx, bout);
 
 			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 			final GPX read = GPX.read(bin);
@@ -386,7 +386,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx = nextGPX(random);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.write(gpx, bout, "    ");
+			GPX.writer("    ").write(gpx, bout);
 
 			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 			final GPX read = GPX.read(bin);
@@ -405,7 +405,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx1 = GPX.read(in);
 
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
-			GPX.write(gpx1, out, "    ");
+			GPX.writer("    ").write(gpx1, out);
 			final GPX gpx2 = GPX.read(new ByteArrayInputStream(out.toByteArray()));
 
 			Assert.assertEquals(gpx1, gpx2);
@@ -438,7 +438,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in, true);
+			gpx = GPX.reader(Version.V11, Mode.LENIENT).read(in);
 		}
 
 		Assert.assertEquals(gpx.getWayPoints().size(), 1);
@@ -497,7 +497,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			try {
 				Assert.assertEquals(read, gpx);
 			} catch (AssertionError e) {
-				GPX.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)), "    ");
+				GPX.writer("    ")
+					.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)));
 			}
 
 

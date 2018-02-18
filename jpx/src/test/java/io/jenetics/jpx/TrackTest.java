@@ -50,8 +50,8 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 	protected Params<Track> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextTrack(random),
-			Track.reader(version),
-			Track.writer(version)
+			Track.xmlReader(version),
+			Track.xmlWriter(version)
 		);
 	}
 

@@ -50,8 +50,8 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 	protected Params<Route> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextRoute(random),
-			Route.reader(version),
-			Route.writer(version)
+			Route.xmlReader(version),
+			Route.xmlWriter(version)
 		);
 	}
 

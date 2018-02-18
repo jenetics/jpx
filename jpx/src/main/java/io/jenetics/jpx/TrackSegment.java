@@ -340,20 +340,20 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static XMLWriter<TrackSegment> writer(final Version version) {
+	static XMLWriter<TrackSegment> xmlWriter(final Version version) {
 		return elem("trkseg",
 			XMLWriter
-				.elems(WayPoint.writer(version,"trkpt"))
+				.elems(WayPoint.xmlWriter(version,"trkpt"))
 				.map(ts -> ts._points)
 		);
 	}
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<TrackSegment> reader(final Version version) {
+	static XMLReader<TrackSegment> xmlReader(final Version version) {
 		return XMLReader.elem(
 			a -> TrackSegment.of((List<WayPoint>)a[0]),
 			"trkseg",
-			XMLReader.elems(WayPoint.reader(version,"trkpt"))
+			XMLReader.elems(WayPoint.xmlReader(version,"trkpt"))
 		);
 	}
 

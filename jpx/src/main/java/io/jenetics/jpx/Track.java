@@ -24,7 +24,6 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.headString;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.DataInput;
@@ -734,6 +733,18 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
+	private static String url(final Track track) {
+		return track.getLinks().isEmpty()
+			? null
+			: track.getLinks().get(0).getHref().toString();
+	}
+
+	private static String urlname(final Track track) {
+		return track.getLinks().isEmpty()
+			? null
+			: track.getLinks().get(0).getText().orElse(null);
+	}
+
 	// Define the needed writers for the different versions.
 	private static final XMLWriters<Track> WRITERS = new XMLWriters<Track>()
 		.v00(XMLWriter.elem("name").map(t -> t._name))
@@ -741,12 +752,12 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v00(XMLWriter.elem("desc").map(r -> r._description))
 		.v00(XMLWriter.elem("src").map(r -> r._source))
 		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
-		.v10(XMLWriter.elem("url").map(rt -> headString(rt._links, Link::getHref)))
-		.v10(XMLWriter.elem("urlname").map(rt -> headString(rt._links, Link::getText)))
+		.v10(XMLWriter.elem("url").map(Track::url))
+		.v10(XMLWriter.elem("urlname").map(Track::urlname))
 		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
 		.v00(XMLWriter.elem("type").map(r -> r._type))
-		.v10(XMLWriter.elems(TrackSegment.writer(Version.V10)).map(r -> r._segments))
-		.v11(XMLWriter.elems(TrackSegment.writer(Version.V11)).map(r -> r._segments));
+		.v10(XMLWriter.elems(TrackSegment.xmlWriter(Version.V10)).map(r -> r._segments))
+		.v11(XMLWriter.elems(TrackSegment.xmlWriter(Version.V11)).map(r -> r._segments));
 
 	// Define the needed readers for the different versions.
 	private static final XMLReaders READERS = new XMLReaders()
@@ -759,15 +770,15 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v10(XMLReader.elem("urlname"))
 		.v00(XMLReader.elem("number").map(UInt::parse))
 		.v00(XMLReader.elem("type"))
-		.v10(XMLReader.elems(TrackSegment.reader(Version.V10)))
-		.v11(XMLReader.elems(TrackSegment.reader(Version.V11)));
+		.v10(XMLReader.elems(TrackSegment.xmlReader(Version.V10)))
+		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)));
 
-	static XMLWriter<Track> writer(final Version version) {
+	static XMLWriter<Track> xmlWriter(final Version version) {
 		return XMLWriter.elem("trk", WRITERS.writers(version));
 	}
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<Track> reader(final Version version) {
+	static XMLReader<Track> xmlReader(final Version version) {
 		return XMLReader.elem(
 			version == Version.V10 ? Track::toTrackV10 : Track::toTrackV11,
 			"trk",

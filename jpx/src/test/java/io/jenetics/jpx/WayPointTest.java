@@ -52,8 +52,8 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	protected Params<WayPoint> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextWayPoint(random),
-			WayPoint.reader(version, "wpt"),
-			WayPoint.writer(version, "wpt")
+			WayPoint.xmlReader(version, "wpt"),
+			WayPoint.xmlWriter(version, "wpt")
 		);
 	}
 

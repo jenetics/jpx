@@ -510,7 +510,9 @@ public final class GPX implements Serializable {
 		public Builder metadata(final Consumer<Metadata.Builder> metadata) {
 			final Metadata.Builder builder = Metadata.builder();
 			metadata.accept(builder);
-			_metadata = builder.build();
+
+			final Metadata md = builder.build();
+			_metadata = md.isEmpty() ? null : md;
 
 			return this;
 		}
@@ -1489,12 +1491,12 @@ public final class GPX implements Serializable {
 		.v10(XMLWriter.elem("urlname").map(GPX::urlname))
 		.v10(XMLWriter.elem("time").map(GPX::time))
 		.v10(XMLWriter.elem("keywords").map(GPX::keywords))
-		.v10(XMLWriter.elems(WayPoint.writer(Version.V10,"wpt")).map(gpx -> gpx._wayPoints))
-		.v11(XMLWriter.elems(WayPoint.writer(Version.V11,"wpt")).map(gpx -> gpx._wayPoints))
-		.v10(XMLWriter.elems(Route.writer(Version.V10)).map(gpx -> gpx._routes))
-		.v11(XMLWriter.elems(Route.writer(Version.V11)).map(gpx -> gpx._routes))
-		.v10(XMLWriter.elems(Track.writer(Version.V10)).map(gpx -> gpx._tracks))
-		.v11(XMLWriter.elems(Track.writer(Version.V11)).map(gpx -> gpx._tracks));
+		.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10,"wpt")).map(gpx -> gpx._wayPoints))
+		.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11,"wpt")).map(gpx -> gpx._wayPoints))
+		.v10(XMLWriter.elems(Route.xmlWriter(Version.V10)).map(gpx -> gpx._routes))
+		.v11(XMLWriter.elems(Route.xmlWriter(Version.V11)).map(gpx -> gpx._routes))
+		.v10(XMLWriter.elems(Track.xmlWriter(Version.V10)).map(gpx -> gpx._tracks))
+		.v11(XMLWriter.elems(Track.xmlWriter(Version.V11)).map(gpx -> gpx._tracks));
 
 
 	// Define the needed readers for the different versions.
@@ -1511,12 +1513,12 @@ public final class GPX implements Serializable {
 		.v10(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
 		.v10(XMLReader.elem("keywords"))
 		.v10(Bounds.READER)
-		.v10(XMLReader.elems(WayPoint.reader(Version.V10, "wpt")))
-		.v11(XMLReader.elems(WayPoint.reader(Version.V11, "wpt")))
-		.v10(XMLReader.elems(Route.reader(Version.V10)))
-		.v11(XMLReader.elems(Route.reader(Version.V11)))
-		.v10(XMLReader.elems(Track.reader(Version.V10)))
-		.v11(XMLReader.elems(Track.reader(Version.V11)));
+		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt")))
+		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "wpt")))
+		.v10(XMLReader.elems(Route.xmlReader(Version.V10)))
+		.v11(XMLReader.elems(Route.xmlReader(Version.V11)))
+		.v10(XMLReader.elems(Track.xmlReader(Version.V10)))
+		.v11(XMLReader.elems(Track.xmlReader(Version.V11)));
 
 
 	static XMLWriter<GPX> xmlWriter(final Version version) {

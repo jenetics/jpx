@@ -27,7 +27,6 @@ import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.headString;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.DataInput;
@@ -1833,6 +1832,18 @@ public final class WayPoint implements Point, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
+	private static String url(final WayPoint point) {
+		return point.getLinks().isEmpty()
+			? null
+			: point.getLinks().get(0).getHref().toString();
+	}
+
+	private static String urlname(final WayPoint point) {
+		return point.getLinks().isEmpty()
+			? null
+			: point.getLinks().get(0).getText().orElse(null);
+	}
+
 	// Define the needed writers for the different versions.
 	private static final XMLWriters<WayPoint> WRITERS = new XMLWriters<WayPoint>()
 		.v00(XMLWriter.attr("lat").map(wp -> wp._latitude))
@@ -1847,8 +1858,8 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLWriter.elem("desc").map(wp -> wp._description))
 		.v00(XMLWriter.elem("src").map(wp -> wp._source))
 		.v11(XMLWriter.elems(Link.WRITER).map(wp -> wp._links))
-		.v10(XMLWriter.elem("url").map(wp -> headString(wp._links, Link::getHref)))
-		.v10(XMLWriter.elem("urlname").map(wp -> headString(wp._links, Link::getText)))
+		.v10(XMLWriter.elem("url").map(WayPoint::url))
+		.v10(XMLWriter.elem("urlname").map(WayPoint::urlname))
 		.v00(XMLWriter.elem("sym").map(wp -> wp._symbol))
 		.v00(XMLWriter.elem("type").map(wp -> wp._type))
 		.v00(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)))
@@ -1887,12 +1898,12 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLReader.elem("dgpsid").map(DGPSStation::parse))
 		.v10(XMLReader.elem("course").map(Degrees::parse));
 
-	static XMLWriter<WayPoint> writer(final Version version, final String name) {
+	static XMLWriter<WayPoint> xmlWriter(final Version version, final String name) {
 		return XMLWriter.elem(name, WRITERS.writers(version));
 	}
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<WayPoint> reader(final Version version, final String name) {
+	static XMLReader<WayPoint> xmlReader(final Version version, final String name) {
 		return XMLReader.elem(
 			version == Version.V10
 				? WayPoint::toWayPointV10
