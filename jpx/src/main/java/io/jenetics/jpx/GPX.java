@@ -21,13 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Format.doubleString;
-import static io.jenetics.jpx.Format.durationString;
-import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.headString;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -1415,9 +1410,7 @@ public final class GPX implements Serializable {
 		.v10(XMLReader.elems(Route.reader(Version.v10)))
 		.v11(XMLReader.elems(Route.reader(Version.v11)))
 		.v10(XMLReader.elems(Track.reader(Version.v10)))
-		.v11(XMLReader.elems(Track.reader(Version.v11)))
-
-		;
+		.v11(XMLReader.elems(Track.reader(Version.v11)));
 
 
 	static XMLWriter<GPX> writer(final Version version) {
