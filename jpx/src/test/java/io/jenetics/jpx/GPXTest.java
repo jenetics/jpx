@@ -73,7 +73,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
-	public static GPX nextGPX(final Random random) {
+	static GPX nextGPX(final Random random) {
 		return GPX.of(
 			Version.V11,
 			format("creator_%s", random.nextInt(100)),
@@ -172,7 +172,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void lenientRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx = GPX.reader(Version.V11, Mode.LENIENT).read(in);
+			final GPX gpx = GPX.reader(Mode.LENIENT).read(in);
 
 			Assert.assertTrue(gpx.getMetadata().isPresent());
 			Assert.assertFalse(gpx.getMetadata().get().getBounds().isPresent());
@@ -420,7 +420,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test(timeOut = 2000)
-	public void issue49_NPEForInvalidGPX() throws IOException {
+	public void issue49_NPEForInvalidGPX() {
 		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
 
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
@@ -438,7 +438,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.reader(Version.V11, Mode.LENIENT).read(in);
+			gpx = GPX.reader(Mode.LENIENT).read(in);
 		}
 
 		Assert.assertEquals(gpx.getWayPoints().size(), 1);

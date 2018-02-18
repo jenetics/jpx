@@ -1715,8 +1715,8 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Return a GPX reader, reading GPX files with the given version and in
-	 * reading mode.
+	 * Return a GPX reader, reading GPX files with the given version and in the
+	 * given reading mode.
 	 *
 	 * @since !__version__!
 	 *
@@ -1745,6 +1745,22 @@ public final class GPX implements Serializable {
 	 */
 	public static Reader reader(final Version version) {
 		return new Reader(GPX.xmlReader(version), Mode.STRICT);
+	}
+
+	/**
+	 * Return a GPX reader, reading GPX files with version 1.1 and in the given
+	 * reading mode.
+	 *
+	 * @since !__version__!
+	 *
+	 * @see #reader()
+	 *
+	 * @param mode the reading mode
+	 * @return a new GPX reader object
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public static Reader reader(final Mode mode) {
+		return new Reader(GPX.xmlReader(Version.V11), mode);
 	}
 
 	/**
