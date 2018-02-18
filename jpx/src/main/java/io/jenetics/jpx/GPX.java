@@ -1528,7 +1528,7 @@ public final class GPX implements Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<GPX> xmlReader(final Version version) {
 		return XMLReader.elem(
-			version == Version.V10 ? GPX::toGPXv10 :GPX::toGPXv11,
+			version == Version.V10 ? GPX::toGPXv10 : GPX::toGPXv11,
 			"gpx",
 			READERS.readers(version)
 		);
