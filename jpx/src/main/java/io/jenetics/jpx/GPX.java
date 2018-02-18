@@ -152,7 +152,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.3
  * @since 1.0
  */
 public final class GPX implements Serializable {
@@ -162,8 +162,8 @@ public final class GPX implements Serializable {
 	/**
 	 * Represents the available GPX versions.
 	 *
-	 * @version !__version__!
-	 * @since !__version__!
+	 * @version 1.3
+	 * @since 1.3
 	 */
 	public enum Version {
 
@@ -460,7 +460,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Set the GPX version.
 		 *
-		 * @since !__version__!
+		 * @since 1.3
 		 *
 		 * @param version the GPX version
 		 * @throws NullPointerException if the given argument is {@code null}
@@ -950,7 +950,7 @@ public final class GPX implements Serializable {
 	/**
 	 * Create a new GPX builder with the given GPX version and creator string.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @param version the GPX version
 	 * @param creator the GPX creator
@@ -1004,16 +1004,16 @@ public final class GPX implements Serializable {
 	 * @see GPX#reader()
 	 * @see GPX#reader(Version, Reader.Mode)
 	 *
-	 * @version !__version__!
-	 * @since !__version__!
+	 * @version 1.3
+	 * @since 1.3
 	 */
 	public static final class Reader {
 
 		/**
 		 * The possible GPX reader modes.
 		 *
-		 * @version !__version__!
-		 * @since !__version__!
+		 * @version 1.3
+		 * @since 1.3
 		 */
 		public enum Mode {
 
@@ -1145,8 +1145,8 @@ public final class GPX implements Serializable {
 	 * @see GPX#writer()
 	 * @see GPX#writer(String)
 	 *
-	 * @version !__version__!
-	 * @since !__version__!
+	 * @version 1.3
+	 * @since 1.3
 	 */
 	public static final class Writer {
 
@@ -1583,7 +1583,7 @@ public final class GPX implements Serializable {
 	/**
 	 * Return a new GPX writer with the given {@code indent}.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @see #writer()
 	 *
@@ -1597,7 +1597,7 @@ public final class GPX implements Serializable {
 	/**
 	 * Return a new GPX writer with no indentation.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @see #writer(String)
 	 *
@@ -1718,7 +1718,7 @@ public final class GPX implements Serializable {
 	 * Return a GPX reader, reading GPX files with the given version and in the
 	 * given reading mode.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @see #reader()
 	 *
@@ -1735,7 +1735,7 @@ public final class GPX implements Serializable {
 	 * Return a GPX reader, reading GPX files with the given version and in
 	 * strict reading mode.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @see #reader()
 	 *
@@ -1751,7 +1751,7 @@ public final class GPX implements Serializable {
 	 * Return a GPX reader, reading GPX files with version 1.1 and in the given
 	 * reading mode.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @see #reader()
 	 *
@@ -1767,7 +1767,7 @@ public final class GPX implements Serializable {
 	 * Return a GPX reader, reading GPX files (v1.1) with reading mode
 	 * {@link Mode#STRICT}.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @see #reader(Version, Reader.Mode)
 	 *

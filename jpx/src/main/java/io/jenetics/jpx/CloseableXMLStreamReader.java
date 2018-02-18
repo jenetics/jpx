@@ -29,8 +29,8 @@ import javax.xml.stream.XMLStreamReader;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.3
+ * @since 1.3
  */
 final class CloseableXMLStreamReader implements XMLStreamReader, AutoCloseable {
 	private final XMLStreamReader _reader;

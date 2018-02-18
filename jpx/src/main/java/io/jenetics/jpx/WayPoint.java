@@ -59,7 +59,7 @@ import io.jenetics.jpx.GPX.Version;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.3
  * @since 1.0
  */
 public final class WayPoint implements Point, Serializable {
@@ -368,7 +368,7 @@ public final class WayPoint implements Point, Serializable {
 	 * available when you read GPX files version 1.0. In version 1.1 this field
 	 * is always {@link Optional#empty()}.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @return the instantaneous course at the point
 	 */
@@ -1236,7 +1236,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Set the the instantaneous course at the point.
 		 *
-		 * @since !__version__!
+		 * @since 1.3
 		 *
 		 * @param course the the instantaneous course at the point
 		 * @return {@code this} {@code Builder} for method chaining
@@ -1249,7 +1249,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Set the the instantaneous course at the point.
 		 *
-		 * @since !__version__!
+		 * @since 1.3
 		 *
 		 * @param courseDegrees the the instantaneous course at the point
 		 * @return {@code this} {@code Builder} for method chaining
@@ -1264,7 +1264,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the instantaneous course at the point.
 		 *
-		 * @since !__version__!
+		 * @since 1.3
 		 *
 		 * @return the instantaneous course at the point.
 		 */
@@ -1644,7 +1644,7 @@ public final class WayPoint implements Point, Serializable {
 	/**
 	 * Create a new way-point with the given parameter.
 	 *
-	 * @since !__version__!
+	 * @since 1.3
 	 *
 	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
 	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
