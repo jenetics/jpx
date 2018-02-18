@@ -49,14 +49,14 @@ final class XMLReaders{
 
 	XMLReaders v10(final XMLReader<?> reader) {
 		requireNonNull(reader);
-		_versions.add(Version.v10);
+		_versions.add(Version.V10);
 		_readers.add(reader);
 		return this;
 	}
 
 	XMLReaders v11(final XMLReader<?> reader) {
 		requireNonNull(reader);
-		_versions.add(Version.v11);
+		_versions.add(Version.V11);
 		_readers.add(reader);
 		return this;
 	}

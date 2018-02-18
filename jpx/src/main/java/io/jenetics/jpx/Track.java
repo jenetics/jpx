@@ -745,8 +745,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v10(XMLWriter.elem("urlname").map(rt -> headString(rt._links, Link::getText)))
 		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
 		.v00(XMLWriter.elem("type").map(r -> r._type))
-		.v10(XMLWriter.elems(TrackSegment.writer(Version.v10)).map(r -> r._segments))
-		.v11(XMLWriter.elems(TrackSegment.writer(Version.v11)).map(r -> r._segments));
+		.v10(XMLWriter.elems(TrackSegment.writer(Version.V10)).map(r -> r._segments))
+		.v11(XMLWriter.elems(TrackSegment.writer(Version.V11)).map(r -> r._segments));
 
 	// Define the needed readers for the different versions.
 	private static final XMLReaders READERS = new XMLReaders()
@@ -759,8 +759,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v10(XMLReader.elem("urlname"))
 		.v00(XMLReader.elem("number").map(UInt::parse))
 		.v00(XMLReader.elem("type"))
-		.v10(XMLReader.elems(TrackSegment.reader(Version.v10)))
-		.v11(XMLReader.elems(TrackSegment.reader(Version.v11)));
+		.v10(XMLReader.elems(TrackSegment.reader(Version.V10)))
+		.v11(XMLReader.elems(TrackSegment.reader(Version.V11)));
 
 	static XMLWriter<Track> writer(final Version version) {
 		return XMLWriter.elem("trk", WRITERS.writers(version));
@@ -769,7 +769,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<Track> reader(final Version version) {
 		return XMLReader.elem(
-			version == Version.v10 ? Track::toTrackV10 : Track::toTrackV11,
+			version == Version.V10 ? Track::toTrackV10 : Track::toTrackV11,
 			"trk",
 			READERS.readers(version)
 		);

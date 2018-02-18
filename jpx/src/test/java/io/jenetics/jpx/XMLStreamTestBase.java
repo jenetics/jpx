@@ -72,7 +72,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
 	@Test(invocationCount = 10)
 	public void marshallingV10() throws Exception {
-		final Params<T> params = params(Version.v10, _random);
+		final Params<T> params = params(Version.V10, _random);
 
 		final T object = params.supplier.get();
 		byte[] marshaled = toBytes(object, params.writer);
@@ -94,7 +94,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
 	@Test(invocationCount = 10)
 	public void marshallingV11() throws Exception {
-		final Params<T> params = params(Version.v11, _random);
+		final Params<T> params = params(Version.V11, _random);
 
 		final T expected = params.supplier.get();
 		final byte[] marshaled = toBytes(expected, params.writer);

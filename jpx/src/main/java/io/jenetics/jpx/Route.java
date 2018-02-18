@@ -774,8 +774,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		.v10(XMLWriter.elem("urlname").map(rt -> headString(rt._links, Link::getText)))
 		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
 		.v00(XMLWriter.elem("type").map(r -> r._type))
-		.v10(XMLWriter.elems(WayPoint.writer(Version.v10, "rtept")).map(r -> r._points))
-		.v11(XMLWriter.elems(WayPoint.writer(Version.v11, "rtept")).map(r -> r._points));
+		.v10(XMLWriter.elems(WayPoint.writer(Version.V10, "rtept")).map(r -> r._points))
+		.v11(XMLWriter.elems(WayPoint.writer(Version.V11, "rtept")).map(r -> r._points));
 
 
 	// Define the needed readers for the different versions.
@@ -789,8 +789,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		.v10(XMLReader.elem("urlname"))
 		.v00(XMLReader.elem("number").map(UInt::parse))
 		.v00(XMLReader.elem("type"))
-		.v10(XMLReader.elems(WayPoint.reader(Version.v10, "rtept")))
-		.v11(XMLReader.elems(WayPoint.reader(Version.v11, "rtept")));
+		.v10(XMLReader.elems(WayPoint.reader(Version.V10, "rtept")))
+		.v11(XMLReader.elems(WayPoint.reader(Version.V11, "rtept")));
 
 	static XMLWriter<Route> writer(final Version version) {
 		return XMLWriter.elem("rte", WRITERS.writers(version));
@@ -799,7 +799,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<Route> reader(final Version version) {
 		return XMLReader.elem(
-			version == Version.v10 ? Route::toRouteV10 : Route::toRouteV11,
+			version == Version.V10 ? Route::toRouteV10 : Route::toRouteV11,
 			"rte",
 			READERS.readers(version)
 		);

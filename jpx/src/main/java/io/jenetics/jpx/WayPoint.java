@@ -1894,7 +1894,7 @@ public final class WayPoint implements Point, Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> reader(final Version version, final String name) {
 		return XMLReader.elem(
-			version == Version.v10
+			version == Version.V10
 				? WayPoint::toWayPointV10
 				: WayPoint::toWayPointV11,
 			name,

@@ -75,7 +75,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	public static GPX nextGPX(final Random random) {
 		return GPX.of(
-			Version.v11,
+			Version.V11,
 			format("creator_%s", random.nextInt(100)),
 			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
 			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
@@ -87,7 +87,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	//@Test
 	public void print() throws IOException {
 		final GPX gpx = nextGPX(new Random(6123)).toBuilder()
-			.version(Version.v10)
+			.version(Version.V10)
 			.build();
 
 		GPX.writer("    ").write(gpx, System.out);
@@ -632,7 +632,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	private GPX readV10(final String name) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.v10, Mode.STRICT).read(in);
+			return GPX.reader(Version.V10, Mode.STRICT).read(in);
 		}
 	}
 

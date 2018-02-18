@@ -49,14 +49,14 @@ final class XMLWriters<T> {
 
 	XMLWriters<T> v10(final XMLWriter<T> writer) {
 		requireNonNull(writer);
-		_versions.add(Version.v10);
+		_versions.add(Version.V10);
 		_writers.add(writer);
 		return this;
 	}
 
 	XMLWriters<T> v11(final XMLWriter<T> writer) {
 		requireNonNull(writer);
-		_versions.add(Version.v11);
+		_versions.add(Version.V11);
 		_writers.add(writer);
 		return this;
 	}

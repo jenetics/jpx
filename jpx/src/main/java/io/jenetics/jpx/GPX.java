@@ -170,13 +170,13 @@ public final class GPX implements Serializable {
 		/**
 		 * The GPX version 1.0. This version can only be read.
 		 */
-		v10("1.0"),
+		V10("1.0"),
 
 		/**
 		 * The GPX version 1.1. This is the default version and can be read and
 		 * written.
 		 */
-		v11("1.1");
+		V11("1.1");
 
 		private final String value;
 
@@ -197,8 +197,8 @@ public final class GPX implements Serializable {
 		 */
 		public static Version of(final String version) {
 			switch (version) {
-				case "1.0": return v10;
-				case "1.1": return v11;
+				case "1.0": return V10;
+				case "1.1": return V11;
 				default: throw new IllegalArgumentException(format(
 					"Unknown version string: '%s'.", version
 				));
@@ -209,7 +209,7 @@ public final class GPX implements Serializable {
 	/**
 	 * The default version number: 1.1.
 	 */
-	public static final String VERSION = Version.v11.value;
+	public static final String VERSION = Version.V11.value;
 
 	/**
 	 * The default creator string.
@@ -961,7 +961,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given arguments is {@code null}
 	 */
 	public static Builder builder(final String creator) {
-		return builder(Version.v11, creator);
+		return builder(Version.V11, creator);
 	}
 
 	/**
@@ -970,7 +970,7 @@ public final class GPX implements Serializable {
 	 * @return new GPX builder
 	 */
 	public static Builder builder() {
-		return builder(Version.v11, CREATOR);
+		return builder(Version.V11, CREATOR);
 	}
 
 
@@ -988,6 +988,9 @@ public final class GPX implements Serializable {
 
 		/**
 		 * The possible GPX reader modes.
+		 *
+		 * @version !__version__!
+		 * @since !__version__!
 		 */
 		public enum Mode {
 
@@ -1274,7 +1277,7 @@ public final class GPX implements Serializable {
 		final List<Track> tracks
 	) {
 		return new GPX(
-			Version.v11,
+			Version.V11,
 			creator,
 			metadata,
 			wayPoints,
@@ -1465,12 +1468,12 @@ public final class GPX implements Serializable {
 		.v10(XMLWriter.elem("urlname").map(GPX::urlname))
 		.v10(XMLWriter.elem("time").map(GPX::time))
 		.v10(XMLWriter.elem("keywords").map(GPX::keywords))
-		.v10(XMLWriter.elems(WayPoint.writer(Version.v10,"wpt")).map(gpx -> gpx._wayPoints))
-		.v11(XMLWriter.elems(WayPoint.writer(Version.v11,"wpt")).map(gpx -> gpx._wayPoints))
-		.v10(XMLWriter.elems(Route.writer(Version.v10)).map(gpx -> gpx._routes))
-		.v11(XMLWriter.elems(Route.writer(Version.v11)).map(gpx -> gpx._routes))
-		.v10(XMLWriter.elems(Track.writer(Version.v10)).map(gpx -> gpx._tracks))
-		.v11(XMLWriter.elems(Track.writer(Version.v11)).map(gpx -> gpx._tracks));
+		.v10(XMLWriter.elems(WayPoint.writer(Version.V10,"wpt")).map(gpx -> gpx._wayPoints))
+		.v11(XMLWriter.elems(WayPoint.writer(Version.V11,"wpt")).map(gpx -> gpx._wayPoints))
+		.v10(XMLWriter.elems(Route.writer(Version.V10)).map(gpx -> gpx._routes))
+		.v11(XMLWriter.elems(Route.writer(Version.V11)).map(gpx -> gpx._routes))
+		.v10(XMLWriter.elems(Track.writer(Version.V10)).map(gpx -> gpx._tracks))
+		.v11(XMLWriter.elems(Track.writer(Version.V11)).map(gpx -> gpx._tracks));
 
 
 	// Define the needed readers for the different versions.
@@ -1487,12 +1490,12 @@ public final class GPX implements Serializable {
 		.v10(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
 		.v10(XMLReader.elem("keywords"))
 		.v10(Bounds.READER)
-		.v10(XMLReader.elems(WayPoint.reader(Version.v10, "wpt")))
-		.v11(XMLReader.elems(WayPoint.reader(Version.v11, "wpt")))
-		.v10(XMLReader.elems(Route.reader(Version.v10)))
-		.v11(XMLReader.elems(Route.reader(Version.v11)))
-		.v10(XMLReader.elems(Track.reader(Version.v10)))
-		.v11(XMLReader.elems(Track.reader(Version.v11)));
+		.v10(XMLReader.elems(WayPoint.reader(Version.V10, "wpt")))
+		.v11(XMLReader.elems(WayPoint.reader(Version.V11, "wpt")))
+		.v10(XMLReader.elems(Route.reader(Version.V10)))
+		.v11(XMLReader.elems(Route.reader(Version.V11)))
+		.v10(XMLReader.elems(Track.reader(Version.V10)))
+		.v11(XMLReader.elems(Track.reader(Version.V11)));
 
 
 	static XMLWriter<GPX> writer(final Version version) {
@@ -1502,7 +1505,7 @@ public final class GPX implements Serializable {
 	@SuppressWarnings("unchecked")
 	static XMLReader<GPX> reader(final Version version) {
 		return XMLReader.elem(
-			version == Version.v10 ? GPX::toGPXv10 :GPX::toGPXv11,
+			version == Version.V10 ? GPX::toGPXv10 :GPX::toGPXv11,
 			"gpx",
 			READERS.readers(version)
 		);
@@ -1716,7 +1719,7 @@ public final class GPX implements Serializable {
 	 * @return a new GPX reader object
 	 */
 	public static Reader reader() {
-		return reader(Version.v11, Mode.STRICT);
+		return reader(Version.V11, Mode.STRICT);
 	}
 
 	/**
@@ -1740,7 +1743,7 @@ public final class GPX implements Serializable {
 	public static GPX read(final InputStream input, final boolean lenient)
 		throws IOException
 	{
-		return reader(Version.v11, lenient ? Mode.LENIENT : Mode.STRICT)
+		return reader(Version.V11, lenient ? Mode.LENIENT : Mode.STRICT)
 			.read(input);
 	}
 
@@ -1758,7 +1761,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final InputStream input) throws IOException {
-		return reader(Version.v11, Mode.STRICT).read(input);
+		return reader(Version.V11, Mode.STRICT).read(input);
 	}
 
 	/**
@@ -1780,7 +1783,7 @@ public final class GPX implements Serializable {
 	public static GPX read(final Path path, final boolean lenient)
 		throws IOException
 	{
-		return reader(Version.v11, lenient ? Mode.LENIENT : Mode.STRICT)
+		return reader(Version.V11, lenient ? Mode.LENIENT : Mode.STRICT)
 			.read(path);
 	}
 
@@ -1798,7 +1801,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return reader(Version.v11, Mode.STRICT).read(path);
+		return reader(Version.V11, Mode.STRICT).read(path);
 	}
 
 	/**
@@ -1820,7 +1823,7 @@ public final class GPX implements Serializable {
 	public static GPX read(final String path, final boolean lenient)
 		throws IOException
 	{
-		return reader(Version.v11, lenient ? Mode.LENIENT : Mode.STRICT)
+		return reader(Version.V11, lenient ? Mode.LENIENT : Mode.STRICT)
 			.read(path);
 	}
 
@@ -1838,7 +1841,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final String path) throws IOException {
-		return reader(Version.v11, Mode.STRICT).read(path);
+		return reader(Version.V11, Mode.STRICT).read(path);
 	}
 
 }
