@@ -1733,7 +1733,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see #reader()
+	 * @see #reader(GPX.Version, GPX.Reader.Mode)
 	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(input)} instead
 	 */
 	@Deprecated
@@ -1773,7 +1773,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see GPX#reader(Version, Mode)
+	 * @see #reader(GPX.Version, GPX.Reader.Mode)
 	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(path)} instead
 	 */
 	@Deprecated
@@ -1813,7 +1813,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
 	 *
-	 * @see GPX#reader(Version, Mode)
+	 * @see #reader(GPX.Version, GPX.Reader.Mode)
 	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
 	 */
 	@Deprecated
