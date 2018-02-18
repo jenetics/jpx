@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
 import io.jenetics.jpx.Length.Unit;
 
 /**
@@ -48,11 +49,11 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	}
 
 	@Override
-	protected Params<WayPoint> params(final Random random) {
+	protected Params<WayPoint> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextWayPoint(random),
-			WayPoint.reader("wpt"),
-			WayPoint.writer("wpt")
+			WayPoint.xmlReader(version, "wpt"),
+			WayPoint.xmlWriter(version, "wpt")
 		);
 	}
 

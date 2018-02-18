@@ -33,6 +33,8 @@ import java.util.function.Supplier;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -45,11 +47,11 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 	}
 
 	@Override
-	protected Params<Track> params(final Random random) {
+	protected Params<Track> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextTrack(random),
-			Track.READER,
-			Track.WRITER
+			Track.xmlReader(version),
+			Track.xmlWriter(version)
 		);
 	}
 

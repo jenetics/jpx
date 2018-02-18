@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamWriter;
  * @version 1.0
  * @since 1.0
  */
-final class IndentingXMLWriter extends XMLWriterProxy {
+final class IndentingXMLStreamWriter extends CloseableXMLStreamWriter {
 
 	private enum State {
 		SEEN_NOTHING,
@@ -47,7 +47,7 @@ final class IndentingXMLWriter extends XMLWriterProxy {
 	private String _indent;
 	private int _depth;
 
-	public IndentingXMLWriter(final XMLStreamWriter writer, final String indent) {
+	IndentingXMLStreamWriter(final XMLStreamWriter writer, final String indent) {
 		super(writer);
 		_state = State.SEEN_NOTHING;
 		_indent = indent;

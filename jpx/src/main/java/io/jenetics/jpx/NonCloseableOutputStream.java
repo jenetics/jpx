@@ -19,47 +19,48 @@
  */
 package io.jenetics.jpx;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
+import static java.util.Objects.requireNonNull;
 
-import java.util.Random;
-import java.util.function.Supplier;
-
-import org.testng.annotations.Test;
-
-import io.jenetics.jpx.GPX.Version;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
  */
-@Test
-public class BoundsTest extends XMLStreamTestBase<Bounds> {
+final class NonCloseableOutputStream extends OutputStream {
 
-	@Override
-	public Supplier<Bounds> factory(Random random) {
-		return () -> nextBounds(random);
+	private final OutputStream _output;
+
+	NonCloseableOutputStream(final OutputStream output) {
+		_output = requireNonNull(output);
 	}
 
 	@Override
-	protected Params<Bounds> params(final Version version, final Random random) {
-		return new Params<>(
-			() -> nextBounds(random),
-			Bounds.READER,
-			Bounds.WRITER
-		);
+	public void write(final int b) throws IOException {
+		_output.write(b);
 	}
 
-	public static Bounds nextBounds(final Random random) {
-		return Bounds.of(
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90)),
-			Latitude.ofDegrees(random.nextInt(90)),
-			Longitude.ofDegrees(random.nextInt(90))
-		);
+	@Override
+	public void write(final byte[] b) throws IOException {
+		_output.write(b);
 	}
 
-	@Test
-	public void equalsVerifier() {
-		EqualsVerifier.forClass(Bounds.class).verify();
+	@Override
+	public void write(final byte[] b, final int off, final int len)
+		throws IOException
+	{
+		_output.write(b, off, len);
+	}
+
+	@Override
+	public void flush() throws IOException {
+		_output.flush();
+	}
+
+	@Override
+	public void close() {
 	}
 
 }

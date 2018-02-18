@@ -19,7 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.Objects.requireNonNull;

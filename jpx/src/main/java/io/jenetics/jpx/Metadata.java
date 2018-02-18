@@ -534,7 +534,7 @@ public final class Metadata implements Serializable {
 		return new Metadata(
 			name,
 			description,
-			author,
+			author == null || author.isEmpty() ? null : author,
 			copyright,
 			links,
 			time,

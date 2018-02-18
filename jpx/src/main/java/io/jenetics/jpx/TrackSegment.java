@@ -41,6 +41,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * A Track Segment holds a list of Track Points which are logically connected in
  * order. To represent a single GPS track where GPS reception was lost, or the
@@ -48,7 +50,7 @@ import java.util.stream.Stream;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
@@ -338,15 +340,23 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<TrackSegment> WRITER = elem("trkseg",
-		XMLWriter.elems(WayPoint.writer("trkpt")).map(ts -> ts._points)
-	);
+	static XMLWriter<TrackSegment> xmlWriter(final Version version) {
+		return elem("trkseg",
+			XMLWriter
+				.elems(WayPoint.xmlWriter(version,"trkpt"))
+				.map(ts -> ts._points)
+		);
+	}
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<TrackSegment> READER = XMLReader.elem(
-		a -> TrackSegment.of((List<WayPoint>)a[0]),
-		"trkseg",
-		XMLReader.elems(WayPoint.reader("trkpt"))
-	);
+	static XMLReader<TrackSegment> xmlReader(final Version version) {
+		return XMLReader.elem(
+			a -> TrackSegment.of((List<WayPoint>)a[0]),
+			"trkseg",
+			XMLReader.elems(WayPoint.xmlReader(version,"trkpt"))
+		);
+	}
+
+
 
 }
