@@ -1896,7 +1896,8 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLReader.elem("pdop").map(Double::parseDouble))
 		.v00(XMLReader.elem("ageofdgpsdata").map(Format::parseDuration))
 		.v00(XMLReader.elem("dgpsid").map(DGPSStation::parse))
-		.v10(XMLReader.elem("course").map(Degrees::parse));
+		.v10(XMLReader.elem("course").map(Degrees::parse))
+		.v00(XMLReader.ignore("extensions"));
 
 	static XMLWriter<WayPoint> xmlWriter(final Version version, final String name) {
 		return XMLWriter.elem(name, WRITERS.writers(version));
