@@ -23,6 +23,8 @@ import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -67,6 +69,19 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		}
 
 		return segments;
+	}
+
+	@Test
+	public void ignoreExtensions() throws IOException {
+		final String resource = "/io/jenetics/jpx/extensions-tracksegment.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertEquals(gpx.getTracks().size(), 1);
+		Assert.assertEquals(gpx.getTracks().get(0).getSegments().size(), 1);
 	}
 
 	@Test

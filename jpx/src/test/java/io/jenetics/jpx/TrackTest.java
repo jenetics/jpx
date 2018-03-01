@@ -25,6 +25,7 @@ import static io.jenetics.jpx.ListsTest.revert;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -82,6 +83,26 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 
 	public static List<Track> nextTracks(final Random random) {
 		return nextObjects(() -> nextTrack(random), random);
+	}
+
+	@Test
+	public void ignoreExtensions() throws IOException {
+		final String resource = "/io/jenetics/jpx/extensions-track.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertEquals(gpx.getTracks().size(), 1);
+
+		Assert.assertEquals(
+			gpx.getTracks().get(0),
+			Track.builder()
+				.name("name_97")
+				.cmt("comment_69")
+				.build()
+		);
 	}
 
 	@Test

@@ -711,7 +711,8 @@ public final class Metadata implements Serializable {
 		XMLReader.elems(Link.READER),
 		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
 		XMLReader.elem("keywords"),
-		Bounds.READER
+		Bounds.READER,
+		XMLReader.ignore("extensions")
 	);
 
 }

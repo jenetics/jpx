@@ -25,6 +25,7 @@ import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,27 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			points.add(nextWayPoint(random));
 		}
 		return points;
+	}
+
+	@Test
+	public void ignoreExtensions() throws IOException {
+		final String resource = "/io/jenetics/jpx/extensions-waypoint.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertEquals(gpx.getWayPoints().size(), 1);
+
+		Assert.assertEquals(
+			gpx.getWayPoints().get(0),
+			WayPoint.builder()
+				.lat(48.2081743).lon(16.3738189)
+				.ele(171)
+				.name("Wien")
+				.build()
+		);
 	}
 
 	@Test

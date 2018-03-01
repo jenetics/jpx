@@ -25,6 +25,7 @@ import static io.jenetics.jpx.ListsTest.revert;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -70,6 +71,26 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 
 	public static List<Route> nextRoutes(final Random random) {
 		return nextObjects(() -> nextRoute(random), random);
+	}
+
+	@Test
+	public void ignoreExtensions() throws IOException {
+		final String resource = "/io/jenetics/jpx/extensions-route.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertEquals(gpx.getRoutes().size(), 1);
+
+		Assert.assertEquals(
+			gpx.getRoutes().get(0),
+			Route.builder()
+				.name("name_97")
+				.cmt("comment_69")
+				.build()
+		);
 	}
 
 	@Test

@@ -1518,7 +1518,8 @@ public final class GPX implements Serializable {
 		.v10(XMLReader.elems(Route.xmlReader(Version.V10)))
 		.v11(XMLReader.elems(Route.xmlReader(Version.V11)))
 		.v10(XMLReader.elems(Track.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(Track.xmlReader(Version.V11)));
+		.v11(XMLReader.elems(Track.xmlReader(Version.V11)))
+		.v00(XMLReader.ignore("extensions"));
 
 
 	static XMLWriter<GPX> xmlWriter(final Version version) {

@@ -353,7 +353,8 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return XMLReader.elem(
 			a -> TrackSegment.of((List<WayPoint>)a[0]),
 			"trkseg",
-			XMLReader.elems(WayPoint.xmlReader(version,"trkpt"))
+			XMLReader.elems(WayPoint.xmlReader(version,"trkpt")),
+			XMLReader.ignore("extensions")
 		);
 	}
 

@@ -169,6 +169,23 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
+	public void ignoreExtensions() throws IOException {
+		final String resource = "/io/jenetics/jpx/extensions-gpx.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		final String[] names = gpx.wayPoints()
+			.map(WayPoint::getName)
+			.map(Optional::get)
+			.toArray(String[]::new);
+
+		Assert.assertEquals(names, new String[]{"Wien", "Eferding", "Freistadt", "Gmunden"});
+	}
+
+	@Test
 	public void lenientRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
