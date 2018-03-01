@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
@@ -320,6 +321,10 @@ abstract class XMLReader<T> {
 		return elem(name, text());
 	}
 
+	public static XMLReader<Object> ignore(final String name) {
+		return new IgnoreReader(name);
+	}
+
 	/**
 	 * Return a {@code XMLReader} which collects the elements, read by the given
 	 * child {@code reader}, and returns it as list of these elements.
@@ -435,7 +440,24 @@ final class ListReader<T> extends XMLReader<List<T>> {
 		final T element = _adoptee.read(xml, lenient);
 		return element != null
 			? Collections.singletonList(element)
-			: Collections.emptyList();
+			: emptyList();
+	}
+}
+
+final class IgnoreReader extends XMLReader<Object> {
+
+	private final XMLReader<Object> _reader;
+
+	IgnoreReader(final String name) {
+		super(name, Type.ELEM);
+		_reader = new ElemReader<>(name, o -> o, emptyList(), Type.ELEM);
+	}
+
+	@Override
+	public Object read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException
+	{
+		return _reader.read(xml, true);
 	}
 }
 
