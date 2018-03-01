@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="creator_5" xmlns="http://www.topografix.com/GPX/1/1">
+	<trk>
+		<name>name_97</name>
+		<extensions>
+			asdf
+			<foo>asdf</foo>
+			<foo>asdf</foo>
+			<!--
+			<foo>asdf</foo>
+			<foo>asdf</foo>
+			-->
+		</extensions>
+		<cmt>comment_69</cmt>
+	</trk>
+</gpx>

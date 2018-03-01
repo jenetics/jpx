@@ -771,7 +771,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v00(XMLReader.elem("number").map(UInt::parse))
 		.v00(XMLReader.elem("type"))
 		.v10(XMLReader.elems(TrackSegment.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)));
+		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)))
+		.v00(XMLReader.ignore("extensions"));
 
 	static XMLWriter<Track> xmlWriter(final Version version) {
 		return XMLWriter.elem("trk", WRITERS.writers(version));
