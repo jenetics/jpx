@@ -103,7 +103,6 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 		Assert.assertEquals(gpx.getWayPoints().size(), 1);
 
-		final WayPoint wp = gpx.getWayPoints().get(0);
 		Assert.assertEquals(
 			gpx.getWayPoints().get(0),
 			WayPoint.builder()

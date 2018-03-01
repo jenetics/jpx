@@ -801,7 +801,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		.v00(XMLReader.elem("number").map(UInt::parse))
 		.v00(XMLReader.elem("type"))
 		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept")))
-		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")));
+		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")))
+		.v00(XMLReader.ignore("extensions"));
 
 	static XMLWriter<Route> xmlWriter(final Version version) {
 		return XMLWriter.elem("rte", WRITERS.writers(version));
