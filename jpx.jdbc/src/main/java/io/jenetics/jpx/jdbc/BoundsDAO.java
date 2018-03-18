@@ -34,6 +34,7 @@ import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Insert;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.RowParser;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
 import io.jenetics.jpx.jdbc.internal.db.Update;
@@ -46,11 +47,15 @@ import io.jenetics.jpx.jdbc.internal.db.Update;
 public final class BoundsDAO
 	extends DAO
 	implements
-	SelectBy<Bounds>,
-	Insert<Bounds>,
-	Update<Bounds>,
-	Delete
+		SelectBy<Bounds>,
+		Insert<Bounds>,
+		Update<Bounds>,
+		Delete
 {
+
+	public enum Columns {
+		ID, MIN_LAT, MIN_LON, MAX_LAT, MAX_LON
+	}
 
 	public BoundsDAO(final Connection connection) {
 		super(connection);
@@ -60,7 +65,7 @@ public final class BoundsDAO
 	 * The link row parser which creates a {@link Bounds} object from a given DB
 	 * row.
 	 */
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Bounds>> RowParser = rs -> Stored.of(
+	private static final RowParser<Stored<Bounds>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
 		Bounds.of(
 			rs.getDouble("minlat"),
@@ -75,6 +80,9 @@ public final class BoundsDAO
 	 * SELECT queries
 	 **************************************************************************/
 
+	private static final String SELECT =
+		"SELECT id, minlat, minlon, maxlat, maxlon FROM bounds ORDER BY id";
+
 	/**
 	 * Select all available bounds.
 	 *
@@ -82,10 +90,7 @@ public final class BoundsDAO
 	 * @throws SQLException if the select fails
 	 */
 	public List<Stored<Bounds>> select() throws SQLException {
-		final String query =
-			"SELECT id, minlat, minlon, maxlat, maxlon FROM bounds ORDER BY id";
-
-		return SQL(query).as(RowParser.list());
+		return SQL(SELECT).as(RowParser.list());
 	}
 
 	@Override
@@ -113,6 +118,10 @@ public final class BoundsDAO
 	 * INSERT queries
 	 **************************************************************************/
 
+	private static final String INSERT =
+		"INSERT INTO bounds(minlat, minlon, maxlat, maxlon) " +
+		"VALUES({minlat}, {minlon}, {maxlat}, {maxlon})";
+
 	/**
 	 * Insert the given bounds list into the DB.
 	 *
@@ -124,11 +133,7 @@ public final class BoundsDAO
 	public List<Stored<Bounds>> insert(final Collection<Bounds> bounds)
 		throws SQLException
 	{
-		final String query =
-			"INSERT INTO bounds(minlat, minlon, maxlat, maxlon) " +
-			"VALUES({minlat}, {minlon}, {maxlat}, {maxlon})";
-
-		return Batch(query).insert(bounds, bound -> asList(
+		return Batch(INSERT).insert(bounds, bound -> asList(
 			Param.value("minlat", bound.getMinLatitude().doubleValue()),
 			Param.value("minlon", bound.getMinLongitude().doubleValue()),
 			Param.value("maxlat", bound.getMaxLatitude().doubleValue()),

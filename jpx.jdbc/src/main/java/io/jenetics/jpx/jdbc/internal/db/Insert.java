@@ -36,6 +36,7 @@ import java.util.function.Function;
  * @version !__version__!
  * @since !__version__!
  */
+@FunctionalInterface
 public interface Insert<T> {
 
 	/**

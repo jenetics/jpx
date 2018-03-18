@@ -40,9 +40,9 @@ import java.util.stream.LongStream;
 public final class Param {
 
 	private final String _name;
-	private final Collection<? extends Object> _values;
+	private final Collection<?> _values;
 
-	private Param(final String name, final Collection<? extends Object> values) {
+	private Param(final String name, final Collection<?> values) {
 		_name = requireNonNull(name);
 		_values = requireNonNull(values);
 	}
@@ -61,7 +61,7 @@ public final class Param {
 	 *
 	 * @return the parameter values
 	 */
-	public Collection<? extends Object> values() {
+	public Collection<?> values() {
 		return _values;
 	}
 
@@ -132,7 +132,7 @@ public final class Param {
 		return new Param(
 			name,
 			LongStream.of(values)
-				.mapToObj(Long::valueOf)
+				.boxed()
 				.collect(Collectors.toList())
 		);
 	}

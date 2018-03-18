@@ -114,7 +114,8 @@ public final class Stored<T> {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj instanceof Stored<?> &&
+		return obj == this ||
+			obj instanceof Stored<?> &&
 			Objects.equals(((Stored)obj)._id, _id) &&
 			Objects.equals(((Stored)obj)._value, _value);
 	}

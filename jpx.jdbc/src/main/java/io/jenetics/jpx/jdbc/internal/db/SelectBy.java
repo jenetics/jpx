@@ -78,13 +78,13 @@ public interface SelectBy<T> {
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public default  <V> List<Stored<T>> selectByVals(
+	public default <V> List<Stored<T>> selectByVals(
 		final String column,
 		final Collection<V> values
 	)
 		throws SQLException
 	{
-		return selectByVals(Column.<V>of(column), values);
+		return selectByVals(Column.of(column), values);
 	}
 
 	/**

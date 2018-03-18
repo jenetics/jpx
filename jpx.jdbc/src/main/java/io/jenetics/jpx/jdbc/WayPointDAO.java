@@ -233,7 +233,8 @@ public class WayPointDAO
 					row.value().vdop,
 					row.value().pdop,
 					row.value().ageOfGPSData,
-					row.value().dgpsID
+					row.value().dgpsID,
+					null
 				)
 			))
 			.collect(Collectors.toList());

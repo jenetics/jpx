@@ -36,6 +36,7 @@ import java.util.List;
  * @since !__version__!
  */
 public final class SQLQuery extends AbstractQuery {
+
 	private final List<Param> _params = new ArrayList<>();
 
 	/**

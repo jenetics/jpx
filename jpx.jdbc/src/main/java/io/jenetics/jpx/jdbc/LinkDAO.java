@@ -21,6 +21,7 @@ package io.jenetics.jpx.jdbc;
 
 import static java.util.Arrays.asList;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Insert;
 import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.db.RowParser;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
 import io.jenetics.jpx.jdbc.internal.db.Update;
@@ -54,6 +56,8 @@ public final class LinkDAO
 	Delete
 {
 
+	public static final Column<Link, URI> HREF = Column.of("href", Link::getHref);
+
 	public LinkDAO(final Connection connection) {
 		super(connection);
 	}
@@ -62,7 +66,7 @@ public final class LinkDAO
 	 * The link row parser which creates a {@link Link} object from a given DB
 	 * row.
 	 */
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Link>> RowParser = rs -> Stored.of(
+	private static final RowParser<Stored<Link>> RowParser = rs -> Stored.of(
 		rs.getLong("id"),
 		Link.of(
 			rs.getString("href"),
@@ -166,7 +170,7 @@ public final class LinkDAO
 		return DAO.put(
 			links,
 			Link::getHref,
-			values -> selectByVals(Column.of("href", Link::getHref), links),
+			values -> selectByVals(HREF, links),
 			this::insert,
 			this::update
 		);
