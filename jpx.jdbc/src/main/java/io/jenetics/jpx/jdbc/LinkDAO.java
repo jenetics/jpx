@@ -33,12 +33,12 @@ import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
-import io.jenetics.jpx.jdbc.internal.db.Insert;
+import io.jenetics.jpx.jdbc.internal.db.Inserter;
 import io.jenetics.jpx.jdbc.internal.db.Param;
 import io.jenetics.jpx.jdbc.internal.db.RowParser;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
-import io.jenetics.jpx.jdbc.internal.db.Update;
+import io.jenetics.jpx.jdbc.internal.db.Updater;
 
 /**
  * DAO for the {@code Link} data class.
@@ -51,8 +51,8 @@ public final class LinkDAO
 	extends DAO
 	implements
 	SelectBy<Link>,
-	Insert<Link>,
-	Update<Link>,
+	Inserter<Link>,
+	Updater<Link>,
 	Delete
 {
 
@@ -171,7 +171,7 @@ public final class LinkDAO
 			links,
 			Link::getHref,
 			values -> selectByVals(HREF, links),
-			this::insert,
+			this,
 			this::update
 		);
 	}

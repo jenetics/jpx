@@ -30,6 +30,7 @@ import java.util.List;
  * @version !__version__!
  * @since !__version__!
  */
+@FunctionalInterface
 public interface Selector<T> {
 
 	/**

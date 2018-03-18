@@ -40,13 +40,13 @@ import io.jenetics.jpx.Person;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
-import io.jenetics.jpx.jdbc.internal.db.Insert;
+import io.jenetics.jpx.jdbc.internal.db.Inserter;
 import io.jenetics.jpx.jdbc.internal.db.ListMapper;
 import io.jenetics.jpx.jdbc.internal.db.OptionMapper;
 import io.jenetics.jpx.jdbc.internal.db.Param;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
-import io.jenetics.jpx.jdbc.internal.db.Update;
+import io.jenetics.jpx.jdbc.internal.db.Updater;
 import io.jenetics.jpx.jdbc.internal.util.Pair;
 
 /**
@@ -58,8 +58,8 @@ public class MetadataDAO
 	extends DAO
 	implements
 	SelectBy<Metadata>,
-	Insert<Metadata>,
-	Update<Metadata>,
+	Inserter<Metadata>,
+	Updater<Metadata>,
 	Delete
 {
 

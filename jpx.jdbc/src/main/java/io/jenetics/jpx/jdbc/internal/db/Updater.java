@@ -34,7 +34,8 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
  * @version !__version__!
  * @since !__version__!
  */
-public interface Update<T> {
+@FunctionalInterface
+public interface Updater<T> {
 
 	/**
 	 * Updates the given list of already inserted objects.

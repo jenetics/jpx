@@ -37,7 +37,7 @@ import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
-import io.jenetics.jpx.jdbc.internal.db.Insert;
+import io.jenetics.jpx.jdbc.internal.db.Inserter;
 import io.jenetics.jpx.jdbc.internal.db.Param;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
@@ -51,7 +51,7 @@ public class RouteWayPointDAO
 	extends DAO
 	implements
 	SelectBy<RouteWayPoint>,
-	Insert<RouteWayPoint>,
+	Inserter<RouteWayPoint>,
 	Delete
 {
 

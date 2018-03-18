@@ -37,7 +37,7 @@ import java.util.function.Function;
  * @since !__version__!
  */
 @FunctionalInterface
-public interface Insert<T> {
+public interface Inserter<T> {
 
 	/**
 	 * Insert the given objects into the DB.

@@ -37,7 +37,7 @@ import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
-import io.jenetics.jpx.jdbc.internal.db.Insert;
+import io.jenetics.jpx.jdbc.internal.db.Inserter;
 import io.jenetics.jpx.jdbc.internal.db.Param;
 import io.jenetics.jpx.jdbc.internal.db.Stored;
 
@@ -49,7 +49,7 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
 public class RouteLinkDAO
 	extends DAO
 	implements
-	Insert<RouteLink>,
+	Inserter<RouteLink>,
 	Delete
 {
 

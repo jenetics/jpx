@@ -97,7 +97,7 @@ public abstract class DAO {
 	 * @param key key function used for determining object equality
 	 * @param select select function for selecting existing objects
 	 * @param inserter insert function for inserting missing objects
-	 * @param update update function for updating changed values
+	 * @param updater update function for updating changed values
 	 * @param <T> the value type
 	 * @param <K> the key type
 	 * @return the missing + updated + unchanged rows
@@ -108,8 +108,8 @@ public abstract class DAO {
 		final Collection<T> values,
 		final Function<T, K> key,
 		final SQL.Function<Collection<T>, List<Stored<T>>> select,
-		final Insert<T> inserter,
-		final SQL.Function<Collection<Stored<T>>, List<Stored<T>>> update
+		final Inserter<T> inserter,
+		final Updater<T> updater
 	)
 		throws SQLException
 	{
@@ -117,7 +117,7 @@ public abstract class DAO {
 		requireNonNull(key);
 		requireNonNull(select);
 		requireNonNull(inserter);
-		requireNonNull(update);
+		requireNonNull(updater);
 
 		final List<Stored<T>> result;
 
@@ -146,7 +146,7 @@ public abstract class DAO {
 
 			result = new ArrayList<>();
 			result.addAll(inserter.insert(missing));
-			result.addAll(update.apply(updated));
+			result.addAll(updater.update(updated));
 			result.addAll(unchanged);
 		} else {
 			result = Collections.emptyList();
