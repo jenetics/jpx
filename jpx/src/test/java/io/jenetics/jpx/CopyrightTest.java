@@ -31,6 +31,8 @@ import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -43,7 +45,7 @@ public class CopyrightTest extends XMLStreamTestBase<Copyright> {
 	}
 
 	@Override
-	protected Params<Copyright> params(final Random random) {
+	protected Params<Copyright> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextCopyright(random),
 			Copyright.READER,

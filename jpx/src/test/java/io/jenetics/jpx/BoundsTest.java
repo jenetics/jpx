@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Version;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -38,7 +40,7 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 	}
 
 	@Override
-	protected Params<Bounds> params(final Random random) {
+	protected Params<Bounds> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextBounds(random),
 			Bounds.READER,

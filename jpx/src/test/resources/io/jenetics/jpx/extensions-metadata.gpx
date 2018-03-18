@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX" >
+	<metadata>
+		<name>Name of GPX</name>
+		<author>
+			<name>Name of Author/Person</name>
+			<link href="http://author.net">
+				<text>Link of Author/Person</text>
+			</link>
+		</author>
+		<extensions>
+			asdf
+			<foo>asdf</foo>
+			<foo>asdf</foo>
+			<!--
+			<foo>asdf</foo>
+			<foo>asdf</foo>
+			-->
+		</extensions>
+		<link href="http://company.net">
+			<text>Link of GPX</text>
+		</link>
+	</metadata>
+</gpx>

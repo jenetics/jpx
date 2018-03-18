@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
@@ -52,7 +53,7 @@ import java.util.Optional;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class Metadata implements Serializable {
@@ -208,7 +209,7 @@ public final class Metadata implements Serializable {
 	public boolean isEmpty() {
 		return _name == null &&
 			_description == null &&
-			_author == null &&
+			(_author == null || _author.isEmpty()) &&
 			_copyright == null &&
 			_links.isEmpty() &&
 			_time == null &&
@@ -271,7 +272,7 @@ public final class Metadata implements Serializable {
 		private String _description;
 		private Person _author;
 		private Copyright _copyright;
-		private List<Link> _links;
+		private final List<Link> _links = new ArrayList<>();
 		private ZonedDateTime _time;
 		private String _keywords;
 		private Bounds _bounds;
@@ -290,7 +291,7 @@ public final class Metadata implements Serializable {
 			_description = metadata._description;
 			_author = metadata._author;
 			_copyright = metadata._copyright;
-			_links = metadata._links;
+			copy(metadata._links, _links);
 			_time = metadata._time;
 			_keywords = metadata._keywords;
 			_bounds = metadata._bounds;
@@ -310,6 +311,17 @@ public final class Metadata implements Serializable {
 		}
 
 		/**
+		 * Return the current name.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the current name
+		 */
+		public Optional<String> name() {
+			return Optional.ofNullable(_name);
+		}
+
+		/**
 		 * Set the metadata description.
 		 *
 		 * @param description the metadata description
@@ -318,6 +330,17 @@ public final class Metadata implements Serializable {
 		public Builder desc(final String description) {
 			_description = description;
 			return this;
+		}
+
+		/**
+		 * Return the current description.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the current description
+		 */
+		public Optional<String> desc() {
+			return Optional.ofNullable(_description);
 		}
 
 		/**
@@ -341,9 +364,37 @@ public final class Metadata implements Serializable {
 			return author != null ? author(Person.of(author)) : null;
 		}
 
+		/**
+		 * Return the current author.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the current author
+		 */
+		public Optional<Person> author() {
+			return Optional.ofNullable(_author);
+		}
+
+		/**
+		 * Set the copyright info.
+		 *
+		 * @param copyright the copyright info
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
 		public Builder copyright(final Copyright copyright) {
 			_copyright = copyright;
 			return this;
+		}
+
+		/**
+		 * Return the current copyright info.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the current copyright info
+		 */
+		public Optional<Copyright> copyright() {
+			return Optional.ofNullable(_copyright);
 		}
 
 		/**
@@ -353,7 +404,7 @@ public final class Metadata implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			_links = links;
+			copy(links, _links);
 			return this;
 		}
 
@@ -364,11 +415,9 @@ public final class Metadata implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder addLink(final Link link) {
-			if (_links == null) {
-				_links = new ArrayList<>();
+			if (link != null) {
+				_links.add(link);
 			}
-
-			_links.add(requireNonNull(link));
 			return this;
 		}
 
@@ -383,6 +432,17 @@ public final class Metadata implements Serializable {
 		 */
 		public Builder addLink(final String href) {
 			return addLink(Link.of(href));
+		}
+
+		/**
+		 * Return the current links.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the current links
+		 */
+		public List<Link> links() {
+			return new NonNullList<>(_links);
 		}
 
 		/**
@@ -447,6 +507,17 @@ public final class Metadata implements Serializable {
 		}
 
 		/**
+		 * Return the currently set time.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the currently set time
+		 */
+		public Optional<ZonedDateTime> time() {
+			return Optional.ofNullable(_time);
+		}
+
+		/**
 		 * Set the metadata keywords.
 		 *
 		 * @param keywords the metadata keywords
@@ -458,6 +529,17 @@ public final class Metadata implements Serializable {
 		}
 
 		/**
+		 * Return the current keywords.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the current keywords
+		 */
+		public Optional<String> keywords() {
+			return Optional.ofNullable(_keywords);
+		}
+
+		/**
 		 * Set the GPX bounds.
 		 *
 		 * @param bounds the GPX bounds
@@ -466,6 +548,17 @@ public final class Metadata implements Serializable {
 		public Builder bounds(final Bounds bounds) {
 			_bounds = bounds;
 			return this;
+		}
+
+		/**
+		 * Return the current bounds.
+		 *
+		 * @since 1.3
+		 *
+		 * @return the current bounds
+		 */
+		public Optional<Bounds> bounds() {
+			return Optional.ofNullable(_bounds);
 		}
 
 		/**
@@ -534,7 +627,7 @@ public final class Metadata implements Serializable {
 		return new Metadata(
 			name,
 			description,
-			author,
+			author == null || author.isEmpty() ? null : author,
 			copyright,
 			links,
 			time,
@@ -618,7 +711,8 @@ public final class Metadata implements Serializable {
 		XMLReader.elems(Link.READER),
 		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
 		XMLReader.elem("keywords"),
-		Bounds.READER
+		Bounds.READER,
+		XMLReader.ignore("extensions")
 	);
 
 }

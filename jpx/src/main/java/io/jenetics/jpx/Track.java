@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +43,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.jenetics.jpx.GPX.Version;
 
 /**
  * Represents a GPX track - an ordered list of points describing a path.
@@ -62,7 +66,7 @@ import java.util.stream.Stream;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class Track implements Iterable<TrackSegment>, Serializable {
@@ -729,20 +733,63 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Track> WRITER = XMLWriter.elem("trk",
-		XMLWriter.elem("name").map(r -> r._name),
-		XMLWriter.elem("cmt").map(r -> r._comment),
-		XMLWriter.elem("desc").map(r -> r._description),
-		XMLWriter.elem("src").map(r -> r._source),
-		XMLWriter.elems(Link.WRITER).map(r -> r._links),
-		XMLWriter.elem("number").map(r -> intString(r._number)),
-		XMLWriter.elem("type").map(r -> r._type),
-		XMLWriter.elems(TrackSegment.WRITER).map(r -> r._segments)
-	);
+	private static String url(final Track track) {
+		return track.getLinks().isEmpty()
+			? null
+			: track.getLinks().get(0).getHref().toString();
+	}
+
+	private static String urlname(final Track track) {
+		return track.getLinks().isEmpty()
+			? null
+			: track.getLinks().get(0).getText().orElse(null);
+	}
+
+	// Define the needed writers for the different versions.
+	private static final XMLWriters<Track> WRITERS = new XMLWriters<Track>()
+		.v00(XMLWriter.elem("name").map(t -> t._name))
+		.v00(XMLWriter.elem("cmt").map(r -> r._comment))
+		.v00(XMLWriter.elem("desc").map(r -> r._description))
+		.v00(XMLWriter.elem("src").map(r -> r._source))
+		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
+		.v10(XMLWriter.elem("url").map(Track::url))
+		.v10(XMLWriter.elem("urlname").map(Track::urlname))
+		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
+		.v00(XMLWriter.elem("type").map(r -> r._type))
+		.v10(XMLWriter.elems(TrackSegment.xmlWriter(Version.V10)).map(r -> r._segments))
+		.v11(XMLWriter.elems(TrackSegment.xmlWriter(Version.V11)).map(r -> r._segments));
+
+	// Define the needed readers for the different versions.
+	private static final XMLReaders READERS = new XMLReaders()
+		.v00(XMLReader.elem("name"))
+		.v00(XMLReader.elem("cmt"))
+		.v00(XMLReader.elem("desc"))
+		.v00(XMLReader.elem("src"))
+		.v11(XMLReader.elems(Link.READER))
+		.v10(XMLReader.elem("url").map(Format::parseURI))
+		.v10(XMLReader.elem("urlname"))
+		.v00(XMLReader.elem("number").map(UInt::parse))
+		.v00(XMLReader.elem("type"))
+		.v10(XMLReader.elems(TrackSegment.xmlReader(Version.V10)))
+		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)))
+		.v00(XMLReader.ignore("extensions"));
+
+	static XMLWriter<Track> xmlWriter(final Version version) {
+		return XMLWriter.elem("trk", WRITERS.writers(version));
+	}
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<Track> READER = XMLReader.elem(
-		v -> Track.of(
+	static XMLReader<Track> xmlReader(final Version version) {
+		return XMLReader.elem(
+			version == Version.V10 ? Track::toTrackV10 : Track::toTrackV11,
+			"trk",
+			READERS.readers(version)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Track toTrackV11(final Object[] v) {
+		return Track.of(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -751,16 +798,23 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(UInt)v[5],
 			(String)v[6],
 			(List<TrackSegment>)v[7]
-		),
-		"trk",
-		XMLReader.elem("name"),
-		XMLReader.elem("cmt"),
-		XMLReader.elem("desc"),
-		XMLReader.elem("src"),
-		XMLReader.elems(Link.READER),
-		XMLReader.elem("number").map(UInt::parse),
-		XMLReader.elem("type"),
-		XMLReader.elems(TrackSegment.READER)
-	);
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Track toTrackV10(final Object[] v) {
+		return Track.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			v[4] != null
+				? singletonList(Link.of((URI)v[4], (String)v[5], null))
+				: null,
+			(UInt)v[6],
+			(String)v[7],
+			(List<TrackSegment>)v[8]
+		);
+	}
 
 }

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="Jenetics TSP">
+	<wpt lat="48.2081743" lon="16.3738189">
+		<ele>171.0</ele>
+		<name>Wien</name>
+	</wpt>
+	<extensions>
+		asdf
+		<foo>asdf</foo>
+		<foo>asdf</foo>
+		<!--
+		<foo>asdf</foo>
+		<foo>asdf</foo>
+		-->
+	</extensions>
+	<wpt lat="48.30879" lon="14.02023">
+		<ele>269.0</ele>
+		<name>Eferding</name>
+	</wpt>
+	<wpt lat="48.50217" lon="14.50201">
+		<ele>547.0</ele>
+		<name>Freistadt</name>
+	</wpt>
+	<wpt lat="47.91839" lon="13.79933">
+		<ele>434.0</ele>
+		<name>Gmunden</name>
+	</wpt>
+</gpx>

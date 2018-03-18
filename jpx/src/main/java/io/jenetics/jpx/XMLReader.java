@@ -21,9 +21,11 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
+import static javax.xml.stream.XMLStreamConstants.COMMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
@@ -319,6 +321,10 @@ abstract class XMLReader<T> {
 		return elem(name, text());
 	}
 
+	public static XMLReader<Object> ignore(final String name) {
+		return new IgnoreReader(name);
+	}
+
 	/**
 	 * Return a {@code XMLReader} which collects the elements, read by the given
 	 * child {@code reader}, and returns it as list of these elements.
@@ -434,7 +440,24 @@ final class ListReader<T> extends XMLReader<List<T>> {
 		final T element = _adoptee.read(xml, lenient);
 		return element != null
 			? Collections.singletonList(element)
-			: Collections.emptyList();
+			: emptyList();
+	}
+}
+
+final class IgnoreReader extends XMLReader<Object> {
+
+	private final XMLReader<Object> _reader;
+
+	IgnoreReader(final String name) {
+		super(name, Type.ELEM);
+		_reader = new ElemReader<>(name, o -> o, emptyList(), Type.ELEM);
+	}
+
+	@Override
+	public Object read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException
+	{
+		return _reader.read(xml, true);
 	}
 }
 
@@ -515,16 +538,28 @@ final class ElemReader<T> extends XMLReader<T> {
 			boolean hasNext = false;
 			do {
 				switch (xml.getEventType()) {
+					case COMMENT:
+						if (xml.hasNext()) {
+							xml.next();
+						}
+						break;
 					case START_ELEMENT:
-						final ReaderResult result = results
-							.get(_readerIndexMapping.get(xml.getLocalName()));
+						final Integer index = _readerIndexMapping
+							.get(xml.getLocalName());
+
+						if (index == null && !lenient) {
+							throw new XMLStreamException(format(
+								"Unexpected element <%s>.",
+								xml.getLocalName()
+							));
+						}
+
+						final ReaderResult result = index != null
+							? results.get(index)
+							: ReaderResult.of(elem(xml.getLocalName()));
 
 						if (result != null) {
-							try {
-								result.put(result.reader().read(xml, lenient));
-							} catch (IllegalArgumentException|NullPointerException e) {
-								if (!lenient) throw e;
-							}
+							throwUnexpectedElement(xml, lenient, result);
 							if (xml.hasNext()) {
 								hasNext = true;
 								xml.next();
@@ -537,11 +572,7 @@ final class ElemReader<T> extends XMLReader<T> {
 					case CHARACTERS:
 					case CDATA:
 						if (text != null) {
-							try {
-								text.put(text.reader().read(xml, lenient));
-							} catch (IllegalArgumentException|NullPointerException e) {
-								if (!lenient) throw e;
-							}
+							throwUnexpectedElement(xml, lenient, text);
 						} else {
 							xml.next();
 						}
@@ -576,6 +607,26 @@ final class ElemReader<T> extends XMLReader<T> {
 		));
 	}
 
+	private void throwUnexpectedElement(
+		final XMLStreamReader xml,
+		final boolean lenient,
+		final ReaderResult text
+	)
+		throws XMLStreamException
+	{
+		try {
+			text.put(text.reader().read(xml, lenient));
+		} catch (IllegalArgumentException|NullPointerException e) {
+			if (!lenient) {
+				final XMLStreamException exp = new XMLStreamException(format(
+					"Unexpected element <%s>.",
+					xml.getLocalName()
+				));
+				exp.addSuppressed(e);
+				throw exp;
+			}
+		}
+	}
 }
 
 /**

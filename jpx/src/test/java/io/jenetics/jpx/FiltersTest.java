@@ -131,7 +131,7 @@ public class FiltersTest {
 	public void nonEmptyFilter() throws IOException {
 		final GPX gpx = GPX.read(new ByteArrayInputStream((
 			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-			"<gpx version=\"1.1\" creator=\"JPX - https://jenetics.github.io/jpx\" " +
+			"<gpx version=\"1.1\" creator=\"JPX - https://github.com/jenetics/jpx\" " +
 			"xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
 			"    <metadata></metadata>\n" +
 			"    <trk><trkseg></trkseg></trk>\n" +

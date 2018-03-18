@@ -25,11 +25,14 @@ import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import io.jenetics.jpx.GPX.Version;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -43,7 +46,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 	}
 
 	@Override
-	protected Params<Metadata> params(final Random random) {
+	protected Params<Metadata> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextMetadata(random),
 			Metadata.READER,
@@ -100,6 +103,36 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 		Assert.assertNotSame(
 			metadata.toBuilder().build(),
 			metadata
+		);
+	}
+
+	@Test
+	public void ignoreExtensions() throws IOException {
+		final String resource = "/io/jenetics/jpx/extensions-metadata.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		final Metadata md = gpx.getMetadata().get();
+		Assert.assertEquals(
+			md,
+			Metadata.builder()
+				.name("Name of GPX")
+				.author(
+					Person.of(
+						"Name of Author/Person",
+						null,
+						Link.of(
+							"http://author.net",
+							"Link of Author/Person",
+							null)))
+				.addLink(Link.of(
+					"http://company.net",
+					"Link of GPX",
+					null))
+				.build()
 		);
 	}
 

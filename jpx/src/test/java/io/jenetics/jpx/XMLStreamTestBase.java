@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -35,6 +36,8 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
+import io.jenetics.jpx.GPX.Version;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -59,7 +62,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 
 	private final Random _random = new Random(1000);
 
-	protected abstract Params<T> params(final Random random);
+	protected abstract Params<T> params(final Version version, final Random random);
 
 	public static <T> List<T> nextObjects(final Supplier<T> supplier, final Random random) {
 		return Stream.generate(supplier)
@@ -68,13 +71,50 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	}
 
 	@Test(invocationCount = 10)
-	public void marshalling() throws Exception {
-		final Params<T> params = params(_random);
+	public void marshallingV10() throws Exception {
+		final Params<T> params = params(Version.V10, _random);
+
+		final T object = params.supplier.get();
+		byte[] marshaled = toBytes(object, params.writer);
+		final T expected = fromBytes(marshaled, params.reader);
+
+		marshaled = toBytes(expected, params.writer);
+		final T actual = fromBytes(marshaled, params.reader);
+
+		/*
+		if (!Objects.equals(actual, expected)) {
+			System.out.println(new String(marshaled));
+			System.out.println();
+			System.out.println(new String(toBytes(actual, params.writer)));
+		}
+		*/
+
+		assertEquals(actual, expected);
+	}
+
+	@Test(invocationCount = 10)
+	public void marshallingV11() throws Exception {
+		final Params<T> params = params(Version.V11, _random);
 
 		final T expected = params.supplier.get();
 		final byte[] marshaled = toBytes(expected, params.writer);
-		//System.out.println(new String(marshaled));
 		final T actual = fromBytes(marshaled, params.reader);
+
+		assertEquals(actual, expected);
+	}
+
+	private void marshalling(final Version version) throws Exception {
+		final Params<T> params = params(version, _random);
+
+		final T expected = params.supplier.get();
+		final byte[] marshaled = toBytes(expected, params.writer);
+		final T actual = fromBytes(marshaled, params.reader);
+
+		if (!Objects.equals(actual, expected)) {
+			System.out.println(new String(marshaled));
+			System.out.println();
+			System.out.println(new String(toBytes(actual, params.writer)));
+		}
 
 		assertEquals(actual, expected);
 	}
@@ -83,12 +123,12 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		Assert.assertEquals(actual, expected);
 	}
 
-	static <T> byte[] toBytes(final T value, final XMLWriter<T> writer)
+	private static <T> byte[] toBytes(final T value, final XMLWriter<T> writer)
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-		final XMLStreamWriter streamWriter = new IndentingXMLWriter(
+		final XMLStreamWriter streamWriter = new IndentingXMLStreamWriter(
 			factory.createXMLStreamWriter(out, "UTF-8"), "    ");
 
 		writer.write(streamWriter, value);

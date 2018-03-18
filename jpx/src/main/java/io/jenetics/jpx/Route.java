@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,6 +43,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.jenetics.jpx.GPX.Version;
 
 /**
  * Represents a route - an ordered list of way-points representing a series of
@@ -58,7 +62,7 @@ import java.util.stream.Stream;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
@@ -758,20 +762,64 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Route> WRITER = XMLWriter.elem("rte",
-		XMLWriter.elem("name").map(r -> r._name),
-		XMLWriter.elem("cmt").map(r -> r._comment),
-		XMLWriter.elem("desc").map(r -> r._description),
-		XMLWriter.elem("src").map(r -> r._source),
-		XMLWriter.elems(Link.WRITER).map(r -> r._links),
-		XMLWriter.elem("number").map(r -> intString(r._number)),
-		XMLWriter.elem("type").map(r -> r._type),
-		XMLWriter.elems(WayPoint.writer("rtept")).map(r -> r._points)
-	);
+	private static String url(final Route route) {
+		return route.getLinks().isEmpty()
+			? null
+			: route.getLinks().get(0).getHref().toString();
+	}
+
+	private static String urlname(final Route route) {
+		return route.getLinks().isEmpty()
+			? null
+			: route.getLinks().get(0).getText().orElse(null);
+	}
+
+	// Define the needed writers for the different versions.
+	private static final XMLWriters<Route> WRITERS = new XMLWriters<Route>()
+		.v00(XMLWriter.elem("name").map(r -> r._name))
+		.v00(XMLWriter.elem("cmt").map(r -> r._comment))
+		.v00(XMLWriter.elem("desc").map(r -> r._description))
+		.v00(XMLWriter.elem("src").map(r -> r._source))
+		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
+		.v10(XMLWriter.elem("url").map(Route::url))
+		.v10(XMLWriter.elem("urlname").map(Route::urlname))
+		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
+		.v00(XMLWriter.elem("type").map(r -> r._type))
+		.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10, "rtept")).map(r -> r._points))
+		.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11, "rtept")).map(r -> r._points));
+
+
+	// Define the needed readers for the different versions.
+	private static final XMLReaders READERS = new XMLReaders()
+		.v00(XMLReader.elem("name"))
+		.v00(XMLReader.elem("cmt"))
+		.v00(XMLReader.elem("desc"))
+		.v00(XMLReader.elem("src"))
+		.v11(XMLReader.elems(Link.READER))
+		.v10(XMLReader.elem("url").map(Format::parseURI))
+		.v10(XMLReader.elem("urlname"))
+		.v00(XMLReader.elem("number").map(UInt::parse))
+		.v00(XMLReader.elem("type"))
+		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept")))
+		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")))
+		.v00(XMLReader.ignore("extensions"));
+
+	static XMLWriter<Route> xmlWriter(final Version version) {
+		return XMLWriter.elem("rte", WRITERS.writers(version));
+	}
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<Route> READER = XMLReader.elem(
-		v -> Route.of(
+	static XMLReader<Route> xmlReader(final Version version) {
+		return XMLReader.elem(
+			version == Version.V10 ? Route::toRouteV10 : Route::toRouteV11,
+			"rte",
+			READERS.readers(version)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Route toRouteV11(final Object[] v) {
+		return Route.of(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -780,16 +828,23 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			(UInt)v[5],
 			(String)v[6],
 			(List<WayPoint>)v[7]
-		),
-		"rte",
-		XMLReader.elem("name"),
-		XMLReader.elem("cmt"),
-		XMLReader.elem("desc"),
-		XMLReader.elem("src"),
-		XMLReader.elems(Link.READER),
-		XMLReader.elem("number").map(UInt::parse),
-		XMLReader.elem("type"),
-		XMLReader.elems(WayPoint.reader("rtept"))
-	);
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static Route toRouteV10(final Object[] v) {
+		return Route.of(
+			(String)v[0],
+			(String)v[1],
+			(String)v[2],
+			(String)v[3],
+			v[4] != null
+				? singletonList(Link.of((URI)v[4], (String)v[5], null))
+				: null,
+			(UInt)v[6],
+			(String)v[7],
+			(List<WayPoint>)v[8]
+		);
+	}
 
 }

@@ -41,7 +41,7 @@ ext {
 
 allprojects {
 	group = 'io.jenetics'
-	version = '1.2.2'
+	version = '1.3.0-SNAPSHOT'
 
 	repositories {
 		mavenCentral()
@@ -52,6 +52,24 @@ allprojects { Project prj ->
 	if (prj.plugins.hasPlugin('java')) {
 		sourceCompatibility = javaVersion
 		targetCompatibility = javaVersion
+	}
+
+	def XLINT_OPTIONS = [
+		'cast',
+		'classfile',
+		'deprecation',
+		'dep-ann',
+		'divzero',
+		'finally',
+		'overrides',
+		'rawtypes',
+		//'serial',
+		//'try',
+		'unchecked'
+	]
+
+	prj.tasks.withType(JavaCompile) { JavaCompile compile ->
+		compile.options.compilerArgs = ["-Xlint:${XLINT_OPTIONS.join(',')}"]
 	}
 }
 

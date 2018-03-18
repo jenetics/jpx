@@ -23,12 +23,14 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
-import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -37,8 +39,10 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -52,8 +56,8 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-import javax.xml.stream.XMLStreamWriter;
+
+import io.jenetics.jpx.GPX.Reader.Mode;
 
 /**
  * GPX documents contain a metadata header, followed by way-points, routes, and
@@ -148,7 +152,7 @@ import javax.xml.stream.XMLStreamWriter;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 1.3
  * @since 1.0
  */
 public final class GPX implements Serializable {
@@ -156,17 +160,85 @@ public final class GPX implements Serializable {
 	private static final long serialVersionUID = 2L;
 
 	/**
-	 * The default version number: 1.1.
+	 * Represents the available GPX versions.
+	 *
+	 * @version 1.3
+	 * @since 1.3
 	 */
-	public static final String VERSION = "1.1";
+	public enum Version {
+
+		/**
+		 * The GPX version 1.0. This version can be read and written.
+		 *
+		 * @see <a href="http://www.topografix.com/gpx_manual.asp">GPX 1.0</a>
+		 */
+		V10("1.0"),
+
+		/**
+		 * The GPX version 1.1. This is the default version and can be read and
+		 * written.
+		 *
+		 * @see <a href="http://www.topografix.com/GPX/1/1/">GPX 1.1</a>
+		 */
+		V11("1.1");
+
+		private final String _value;
+
+		Version(final String value) {
+			_value = value;
+		}
+
+		/**
+		 * Return the version string value.
+		 *
+		 * @return the version string value
+		 */
+		public String getValue() {
+			return _value;
+		}
+
+		/**
+		 * Return the version from the given {@code version} string. Allowed
+		 * values are "1.0" and "1.1".
+		 *
+		 * @param version the version string
+		 * @return the version from the given {@code version} string
+		 * @throws IllegalArgumentException if the given {@code version} string
+		 *         is neither "1.0" nor "1.1"
+		 * @throws NullPointerException if the given {@code version} string is
+		 *         {@code null}
+		 */
+		public static Version of(final String version) {
+			switch (version) {
+				case "1.0": return V10;
+				case "1.1": return V11;
+				default: throw new IllegalArgumentException(format(
+					"Unknown version string: '%s'.", version
+				));
+			}
+		}
+	}
+
+	/**
+	 * The default version number: 1.1.
+	 *
+	 * @deprecated Use {@link GPX.Version} instead
+	 */
+	@Deprecated
+	public static final String VERSION = Version.V11._value;
+
+	private static final String _CREATOR = "JPX - https://github.com/jenetics/jpx";
 
 	/**
 	 * The default creator string.
+	 *
+	 * @deprecated Will be removed without replacement
 	 */
-	public static final String CREATOR = "JPX - https://jenetics.github.io/jpx";
+	@Deprecated
+	public static final String CREATOR = _CREATOR;
 
 	private final String _creator;
-	private final String _version;
+	private final Version _version;
 	private final Metadata _metadata;
 	private final List<WayPoint> _wayPoints;
 	private final List<Route> _routes;
@@ -187,7 +259,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	private GPX(
-		final String version,
+		final Version version,
 		final String creator,
 		final Metadata metadata,
 		final List<WayPoint> wayPoints,
@@ -208,7 +280,7 @@ public final class GPX implements Serializable {
 	 * @return the version number of the GPX file
 	 */
 	public String getVersion() {
-		return _version;
+		return _version._value;
 	}
 
 	/**
@@ -351,13 +423,13 @@ public final class GPX implements Serializable {
 	 */
 	public static final class Builder {
 		private String _creator;
-		private String _version;
+		private Version _version;
 		private Metadata _metadata;
 		private final List<WayPoint> _wayPoints = new ArrayList<>();
 		private final List<Route> _routes = new ArrayList<>();
 		private final List<Track> _tracks = new ArrayList<>();
 
-		private Builder(final String version, final String creator) {
+		private Builder(final Version version, final String creator) {
 			_version = requireNonNull(version);
 			_creator = requireNonNull(creator);
 		}
@@ -386,6 +458,20 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Set the GPX version.
+		 *
+		 * @since 1.3
+		 *
+		 * @param version the GPX version
+		 * @throws NullPointerException if the given argument is {@code null}
+		 * @return {@code this} {@code Builder} for method chaining
+		 */
+		public Builder version(final Version version) {
+			_version = requireNonNull(version);
+			return this;
+		}
+
+		/**
 		 * Return the current version value.
 		 *
 		 * @since 1.1
@@ -393,7 +479,7 @@ public final class GPX implements Serializable {
 		 * @return the current version value
 		 */
 		public String version() {
-			return _version;
+			return _version._value;
 		}
 
 		/**
@@ -424,7 +510,9 @@ public final class GPX implements Serializable {
 		public Builder metadata(final Consumer<Metadata.Builder> metadata) {
 			final Metadata.Builder builder = Metadata.builder();
 			metadata.accept(builder);
-			_metadata = builder.build();
+
+			final Metadata md = builder.build();
+			_metadata = md.isEmpty() ? null : md;
 
 			return this;
 		}
@@ -862,13 +950,30 @@ public final class GPX implements Serializable {
 	/**
 	 * Create a new GPX builder with the given GPX version and creator string.
 	 *
-	 * @param version the GPX version string
+	 * @since 1.3
+	 *
+	 * @param version the GPX version
 	 * @param creator the GPX creator
 	 * @return new GPX builder
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public static Builder builder(final String version, final String creator) {
+	public static Builder builder(final Version version, final String creator) {
 		return new Builder(version, creator);
+	}
+
+	/**
+	 * Create a new GPX builder with the given GPX version and creator string.
+	 *
+	 * @param version the GPX version string
+	 * @param creator the GPX creator
+	 * @return new GPX builder
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 *
+	 * @deprecated Use {@link #builder(Version, String)} instead.
+	 */
+	@Deprecated
+	public static Builder builder(final String version, final String creator) {
+		return new Builder(Version.of(version), creator);
 	}
 
 	/**
@@ -879,7 +984,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if the given arguments is {@code null}
 	 */
 	public static Builder builder(final String creator) {
-		return builder(VERSION, creator);
+		return builder(Version.V11, creator);
 	}
 
 	/**
@@ -888,9 +993,284 @@ public final class GPX implements Serializable {
 	 * @return new GPX builder
 	 */
 	public static Builder builder() {
-		return builder(VERSION, CREATOR);
+		return builder(Version.V11, _CREATOR);
 	}
 
+
+	/**
+	 * Class for reading GPX files. A reader instance can be created by the
+	 * {@code GPX.reader} factory methods.
+	 *
+	 * @see GPX#reader()
+	 * @see GPX#reader(Version, Reader.Mode)
+	 *
+	 * @version 1.3
+	 * @since 1.3
+	 */
+	public static final class Reader {
+
+		/**
+		 * The possible GPX reader modes.
+		 *
+		 * @version 1.3
+		 * @since 1.3
+		 */
+		public enum Mode {
+
+			/**
+			 * In this mode the GPX reader tries to ignore invalid GPX values
+			 * and elements.
+			 */
+			LENIENT,
+
+			/**
+			 * Expects to read valid GPX files.
+			 */
+			STRICT
+		}
+
+		private final XMLReader<GPX> _reader;
+		private final Mode _mode;
+
+		private Reader(final XMLReader<GPX> reader, final Mode mode) {
+			_reader = requireNonNull(reader);
+			_mode = requireNonNull(mode);
+		}
+
+		/**
+		 * Return the current reader mode.
+		 *
+		 * @return the current reader mode
+		 */
+		public Mode getMode() {
+			return _mode;
+		}
+
+		/**
+		 * Read a GPX object from the given {@code input} stream.
+		 *
+		 * @param input the input stream from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final InputStream input)
+			throws IOException
+		{
+			final XMLInputFactory factory = XMLInputFactory.newFactory();
+			try  (CloseableXMLStreamReader reader = new CloseableXMLStreamReader(
+						factory.createXMLStreamReader(input)))
+			{
+				if (reader.hasNext()) {
+					reader.next();
+					return _reader.read(reader, _mode == Mode.LENIENT);
+				} else {
+					throw new IOException("No 'gpx' element found.");
+				}
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
+		}
+
+		/**
+		 * Read a GPX object from the given {@code input} stream.
+		 *
+		 * @param file the input file from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final File file) throws IOException {
+			try (FileInputStream fin = new FileInputStream(file);
+				 BufferedInputStream bin = new BufferedInputStream(fin))
+			{
+				return read(bin);
+			}
+		}
+
+		/**
+		 * Read a GPX object from the given {@code input} stream.
+		 *
+		 * @param path the input path from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final Path path) throws IOException {
+			return read(path.toFile());
+		}
+
+		/**
+		 * Read a GPX object from the given {@code input} stream.
+		 *
+		 * @param path the input path from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 */
+		public GPX read(final String path) throws IOException {
+			return read(Paths.get(path));
+		}
+
+		/**
+		 * Create a GPX object from the given GPX-XML string.
+		 *
+		 * @param xml the GPX XML string
+		 * @return the GPX object created from the given XML string
+		 * @throws IllegalArgumentException if the given {@code xml} is not a
+		 *         valid GPX XML string
+		 * @throws NullPointerException if the given {@code xml} string is
+		 *         {@code null}
+		 */
+		public GPX fromString(final String xml) {
+			final byte[] bytes = xml.getBytes();
+			final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
+			try {
+				return read(in);
+			} catch (IOException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+	}
+
+	/**
+	 * Class for writing GPX files. A writer instance can be created by the
+	 * {@code GPX.writer} factory methods.
+	 *
+	 * @see GPX#writer()
+	 * @see GPX#writer(String)
+	 *
+	 * @version 1.3
+	 * @since 1.3
+	 */
+	public static final class Writer {
+
+		private final String _indent;
+
+		private Writer(final String indent) {
+			_indent = indent;
+		}
+
+		/**
+		 * Return the indentation string this GPX writer is using. If the
+		 * indentation string is {@link Optional#empty()}, the GPX file consists
+		 * of one line.
+		 *
+		 * @return the indentation string
+		 */
+		public Optional<String> getIndent() {
+			return Optional.ofNullable(_indent);
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param output the output stream where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final OutputStream output)
+			throws IOException
+		{
+			final XMLOutputFactory factory = XMLOutputFactory.newFactory();
+			try (CloseableXMLStreamWriter xml = writer(factory, output)) {
+				xml.writeStartDocument("UTF-8", "1.0");
+				GPX.xmlWriter(gpx._version).write(xml, gpx);
+				xml.writeEndDocument();
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
+		}
+
+		private CloseableXMLStreamWriter writer(
+			final XMLOutputFactory factory,
+			final OutputStream output
+		)
+			throws XMLStreamException
+		{
+			final NonCloseableOutputStream out =
+				new NonCloseableOutputStream(output);
+
+			return _indent == null
+				? new CloseableXMLStreamWriter(factory
+					.createXMLStreamWriter(out, "UTF-8"))
+				: new IndentingXMLStreamWriter(factory
+					.createXMLStreamWriter(out, "UTF-8"), _indent);
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param file the output file where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final File file) throws IOException {
+			try (FileOutputStream out = new FileOutputStream(file);
+				 BufferedOutputStream bout = new BufferedOutputStream(out))
+			{
+				write(gpx, bout);
+			}
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param path the output path where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final Path path) throws IOException {
+			write(gpx, path.toFile());
+		}
+
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param path the output path where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final String path) throws IOException {
+			write(gpx, Paths.get(path));
+		}
+
+		/**
+		 * Create a XML string representation of the given {@code gpx} object.
+		 *
+		 * @param gpx the GPX object to convert to a string
+		 * @return the XML string representation of the given {@code gpx} object
+		 * @throws NullPointerException if the given given GPX object is
+		 *         {@code null}
+		 */
+		public String toString(final GPX gpx) {
+			final ByteArrayOutputStream out = new ByteArrayOutputStream();
+			try {
+				write(gpx, out);
+				return new String(out.toByteArray());
+			} catch (IOException e) {
+				throw new IllegalStateException("Unexpected error.", e);
+			}
+		}
+
+	}
 
 	/* *************************************************************************
 	 *  Static object creation methods
@@ -918,7 +1298,7 @@ public final class GPX implements Serializable {
 		final List<Track> tracks
 	) {
 		return new GPX(
-			VERSION,
+			Version.V11,
 			creator,
 			metadata,
 			wayPoints,
@@ -943,7 +1323,7 @@ public final class GPX implements Serializable {
 	 *         {@code routes} or {@code tracks} is {@code null}
 	 */
 	public static GPX of(
-		final String version,
+		final Version version,
 		final String creator,
 		final Metadata metadata,
 		final List<WayPoint> wayPoints,
@@ -952,6 +1332,45 @@ public final class GPX implements Serializable {
 	) {
 		return new GPX(
 			version,
+			creator,
+			metadata == null || metadata.isEmpty() ? null : metadata,
+			wayPoints,
+			routes,
+			tracks
+		);
+	}
+
+	/**
+	 * Create a new {@code GPX} object with the given data.
+	 *
+	 * @param creator the name or URL of the software that created your GPX
+	 *        document. This allows others to inform the creator of a GPX
+	 *        instance document that fails to validate.
+	 * @param  version the GPX version
+	 * @param metadata the metadata about the GPS file
+	 * @param wayPoints the way-points
+	 * @param routes the routes
+	 * @param tracks the tracks
+	 * @return a new {@code GPX} object with the given data
+	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
+	 *         {@code routes} or {@code tracks} is {@code null}
+	 * @throws IllegalArgumentException if the given GPX {@code version} string
+	 *         is neither "1.0" nor "1.1"
+	 *
+	 * @deprecated Use {@link #of(Version, String, Metadata, List, List, List)}
+	 *             instead
+	 */
+	@Deprecated
+	public static GPX of(
+		final String version,
+		final String creator,
+		final Metadata metadata,
+		final List<WayPoint> wayPoints,
+		final List<Route> routes,
+		final List<Track> tracks
+	) {
+		return new GPX(
+			Version.of(version),
 			creator,
 			metadata,
 			wayPoints,
@@ -976,7 +1395,7 @@ public final class GPX implements Serializable {
 	}
 
 	void write(final DataOutput out) throws IOException {
-		IO.writeString(_version, out);
+		IO.writeString(_version.getValue(), out);
 		IO.writeString(_creator, out);
 		IO.writeNullable(_metadata, Metadata::write, out);
 		IO.writes(_wayPoints, WayPoint::write, out);
@@ -986,7 +1405,7 @@ public final class GPX implements Serializable {
 
 	static GPX read(final DataInput in) throws IOException {
 		return new GPX(
-			IO.readString(in),
+			Version.of(IO.readString(in)),
 			IO.readString(in),
 			IO.readNullable(Metadata::read, in),
 			IO.reads(WayPoint::read, in),
@@ -999,48 +1418,195 @@ public final class GPX implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	/**
-	 * Writes this {@code Link} object to the given XML stream {@code writer}.
-	 *
-	 * @param writer the XML data sink
-	 * @throws XMLStreamException if an error occurs
-	 */
-	void write(final XMLStreamWriter writer) throws XMLStreamException {
-		WRITER.write(writer, this);
+	private static String name(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getName)
+			.orElse(null);
 	}
 
-	static final XMLWriter<GPX> WRITER = elem("gpx",
-		XMLWriter.ns("http://www.topografix.com/GPX/1/1"),
-		XMLWriter.attr("version").map(gpx -> gpx._version),
-		XMLWriter.attr("creator").map(gpx -> gpx._creator),
-		Metadata.WRITER.map(gpx -> gpx._metadata),
-		XMLWriter.elems(WayPoint.writer("wpt")).map(gpx -> gpx._wayPoints),
-		XMLWriter.elems(Route.WRITER).map(gpx -> gpx._routes),
-		XMLWriter.elems(Track.WRITER).map(gpx -> gpx._tracks)
-	);
+	private static String desc(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getDescription)
+			.orElse(null);
+	}
+
+	private static String author(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getName)
+			.orElse(null);
+	}
+
+	private static String email(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getEmail)
+			.map(Email::getAddress)
+			.orElse(null);
+	}
+
+	private static String url(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getLink)
+			.map(Link::getHref)
+			.map(URI::toString)
+			.orElse(null);
+	}
+
+	private static String urlname(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getAuthor)
+			.flatMap(Person::getLink)
+			.flatMap(Link::getText)
+			.orElse(null);
+	}
+
+	private static String time(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getTime)
+			.map(ZonedDateTimeFormat::format)
+			.orElse(null);
+	}
+
+	private static String keywords(final GPX gpx) {
+		return gpx.getMetadata()
+			.flatMap(Metadata::getKeywords)
+			.orElse(null);
+	}
+
+
+	// Define the needed writers for the different versions.
+	private static final XMLWriters<GPX> WRITERS = new XMLWriters<GPX>()
+		.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
+		.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
+		.v11(XMLWriter.ns("http://www.topografix.com/GPX/1/1"))
+		.v10(XMLWriter.ns("http://www.topografix.com/GPX/1/0"))
+		.v11(Metadata.WRITER.map(gpx -> gpx._metadata))
+		.v10(XMLWriter.elem("name").map(GPX::name))
+		.v10(XMLWriter.elem("desc").map(GPX::desc))
+		.v10(XMLWriter.elem("author").map(GPX::author))
+		.v10(XMLWriter.elem("email").map(GPX::email))
+		.v10(XMLWriter.elem("url").map(GPX::url))
+		.v10(XMLWriter.elem("urlname").map(GPX::urlname))
+		.v10(XMLWriter.elem("time").map(GPX::time))
+		.v10(XMLWriter.elem("keywords").map(GPX::keywords))
+		.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10,"wpt")).map(gpx -> gpx._wayPoints))
+		.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11,"wpt")).map(gpx -> gpx._wayPoints))
+		.v10(XMLWriter.elems(Route.xmlWriter(Version.V10)).map(gpx -> gpx._routes))
+		.v11(XMLWriter.elems(Route.xmlWriter(Version.V11)).map(gpx -> gpx._routes))
+		.v10(XMLWriter.elems(Track.xmlWriter(Version.V10)).map(gpx -> gpx._tracks))
+		.v11(XMLWriter.elems(Track.xmlWriter(Version.V11)).map(gpx -> gpx._tracks));
+
+
+	// Define the needed readers for the different versions.
+	private static final XMLReaders READERS = new XMLReaders()
+		.v00(XMLReader.attr("version").map(Version::of))
+		.v00(XMLReader.attr("creator"))
+		.v11(Metadata.READER)
+		.v10(XMLReader.elem("name"))
+		.v10(XMLReader.elem("desc"))
+		.v10(XMLReader.elem("author"))
+		.v10(XMLReader.elem("email"))
+		.v10(XMLReader.elem("url"))
+		.v10(XMLReader.elem("urlname"))
+		.v10(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
+		.v10(XMLReader.elem("keywords"))
+		.v10(Bounds.READER)
+		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt")))
+		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "wpt")))
+		.v10(XMLReader.elems(Route.xmlReader(Version.V10)))
+		.v11(XMLReader.elems(Route.xmlReader(Version.V11)))
+		.v10(XMLReader.elems(Track.xmlReader(Version.V10)))
+		.v11(XMLReader.elems(Track.xmlReader(Version.V11)))
+		.v00(XMLReader.ignore("extensions"));
+
+
+	static XMLWriter<GPX> xmlWriter(final Version version) {
+		return XMLWriter.elem("gpx", WRITERS.writers(version));
+	}
 
 	@SuppressWarnings("unchecked")
-	static final XMLReader<GPX> READER = XMLReader.elem(
-		a -> GPX.of(
-			(String)a[0],
-			(String)a[1],
-			(Metadata)a[2],
-			(List<WayPoint>)a[3],
-			(List<Route>)a[4],
-			(List<Track>)a[5]
-		),
-		"gpx",
-		XMLReader.attr("version"),
-		XMLReader.attr("creator"),
-		Metadata.READER,
-		XMLReader.elems(WayPoint.reader("wpt")),
-		XMLReader.elems(Route.READER),
-		XMLReader.elems(Track.READER)
-	);
+	static XMLReader<GPX> xmlReader(final Version version) {
+		return XMLReader.elem(
+			version == Version.V10 ? GPX::toGPXv10 : GPX::toGPXv11,
+			"gpx",
+			READERS.readers(version)
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static GPX toGPXv11(final Object[] v) {
+		return GPX.of(
+			(Version)v[0],
+			(String)v[1],
+			(Metadata)v[2],
+			(List<WayPoint>)v[3],
+			(List<Route>)v[4],
+			(List<Track>)v[5]
+		);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static GPX toGPXv10(final Object[] v) {
+		return GPX.of(
+			(Version)v[0],
+			(String)v[1],
+			Metadata.of(
+				(String)v[2],
+				(String)v[3],
+				Person.of(
+					(String)v[4],
+					v[5] != null
+						? Email.of((String)v[5])
+						: null,
+					v[6] != null
+						? Link.of((String)v[6], (String)v[7], null)
+						: null
+				),
+				null,
+				null,
+				(ZonedDateTime)v[8],
+				(String)v[9],
+				(Bounds)v[10]
+			),
+			(List<WayPoint>)v[11],
+			(List<Route>)v[12],
+			(List<Track>)v[13]
+		);
+	}
+
 
 	/* *************************************************************************
-	 *  Load GPX from file.
+	 *  Write and read GPX files
 	 * ************************************************************************/
+
+	/**
+	 * Return a new GPX writer with the given {@code indent}.
+	 *
+	 * @since 1.3
+	 *
+	 * @see #writer()
+	 *
+	 * @param indent the element indentation
+	 * @return a new GPX writer
+	 */
+	public static Writer writer(final String indent) {
+		return new Writer(indent);
+	}
+
+	/**
+	 * Return a new GPX writer with no indentation.
+	 *
+	 * @since 1.3
+	 *
+	 * @see #writer(String)
+	 *
+	 * @return a new GPX writer
+	 */
+	public static Writer writer() {
+		return new Writer(null);
+	}
 
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
@@ -1054,7 +1620,7 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final OutputStream output)
 		throws IOException
 	{
-		write(gpx, output, null);
+		writer().write(gpx, output);
 	}
 
 	/**
@@ -1069,11 +1635,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static void write(final GPX gpx, final Path path) throws IOException {
-		try (FileOutputStream out = new FileOutputStream(path.toFile());
-			 BufferedOutputStream bout = new BufferedOutputStream(out))
-		{
-			write(gpx, bout);
-		}
+		writer().write(gpx, path);
 	}
 
 	/**
@@ -1086,7 +1648,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static void write(final GPX gpx, final String path) throws IOException {
-		write(gpx, Paths.get(path));
+		writer().write(gpx, path);
 	}
 
 	/**
@@ -1099,7 +1661,10 @@ public final class GPX implements Serializable {
 	 *        {@code null}, no pretty printing is performed.
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 *
+	 * @deprecated Use {@code GPX.writer(indent).write(gpx, output)} instead
 	 */
+	@Deprecated
 	public static void write(
 		final GPX gpx,
 		final OutputStream output,
@@ -1107,19 +1672,7 @@ public final class GPX implements Serializable {
 	)
 		throws IOException
 	{
-		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-		try {
-			final XMLStreamWriter writer = indent != null
-				? new IndentingXMLWriter(
-					factory.createXMLStreamWriter(output, "UTF-8"), indent)
-				: factory.createXMLStreamWriter(output, "UTF-8");
-
-			writer.writeStartDocument("UTF-8", "1.0");
-			gpx.write(writer);
-			writer.writeEndDocument();
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		}
+		writer(indent).write(gpx, output);
 	}
 
 	/**
@@ -1132,15 +1685,14 @@ public final class GPX implements Serializable {
 	 *        {@code null}, no pretty printing is performed.
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 *
+	 * @deprecated Use {@code GPX.writer(indent).write(gpx, path)} instead
 	 */
+	@Deprecated
 	public static void write(final GPX gpx, final Path path, final String indent)
 		throws IOException
 	{
-		try (FileOutputStream out = new FileOutputStream(path.toFile());
-			 BufferedOutputStream bout = new BufferedOutputStream(out))
-		{
-			write(gpx, bout, indent);
-		}
+		writer(indent).write(gpx, path);
 	}
 
 	/**
@@ -1153,11 +1705,77 @@ public final class GPX implements Serializable {
 	 *        {@code null}, no pretty printing is performed.
 	 * @throws IOException if the writing of the GPX object fails
 	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 *
+	 * @deprecated Use {@code GPX.writer(indent).write(gpx, path);} instead
 	 */
+	@Deprecated
 	public static void write(final GPX gpx, final String path, final String indent)
 		throws IOException
 	{
-		write(gpx, Paths.get(path), indent);
+		writer(indent).write(gpx, path);
+	}
+
+	/**
+	 * Return a GPX reader, reading GPX files with the given version and in the
+	 * given reading mode.
+	 *
+	 * @since 1.3
+	 *
+	 * @see #reader()
+	 *
+	 * @param version the GPX version to read
+	 * @param mode the reading mode
+	 * @return a new GPX reader object
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public static Reader reader(final Version version, final Mode mode) {
+		return new Reader(GPX.xmlReader(version), mode);
+	}
+
+	/**
+	 * Return a GPX reader, reading GPX files with the given version and in
+	 * strict reading mode.
+	 *
+	 * @since 1.3
+	 *
+	 * @see #reader()
+	 *
+	 * @param version the GPX version to read
+	 * @return a new GPX reader object
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public static Reader reader(final Version version) {
+		return new Reader(GPX.xmlReader(version), Mode.STRICT);
+	}
+
+	/**
+	 * Return a GPX reader, reading GPX files with version 1.1 and in the given
+	 * reading mode.
+	 *
+	 * @since 1.3
+	 *
+	 * @see #reader()
+	 *
+	 * @param mode the reading mode
+	 * @return a new GPX reader object
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public static Reader reader(final Mode mode) {
+		return new Reader(GPX.xmlReader(Version.V11), mode);
+	}
+
+	/**
+	 * Return a GPX reader, reading GPX files (v1.1) with reading mode
+	 * {@link Mode#STRICT}.
+	 *
+	 * @since 1.3
+	 *
+	 * @see #reader(Version, Reader.Mode)
+	 *
+	 * @return a new GPX reader object
+	 */
+	public static Reader reader() {
+		return reader(Version.V11, Mode.STRICT);
 	}
 
 	/**
@@ -1173,26 +1791,24 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
+	 *
+	 * @see #reader(GPX.Version, GPX.Reader.Mode)
+	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(input)} instead
 	 */
+	@Deprecated
 	public static GPX read(final InputStream input, final boolean lenient)
 		throws IOException
 	{
-		final XMLInputFactory factory = XMLInputFactory.newFactory();
-		try {
-			final XMLStreamReader reader = factory.createXMLStreamReader(input);
-			if (reader.hasNext()) {
-				reader.next();
-				return READER.read(reader, lenient);
-			} else {
-				throw new IOException("No 'gpx' element found.");
-			}
-		} catch (XMLStreamException e) {
-			throw new IOException(e);
-		}
+		return reader(Version.V11, lenient ? Mode.LENIENT : Mode.STRICT)
+			.read(input);
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read an GPX object from the given {@code input} stream. This method is a
+	 * shortcut for
+	 * <pre>{@code
+	 * final GPX gpx = GPX.reader().read(input);
+	 * }</pre>
 	 *
 	 * @param input the input stream from where the GPX date is read
 	 * @return the GPX object read from the input stream
@@ -1201,7 +1817,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final InputStream input) throws IOException {
-		return read(input, false);
+		return reader(Version.V11, Mode.STRICT).read(input);
 	}
 
 	/**
@@ -1215,19 +1831,24 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
+	 *
+	 * @see #reader(GPX.Version, GPX.Reader.Mode)
+	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(path)} instead
 	 */
+	@Deprecated
 	public static GPX read(final Path path, final boolean lenient)
 		throws IOException
 	{
-		try (FileInputStream in = new FileInputStream(path.toFile());
-			 BufferedInputStream bin = new BufferedInputStream(in))
-		{
-			return read(bin, lenient);
-		}
+		return reader(Version.V11, lenient ? Mode.LENIENT : Mode.STRICT)
+			.read(path);
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read an GPX object from the given {@code input} stream. This method is a
+	 * shortcut for
+	 * <pre>{@code
+	 * final GPX gpx = GPX.reader().read(path);
+	 * }</pre>
 	 *
 	 * @param path the input path from where the GPX date is read
 	 * @return the GPX object read from the input stream
@@ -1236,7 +1857,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return read(path, false);
+		return reader(Version.V11, Mode.STRICT).read(path);
 	}
 
 	/**
@@ -1250,15 +1871,24 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
+	 *
+	 * @see #reader(GPX.Version, GPX.Reader.Mode)
+	 * @deprecated Use {@code GPX.reader(lenient).read(path)} instead
 	 */
+	@Deprecated
 	public static GPX read(final String path, final boolean lenient)
 		throws IOException
 	{
-		return read(Paths.get(path), lenient);
+		return reader(Version.V11, lenient ? Mode.LENIENT : Mode.STRICT)
+			.read(path);
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read an GPX object from the given {@code input} stream. This method is a
+	 * shortcut for
+	 * <pre>{@code
+	 * final GPX gpx = GPX.reader().read(path);
+	 * }</pre>
 	 *
 	 * @param path the input path from where the GPX date is read
 	 * @return the GPX object read from the input stream
@@ -1267,7 +1897,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final String path) throws IOException {
-		return read(Paths.get(path), false);
+		return reader(Version.V11, Mode.STRICT).read(path);
 	}
 
 }

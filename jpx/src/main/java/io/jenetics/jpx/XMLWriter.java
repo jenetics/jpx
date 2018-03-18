@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
@@ -61,9 +62,9 @@ interface XMLWriter<T> {
 	default <B> XMLWriter<B>
 	map(final Function<? super B, ? extends T> mapper) {
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				final T value = mapper.apply(data);
-				if (value != null) {
+				if (value != null && value != Optional.empty()) {
 					write(xml, value);
 				}
 			}
@@ -99,7 +100,7 @@ interface XMLWriter<T> {
 		requireNonNull(name);
 
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				xml.writeAttribute(name, data.toString());
 			}
 		};
@@ -156,7 +157,7 @@ interface XMLWriter<T> {
 		requireNonNull(children);
 
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				if (children.length > 0) {
 					xml.writeStartElement(name);
 					for (XMLWriter<? super T> child : children) {
@@ -182,7 +183,7 @@ interface XMLWriter<T> {
 	 */
 	static <T> XMLWriter<T> text() {
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				xml.writeCharacters(data.toString());
 			}
 		};
@@ -216,7 +217,7 @@ interface XMLWriter<T> {
 		return (xml, data) -> {
 			if (data != null) {
 				for (T value : data) {
-					if (value != null) {
+					if (value != null && value != Optional.empty()) {
 						xml.writeStartElement(name);
 						writer.write(xml, value);
 						xml.writeEndElement();
@@ -241,7 +242,7 @@ interface XMLWriter<T> {
 		return (xml, data) -> {
 			if (data != null) {
 				for (T value : data) {
-					if (value != null) {
+					if (value != null && value != Optional.empty()) {
 						writer.write(xml, value);
 					}
 				}
