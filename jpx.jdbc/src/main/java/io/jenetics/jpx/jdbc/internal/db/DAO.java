@@ -98,18 +98,18 @@ public abstract class DAO {
 	 * @param select select function for selecting existing objects
 	 * @param inserter insert function for inserting missing objects
 	 * @param updater update function for updating changed values
-	 * @param <T> the value type
+	 * @param <V> the value type
 	 * @param <K> the key type
 	 * @return the missing + updated + unchanged rows
 	 * @throws SQLException if the DB operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	protected static <T, K> List<Stored<T>> put(
-		final Collection<T> values,
-		final Function<T, K> key,
-		final SQL.Function<Collection<T>, List<Stored<T>>> select,
-		final Inserter<T> inserter,
-		final Updater<T> updater
+	protected static <V, K> List<Stored<V>> put(
+		final Collection<V> values,
+		final Function<V, K> key,
+		final SQL.Function<Collection<V>, List<Stored<V>>> select,
+		final Inserter<V> inserter,
+		final Updater<V> updater
 	)
 		throws SQLException
 	{
@@ -119,29 +119,29 @@ public abstract class DAO {
 		requireNonNull(inserter);
 		requireNonNull(updater);
 
-		final List<Stored<T>> result;
+		final List<Stored<V>> result;
 
 		if (!values.isEmpty()) {
-			final Map<K, Stored<T>> existing = select.apply(values).stream()
+			final Map<K, Stored<V>> existing = select.apply(values).stream()
 				.collect(toMap(
 					value -> key.apply(value.value()),
 					value -> value,
 					(a, b) -> b));
 
-			final Map<K, T> actual = values.stream()
+			final Map<K, V> actual = values.stream()
 				.collect(toMap(key, value -> value, (a, b) -> b));
 
-			final Diff<K, Stored<T>, T> diff = Diff.of(existing, actual);
+			final Diff<K, Stored<V>, V> diff = Diff.of(existing, actual);
 
-			final List<T> missing = diff.missing();
+			final List<V> missing = diff.missing();
 
-			final List<Stored<T>> updated = diff
+			final List<Stored<V>> updated = diff
 				.updated((e, a) -> Objects.equals(e.value(), a))
 				.entrySet().stream()
 				.map(entry -> entry.getKey().map(m -> entry.getValue()))
 				.collect(toList());
 
-			final List<Stored<T>> unchanged = diff
+			final List<Stored<V>> unchanged = diff
 				.unchanged((e, a) -> Objects.equals(e.value(), a));
 
 			result = new ArrayList<>();

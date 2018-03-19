@@ -24,14 +24,20 @@ import static java.util.Collections.singletonList;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-@FunctionalInterface
 public interface Selector<T> {
+
+	public <V, C> List<Stored<T>> selectByVals(
+		final Col<C> column,
+		final Collection<V> values,
+		final Function<V, C> mapper
+	) throws SQLException;
 
 	/**
 	 * Selects the all stored objects with the given column values.
@@ -44,7 +50,7 @@ public interface Selector<T> {
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public <V, C> List<T> selectByVals(
+	public <V, C> List<T> select(
 		final Column<V, C> column,
 		final Collection<V> values
 	)
@@ -67,7 +73,7 @@ public interface Selector<T> {
 	)
 		throws SQLException
 	{
-		return selectByVals(column, singletonList(value));
+		return select(column, singletonList(value));
 	}
 
 	/**
@@ -80,13 +86,13 @@ public interface Selector<T> {
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public default  <V> List<T> selectByVals(
+	public default  <V> List<T> select(
 		final String column,
 		final Collection<V> values
 	)
 		throws SQLException
 	{
-		return selectByVals(Column.<V>of(column), values);
+		return select(Column.<V>of(column), values);
 	}
 
 	/**

@@ -89,7 +89,7 @@ public class PersonDAO extends DAO implements Selector<PersonRow> {
 	{
 		final Column<T, Long> col = Column.of("id", row -> mapper.apply(row).id);
 
-		final Map<Long, PersonRow> links = selectByVals(col, rows).stream()
+		final Map<Long, PersonRow> links = select(col, rows).stream()
 			.collect(toMap(l -> l.id, l -> l, (a, b) -> b));
 
 		/*
@@ -100,7 +100,7 @@ public class PersonDAO extends DAO implements Selector<PersonRow> {
 	}
 
 	@Override
-	public <V, C> List<PersonRow> selectByVals(
+	public <V, C> List<PersonRow> select(
 		final Column<V, C> column,
 		final Collection<V> values
 	)

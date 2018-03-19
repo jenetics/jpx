@@ -82,7 +82,7 @@ public final class LinkDAO
 	}
 
 	@Override
-	public <V, C> List<LinkRow> selectByVals(
+	public <V, C> List<LinkRow> select(
 		final Column<V, C> column,
 		final Collection<V> values
 	)
@@ -108,7 +108,7 @@ public final class LinkDAO
 	{
 		final Column<T, Long> col = Column.of("id", row -> mapper.apply(row).id);
 
-		final Map<Long, LinkRow> links = selectByVals(col, rows).stream()
+		final Map<Long, LinkRow> links = select(col, rows).stream()
 			.collect(toMap(l -> l.id, l -> l, (a, b) -> b));
 
 		rows.stream()

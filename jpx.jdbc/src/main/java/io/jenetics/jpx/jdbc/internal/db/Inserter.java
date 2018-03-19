@@ -79,7 +79,8 @@ public interface Inserter<T> {
 	public default Stored<T> insert(final T value)
 		throws SQLException
 	{
-		return insert(singletonList(value)).get(0);
+		final List<Stored<T>> result = insert(singletonList(value));
+		return result.get(0);
 	}
 
 }

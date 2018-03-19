@@ -37,16 +37,13 @@ public interface SelectBy<T> {
 	 *
 	 * @param column the column to select
 	 * @param values the value list
-	 * @param <V> the value type
-	 * @param <C> the column type
 	 * @return the selected stored object with the given values
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public <V, C> List<Stored<T>> selectByVals(
-		final Column<V, C> column,
-		final Collection<V> values
-	) throws SQLException;
+	public <V> List<Stored<T>>
+	selectByVals(final String column, final Collection<V> values)
+		throws SQLException;
 
 	/**
 	 * Selects the all stored objects with the given column value.
@@ -54,56 +51,15 @@ public interface SelectBy<T> {
 	 * @param column the column to select
 	 * @param value the selection value
 	 * @param <V> the value type
-	 * @param <C> the column type
 	 * @return the selected stored objects
 	 * @throws SQLException if the operation fails
 	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
-	public default <V, C> List<Stored<T>> selectBy(
-		final Column<V, C> column,
-		final V value
-	)
+	public default <V> List<Stored<T>>
+	selectBy(final String column, final V value)
 		throws SQLException
 	{
 		return selectByVals(column, singletonList(value));
-	}
-
-	/**
-	 * Selects the all stored objects with the given column value.
-	 *
-	 * @param column the column to select
-	 * @param values the selection values
-	 * @param <V> the value type
-	 * @return the selected stored objects
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public default <V> List<Stored<T>> selectByVals(
-		final String column,
-		final Collection<V> values
-	)
-		throws SQLException
-	{
-		return selectByVals(Column.of(column), values);
-	}
-
-	/**
-	 * Selects the all stored objects with the given column value.
-	 *
-	 * @param column the column to select
-	 * @param value the selection value
-	 * @param <V> the value type
-	 * @return the selected stored objects
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public default  <V> List<Stored<T>> selectBy(
-		final String column,
-		final V value
-	)
-		throws SQLException
-	{
-		return selectBy(Column.of(column), value);
 	}
 
 }

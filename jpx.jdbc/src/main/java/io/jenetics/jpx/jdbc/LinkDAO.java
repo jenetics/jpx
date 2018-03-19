@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
@@ -95,21 +96,21 @@ public final class LinkDAO
 	}
 
 	@Override
-	public <V, C> List<Stored<Link>> selectByVals(
-		final Column<V, C> column,
+	public <V> List<Stored<Link>> selectByVals(
+		final String column,
 		final Collection<V> values
 	)
 		throws SQLException
 	{
 			final String query =
 				"SELECT id, href, text, type " +
-				"FROM link WHERE "+column.name()+" IN ({values}) " +
+				"FROM link WHERE "+column+" IN ({values}) " +
 				"ORDER BY id";
 
 		return values.isEmpty()
 			? Collections.emptyList()
 			: SQL(query)
-				.on(Param.values("values", values, column.mapper()))
+				.on(Param.values("values", values))
 				.as(RowParser.list());
 	}
 
@@ -170,9 +171,9 @@ public final class LinkDAO
 		return DAO.put(
 			links,
 			Link::getHref,
-			values -> selectByVals(HREF, links),
+			values -> selectByVals("href", links),
 			this,
-			this::update
+			this
 		);
 	}
 

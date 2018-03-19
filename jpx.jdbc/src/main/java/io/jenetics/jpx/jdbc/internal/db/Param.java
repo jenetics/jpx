@@ -89,12 +89,11 @@ public final class Param {
 	 *
 	 * @param name the parameter name
 	 * @param values the parameter values
-	 * @param <T> the values type
 	 * @return a new parameter object
 	 */
-	public static <T> Param values(
+	public static Param values(
 		final String name,
-		final Collection<T> values
+		final Collection<?> values
 	) {
 		return new Param(name, values);
 	}
@@ -105,16 +104,15 @@ public final class Param {
 	 * @param name the parameter name
 	 * @param values the raw parameter values
 	 * @param mapper the parameter mapper
-	 * @param <A> the raw-type
-	 * @param <B> the mapped type
+	 * @param <V> the raw-type
 	 * @return a new parameter object
 	 */
-	public static <A, B> Param values(
+	public static <V> Param values(
 		final String name,
-		final Collection<A> values,
-		final Function<A, B> mapper
+		final Collection<? extends V> values,
+		final Function<? super V, ?> mapper
 	) {
-		final List<B> converted = values.stream()
+		final List<?> converted = values.stream()
 			.map(mapper)
 			.collect(Collectors.toList());
 
