@@ -239,9 +239,14 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.2.3](https://github.com/jenetics/jpx/releases/tag/v1.2.3)
+### [1.3.0](https://github.com/jenetics/jpx/releases/tag/v1.3.0)
+
+#### Enhancement
+
+* [#25](https://github.com/jenetics/jpx/issues/25): Read/write GPX version 1.0 files.
+* [#54](https://github.com/jenetics/jpx/issues/54): Create GPX object from XML-string.
 
 #### Bug fixes
 
-* [#49](https://github.com/jenetics/jpx/issues/49): Improve thrown exceptions for invalid files and let the _lenient_ read ignore unknown XML tags.
-* [#51](https://github.com/jenetics/jpx/issues/51): GPX reader does not handle XML comments correctly.
+* [#57](https://github.com/jenetics/jpx/issues/57): XMLStreamException: Unexpected element <extensions>.
+
