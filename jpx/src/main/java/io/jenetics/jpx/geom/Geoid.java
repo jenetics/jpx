@@ -27,6 +27,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 import java.util.stream.Collector;
@@ -92,7 +93,7 @@ public final class Geoid {
 	private final double F;
 
 	// The maximal iteration of the 'distance'
-	private static final int DISTANCE_ITERATION_MAX = 100;
+	private static final int DISTANCE_ITERATION_MAX = 1000;
 
 	// The epsilon of the result, when to stop iteration.
 	private static final double DISTANCE_ITERATION_EPSILON = 1E-12;
@@ -136,6 +137,8 @@ public final class Geoid {
 	 * @param end the end point
 	 * @return the distance between {@code start} and {@code end} in meters
 	 * @throws NullPointerException if one of the points is {@code null}
+	 * @throws ArithmeticException if the algorithm used for calculating the
+	 *         distance between {@code start} and {@code end} didn't converge
 	 */
 	public Length distance(final Point start, final Point end) {
 		final double lat1 = start.getLatitude().toRadians();
@@ -229,6 +232,13 @@ public final class Geoid {
 
 		} while (iteration++ < DISTANCE_ITERATION_MAX &&
 			(abs((lambda - lambda0)/lambda) > DISTANCE_ITERATION_EPSILON));
+
+		if (iteration >= DISTANCE_ITERATION_MAX) {
+			throw new ArithmeticException(format(
+				"Calculating distance between %s and %s didn't converge.",
+				start, end
+			));
+		}
 
 		// Eq. 19
 		final double s = B*a*(sigma - deltasigma);
