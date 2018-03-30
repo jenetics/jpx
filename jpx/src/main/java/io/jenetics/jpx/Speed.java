@@ -48,7 +48,7 @@ public final class Speed
 	/**
 	 * Represents a given speed unit.
 	 */
-	public static enum Unit {
+	public enum Unit {
 
 		/**
 		 * Represents the speed unit <em>meters per second</em>: <b>m/s</b>.
