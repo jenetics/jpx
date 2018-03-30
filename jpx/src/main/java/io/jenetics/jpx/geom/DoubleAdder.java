@@ -44,18 +44,10 @@ final class DoubleAdder
 	private double _compensation = 0.0;
 
 	/**
-	 * Create a new adder with the given default {@code value}.
-	 *
-	 * @param value the initial {@code value} of this adder.
-	 */
-	public DoubleAdder(final double value) {
-		add(value);
-	}
-
-	/**
 	 * Create a new adder with the initial value of {@code 0.0}.
 	 */
-	public DoubleAdder() {
+
+	DoubleAdder() {
 	}
 
 	/**
@@ -68,16 +60,6 @@ final class DoubleAdder
 		_simpleSum = 0.0;
 		_compensation = 0.0;
 		return this;
-	}
-
-	/**
-	 * Set the adder to the given {@code value}.
-	 *
-	 * @param value the new adder value
-	 * @return {@code this} adder, for command chaining
-	 */
-	public DoubleAdder set(final double value) {
-		return reset().add(value);
 	}
 
 	/**
