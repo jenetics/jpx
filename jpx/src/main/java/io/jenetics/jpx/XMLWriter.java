@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import javax.xml.stream.XMLStreamException;
@@ -61,9 +62,9 @@ interface XMLWriter<T> {
 	default <B> XMLWriter<B>
 	map(final Function<? super B, ? extends T> mapper) {
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				final T value = mapper.apply(data);
-				if (value != null) {
+				if (value != null && value != Optional.empty()) {
 					write(xml, value);
 				}
 			}
@@ -88,8 +89,6 @@ interface XMLWriter<T> {
 	 * final XMLWriter<String> writer1 = elem("element", attr("attribute"));
 	 * }</pre>
 	 *
-	 * @see #attr(String, Object)
-	 *
 	 * @param name the attribute name
 	 * @param <T> the writer base type
 	 * @return a new writer instance
@@ -99,32 +98,32 @@ interface XMLWriter<T> {
 		requireNonNull(name);
 
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				xml.writeAttribute(name, data.toString());
 			}
 		};
 	}
 
-	/**
-	 * Writes the attribute with the given {@code name} and a constant
-	 * {@code value} to the current <em>outer</em> element.
-	 *
-	 * <pre>{@code
-	 * final XMLWriter<MyObject> = elem("element", attr("version", "1.0"));
-	 * }</pre>
-	 *
-	 * @param name the attribute name
-	 * @param value the attribute value
-	 * @param <T> the writer base type
-	 * @return a new writer instance
-	 * @throws NullPointerException if one of the {@code name} is {@code null}
-	 */
-	static <T> XMLWriter<T> attr(
-		final String name,
-		final Object value
-	) {
-		return attr(name).map(data -> value);
-	}
+//	/**
+//	 * Writes the attribute with the given {@code name} and a constant
+//	 * {@code value} to the current <em>outer</em> element.
+//	 *
+//	 * <pre>{@code
+//	 * final XMLWriter<MyObject> = elem("element", attr("version", "1.0"));
+//	 * }</pre>
+//	 *
+//	 * @param name the attribute name
+//	 * @param value the attribute value
+//	 * @param <T> the writer base type
+//	 * @return a new writer instance
+//	 * @throws NullPointerException if one of the {@code name} is {@code null}
+//	 */
+//	static <T> XMLWriter<T> attr(
+//		final String name,
+//		final Object value
+//	) {
+//		return attr(name).map(data -> value);
+//	}
 
 
 	/* *************************************************************************
@@ -132,9 +131,7 @@ interface XMLWriter<T> {
 	 * ************************************************************************/
 
 	static <T> XMLWriter<T> ns(final String namespace) {
-		return (xml, data) -> {
-			xml.writeDefaultNamespace(namespace);
-		};
+		return (xml, data) -> xml.writeDefaultNamespace(namespace);
 	}
 
 	/**
@@ -156,7 +153,7 @@ interface XMLWriter<T> {
 		requireNonNull(children);
 
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				if (children.length > 0) {
 					xml.writeStartElement(name);
 					for (XMLWriter<? super T> child : children) {
@@ -182,7 +179,7 @@ interface XMLWriter<T> {
 	 */
 	static <T> XMLWriter<T> text() {
 		return (xml, data) -> {
-			if (data != null) {
+			if (data != null && data != Optional.empty()) {
 				xml.writeCharacters(data.toString());
 			}
 		};
@@ -196,35 +193,35 @@ interface XMLWriter<T> {
 		};
 	}
 
-	/**
-	 * Creates a new {@code XMLWriter}, which writes the given {@code children} as
-	 * sub-elements, defined by the given {@code childXMLWriter}.
-	 *
-	 * @param name the enclosing element name used for each data value
-	 * @param writer the sub-element writer
-	 * @param <T> the writer base type
-	 * @return a new writer instance
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	static <T> XMLWriter<Iterable<T>> elems(
-		final String name,
-		final XMLWriter<? super T> writer
-	) {
-		requireNonNull(name);
-		requireNonNull(writer);
-
-		return (xml, data) -> {
-			if (data != null) {
-				for (T value : data) {
-					if (value != null) {
-						xml.writeStartElement(name);
-						writer.write(xml, value);
-						xml.writeEndElement();
-					}
-				}
-			}
-		};
-	}
+//	/**
+//	 * Creates a new {@code XMLWriter}, which writes the given {@code children} as
+//	 * sub-elements, defined by the given {@code childXMLWriter}.
+//	 *
+//	 * @param name the enclosing element name used for each data value
+//	 * @param writer the sub-element writer
+//	 * @param <T> the writer base type
+//	 * @return a new writer instance
+//	 * @throws NullPointerException if one of the arguments is {@code null}
+//	 */
+//	static <T> XMLWriter<Iterable<T>> elems(
+//		final String name,
+//		final XMLWriter<? super T> writer
+//	) {
+//		requireNonNull(name);
+//		requireNonNull(writer);
+//
+//		return (xml, data) -> {
+//			if (data != null) {
+//				for (T value : data) {
+//					if (value != null && value != Optional.empty()) {
+//						xml.writeStartElement(name);
+//						writer.write(xml, value);
+//						xml.writeEndElement();
+//					}
+//				}
+//			}
+//		};
+//	}
 
 	/**
 	 * Creates a new {@code XMLWriter}, which writes the given {@code children} as
@@ -241,7 +238,7 @@ interface XMLWriter<T> {
 		return (xml, data) -> {
 			if (data != null) {
 				for (T value : data) {
-					if (value != null) {
+					if (value != null && value != Optional.empty()) {
 						writer.write(xml, value);
 					}
 				}
@@ -249,24 +246,24 @@ interface XMLWriter<T> {
 		};
 	}
 
-	/**
-	 * Adds a XML prolog element written by the given {@code writer}. The default
-	 * values for encoding and version is set to "UTF-8" and "1.0", respectively.
-	 *
-	 * <pre> {@code
-	 * <?xml version="1.0" encoding="UTF-8"?>
-	 * }</pre>
-	 *
-	 * @param writer the root element writer
-	 * @param <T> the writer data type
-	 * @return a new writer instance
-	 */
-	public static <T> XMLWriter<T> doc(final XMLWriter<? super T> writer) {
-		return (xml, data) -> {
-			xml.writeStartDocument("UTF-8", "1.0");
-			writer.write(xml, data);
-			xml.writeEndDocument();
-		};
-	}
+//	/**
+//	 * Adds a XML prolog element written by the given {@code writer}. The default
+//	 * values for encoding and version is set to "UTF-8" and "1.0", respectively.
+//	 *
+//	 * <pre> {@code
+//	 * <?xml version="1.0" encoding="UTF-8"?>
+//	 * }</pre>
+//	 *
+//	 * @param writer the root element writer
+//	 * @param <T> the writer data type
+//	 * @return a new writer instance
+//	 */
+//	public static <T> XMLWriter<T> doc(final XMLWriter<? super T> writer) {
+//		return (xml, data) -> {
+//			xml.writeStartDocument("UTF-8", "1.0");
+//			writer.write(xml, data);
+//			xml.writeEndDocument();
+//		};
+//	}
 
 }

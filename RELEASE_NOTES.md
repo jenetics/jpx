@@ -1,5 +1,17 @@
 ## Release notes
 
+### [1.3.0](https://github.com/jenetics/jpx/releases/tag/v1.3.0)
+
+#### Enhancement
+
+* [#25](https://github.com/jenetics/jpx/issues/25): Read GPX version 1.0 files.
+* [#54](https://github.com/jenetics/jpx/issues/54): Create GPX object from XML-string.
+
+#### Bug fixes
+
+* [#57](https://github.com/jenetics/jpx/issues/57): XMLStreamException: Unexpected element <extensions>.
+
+
 ### [1.2.3](https://github.com/jenetics/jpx/releases/tag/v1.2.3)
 
 #### Bug fixes

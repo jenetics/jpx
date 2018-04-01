@@ -152,22 +152,19 @@ final class NonNullList<E> implements List<E>, Serializable {
 		return _adoptee.removeIf(filter);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Spliterator<E> spliterator() {
-		return (Spliterator<E>)_adoptee.spliterator();
+		return _adoptee.spliterator();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Stream<E> stream() {
-		return (Stream<E>)_adoptee.stream();
+		return _adoptee.stream();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Stream<E> parallelStream() {
-		return (Stream<E>)_adoptee.parallelStream();
+		return _adoptee.parallelStream();
 	}
 
 	@Override

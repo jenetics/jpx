@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -49,6 +50,8 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX.Reader.Mode;
+import io.jenetics.jpx.GPX.Version;
 import io.jenetics.jpx.Length.Unit;
 
 /**
@@ -62,23 +65,42 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Override
-	protected Params<GPX> params(final Random random) {
+	protected Params<GPX> params(final Version version, final Random random) {
 		return new Params<>(
 			() -> nextGPX(random),
-			GPX.READER,
-			GPX.WRITER
+			GPX.xmlReader(version),
+			GPX.xmlWriter(version)
 		);
 	}
 
-	public static GPX nextGPX(final Random random) {
+	static GPX nextGPX(final Random random) {
 		return GPX.of(
+			Version.V11,
 			format("creator_%s", random.nextInt(100)),
-			format("version_%s", random.nextInt(100)),
 			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
 			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
 			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
 			random.nextBoolean() ? TrackTest.nextTracks(random) : null
 		);
+	}
+
+	//@Test
+	public void print() throws IOException {
+		final GPX gpx = nextGPX(new Random(6123)).toBuilder()
+			.version(Version.V10)
+			.build();
+
+		GPX.writer("    ").write(gpx, System.out);
+	}
+
+	@Test(invocationCount = 5)
+	public void toStringFromString() {
+		final GPX expected = nextGPX(new Random());
+		final String string = GPX.writer("  ").toString(expected);
+		//System.out.println(string);
+		final GPX actual = GPX.reader().fromString(string);
+
+		Assert.assertEquals(actual, expected);
 	}
 
 	@Test(dataProvider = "validEmptyElementsFiles")
@@ -147,10 +169,27 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
+	public void ignoreExtensions() throws IOException {
+		final String resource = "/io/jenetics/jpx/extensions-gpx.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		final String[] names = gpx.wayPoints()
+			.map(WayPoint::getName)
+			.map(Optional::get)
+			.toArray(String[]::new);
+
+		Assert.assertEquals(names, new String[]{"Wien", "Eferding", "Freistadt", "Gmunden"});
+	}
+
+	@Test
 	public void lenientRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx = GPX.read(in, true);
+			final GPX gpx = GPX.reader(Mode.LENIENT).read(in);
 
 			Assert.assertTrue(gpx.getMetadata().isPresent());
 			Assert.assertFalse(gpx.getMetadata().get().getBounds().isPresent());
@@ -168,7 +207,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void strictRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in, false);
+			GPX.read(in);
 		}
 	}
 
@@ -348,7 +387,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx = nextGPX(random);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.write(gpx, bout, "    ");
+			GPX.writer("    ").write(gpx, bout);
 
 			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 			final GPX read = GPX.read(bin);
@@ -364,7 +403,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx = nextGPX(random);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.write(gpx, bout, "    ");
+			GPX.writer("    ").write(gpx, bout);
 
 			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 			final GPX read = GPX.read(bin);
@@ -383,7 +422,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx1 = GPX.read(in);
 
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
-			GPX.write(gpx1, out, "    ");
+			GPX.writer("    ").write(gpx1, out);
 			final GPX gpx2 = GPX.read(new ByteArrayInputStream(out.toByteArray()));
 
 			Assert.assertEquals(gpx1, gpx2);
@@ -398,7 +437,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test(timeOut = 2000)
-	public void issue49_NPEForInvalidGPX() throws IOException {
+	public void issue49_NPEForInvalidGPX() {
 		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
 
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
@@ -416,7 +455,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in, true);
+			gpx = GPX.reader(Mode.LENIENT).read(in);
 		}
 
 		Assert.assertEquals(gpx.getWayPoints().size(), 1);
@@ -475,7 +514,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			try {
 				Assert.assertEquals(read, gpx);
 			} catch (AssertionError e) {
-				GPX.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)), "    ");
+				GPX.writer("    ")
+					.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)));
 			}
 
 
@@ -487,6 +527,133 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 	}
 
+	@Test
+	public void readCourse() throws IOException {
+		final GPX gpx = readV10("GPX_10-1.gpx");
+
+		final List<Degrees> courses = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.filter(wp -> wp.getCourse().isPresent())
+			.map(wp -> wp.getCourse().orElseThrow(IllegalArgumentException::new))
+			.collect(Collectors.toList());
+
+		Assert.assertEquals(
+			courses,
+			asList(Degrees.ofDegrees(341.6), Degrees.ofDegrees(298.6))
+		);
+	}
+
+	@Test
+	public void readGPXv10_1() throws IOException {
+		final Metadata expected = Metadata.builder()
+			.name("Five Hikes in the White Mountains")
+			.desc("Five Hikes in the White Mountains!!")
+			.author(Person.of(
+				"Franz Wilhelmstötter",
+				Email.of("franz.wilhelmstoetter@gmail.com"),
+				Link.of(
+					"https://github.com/jenetics/jpx",
+					"Visit my New Hampshire hiking website!",
+					null)))
+			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.keywords("Hiking, NH, Presidential Range")
+			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
+			.build();
+
+		final GPX gpx = readV10("GPX_10-1.gpx");
+		Assert.assertEquals(gpx.getMetadata(), Optional.of(expected));
+	}
+
+	@Test
+	public void readGPXv10_2() throws IOException {
+		final Metadata expected = Metadata.builder()
+			.desc("Five Hikes in the White Mountains!!")
+			.author(Person.of(
+				"Franz Wilhelmstötter",
+				Email.of("franz.wilhelmstoetter@gmail.com"),
+				Link.of(
+					"https://github.com/jenetics/jpx",
+					"Visit my New Hampshire hiking website!",
+					null)))
+			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.keywords("Hiking, NH, Presidential Range")
+			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
+			.build();
+
+		Assert.assertEquals(readV10("GPX_10-2.gpx").getMetadata(), Optional.of(expected));
+	}
+
+	@Test
+	public void readGPXv10_3() throws IOException {
+		final Metadata expected = Metadata.builder()
+			.author(Person.of(
+				"Franz Wilhelmstötter",
+				Email.of("franz.wilhelmstoetter@gmail.com"),
+				Link.of(
+					"https://github.com/jenetics/jpx",
+					"Visit my New Hampshire hiking website!",
+					null)))
+			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.keywords("Hiking, NH, Presidential Range")
+			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
+			.build();
+
+		Assert.assertEquals(readV10("GPX_10-3.gpx").getMetadata(), Optional.of(expected));
+	}
+
+	@Test
+	public void readGPXv10_4() throws IOException {
+		final Metadata expected = Metadata.builder()
+			.author(Person.of(
+				null,
+				Email.of("franz.wilhelmstoetter@gmail.com"),
+				Link.of(
+					"https://github.com/jenetics/jpx",
+					"Visit my New Hampshire hiking website!",
+					null)))
+			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.keywords("Hiking, NH, Presidential Range")
+			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
+			.build();
+
+		Assert.assertEquals(readV10("GPX_10-4.gpx").getMetadata(), Optional.of(expected));
+	}
+
+	@Test
+	public void readGPXv10_5() throws IOException {
+		final Metadata expected = Metadata.builder()
+			.author(Person.of(
+				null,
+				null,
+				Link.of(
+					"https://github.com/jenetics/jpx",
+					"Visit my New Hampshire hiking website!",
+					null)))
+			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.keywords("Hiking, NH, Presidential Range")
+			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
+			.build();
+
+		Assert.assertEquals(readV10("GPX_10-5.gpx").getMetadata(), Optional.of(expected));
+	}
+
+	@Test
+	public void readGPXv10_6() throws IOException {
+		final Metadata expected = Metadata.builder()
+			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
+			.build();
+
+		Assert.assertEquals(readV10("GPX_10-6.gpx").getMetadata(), Optional.of(expected));
+	}
+
+	private GPX readV10(final String name) throws IOException {
+		final String resource = "/io/jenetics/jpx/" + name;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			return GPX.reader(Version.V10, Mode.STRICT).read(in);
+		}
+	}
+
 	public static void main(final String[] args) throws IOException {
 		final String baseDir = "jpx/src/test/resources/io/jenetics/jpx/serialization";
 
@@ -494,8 +661,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		for (int i = 0; i < 15; ++i) {
 			final GPX gpx = nextGPX(random);
 
-			GPX.write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)), "    ");
-
+			GPX.writer("    ").write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try (OutputStream fout = new FileOutputStream(new File(baseDir, format("gpx_%d.obj", i)));
 				 ObjectOutputStream oout = new ObjectOutputStream(fout))
 			{
