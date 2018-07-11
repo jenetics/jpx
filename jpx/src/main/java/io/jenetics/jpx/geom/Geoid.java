@@ -79,13 +79,8 @@ public final class Geoid {
 
 	private final Ellipsoid _ellipsoid;
 
-	// Major semi-axes of the ellipsoid.
-	private final double A;
-	private final double AA;
-
 	// Minor semi-axes of the ellipsoid.
 	private final double B;
-	private final double BB;
 
 	private final double AABBBB;
 
@@ -107,11 +102,13 @@ public final class Geoid {
 	private Geoid(final Ellipsoid ellipsoid) {
 		_ellipsoid = requireNonNull(ellipsoid);
 
-		A = ellipsoid.A();
-		AA = A*A;
+		final double a = ellipsoid.A();
+		final double aa = a*a;
+
 		B = ellipsoid.B();
-		BB = B*B;
-		AABBBB = (AA - BB)/BB;
+		final double bb = B*B;
+
+		AABBBB = (aa - bb)/bb;
 		F = 1.0/ellipsoid.F();
 	}
 
@@ -125,7 +122,10 @@ public final class Geoid {
 	}
 
 	/**
-	 * Calculate the distance between points on an ellipsoidal earth model.
+	 * Calculate the distance between points on an ellipsoidal earth model. This
+	 * method will throw an {@link ArithmeticException} if the algorithm doesn't
+	 * converge while calculating the distance, which is the case for a point
+	 * and its (near) antidote.
 	 *
 	 * @see <a href="http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf">DIRECT AND
 	 *               INVERSE SOLUTIONS OF GEODESICS 0 THE ELLIPSOID
@@ -138,7 +138,8 @@ public final class Geoid {
 	 * @return the distance between {@code start} and {@code end} in meters
 	 * @throws NullPointerException if one of the points is {@code null}
 	 * @throws ArithmeticException if the algorithm used for calculating the
-	 *         distance between {@code start} and {@code end} didn't converge
+	 *         distance between {@code start} and {@code end} didn't converge,
+	 *         which is the case for a point and its (near) antidote.
 	 */
 	public Length distance(final Point start, final Point end) {
 		final double lat1 = start.getLatitude().toRadians();
