@@ -26,8 +26,10 @@ import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
 import static io.jenetics.jpx.Format.intString;
+import static io.jenetics.jpx.Length.Unit.METER;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Speed.Unit.METERS_PER_SECOND;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -606,7 +608,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder ele(final double meters) {
-			_elevation = Length.of(meters, Length.Unit.METER);
+			_elevation = Length.of(meters, METER);
 			return this;
 		}
 
@@ -662,7 +664,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder speed(final double meterPerSecond) {
-			_speed = Speed.of(meterPerSecond, Speed.Unit.METERS_PER_SECOND);
+			_speed = Speed.of(meterPerSecond, METERS_PER_SECOND);
 			return this;
 		}
 
@@ -807,7 +809,7 @@ public final class WayPoint implements Point, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder geoidheight(final double meter) {
-			_geoidHeight = Length.of(meter, Length.Unit.METER);
+			_geoidHeight = Length.of(meter, METER);
 			return this;
 		}
 
@@ -1538,7 +1540,7 @@ public final class WayPoint implements Point, Serializable {
 		return of(
 			Latitude.ofDegrees(latitudeDegree),
 			Longitude.ofDegrees(longitudeDegree),
-			Length.of(elevationMeter, Length.Unit.METER),
+			Length.of(elevationMeter, METER),
 			ZonedDateTime.ofInstant(
 				Instant.ofEpochMilli(timeEpochMilli),
 				UTC
