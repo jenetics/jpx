@@ -1058,7 +1058,7 @@ public final class GPX implements Serializable {
 		public GPX read(final InputStream input)
 			throws IOException
 		{
-			final XMLInputFactory factory = XMLInputFactory.newFactory();
+			final XMLInputFactory factory = XMLInputFactory.newInstance();
 			try  (CloseableXMLStreamReader reader = new CloseableXMLStreamReader(
 						factory.createXMLStreamReader(input)))
 			{
@@ -1180,7 +1180,7 @@ public final class GPX implements Serializable {
 		public void write(final GPX gpx, final OutputStream output)
 			throws IOException
 		{
-			final XMLOutputFactory factory = XMLOutputFactory.newFactory();
+			final XMLOutputFactory factory = XMLOutputFactory.newInstance();
 			try (CloseableXMLStreamWriter xml = writer(factory, output)) {
 				xml.writeStartDocument("UTF-8", "1.0");
 				GPX.xmlWriter(gpx._version).write(xml, gpx);
