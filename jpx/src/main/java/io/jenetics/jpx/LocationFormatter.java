@@ -19,6 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import java.text.ParsePosition;
+import java.time.format.DateTimeFormatter;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -42,6 +45,7 @@ public abstract class LocationFormatter {
 
 
 	protected LocationFormatter() {
+		DateTimeFormatter f;
 	}
 
 	public abstract String format(final Latitude lat);
@@ -51,5 +55,9 @@ public abstract class LocationFormatter {
 	public abstract String format(final Latitude lat, final Longitude lon);
 
 	public abstract String format(final Point point);
+
+	public abstract Object parseLatitude(final CharSequence text, final ParsePosition pos);
+
+	public abstract Object parseLongitude(final CharSequence text, final ParsePosition pos);
 
 }
