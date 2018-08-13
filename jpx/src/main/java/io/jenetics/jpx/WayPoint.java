@@ -19,7 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.String.format;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
@@ -473,9 +472,9 @@ public final class WayPoint implements Point, Serializable {
 	@Override
 	public String toString() {
 		return _elevation != null
-			? format("[lat=%s, lon=%s, ele=%s]",
+			? String.format("[lat=%s, lon=%s, ele=%s]",
 				_latitude, _longitude, _elevation)
-			: format("[lat=%s, lon=%s]",
+			: String.format("[lat=%s, lon=%s]",
 				_latitude, _longitude);
 	}
 
@@ -1738,6 +1737,29 @@ public final class WayPoint implements Point, Serializable {
 		);
 	}
 
+	/**
+	 * Return a (new) WayPoint from the given input {@code point}. If the given
+	 * {@code point} is already a {@code WayPoint} instance, the input is casted
+	 * to a {@code WayPoint} and returned.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param point the input {@code point} to create the {@code WayPoint} from
+	 * @return a newly created {@code WayPoint} instance, or the input
+	 *         {@code point} if it is already a {@code WayPoint} instance
+	 * @throws NullPointerException if the given {@code point} is {@code null}
+	 */
+	public static WayPoint of(final Point point) {
+		requireNonNull(point);
+
+		return point instanceof WayPoint
+			? (WayPoint)point
+			: of(
+				point.getLatitude(),
+				point.getLongitude(),
+				point.getElevation().orElse(null),
+				point.getTime().orElse(null));
+	}
 
 	/* *************************************************************************
 	 *  Java object serialization
