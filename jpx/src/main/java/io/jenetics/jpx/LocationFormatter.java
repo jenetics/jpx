@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import static java.util.Objects.requireNonNull;
+
 import java.text.ParsePosition;
 import java.time.format.DateTimeFormatter;
 
@@ -29,11 +31,33 @@ import java.time.format.DateTimeFormatter;
  */
 public abstract class LocationFormatter {
 
-
+	/**
+	 * 37.335685	37°20'08"N
+	 * -48.148918	48°08'56"S
+	 */
 	public static final LocationFormatter ISO_HUMAN_LONG = new LocationFormatter() {
 		@Override
 		public String format(final Latitude lat) {
-			return null;
+			final double degrees = lat.toDegrees();
+			final StringBuilder out = new StringBuilder();
+
+			final int[] parts = Angle.split(degrees);
+			out.append(String.format("%02d", Math.abs(parts[0])));
+			out.append("\u00B0");
+
+			out.append(String.format("%02d", Math.abs(parts[1])));
+			out.append("'");
+
+			out.append(String.format("%02d", Math.abs(parts[2])));
+			out.append("\"");
+
+			if (Double.compare(degrees, 0.0) >= 0) {
+				out.append("N");
+			} else {
+				out.append("S");
+			}
+
+			return out.toString();
 		}
 	};
 

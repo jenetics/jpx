@@ -128,7 +128,7 @@ public class LocationFormatterTest {
 				lat, PointLocationFormatType.HUMAN_LONG
 			);
 
-			out.append(format("%f\t%s\n", latitude.toDegrees(), string));
+			out.append(format("%+17.15f\t%s\n", latitude.toDegrees(), string));
 		}
 
 		final File file = new File(baseDir, "latitudes[ISO_HUMAN_LONG].csv");
