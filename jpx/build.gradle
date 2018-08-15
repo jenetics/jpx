@@ -39,6 +39,7 @@ repositories {
 dependencies {
 	testCompile 'org.testng:testng:6.13.1'
 	testCompile 'nl.jqno.equalsverifier:equalsverifier:2.4'
+	testCompile 'us.fatehi:pointlocation6709:4.1'
 }
 
 javadoc {

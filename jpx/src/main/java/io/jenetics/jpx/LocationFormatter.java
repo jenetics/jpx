@@ -29,9 +29,15 @@ import java.time.format.DateTimeFormatter;
  */
 public abstract class LocationFormatter {
 
-	public static final LocationFormatter ISO6709_DECIMAL = null;
 
-	public static final LocationFormatter ISO6709_HUMAN_LONG = null;
+	public static final LocationFormatter ISO_HUMAN_LONG = new LocationFormatter() {
+		@Override
+		public String format(final Latitude lat) {
+			return null;
+		}
+	};
+
+	public static final LocationFormatter ISO6709_DECIMAL = null;
 
 	public static final LocationFormatter ISO6709_HUMAN_MEDIUM = null;
 
@@ -50,6 +56,7 @@ public abstract class LocationFormatter {
 
 	public abstract String format(final Latitude lat);
 
+	/*
 	public abstract String format(final Longitude lon);
 
 	public abstract String format(final Latitude lat, final Longitude lon);
@@ -59,5 +66,6 @@ public abstract class LocationFormatter {
 	public abstract Object parseLatitude(final CharSequence text, final ParsePosition pos);
 
 	public abstract Object parseLongitude(final CharSequence text, final ParsePosition pos);
+	*/
 
 }
