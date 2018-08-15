@@ -31,11 +31,13 @@ import java.time.format.DateTimeFormatter;
  */
 public abstract class LocationFormatter {
 
-	/**
-	 * 37.335685	37°20'08"N
-	 * -48.148918	48°08'56"S
-	 */
+
 	public static final LocationFormatter ISO_HUMAN_LONG = new LocationFormatter() {
+
+		/**
+		 * 37.335685	37°20'08"N
+		 * -48.148918	48°08'56"S
+		 */
 		@Override
 		public String format(final Latitude lat) {
 			final double degrees = lat.toDegrees();

@@ -63,7 +63,7 @@ public class LocationFormatterTest {
 	public Iterator<Object[]> humanLongLatitudes() throws IOException {
 		final File file  = new File("" +
 			"src/test/resources/io/jenetics/jpx/iso6709",
-			"latitudes[ISO_HUMAN_LONG].csv"
+			"latitudes.csv"
 		);
 		final List<String> lines = Files.readAllLines(file.toPath());
 
@@ -131,7 +131,7 @@ public class LocationFormatterTest {
 			out.append(format("%+17.15f\t%s\n", latitude.toDegrees(), string));
 		}
 
-		final File file = new File(baseDir, "latitudes[ISO_HUMAN_LONG].csv");
+		final File file = new File(baseDir, "latitudes.csv");
 		Files.write(file.toPath(), out.toString().getBytes());
 	}
 
