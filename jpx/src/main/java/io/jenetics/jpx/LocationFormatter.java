@@ -110,9 +110,24 @@ public abstract class LocationFormatter {
 		}
 	};
 
+	public static final LocationFormatter ISO_LONG = new LocationFormatter() {
+		@Override
+		public String format(Latitude lat) {
+			final double degrees = lat.toDegrees();
+			final StringBuilder out = new StringBuilder();
+
+			final int[] parts = Angle.split(degrees);
+			out.append(Double.compare(degrees, 0.0) < 0 ? "-" : "+");
+			out.append(String.format("%02d", abs(parts[0])));
+			out.append(String.format("%02d", abs(parts[1])));
+			out.append(String.format("%02d", abs(parts[2])));
+
+			return out.toString();
+		}
+	};
+
 	public static final LocationFormatter ISO6709_HUMAN_SHORT = null;
 
-	public static final LocationFormatter ISO6709_LONG = null;
 
 	public static final LocationFormatter ISO6709_MEDIUM = null;
 

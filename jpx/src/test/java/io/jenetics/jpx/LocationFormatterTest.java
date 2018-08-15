@@ -83,6 +83,18 @@ public class LocationFormatterTest {
 		);
 	}
 
+	@Test(dataProvider = "latitudes")
+	public void latitudesISOLong(final String[] row) {
+		final double degrees = Double.parseDouble(row[0]);
+		final Latitude latitude = Latitude.ofDegrees(degrees);
+
+		final String format = row[4];
+		Assert.assertEquals(
+			LocationFormatter.ISO_LONG.format(latitude),
+			format
+		);
+	}
+
 	@DataProvider
 	public Iterator<Object[]> latitudes() throws IOException {
 		final File file  = new File("" +
@@ -146,11 +158,12 @@ public class LocationFormatterTest {
 		final StringBuilder out = new StringBuilder();
 		for (Latitude latitude : latitudes) {
 			out.append(String.format(
-				"%+17.15f\t%s\t%s\t%s\n",
+				"%+17.15f\t%s\t%s\t%s\t%s\n",
 				latitude.toDegrees(),
 				format(latitude, PointLocationFormatType.HUMAN_LONG),
 				format(latitude, PointLocationFormatType.HUMAN_MEDIUM),
-				format(latitude, PointLocationFormatType.DECIMAL)
+				format(latitude, PointLocationFormatType.DECIMAL),
+				format(latitude, PointLocationFormatType.LONG)
 			));
 		}
 
