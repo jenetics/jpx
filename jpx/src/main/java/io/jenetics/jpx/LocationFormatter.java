@@ -126,12 +126,36 @@ public abstract class LocationFormatter {
 		}
 	};
 
+	public static final LocationFormatter ISO_MEDIUM = new LocationFormatter() {
+		@Override
+		public String format(Latitude lat) {
+			final double degrees = lat.toDegrees();
+			final StringBuilder out = new StringBuilder();
+
+			final int[] parts = Angle.split(degrees);
+			out.append(Double.compare(degrees, 0.0) < 0 ? "-" : "+");
+			out.append(String.format("%02d", abs(parts[0])));
+
+			final int minutes = abs(parts[2]) < 30
+				? abs(parts[1])
+				: abs(parts[1]) + 1;
+
+			out.append(String.format("%02d", minutes));
+
+			return out.toString();
+		}
+	};
+
+	public static final LocationFormatter ISO_SHORT = new LocationFormatter() {
+		@Override
+		public String format(final Latitude lat) {
+			return (Double.compare(lat.toDegrees(), 0.0) < 0 ? "-" : "+") +
+				String.format("%02d", abs(Angle.split(lat.toDegrees())[0]));
+		}
+	};
+
 	public static final LocationFormatter ISO6709_HUMAN_SHORT = null;
 
-
-	public static final LocationFormatter ISO6709_MEDIUM = null;
-
-	public static final LocationFormatter ISO6709_SHORT = null;
 
 
 	protected LocationFormatter() {
