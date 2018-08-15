@@ -20,11 +20,10 @@
 package io.jenetics.jpx;
 
 import static java.lang.Math.abs;
-import static java.lang.Math.min;
-import static java.util.Objects.requireNonNull;
 
-import java.text.ParsePosition;
+import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -37,8 +36,8 @@ public abstract class LocationFormatter {
 	public static final LocationFormatter ISO_HUMAN_LONG = new LocationFormatter() {
 
 		/**
-		 * 37.335685	37°20'08"N
-		 * -48.148918	48°08'56"S
+		 * -7.287954696138044 07°17'17"S 07°17'S -07.28795
+		 * +16.449772215262600 16°26'59"N 16°27'N +16.44977
 		 */
 		@Override
 		public String format(final Latitude lat) {
@@ -97,7 +96,19 @@ public abstract class LocationFormatter {
 		}
 	};
 
-	public static final LocationFormatter ISO6709_DECIMAL = null;
+	public static final LocationFormatter ISO_DECIMAL = new LocationFormatter() {
+		@Override
+		public String format(final Latitude lat) {
+			final double degrees = lat.toDegrees();
+
+			final NumberFormat fmt = NumberFormat.getInstance(Locale.ENGLISH);
+			fmt.setMinimumIntegerDigits(2);
+			fmt.setMinimumFractionDigits(5);
+
+			return (Double.compare(degrees, 0.0) < 0 ? "" : "+") +
+				fmt.format(degrees);
+		}
+	};
 
 	public static final LocationFormatter ISO6709_HUMAN_SHORT = null;
 
