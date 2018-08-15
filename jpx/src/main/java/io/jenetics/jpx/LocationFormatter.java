@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
 import static java.util.Objects.requireNonNull;
 
 import java.text.ParsePosition;
@@ -44,13 +46,13 @@ public abstract class LocationFormatter {
 			final StringBuilder out = new StringBuilder();
 
 			final int[] parts = Angle.split(degrees);
-			out.append(String.format("%02d", Math.abs(parts[0])));
+			out.append(String.format("%02d", abs(parts[0])));
 			out.append("\u00B0");
 
-			out.append(String.format("%02d", Math.abs(parts[1])));
+			out.append(String.format("%02d", abs(parts[1])));
 			out.append("'");
 
-			out.append(String.format("%02d", Math.abs(parts[2])));
+			out.append(String.format("%02d", abs(parts[2])));
 			out.append("\"");
 
 			if (Double.compare(degrees, 0.0) >= 0) {
@@ -63,9 +65,39 @@ public abstract class LocationFormatter {
 		}
 	};
 
-	public static final LocationFormatter ISO6709_DECIMAL = null;
+	public static final LocationFormatter ISO_HUMAN_MEDIUM = new LocationFormatter() {
 
-	public static final LocationFormatter ISO6709_HUMAN_MEDIUM = null;
+		/**
+		 * 37.335685	37°20'N
+		 * -48.148918	48°09'S
+		 */
+		@Override
+		public String format(final Latitude lat) {
+			final double degrees = lat.toDegrees();
+			final StringBuilder out = new StringBuilder();
+
+			final int[] parts = Angle.split(degrees);
+			out.append(String.format("%02d", abs(parts[0])));
+			out.append("\u00B0");
+
+			final int minutes = abs(parts[2]) < 30
+				? abs(parts[1])
+				: abs(parts[1]) + 1;
+
+			out.append(String.format("%02d", minutes));
+			out.append("'");
+
+			if (Double.compare(degrees, 0.0) >= 0) {
+				out.append("N");
+			} else {
+				out.append("S");
+			}
+
+			return out.toString();
+		}
+	};
+
+	public static final LocationFormatter ISO6709_DECIMAL = null;
 
 	public static final LocationFormatter ISO6709_HUMAN_SHORT = null;
 

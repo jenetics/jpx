@@ -47,8 +47,8 @@ public class LocationFormatterTest {
 	private static final String BASE_DIR = "jpx/src/test/resources/io/jenetics/jpx/iso6709";
 
 
-	@Test(dataProvider = "humanLongLatitudes")
-	public void humanLongLatitudes(final String[] row) {
+	@Test(dataProvider = "latitudes")
+	public void latitudesISOHumanLong(final String[] row) {
 		final double degrees = Double.parseDouble(row[0]);
 		final Latitude latitude = Latitude.ofDegrees(degrees);
 
@@ -59,8 +59,20 @@ public class LocationFormatterTest {
 		);
 	}
 
-	@DataProvider(name = "humanLongLatitudes")
-	public Iterator<Object[]> humanLongLatitudes() throws IOException {
+	@Test(dataProvider = "latitudes")
+	public void latitudesISOHumanMedium(final String[] row) {
+		final double degrees = Double.parseDouble(row[0]);
+		final Latitude latitude = Latitude.ofDegrees(degrees);
+
+		final String format = row[2];
+		Assert.assertEquals(
+			LocationFormatter.ISO_HUMAN_MEDIUM.format(latitude),
+			format
+		);
+	}
+
+	@DataProvider
+	public Iterator<Object[]> latitudes() throws IOException {
 		final File file  = new File("" +
 			"src/test/resources/io/jenetics/jpx/iso6709",
 			"latitudes.csv"
@@ -104,7 +116,7 @@ public class LocationFormatterTest {
 		return new us.fatehi.pointlocation6709.Latitude(angle);
 	}
 
-	public static void main(final String[] args) throws IOException, FormatterException {
+	public static void main(final String[] args) throws IOException {
 		final Random random = new Random(191929);
 		final List<Latitude> latitudes = Stream.generate(() -> LocationRandom.nextLatitude(random))
 			.limit(100)
@@ -113,9 +125,7 @@ public class LocationFormatterTest {
 		write(latitudes);
 	}
 
-	private static void write(final List<Latitude> latitudes)
-		throws IOException, FormatterException
-	{
+	private static void write(final List<Latitude> latitudes) throws IOException {
 		final File baseDir = new File(BASE_DIR);
 		if (!baseDir.isDirectory() && !baseDir.mkdirs()) {
 			throw new IOException("Error while creating directory " + baseDir);
@@ -123,16 +133,27 @@ public class LocationFormatterTest {
 
 		final StringBuilder out = new StringBuilder();
 		for (Latitude latitude : latitudes) {
-			final us.fatehi.pointlocation6709.Latitude lat = toLat(latitude);
-			final String string = PointLocationFormatter.formatLatitude(
-				lat, PointLocationFormatType.HUMAN_LONG
-			);
-
-			out.append(format("%+17.15f\t%s\n", latitude.toDegrees(), string));
+			out.append(String.format(
+				"%+17.15f\t%s\t%s\n",
+				latitude.toDegrees(),
+				format(latitude, PointLocationFormatType.HUMAN_LONG),
+				format(latitude, PointLocationFormatType.HUMAN_MEDIUM)
+			));
 		}
 
 		final File file = new File(baseDir, "latitudes.csv");
 		Files.write(file.toPath(), out.toString().getBytes());
+	}
+
+	private static String format(
+		final Latitude latitude,
+		final PointLocationFormatType type
+	) {
+		try {
+			return PointLocationFormatter.formatLatitude(toLat(latitude), type);
+		} catch (FormatterException e) {
+			throw new AssertionError(e);
+		}
 	}
 
 }
