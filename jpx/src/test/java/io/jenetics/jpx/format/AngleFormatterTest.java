@@ -35,9 +35,9 @@ public class AngleFormatterTest {
 		//final double d = -7.287954696138044;
 		final double d = 88.918540267041150;
 
-		System.out.println(AngleFormatter.ofDegrees("#00").format(d));
-		System.out.println(AngleFormatter.ofMinutes("#00").format(d));
-		System.out.println(AngleFormatter.ofSeconds("#00.000").format(d));
+		System.out.println(AngleFormatter.ofDegrees("#00").apply(d));
+		System.out.println(AngleFormatter.ofMinutes("#00").apply(d));
+		System.out.println(AngleFormatter.ofSeconds("#00.000").apply(d));
 	}
 
 }
