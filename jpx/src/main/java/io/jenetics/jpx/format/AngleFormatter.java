@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx;
+package io.jenetics.jpx.format;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;

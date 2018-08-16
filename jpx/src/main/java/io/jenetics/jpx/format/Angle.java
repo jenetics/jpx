@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx;
+package io.jenetics.jpx.format;
 
 /**
  * Helper class for angle calculations

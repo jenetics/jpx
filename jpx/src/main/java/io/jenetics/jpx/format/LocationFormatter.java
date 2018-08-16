@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx;
+package io.jenetics.jpx.format;
 
 import static java.lang.Math.abs;
 import static java.util.Objects.requireNonNull;
@@ -26,11 +26,13 @@ import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.function.DoubleFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
+
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -121,7 +123,7 @@ public abstract class LocationFormatter {
 		}
 
 		String format() {
-			
+
 
 			return null;
 		}
