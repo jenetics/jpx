@@ -24,15 +24,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.OptionalDouble;
-import java.util.function.DoubleFunction;
-import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Latitude;
-import io.jenetics.jpx.Length;
-import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -41,93 +38,22 @@ import io.jenetics.jpx.Longitude;
  */
 public abstract class LocationFormatter {
 
-	private static final class Fields {
-		private final Latitude _latitude;
-		private final Longitude _longitude;
-		private final Length _elevation;
+	private final List<Format<Location>> _formats;
 
-		private Fields(
-			final Latitude latitude,
-			final Longitude longitude,
-			final Length elevation
-		) {
-			_latitude = latitude;
-			_longitude = longitude;
-			_elevation = elevation;
-		}
-
-		Latitude latitude() {
-			return _latitude;
-		}
-
-		Longitude longitude() {
-			return _longitude;
-		}
-
-		Length elevation() {
-			return _elevation;
-		}
-
-		static Fields of(
-			final Latitude latitude,
-			final Longitude longitude,
-			final Length elevation
-		) {
-			return new Fields(latitude, longitude, elevation);
-		}
+	public LocationFormatter(final List<Format<Location>> formats) {
+		_formats = requireNonNull(formats);
 	}
 
-	private static abstract class Field {
-		private final Fields _fields;
-
-		protected Field(final Fields fields) {
-			_fields = requireNonNull(fields);
-		}
-
-		Fields fields() {
-			return _fields;
-		}
-
-		abstract String format();
-
+	public LocationFormatter() {
+		_formats = new ArrayList<>();
 	}
 
-	private static final class LatitudeDegree extends Field {
+	String format(final Location location) {
+		requireNonNull(location);
 
-		private boolean _optional;
-
-		private LatitudeDegree(final Fields fields) {
-			super(fields);
-		}
-
-		@Override
-		String format() {
-			return null;
-		}
-	}
-
-
-	private static final class Fmt {
-		private final Supplier<OptionalDouble> _value;
-		private final DoubleFunction<String> _formatter;
-		private final boolean _optional;
-
-		Fmt(
-			final Supplier<OptionalDouble> value,
-			final DoubleFunction<String> formatter,
-			final boolean optional
-		) {
-			_value = requireNonNull(value);
-			_formatter = requireNonNull(formatter);
-			_optional = optional;
-		}
-
-		String format() {
-
-
-			return null;
-		}
-
+		return _formats.stream()
+			.map(format -> format.format(location))
+			.collect(Collectors.joining());
 	}
 
 
@@ -258,11 +184,12 @@ public abstract class LocationFormatter {
 
 
 
-	protected LocationFormatter() {
-		DateTimeFormatter f;
+
+	public String format(final Latitude lat) {
+		return null;
 	}
 
-	public abstract String format(final Latitude lat);
+
 
 	/*
 	public abstract String format(final Longitude lon);

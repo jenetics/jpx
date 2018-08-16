@@ -25,6 +25,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 /**
@@ -32,16 +33,13 @@ import java.util.function.Supplier;
  * @version !__version__!
  * @since !__version__!
  */
-abstract class AngleFormatter {
+abstract class AngleFormatter implements DoubleFunction<String> {
 
 	final Supplier<NumberFormat> _format;
 
 	private AngleFormatter(final Supplier<NumberFormat> format) {
 		_format = requireNonNull(format);
 	}
-
-	abstract String format(final double degrees);
-
 
 	static AngleFormatter ofDegrees(final String pattern) {
 		return DegreesFormatter.ofPattern(pattern);
@@ -62,7 +60,8 @@ abstract class AngleFormatter {
 			super(format);
 		}
 
-		String format(final double degrees) {
+		@Override
+		public String apply(final double degrees) {
 			final double dd = abs(degrees);
 			return _format.get().format(dd);
 		}
@@ -79,7 +78,8 @@ abstract class AngleFormatter {
 			super(format);
 		}
 
-		String format(final double degrees) {
+		@Override
+		public String apply(final double degrees) {
 			final double dd = abs(degrees);
 			final double minutes = (dd - floor(dd))*60.0;
 			return _format.get().format(minutes);
@@ -96,7 +96,8 @@ abstract class AngleFormatter {
 			super(format);
 		}
 
-		String format(final double degrees) {
+		@Override
+		public String apply(final double degrees) {
 			final double dd = abs(degrees);
 			final double d = floor(dd);
 			final double m = floor((dd - d)*60.0);
