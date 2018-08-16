@@ -20,11 +20,17 @@
 package io.jenetics.jpx;
 
 import static java.lang.Math.abs;
+import static java.util.Objects.requireNonNull;
 
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.function.DoubleFunction;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -32,6 +38,95 @@ import java.util.Locale;
  * @since !__version__!
  */
 public abstract class LocationFormatter {
+
+	private static final class Fields {
+		private final Latitude _latitude;
+		private final Longitude _longitude;
+		private final Length _elevation;
+
+		private Fields(
+			final Latitude latitude,
+			final Longitude longitude,
+			final Length elevation
+		) {
+			_latitude = latitude;
+			_longitude = longitude;
+			_elevation = elevation;
+		}
+
+		Latitude latitude() {
+			return _latitude;
+		}
+
+		Longitude longitude() {
+			return _longitude;
+		}
+
+		Length elevation() {
+			return _elevation;
+		}
+
+		static Fields of(
+			final Latitude latitude,
+			final Longitude longitude,
+			final Length elevation
+		) {
+			return new Fields(latitude, longitude, elevation);
+		}
+	}
+
+	private static abstract class Field {
+		private final Fields _fields;
+
+		protected Field(final Fields fields) {
+			_fields = requireNonNull(fields);
+		}
+
+		Fields fields() {
+			return _fields;
+		}
+
+		abstract String format();
+
+	}
+
+	private static final class LatitudeDegree extends Field {
+
+		private boolean _optional;
+
+		private LatitudeDegree(final Fields fields) {
+			super(fields);
+		}
+
+		@Override
+		String format() {
+			return null;
+		}
+	}
+
+
+	private static final class Fmt {
+		private final Supplier<OptionalDouble> _value;
+		private final DoubleFunction<String> _formatter;
+		private final boolean _optional;
+
+		Fmt(
+			final Supplier<OptionalDouble> value,
+			final DoubleFunction<String> formatter,
+			final boolean optional
+		) {
+			_value = requireNonNull(value);
+			_formatter = requireNonNull(formatter);
+			_optional = optional;
+		}
+
+		String format() {
+			
+
+			return null;
+		}
+
+	}
 
 
 	public static final LocationFormatter ISO_HUMAN_LONG = new LocationFormatter() {
