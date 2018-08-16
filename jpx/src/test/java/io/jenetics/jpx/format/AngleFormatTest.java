@@ -21,12 +21,10 @@ package io.jenetics.jpx.format;
 
 import org.testng.annotations.Test;
 
-import io.jenetics.jpx.format.AngleFormatter;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class AngleFormatterTest {
+public class AngleFormatTest {
 
 	// -7.287954696138044 07°17'17"S 07°17'S -07.28795
 	// +88.918540267041150	88°55'07
@@ -35,9 +33,9 @@ public class AngleFormatterTest {
 		//final double d = -7.287954696138044;
 		final double d = 88.918540267041150;
 
-		System.out.println(AngleFormatter.ofDegrees("#00").apply(d));
-		System.out.println(AngleFormatter.ofMinutes("#00").apply(d));
-		System.out.println(AngleFormatter.ofSeconds("#00.000").apply(d));
+		System.out.println(AngleFormat.ofDegrees("#00").apply(d));
+		System.out.println(AngleFormat.ofMinutes("#00").apply(d));
+		System.out.println(AngleFormat.ofSeconds("#00.000").apply(d));
 	}
 
 }

@@ -33,28 +33,28 @@ import java.util.function.Supplier;
  * @version !__version__!
  * @since !__version__!
  */
-abstract class AngleFormatter implements DoubleFunction<String> {
+abstract class AngleFormat implements DoubleFunction<String> {
 
 	final Supplier<NumberFormat> _format;
 
-	private AngleFormatter(final Supplier<NumberFormat> format) {
+	private AngleFormat(final Supplier<NumberFormat> format) {
 		_format = requireNonNull(format);
 	}
 
-	static AngleFormatter ofDegrees(final String pattern) {
+	static AngleFormat ofDegrees(final String pattern) {
 		return DegreesFormatter.ofPattern(pattern);
 	}
 
-	static AngleFormatter ofMinutes(final String pattern) {
+	static AngleFormat ofMinutes(final String pattern) {
 		return MinutesFormatter.ofPattern(pattern);
 	}
 
-	static AngleFormatter ofSeconds(final String pattern) {
+	static AngleFormat ofSeconds(final String pattern) {
 		return SecondsFormatter.ofPattern(pattern);
 	}
 
 
-	private final static class DegreesFormatter extends AngleFormatter {
+	private final static class DegreesFormatter extends AngleFormat {
 
 		private DegreesFormatter(final Supplier<NumberFormat> format) {
 			super(format);
@@ -72,7 +72,7 @@ abstract class AngleFormatter implements DoubleFunction<String> {
 
 	}
 
-	private final static class MinutesFormatter extends AngleFormatter {
+	private final static class MinutesFormatter extends AngleFormat {
 
 		private MinutesFormatter(final Supplier<NumberFormat> format) {
 			super(format);
@@ -90,7 +90,7 @@ abstract class AngleFormatter implements DoubleFunction<String> {
 		}
 	}
 
-	private final static class SecondsFormatter extends AngleFormatter {
+	private final static class SecondsFormatter extends AngleFormat {
 
 		private SecondsFormatter(final Supplier<NumberFormat> format) {
 			super(format);
