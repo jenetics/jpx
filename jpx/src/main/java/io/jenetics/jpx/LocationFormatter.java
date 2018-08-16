@@ -23,6 +23,7 @@ import static java.lang.Math.abs;
 
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -34,6 +35,8 @@ public abstract class LocationFormatter {
 
 
 	public static final LocationFormatter ISO_HUMAN_LONG = new LocationFormatter() {
+
+		DateTimeFormatter f = DateTimeFormatter.ofPattern("");
 
 		/**
 		 * -7.287954696138044 07°17'17"S 07°17'S -07.28795
@@ -175,5 +178,13 @@ public abstract class LocationFormatter {
 
 	public abstract Object parseLongitude(final CharSequence text, final ParsePosition pos);
 	*/
+
+	public static LocationFormatter ofPattern(final String pattern) {
+		return null;
+	}
+
+	private static List<String> tokenize(final String pattern) {
+		return null;
+	}
 
 }

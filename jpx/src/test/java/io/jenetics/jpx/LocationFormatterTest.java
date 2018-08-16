@@ -46,6 +46,11 @@ public class LocationFormatterTest {
 
 	private static final String BASE_DIR = "jpx/src/test/resources/io/jenetics/jpx/iso6709";
 
+	// -7.287954696138044 07°17'17"S 07°17'S -07.28795
+	@Test
+	public void parsing() {
+		LocationFormatter.ofPattern("DD°MM'SS.SSS\"[NS] dd°mm'ss.sss\"[EW]");
+	}
 
 	@Test(dataProvider = "latitudes")
 	public void latitudesISOHumanLong(final String[] row) {
@@ -136,7 +141,7 @@ public class LocationFormatterTest {
 
 
 
-	@Test
+	//@Test
 	public void latitude() throws FormatterException {
 		final Random random = new Random();
 
