@@ -30,6 +30,9 @@ import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Longitude;
 
 /**
+ * Represents one of the existing location fields: latitude, longitude and
+ * elevation.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
@@ -62,15 +65,32 @@ final class LocationField {
 		_value = requireNonNull(value);
 	}
 
+	/**
+	 * Return the name of the location field.
+	 *
+	 * @return the name of the location field
+	 */
 	String name() {
 		return _name;
 	}
 
+	/**
+	 * Extracts the (double) value from the given location field.
+	 *
+	 * @param location the location
+	 * @return the value of the location field
+	 */
 	Optional<Double> value(final Location location) {
 		return _value.apply(requireNonNull(location));
 	}
 
-	static LocationField of(final char character) {
+	/**
+	 * Return the location field for the given type character.
+	 *
+	 * @param character the location field type character
+	 * @return the location field for the given type character
+	 */
+	static LocationField ofType(final char character) {
 		switch (character) {
 			case 'H': return ELEVATION;
 			case 'D':

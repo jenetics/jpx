@@ -26,6 +26,9 @@ import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 
 /**
+ * Aggregation of the three location components: latitude, longitude and
+ * elevation.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
