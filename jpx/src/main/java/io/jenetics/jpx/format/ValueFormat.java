@@ -28,42 +28,41 @@ import java.text.NumberFormat;
 import java.util.function.Supplier;
 
 /**
+ * Implementations of format objects for <em>degrees</em>, <em>minutes</em>,
+ * <em>seconds</em> and <em>heights</em>.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-abstract class AngleFormat implements Format<Double> {
+abstract class ValueFormat implements Format<Double> {
 
 	final Supplier<NumberFormat> _format;
 
-	private AngleFormat(final Supplier<NumberFormat> format) {
+	private ValueFormat(final Supplier<NumberFormat> format) {
 		_format = requireNonNull(format);
 	}
 
-	static AngleFormat ofDegrees(final String pattern) {
-		return DegreesFormatter.ofPattern(pattern);
-	}
-
-	static AngleFormat ofMinutes(final String pattern) {
-		return MinutesFormatter.ofPattern(pattern);
-	}
-
-	static AngleFormat ofSeconds(final String pattern) {
-		return SecondsFormatter.ofPattern(pattern);
-	}
-
-	static AngleFormat ofPattern(final String pattern) {
+	/**
+	 * Return the appropriate value format object for the given pattern:
+	 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
+	 *
+	 * @param pattern the location part pattern
+	 * @return the appropriate format for the given pattern
+	 */
+	static Format<Double> ofPattern(final String pattern) {
 		switch (Character.toLowerCase(pattern.charAt(0))) {
-			case 'd': return ofDegrees(toDecimalPattern(pattern));
-			case 'm': return ofMinutes(toDecimalPattern(pattern));
-			case 's': return ofSeconds(toDecimalPattern(pattern));
+			case 'd': return new DegreesFormatter(toNumberFormat(pattern));
+			case 'm': return new MinutesFormatter(toNumberFormat(pattern));
+			case 's': return new SecondsFormatter(toNumberFormat(pattern));
+			case 'h': return ele -> new DecimalFormat(pattern).format(ele);
 			default: throw new IllegalArgumentException(String.format(
 				"Invalid pattern: %s", pattern
 			));
 		}
 	}
 
-	private static String toDecimalPattern(final String pattern) {
+	private static Supplier<NumberFormat> toNumberFormat(final String pattern) {
 		final StringBuilder out = new StringBuilder();
 		for (int i = 0; i < pattern.length(); ++i) {
 			final char c = pattern.charAt(i);
@@ -78,51 +77,45 @@ abstract class AngleFormat implements Format<Double> {
 			}
 		}
 
-		return out.toString();
+		return () -> new DecimalFormat(out.toString());
 	}
 
-	private final static class DegreesFormatter extends AngleFormat {
-
+	/**
+	 * Degree format implementation.
+	 */
+	private final static class DegreesFormatter extends ValueFormat {
 		private DegreesFormatter(final Supplier<NumberFormat> format) {
 			super(format);
 		}
-
 		@Override
 		public String format(final Double degrees) {
 			final double dd = abs(degrees);
 			return _format.get().format(dd);
 		}
-
-		static DegreesFormatter ofPattern(final String pattern) {
-			return new DegreesFormatter(() -> new DecimalFormat(pattern));
-		}
-
 	}
 
-	private final static class MinutesFormatter extends AngleFormat {
-
+	/**
+	 * Minute format implementation.
+	 */
+	private final static class MinutesFormatter extends ValueFormat {
 		private MinutesFormatter(final Supplier<NumberFormat> format) {
 			super(format);
 		}
-
 		@Override
 		public String format(final Double degrees) {
 			final double dd = abs(degrees);
 			final double minutes = (dd - floor(dd))*60.0;
 			return _format.get().format(minutes);
 		}
-
-		static MinutesFormatter ofPattern(final String pattern) {
-			return new MinutesFormatter(() -> new DecimalFormat(pattern));
-		}
 	}
 
-	private final static class SecondsFormatter extends AngleFormat {
-
+	/**
+	 * Second format implementation.
+	 */
+	private final static class SecondsFormatter extends ValueFormat {
 		private SecondsFormatter(final Supplier<NumberFormat> format) {
 			super(format);
 		}
-
 		@Override
 		public String format(final Double degrees) {
 			final double dd = abs(degrees);
@@ -131,11 +124,6 @@ abstract class AngleFormat implements Format<Double> {
 			final double s = (dd - d - m/60.0)*3600.0;
 			return _format.get().format(s);
 		}
-
-		static SecondsFormatter ofPattern(final String pattern) {
-			return new SecondsFormatter(() -> new DecimalFormat(pattern));
-		}
-
 	}
 
 }
