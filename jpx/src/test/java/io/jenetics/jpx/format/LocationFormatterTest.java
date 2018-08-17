@@ -60,7 +60,7 @@ public class LocationFormatterTest {
 		System.out.println(LocationFormatter.ISO_HUMAN_LONG.format(latitude));
 	}
 
-	@Test(dataProvider = "latitudes")
+	//@Test(dataProvider = "latitudes")
 	public void latitudesISOHumanLong(final String[] row) {
 		final double degrees = Double.parseDouble(row[0]);
 		final Latitude latitude = Latitude.ofDegrees(degrees);

@@ -122,14 +122,6 @@ abstract class ValueFormat implements Format<Double> {
 		}
 	}
 
-	/*
-d = int(16.44977221°) = 16°
-m = int((16.44977221° - 16°) × 60) = 26'
-s = (16.44977221° - 16° - 26'/60) × 3600 = 59.18"
-16.44977221°
-= 16° 26' 59.18"
-	 */
-
 	/**
 	 * Second format implementation.
 	 */
@@ -139,14 +131,11 @@ s = (16.44977221° - 16° - 26'/60) × 3600 = 59.18"
 		}
 		@Override
 		public String format(final Double degrees) {
-			final NumberFormat f = _format.get();
-			f.setRoundingMode(RoundingMode.HALF_UP);
-
 			final double dd = abs(degrees);
 			final double d = floor(dd);
 			final double m = floor((dd - d)*60.0);
 			final double s = (dd - d - m/60.0)*3600.0;
-			return f.format(s);
+			return _format.get().format(s);
 		}
 	}
 

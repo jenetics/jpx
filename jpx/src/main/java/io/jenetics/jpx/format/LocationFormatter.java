@@ -21,8 +21,10 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Latitude;
@@ -50,6 +52,7 @@ public class LocationFormatter {
 
 	String format(final Location location) {
 		requireNonNull(location);
+		DateTimeFormatter f;
 
 		return _formats.stream()
 			.map(format -> format.format(location))
@@ -135,6 +138,10 @@ public class LocationFormatter {
 
 	public String format(final Length ele) {
 		return format(null, null, ele);
+	}
+
+	public LocationFormatter withLocal(final Locale locale) {
+		return this;
 	}
 
 }
