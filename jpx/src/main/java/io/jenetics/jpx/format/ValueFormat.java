@@ -52,9 +52,9 @@ abstract class ValueFormat implements Format<Double> {
 	 */
 	static Format<Double> ofPattern(final String pattern) {
 		switch (Character.toLowerCase(pattern.charAt(0))) {
-			case 'd': return new DegreesFormatter(toNumberFormat(pattern));
-			case 'm': return new MinutesFormatter(toNumberFormat(pattern));
-			case 's': return new SecondsFormatter(toNumberFormat(pattern));
+			case 'd': return new DegreesFormat(toNumberFormat(pattern));
+			case 'm': return new MinutesFormat(toNumberFormat(pattern));
+			case 's': return new SecondsFormat(toNumberFormat(pattern));
 			case 'h': return ele -> new DecimalFormat(pattern).format(ele);
 			case '+': return new FixSignFormat();
 			default: throw new IllegalArgumentException(String.format(
@@ -84,8 +84,8 @@ abstract class ValueFormat implements Format<Double> {
 	/**
 	 * Degree format implementation.
 	 */
-	private final static class DegreesFormatter extends ValueFormat {
-		private DegreesFormatter(final Supplier<NumberFormat> format) {
+	private final static class DegreesFormat extends ValueFormat {
+		private DegreesFormat(final Supplier<NumberFormat> format) {
 			super(format);
 		}
 		@Override
@@ -98,8 +98,8 @@ abstract class ValueFormat implements Format<Double> {
 	/**
 	 * Minute format implementation.
 	 */
-	private final static class MinutesFormatter extends ValueFormat {
-		private MinutesFormatter(final Supplier<NumberFormat> format) {
+	private final static class MinutesFormat extends ValueFormat {
+		private MinutesFormat(final Supplier<NumberFormat> format) {
 			super(format);
 		}
 		@Override
@@ -113,8 +113,8 @@ abstract class ValueFormat implements Format<Double> {
 	/**
 	 * Second format implementation.
 	 */
-	private final static class SecondsFormatter extends ValueFormat {
-		private SecondsFormatter(final Supplier<NumberFormat> format) {
+	private final static class SecondsFormat extends ValueFormat {
+		private SecondsFormat(final Supplier<NumberFormat> format) {
 			super(format);
 		}
 		@Override
