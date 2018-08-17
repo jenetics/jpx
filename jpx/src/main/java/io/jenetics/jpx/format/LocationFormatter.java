@@ -113,6 +113,7 @@ public class LocationFormatter {
 		.appendLiteral("'")
 		.appendFieldFormat("SS")
 		.appendLiteral("\"")
+		.appendFieldFormat("X")
 		.build();
 
 

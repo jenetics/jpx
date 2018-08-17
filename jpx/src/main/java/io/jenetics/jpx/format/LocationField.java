@@ -95,10 +95,12 @@ final class LocationField {
 			case 'H': return ELEVATION;
 			case 'D':
 			case 'M':
-			case 'S': return LATITUDE;
+			case 'S':
+			case 'X': return LATITUDE;
 			case 'd':
 			case 'm':
-			case 's': return LONGITUDE;
+			case 's':
+			case 'x': return LONGITUDE;
 			default: throw new IllegalStateException(format(
 				"Unknown field character: %s", character
 			));

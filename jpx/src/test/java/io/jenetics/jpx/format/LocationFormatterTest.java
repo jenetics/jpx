@@ -54,6 +54,12 @@ public class LocationFormatterTest {
 		LocationFormatter.ofPattern("DD°MM'SS.SSS\"[NS] dd°mm'ss.sss\"[EW]");
 	}
 
+	@Test
+	public void format() {
+		final Latitude latitude = Latitude.ofDegrees(16.44977221);
+		System.out.println(LocationFormatter.ISO_HUMAN_LONG.format(latitude));
+	}
+
 	@Test(dataProvider = "latitudes")
 	public void latitudesISOHumanLong(final String[] row) {
 		final double degrees = Double.parseDouble(row[0]);

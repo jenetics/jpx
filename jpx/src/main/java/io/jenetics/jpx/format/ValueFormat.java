@@ -23,6 +23,7 @@ import static java.lang.Math.abs;
 import static java.lang.Math.floor;
 import static java.util.Objects.requireNonNull;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.function.Supplier;
@@ -51,12 +52,17 @@ abstract class ValueFormat implements Format<Double> {
 	 * @return the appropriate format for the given pattern
 	 */
 	static Format<Double> ofPattern(final String pattern) {
-		switch (Character.toLowerCase(pattern.charAt(0))) {
+		switch (pattern.charAt(0)) {
+			case 'D':
 			case 'd': return new DegreesFormat(toNumberFormat(pattern));
+			case 'M':
 			case 'm': return new MinutesFormat(toNumberFormat(pattern));
+			case 'S':
 			case 's': return new SecondsFormat(toNumberFormat(pattern));
-			case 'h': return ele -> new DecimalFormat(pattern).format(ele);
+			case 'H': return ele -> new DecimalFormat(pattern).format(ele);
 			case '+': return new FixSignFormat();
+			case 'X': return new HemisphereFormat();
+			case 'x': return new LonFormat();
 			default: throw new IllegalArgumentException(String.format(
 				"Invalid pattern: %s", pattern
 			));
@@ -78,7 +84,13 @@ abstract class ValueFormat implements Format<Double> {
 			}
 		}
 
-		return () -> new DecimalFormat(out.toString());
+		return () -> {
+			final DecimalFormat f = new DecimalFormat(out.toString());
+			if (f.getMinimumFractionDigits() == 0) {
+				f.setRoundingMode(RoundingMode.FLOOR);
+			}
+			return f;
+		};
 	}
 
 	/**
@@ -110,6 +122,14 @@ abstract class ValueFormat implements Format<Double> {
 		}
 	}
 
+	/*
+d = int(16.44977221°) = 16°
+m = int((16.44977221° - 16°) × 60) = 26'
+s = (16.44977221° - 16° - 26'/60) × 3600 = 59.18"
+16.44977221°
+= 16° 26' 59.18"
+	 */
+
 	/**
 	 * Second format implementation.
 	 */
@@ -119,11 +139,14 @@ abstract class ValueFormat implements Format<Double> {
 		}
 		@Override
 		public String format(final Double degrees) {
+			final NumberFormat f = _format.get();
+			f.setRoundingMode(RoundingMode.HALF_UP);
+
 			final double dd = abs(degrees);
 			final double d = floor(dd);
 			final double m = floor((dd - d)*60.0);
 			final double s = (dd - d - m/60.0)*3600.0;
-			return _format.get().format(s);
+			return f.format(s);
 		}
 	}
 
@@ -131,6 +154,20 @@ abstract class ValueFormat implements Format<Double> {
 		@Override
 		public String format(final Double value) {
 			return Double.compare(value, 0.0) >= 0 ? "+" : "-";
+		}
+	}
+
+	private static final class HemisphereFormat implements Format<Double> {
+		@Override
+		public String format(final Double value) {
+			return Double.compare(value, 0.0) >= 0 ? "N" : "S";
+		}
+	}
+
+	private static final class LonFormat implements Format<Double> {
+		@Override
+		public String format(final Double value) {
+			return Double.compare(value, 0.0) >= 0 ? "E" : "W";
 		}
 	}
 
