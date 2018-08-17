@@ -56,6 +56,7 @@ abstract class ValueFormat implements Format<Double> {
 			case 'm': return new MinutesFormatter(toNumberFormat(pattern));
 			case 's': return new SecondsFormatter(toNumberFormat(pattern));
 			case 'h': return ele -> new DecimalFormat(pattern).format(ele);
+			case '+': return new FixSignFormat();
 			default: throw new IllegalArgumentException(String.format(
 				"Invalid pattern: %s", pattern
 			));
@@ -123,6 +124,13 @@ abstract class ValueFormat implements Format<Double> {
 			final double m = floor((dd - d)*60.0);
 			final double s = (dd - d - m/60.0)*3600.0;
 			return _format.get().format(s);
+		}
+	}
+
+	private static final class FixSignFormat implements Format<Double> {
+		@Override
+		public String format(final Double value) {
+			return Double.compare(value, 0.0) >= 0 ? "+" : "-";
 		}
 	}
 
