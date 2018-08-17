@@ -19,17 +19,15 @@
  */
 package io.jenetics.jpx.format;
 
-import static java.lang.Math.abs;
 import static java.util.Objects.requireNonNull;
 
-import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
 
 /**
  * DD°MM''SS.SSS"X
@@ -38,7 +36,7 @@ import io.jenetics.jpx.Latitude;
  * @version !__version__!
  * @since !__version__!
  */
-public abstract class LocationFormatter {
+public class LocationFormatter {
 
 	private final List<Format<Location>> _formats;
 
@@ -59,158 +57,83 @@ public abstract class LocationFormatter {
 	}
 
 
-	public static final LocationFormatter ISO_HUMAN_LONG = new LocationFormatter() {
+	public static LocationFormatter ofPattern(final String pattern) {
+		final StringBuilder out = new StringBuilder();
 
-		DateTimeFormatter f = DateTimeFormatter.ofPattern("");
-
-		/**
-		 * -7.287954696138044 07°17'17"S 07°17'S -07.28795
-		 * +16.449772215262600 16°26'59"N 16°27'N +16.44977
-		 */
-		@Override
-		public String format(final Latitude lat) {
-			final double degrees = lat.toDegrees();
-			final StringBuilder out = new StringBuilder();
-
-			final int[] parts = Angle.split(degrees);
-			out.append(String.format("%02d", abs(parts[0])));
-			out.append("\u00B0");
-
-			out.append(String.format("%02d", abs(parts[1])));
-			out.append("'");
-
-			out.append(String.format("%02d", abs(parts[2])));
-			out.append("\"");
-
-			if (Double.compare(degrees, 0.0) >= 0) {
-				out.append("N");
-			} else {
-				out.append("S");
+		for (int i = 0; i < pattern.length(); ++i) {
+			final char c = pattern.charAt(i);
+			switch (c) {
+				case 'D':
+				case 'M':
+				case 'S':
+				case 'd':
+				case 'm':
+				case 's':
+				case 'H':
+				case '.':
+				case ',':
+				default:
 			}
-
-			return out.toString();
 		}
-	};
 
-	public static final LocationFormatter ISO_HUMAN_MEDIUM = new LocationFormatter() {
+		return null;
+	}
 
-		/**
-		 * 37.335685	37°20'N
-		 * -48.148918	48°09'S
-		 */
-		@Override
-		public String format(final Latitude lat) {
-			final double degrees = lat.toDegrees();
-			final StringBuilder out = new StringBuilder();
+	public static Builder builder() {
+		return new Builder();
+	}
 
-			final int[] parts = Angle.split(degrees);
-			out.append(String.format("%02d", abs(parts[0])));
-			out.append("\u00B0");
+	public static final class Builder {
+		private final List<Format<Location>> _formats = new ArrayList<>();
 
-			final int minutes = abs(parts[2]) < 30
-				? abs(parts[1])
-				: abs(parts[1]) + 1;
-
-			out.append(String.format("%02d", minutes));
-			out.append("'");
-
-			if (Double.compare(degrees, 0.0) >= 0) {
-				out.append("N");
-			} else {
-				out.append("S");
-			}
-
-			return out.toString();
+		private Builder() {
 		}
-	};
 
-	public static final LocationFormatter ISO_DECIMAL = new LocationFormatter() {
-		@Override
-		public String format(final Latitude lat) {
-			final double degrees = lat.toDegrees();
-
-			final NumberFormat fmt = NumberFormat.getInstance(Locale.ENGLISH);
-			fmt.setMinimumIntegerDigits(2);
-			fmt.setMinimumFractionDigits(5);
-
-			return (Double.compare(degrees, 0.0) < 0 ? "" : "+") +
-				fmt.format(degrees);
+		public Builder appendLiteral(final String literal) {
+			_formats.add(ConstFormat.of(literal));
+			return this;
 		}
-	};
 
-	public static final LocationFormatter ISO_LONG = new LocationFormatter() {
-		@Override
-		public String format(Latitude lat) {
-			final double degrees = lat.toDegrees();
-			final StringBuilder out = new StringBuilder();
-
-			final int[] parts = Angle.split(degrees);
-			out.append(Double.compare(degrees, 0.0) < 0 ? "-" : "+");
-			out.append(String.format("%02d", abs(parts[0])));
-			out.append(String.format("%02d", abs(parts[1])));
-			out.append(String.format("%02d", abs(parts[2])));
-
-			return out.toString();
+		public Builder appendFieldFormat(final String pattern) {
+			_formats.add(LocationFieldFormat.ofPattern(pattern));
+			return this;
 		}
-	};
 
-	public static final LocationFormatter ISO_MEDIUM = new LocationFormatter() {
-		@Override
-		public String format(Latitude lat) {
-			final double degrees = lat.toDegrees();
-			final StringBuilder out = new StringBuilder();
-
-			final int[] parts = Angle.split(degrees);
-			out.append(Double.compare(degrees, 0.0) < 0 ? "-" : "+");
-			out.append(String.format("%02d", abs(parts[0])));
-
-			final int minutes = abs(parts[2]) < 30
-				? abs(parts[1])
-				: abs(parts[1]) + 1;
-
-			out.append(String.format("%02d", minutes));
-
-			return out.toString();
+		public LocationFormatter build() {
+			return new LocationFormatter(new ArrayList<>(_formats));
 		}
-	};
 
-	public static final LocationFormatter ISO_SHORT = new LocationFormatter() {
-		@Override
-		public String format(final Latitude lat) {
-			return (Double.compare(lat.toDegrees(), 0.0) < 0 ? "-" : "+") +
-				String.format("%02d", abs(Angle.split(lat.toDegrees())[0]));
-		}
-	};
-
-	public static final LocationFormatter ISO6709_HUMAN_SHORT = null;
+	}
 
 
+	public static final LocationFormatter ISO_HUMAN_LONG = builder()
+		.appendFieldFormat("DD")
+		.appendLiteral("°")
+		.appendFieldFormat("MM")
+		.appendLiteral("'")
+		.appendFieldFormat("SS")
+		.appendLiteral("\"")
+		.build();
 
+
+	public String format(final Latitude lat, final Longitude lon, final Length ele) {
+		return format(Location.of(lat, lon, ele));
+	}
+
+	public String format(final Latitude lat, final Longitude lon) {
+		return format(lat, lon, null);
+	}
 
 	public String format(final Latitude lat) {
-		return null;
+		return format(lat, null, null);
 	}
 
-
-
-	/*
-	public abstract String format(final Longitude lon);
-
-	public abstract String format(final Latitude lat, final Longitude lon);
-
-	public abstract String format(final Point point);
-
-	public abstract Object parseLatitude(final CharSequence text, final ParsePosition pos);
-
-	public abstract Object parseLongitude(final CharSequence text, final ParsePosition pos);
-	*/
-
-	public static LocationFormatter ofPattern(final String pattern) {
-		return null;
+	public String format(final Longitude lon) {
+		return format(null, lon, null);
 	}
 
-	private static List<String> tokenize(final String pattern) {
-		return null;
+	public String format(final Length ele) {
+		return format(null, null, ele);
 	}
 
 }

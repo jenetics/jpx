@@ -66,65 +66,65 @@ public class LocationFormatterTest {
 		);
 	}
 
-	@Test(dataProvider = "latitudes")
-	public void latitudesISOHumanMedium(final String[] row) {
-		final double degrees = Double.parseDouble(row[0]);
-		final Latitude latitude = Latitude.ofDegrees(degrees);
-
-		final String format = row[2];
-		Assert.assertEquals(
-			LocationFormatter.ISO_HUMAN_MEDIUM.format(latitude),
-			format
-		);
-	}
-
-	@Test(dataProvider = "latitudes")
-	public void latitudesISODecimal(final String[] row) {
-		final double degrees = Double.parseDouble(row[0]);
-		final Latitude latitude = Latitude.ofDegrees(degrees);
-
-		final String format = row[3];
-		Assert.assertEquals(
-			LocationFormatter.ISO_DECIMAL.format(latitude),
-			format
-		);
-	}
-
-	@Test(dataProvider = "latitudes")
-	public void latitudesISOLong(final String[] row) {
-		final double degrees = Double.parseDouble(row[0]);
-		final Latitude latitude = Latitude.ofDegrees(degrees);
-
-		final String format = row[4];
-		Assert.assertEquals(
-			LocationFormatter.ISO_LONG.format(latitude),
-			format
-		);
-	}
-
-	@Test(dataProvider = "latitudes")
-	public void latitudesISOMedium(final String[] row) {
-		final double degrees = Double.parseDouble(row[0]);
-		final Latitude latitude = Latitude.ofDegrees(degrees);
-
-		final String format = row[5];
-		Assert.assertEquals(
-			LocationFormatter.ISO_MEDIUM.format(latitude),
-			format
-		);
-	}
-
-	@Test(dataProvider = "latitudes")
-	public void latitudesISOShort(final String[] row) {
-		final double degrees = Double.parseDouble(row[0]);
-		final Latitude latitude = Latitude.ofDegrees(degrees);
-
-		final String format = row[6];
-		Assert.assertEquals(
-			LocationFormatter.ISO_SHORT.format(latitude),
-			format
-		);
-	}
+//	@Test(dataProvider = "latitudes")
+//	public void latitudesISOHumanMedium(final String[] row) {
+//		final double degrees = Double.parseDouble(row[0]);
+//		final Latitude latitude = Latitude.ofDegrees(degrees);
+//
+//		final String format = row[2];
+//		Assert.assertEquals(
+//			LocationFormatter.ISO_HUMAN_MEDIUM.format(latitude),
+//			format
+//		);
+//	}
+//
+//	@Test(dataProvider = "latitudes")
+//	public void latitudesISODecimal(final String[] row) {
+//		final double degrees = Double.parseDouble(row[0]);
+//		final Latitude latitude = Latitude.ofDegrees(degrees);
+//
+//		final String format = row[3];
+//		Assert.assertEquals(
+//			LocationFormatter.ISO_DECIMAL.format(latitude),
+//			format
+//		);
+//	}
+//
+//	@Test(dataProvider = "latitudes")
+//	public void latitudesISOLong(final String[] row) {
+//		final double degrees = Double.parseDouble(row[0]);
+//		final Latitude latitude = Latitude.ofDegrees(degrees);
+//
+//		final String format = row[4];
+//		Assert.assertEquals(
+//			LocationFormatter.ISO_LONG.format(latitude),
+//			format
+//		);
+//	}
+//
+//	@Test(dataProvider = "latitudes")
+//	public void latitudesISOMedium(final String[] row) {
+//		final double degrees = Double.parseDouble(row[0]);
+//		final Latitude latitude = Latitude.ofDegrees(degrees);
+//
+//		final String format = row[5];
+//		Assert.assertEquals(
+//			LocationFormatter.ISO_MEDIUM.format(latitude),
+//			format
+//		);
+//	}
+//
+//	@Test(dataProvider = "latitudes")
+//	public void latitudesISOShort(final String[] row) {
+//		final double degrees = Double.parseDouble(row[0]);
+//		final Latitude latitude = Latitude.ofDegrees(degrees);
+//
+//		final String format = row[6];
+//		Assert.assertEquals(
+//			LocationFormatter.ISO_SHORT.format(latitude),
+//			format
+//		);
+//	}
 
 	@DataProvider
 	public Iterator<Object[]> latitudes() throws IOException {
