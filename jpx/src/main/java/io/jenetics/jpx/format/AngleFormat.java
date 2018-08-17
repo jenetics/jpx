@@ -25,7 +25,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.function.DoubleFunction;
 import java.util.function.Supplier;
 
 /**
@@ -33,7 +32,7 @@ import java.util.function.Supplier;
  * @version !__version__!
  * @since !__version__!
  */
-abstract class AngleFormat implements DoubleFunction<String> {
+abstract class AngleFormat implements Format<Double> {
 
 	final Supplier<NumberFormat> _format;
 
@@ -53,6 +52,34 @@ abstract class AngleFormat implements DoubleFunction<String> {
 		return SecondsFormatter.ofPattern(pattern);
 	}
 
+	static AngleFormat ofPattern(final String pattern) {
+		switch (Character.toLowerCase(pattern.charAt(0))) {
+			case 'd': return ofDegrees(toDecimalPattern(pattern));
+			case 'm': return ofMinutes(toDecimalPattern(pattern));
+			case 's': return ofSeconds(toDecimalPattern(pattern));
+			default: throw new IllegalArgumentException(String.format(
+				"Invalid pattern: %s", pattern
+			));
+		}
+	}
+
+	private static String toDecimalPattern(final String pattern) {
+		final StringBuilder out = new StringBuilder();
+		for (int i = 0; i < pattern.length(); ++i) {
+			final char c = pattern.charAt(i);
+			switch (c) {
+				case '.':
+				case ',':
+					out.append(c);
+					break;
+				default:
+					out.append('0');
+					break;
+			}
+		}
+
+		return out.toString();
+	}
 
 	private final static class DegreesFormatter extends AngleFormat {
 
@@ -61,7 +88,7 @@ abstract class AngleFormat implements DoubleFunction<String> {
 		}
 
 		@Override
-		public String apply(final double degrees) {
+		public String format(final Double degrees) {
 			final double dd = abs(degrees);
 			return _format.get().format(dd);
 		}
@@ -79,7 +106,7 @@ abstract class AngleFormat implements DoubleFunction<String> {
 		}
 
 		@Override
-		public String apply(final double degrees) {
+		public String format(final Double degrees) {
 			final double dd = abs(degrees);
 			final double minutes = (dd - floor(dd))*60.0;
 			return _format.get().format(minutes);
@@ -97,7 +124,7 @@ abstract class AngleFormat implements DoubleFunction<String> {
 		}
 
 		@Override
-		public String apply(final double degrees) {
+		public String format(final Double degrees) {
 			final double dd = abs(degrees);
 			final double d = floor(dd);
 			final double m = floor((dd - d)*60.0);

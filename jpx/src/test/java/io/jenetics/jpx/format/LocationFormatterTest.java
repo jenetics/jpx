@@ -40,8 +40,6 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Latitude;
-import io.jenetics.jpx.LocationRandom;
-import io.jenetics.jpx.format.LocationFormatter;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

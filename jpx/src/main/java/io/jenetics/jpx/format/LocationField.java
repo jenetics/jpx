@@ -19,10 +19,15 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Length.Unit.METER;
 
-import java.util.OptionalDouble;
+import java.util.Optional;
 import java.util.function.Function;
+
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -31,12 +36,27 @@ import java.util.function.Function;
  */
 final class LocationField {
 
-	private final String _name;
-	private final Function<Location, OptionalDouble> _value;
+	static final LocationField LATITUDE = new LocationField(
+		"latitude",
+		loc -> loc.latitude().map(Latitude::toDegrees)
+	);
 
-	LocationField(
+	static final LocationField LONGITUDE = new LocationField(
+		"longitude",
+		loc -> loc.longitude().map(Longitude::toDegrees)
+	);
+
+	static final LocationField ELEVATION = new LocationField(
+		"elevation",
+		loc -> loc.elevation().map(l -> l.to(METER))
+	);
+
+	private final String _name;
+	private final Function<Location, Optional<Double>> _value;
+
+	private LocationField(
 		final String name,
-		final Function<Location, OptionalDouble> value
+		final Function<Location, Optional<Double>> value
 	) {
 		_name = requireNonNull(name);
 		_value = requireNonNull(value);
@@ -46,8 +66,23 @@ final class LocationField {
 		return _name;
 	}
 
-	OptionalDouble value(final Location location) {
+	Optional<Double> value(final Location location) {
 		return _value.apply(requireNonNull(location));
+	}
+
+	static LocationField of(final char character) {
+		switch (character) {
+			case 'H': return ELEVATION;
+			case 'D':
+			case 'M':
+			case 'S': return LATITUDE;
+			case 'd':
+			case 'm':
+			case 's': return LONGITUDE;
+			default: throw new IllegalStateException(format(
+				"Unknown field character: %s", character
+			));
+		}
 	}
 
 }

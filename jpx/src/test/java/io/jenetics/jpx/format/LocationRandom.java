@@ -19,23 +19,27 @@
  */
 package io.jenetics.jpx.format;
 
-import org.testng.annotations.Test;
+import java.util.Random;
+
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Randoms;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class AngleFormatTest {
-
-	// -7.287954696138044 07°17'17"S 07°17'S -07.28795
-	// +88.918540267041150	88°55'07
-	@Test
-	public void format() {
-		//final double d = -7.287954696138044;
-		final double d = 88.918540267041150;
-
-		System.out.println(AngleFormat.ofDegrees("#00").format(d));
-		System.out.println(AngleFormat.ofMinutes("#00").format(d));
-		System.out.println(AngleFormat.ofSeconds("#00.000").format(d));
+public final class LocationRandom {
+	private LocationRandom() {
 	}
+
+	public static Latitude nextLatitude(final Random random) {
+		final double degrees = Randoms.nextDouble(
+			Latitude.MIN_VALUE.toDegrees(),
+			Latitude.MAX_VALUE.toDegrees(),
+			random
+		);
+
+		return Latitude.ofDegrees(degrees);
+	}
+
 
 }

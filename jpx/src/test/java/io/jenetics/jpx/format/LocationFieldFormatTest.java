@@ -17,26 +17,33 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx;
+package io.jenetics.jpx.format;
 
 import java.util.Random;
+
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public final class LocationRandom {
-	private LocationRandom() {
-	}
+public class LocationFieldFormatTest {
 
-	public static Latitude nextLatitude(final Random random) {
-		final double degrees = Randoms.nextDouble(
-			Latitude.MIN_VALUE.toDegrees(),
-			Latitude.MAX_VALUE.toDegrees(),
-			random
+	@Test
+	public void format() {
+		final Random random = new Random(123);
+
+		final Location loc = Location.of(
+			LocationRandom.nextLatitude(random),
+			null,
+			null
 		);
 
-		return Latitude.ofDegrees(degrees);
-	}
+		final LocationFieldFormat df = LocationFieldFormat.ofPattern("DD");
+		final LocationFieldFormat mf = LocationFieldFormat.ofPattern("MM");
+		final LocationFieldFormat sf = LocationFieldFormat.ofPattern("SS.SSS");
 
+		System.out.println(loc.latitude());
+		System.out.println(df.format(loc) + "°" + mf.format(loc) + "'" + sf.format(loc) + "\"");
+	}
 
 }

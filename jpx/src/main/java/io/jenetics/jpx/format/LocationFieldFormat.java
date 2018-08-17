@@ -21,38 +21,40 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
-import java.util.function.DoubleFunction;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 /**
+ * This class formats a given location field (latitude, longitude or elevation)
+ * with the given double value format. E.g. {@code DD}, {@code ss.sss} or
+ * {@code HHHH.H}.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-final class LocationFieldFormat implements Function<Location, String> {
+final class LocationFieldFormat implements Format<Location> {
 
 	private final LocationField _field;
-	private final List<DoubleFunction<String>> _formats;
+	private final Format<Double> _format;
 
 	private LocationFieldFormat(
 		final LocationField field,
-		final List<DoubleFunction<String>> formats
+		final Format<Double> format
 	) {
 		_field = requireNonNull(field);
-		_formats = requireNonNull(formats);
+		_format = requireNonNull(format);
 	}
 
 	@Override
-	public String apply(final Location location) {
+	public String format(final Location location) {
 		final double value = _field.value(location)
 			.orElseThrow(() -> new IllegalArgumentException(String.format(
 				"No '%s' value.", _field.name())));
 
-		return _formats.stream()
-			.map(format -> format.apply(value))
-			.collect(Collectors.joining());
+		return _format.format(value);
+	}
+
+	static LocationFieldFormat ofPattern(final String pattern) {
+		final LocationField field = LocationField.of(pattern.charAt(0));
+		return new LocationFieldFormat(field, AngleFormat.ofPattern(pattern));
 	}
 
 }
