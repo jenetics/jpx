@@ -85,13 +85,14 @@ enum LocationField {
 	}
 
 	/**
-	 * Return the location field for the given type character.
+	 * Return the location field for the given location pattern:
+	 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
 	 *
-	 * @param character the location field type character
-	 * @return the location field for the given type character
+	 * @param pattern the location pattern
+	 * @return the location field for the given location pattern
 	 */
-	static LocationField ofType(final char character) {
-		switch (character) {
+	static LocationField ofPattern(final String pattern) {
+		switch (pattern.charAt(0)) {
 			case 'H':
 				return ELEVATION;
 			case 'D': case 'M': case 'S': case 'X':
@@ -99,7 +100,7 @@ enum LocationField {
 			case 'd': case 'm': case 's': case 'x':
 				return LONGITUDE;
 			default: throw new IllegalArgumentException(format(
-				"Unknown field character: %s", character
+				"Unknown field type: %s", pattern
 			));
 		}
 	}

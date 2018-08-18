@@ -60,8 +60,10 @@ final class LocationFieldFormat implements Format<Location> {
 	 * @return a new format object from the given pattern
 	 */
 	static LocationFieldFormat ofPattern(final String pattern) {
-		final LocationField field = LocationField.ofType(pattern.charAt(0));
-		return new LocationFieldFormat(field, ValueFormat.ofPattern(pattern));
+		return new LocationFieldFormat(
+			LocationField.ofPattern(pattern),
+			ValueFormat.ofPattern(pattern)
+		);
 	}
 
 }

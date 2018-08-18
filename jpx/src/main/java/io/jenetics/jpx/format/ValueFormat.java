@@ -53,12 +53,12 @@ abstract class ValueFormat implements Format<Double> {
 	 */
 	static Format<Double> ofPattern(final String pattern) {
 		switch (pattern.charAt(0)) {
-			case 'D':
-			case 'd': return new DegreesFormat(toNumberFormat(pattern));
-			case 'M':
-			case 'm': return new MinutesFormat(toNumberFormat(pattern));
-			case 'S':
-			case 's': return new SecondsFormat(toNumberFormat(pattern));
+			case 'D': case 'd':
+				return new DegreesFormat(toNumberFormat(pattern));
+			case 'M': case 'm':
+				return new MinutesFormat(toNumberFormat(pattern));
+			case 'S': case 's':
+				return new SecondsFormat(toNumberFormat(pattern));
 			case 'H': return ele -> new DecimalFormat(pattern).format(ele);
 			case '+': return new FixSignFormat();
 			case 'X': return new HemisphereFormat();
@@ -74,8 +74,7 @@ abstract class ValueFormat implements Format<Double> {
 		for (int i = 0; i < pattern.length(); ++i) {
 			final char c = pattern.charAt(i);
 			switch (c) {
-				case '.':
-				case ',':
+				case '.': case ',':
 					out.append(c);
 					break;
 				default:
