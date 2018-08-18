@@ -37,19 +37,19 @@ import io.jenetics.jpx.Longitude;
  * @version !__version__!
  * @since !__version__!
  */
-final class LocationField {
+enum LocationField {
 
-	static final LocationField LATITUDE = new LocationField(
+	LATITUDE(
 		"latitude",
 		loc -> loc.latitude().map(Latitude::toDegrees)
-	);
+	),
 
-	static final LocationField LONGITUDE = new LocationField(
+	LONGITUDE(
 		"longitude",
 		loc -> loc.longitude().map(Longitude::toDegrees)
-	);
+	),
 
-	static final LocationField ELEVATION = new LocationField(
+	ELEVATION(
 		"elevation",
 		loc -> loc.elevation().map(l -> l.to(METER))
 	);
@@ -70,7 +70,7 @@ final class LocationField {
 	 *
 	 * @return the name of the location field
 	 */
-	String name() {
+	String fieldName() {
 		return _name;
 	}
 
@@ -92,16 +92,13 @@ final class LocationField {
 	 */
 	static LocationField ofType(final char character) {
 		switch (character) {
-			case 'H': return ELEVATION;
-			case 'D':
-			case 'M':
-			case 'S':
-			case 'X': return LATITUDE;
-			case 'd':
-			case 'm':
-			case 's':
-			case 'x': return LONGITUDE;
-			default: throw new IllegalStateException(format(
+			case 'H':
+				return ELEVATION;
+			case 'D': case 'M': case 'S': case 'X':
+				return LATITUDE;
+			case 'd': case 'm': case 's': case 'x':
+				return LONGITUDE;
+			default: throw new IllegalArgumentException(format(
 				"Unknown field character: %s", character
 			));
 		}

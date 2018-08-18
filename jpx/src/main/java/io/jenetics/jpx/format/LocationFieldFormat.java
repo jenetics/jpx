@@ -47,7 +47,7 @@ final class LocationFieldFormat implements Format<Location> {
 	public String format(final Location location) {
 		final double value = _field.value(location)
 			.orElseThrow(() -> new IllegalArgumentException(String.format(
-				"No '%s' value.", _field.name())));
+				"No '%s' value.", _field.fieldName())));
 
 		return _format.format(value);
 	}
