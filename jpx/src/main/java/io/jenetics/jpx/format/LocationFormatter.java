@@ -32,7 +32,26 @@ import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 
 /**
- * DD°MM''SS.SSS"X
+ * Formatter for printing and parsing geographic location objects.
+ * <h3 id="patterns">Patterns for Formatting and Parsing</h3>
+ * Patterns are based on a simple sequence of letters and symbols. A pattern is
+ * used to create a Formatter using the {@link #ofPattern(String)} and
+ * {@link #ofPattern(String, Locale)} methods.
+ * For example, {@code DD°MM'SS.SSS"X} will format to, for example,
+ * {@code 60°15'59.613"N}. A formatter created from a pattern can be used as
+ * many times as necessary, it is immutable and is thread-safe.
+ *
+ * <pre>
+ *  Symbol  Meaning                     Presentation      Examples
+ *  ------  -------                     ------------      -------
+ *   G       era                         text              AD; Anno Domini; A
+ *   u       year                        year              2004; 04
+ *   y       year-of-era                 year              2004; 04
+ *   D       day-of-year                 number            189
+ *   M/L     month-of-year               number/text       7; 07; Jul; July; J
+ *   d       day-of-month                number            10
+ * </pre>
+ *
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -40,14 +59,20 @@ import io.jenetics.jpx.Longitude;
  */
 public class LocationFormatter {
 
+	public static final LocationFormatter ISO_HUMAN_LONG = builder()
+		.appendFieldFormat("DD")
+		.appendLiteral("°")
+		.appendFieldFormat("MM")
+		.appendLiteral("'")
+		.appendFieldFormat("SS")
+		.appendLiteral("\"")
+		.appendFieldFormat("X")
+		.build();
+
 	private final List<Format<Location>> _formats;
 
-	public LocationFormatter(final List<Format<Location>> formats) {
+	private LocationFormatter(final List<Format<Location>> formats) {
 		_formats = requireNonNull(formats);
-	}
-
-	public LocationFormatter() {
-		_formats = new ArrayList<>();
 	}
 
 	String format(final Location location) {
@@ -82,10 +107,20 @@ public class LocationFormatter {
 		return null;
 	}
 
+	public static LocationFormatter ofPattern(final String patter, final Locale locale) {
+		return null;
+	}
+
 	public static Builder builder() {
 		return new Builder();
 	}
 
+	/**
+	 * Builder to create location formatters.
+	 *
+	 * @implNote
+	 * This class is a mutable builder intended for use from a single thread.
+	 */
 	public static final class Builder {
 		private final List<Format<Location>> _formats = new ArrayList<>();
 
@@ -107,17 +142,6 @@ public class LocationFormatter {
 		}
 
 	}
-
-
-	public static final LocationFormatter ISO_HUMAN_LONG = builder()
-		.appendFieldFormat("DD")
-		.appendLiteral("°")
-		.appendFieldFormat("MM")
-		.appendLiteral("'")
-		.appendFieldFormat("SS")
-		.appendLiteral("\"")
-		.appendFieldFormat("X")
-		.build();
 
 
 	public String format(final Latitude lat, final Longitude lon, final Length ele) {

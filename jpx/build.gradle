@@ -56,8 +56,11 @@ javadoc {
 		windowTitle = "JPX ${project.version}"
 		docTitle = "<h1>JPX ${project.version}</h1>"
 		bottom = "&copy; ${copyrightYear} Franz Wilhelmst&ouml;tter  &nbsp;<i>(${dateformat.format(now)})</i>"
-
 		exclude '**/internal/**'
+
+		options.tags = ["apiNote:a:API Note:",
+						"implSpec:a:Implementation Requirements:",
+						"implNote:a:Implementation Note:"]
 	}
 
 	// Copy the doc-files.
