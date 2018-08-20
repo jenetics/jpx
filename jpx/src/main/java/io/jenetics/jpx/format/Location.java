@@ -167,6 +167,11 @@ public final class Location {
 		return new Location(null, longitude, null);
 	}
 
+
+	/* *************************************************************************
+	 * Inner classes.
+	 * ************************************************************************/
+
 	/**
 	 * Represents one of the existing location fields: latitude, longitude and
 	 * elevation.
@@ -175,7 +180,7 @@ public final class Location {
 	 * @version !__version__!
 	 * @since !__version__!
 	 */
-	enum LocationField {
+	public enum Field {
 
 		LATITUDE(
 			"latitude",
@@ -195,7 +200,7 @@ public final class Location {
 		private final String _name;
 		private final Function<Location, Optional<Double>> _value;
 
-		LocationField(
+		Field(
 			final String name,
 			final Function<Location, Optional<Double>> value
 		) {
@@ -229,7 +234,7 @@ public final class Location {
 		 * @param pattern the location pattern
 		 * @return the location field for the given location pattern
 		 */
-		static LocationField ofPattern(final String pattern) {
+		static Field ofPattern(final String pattern) {
 			switch (pattern.charAt(0)) {
 				case 'E':
 					return ELEVATION;
@@ -242,6 +247,5 @@ public final class Location {
 				));
 			}
 		}
-
 	}
 }

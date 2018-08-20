@@ -23,6 +23,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 
+import io.jenetics.jpx.format.Location.Field;
+
 /**
  * This class formats a given location field (latitude, longitude or elevation)
  * with the given double value format. E.g. {@code DD}, {@code ss.sss} or
@@ -34,12 +36,12 @@ import java.util.Optional;
  */
 final class LocationFieldFormat implements Format<Location> {
 
-	private final Location.LocationField _field;
+	private final Field _field;
 	private final Format<Double> _format;
 	private final boolean _optional;
 
 	private LocationFieldFormat(
-		final Location.LocationField field,
+		final Field field,
 		final Format<Double> format,
 		final boolean optional
 	) {
@@ -73,7 +75,7 @@ final class LocationFieldFormat implements Format<Location> {
 	static LocationFieldFormat
 	ofPattern(final String pattern, final boolean optional) {
 		return new LocationFieldFormat(
-			Location.LocationField.ofPattern(pattern),
+			Field.ofPattern(pattern),
 			ValueFormat.ofPattern(pattern),
 			optional
 		);
