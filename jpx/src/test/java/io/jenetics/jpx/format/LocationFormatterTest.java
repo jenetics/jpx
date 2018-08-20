@@ -57,7 +57,7 @@ public class LocationFormatterTest {
 	@Test
 	public void format() {
 		final Latitude latitude = Latitude.ofDegrees(16.44977221);
-		System.out.println(LocationFormatter.ISO_HUMAN_LONG.format(latitude));
+		System.out.println(LocationFormatter.ISO_HUMAN_LONG.format(Location.of(latitude)));
 	}
 
 	//@Test(dataProvider = "latitudes")
@@ -67,7 +67,7 @@ public class LocationFormatterTest {
 
 		final String format = row[1];
 		Assert.assertEquals(
-			LocationFormatter.ISO_HUMAN_LONG.format(latitude),
+			LocationFormatter.ISO_HUMAN_LONG.format(Location.of(latitude)),
 			format
 		);
 	}

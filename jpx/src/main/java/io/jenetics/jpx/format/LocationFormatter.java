@@ -85,15 +85,6 @@ public class LocationFormatter {
 		_formats = requireNonNull(formats);
 	}
 
-	String format(final Location location) {
-		requireNonNull(location);
-		DateTimeFormatter f;
-
-		return _formats.stream()
-			.map(format -> format.format(location))
-			.collect(Collectors.joining());
-	}
-
 
 	public static LocationFormatter ofPattern(final String pattern) {
 		final StringBuilder out = new StringBuilder();
@@ -137,12 +128,6 @@ public class LocationFormatter {
 		private Builder() {
 		}
 
-		/**
-		 *
-		 *
-		 * @param pattern
-		 * @return
-		 */
 		public Builder append(final String pattern) {
 			return null;
 		}
@@ -156,12 +141,6 @@ public class LocationFormatter {
 			return this;
 		}
 
-		/**
-		 * Append the given location field pattern to this builder.
-		 *
-		 * @param pattern
-		 * @return
-		 */
 		public Builder appendFieldFormat(final String pattern) {
 			_formats.add(LocationFieldFormat.ofPattern(pattern, false));
 			return this;
@@ -174,36 +153,46 @@ public class LocationFormatter {
 	}
 
 
-	public String format(final Latitude lat, final Longitude lon, final Length ele) {
-		return format(Location.of(lat, lon, ele));
+	public String format(final Location location) {
+		requireNonNull(location);
+		DateTimeFormatter f;
+
+		return _formats.stream()
+			.map(format -> format.format(location))
+			.collect(Collectors.joining());
 	}
 
-	public String format(final Latitude lat, final Longitude lon) {
-		return format(lat, lon, null);
-	}
 
-	public String format(final Latitude lat) {
-		return format(lat, null, null);
-	}
-
-	public String format(final Longitude lon) {
-		return format(null, lon, null);
-	}
-
-	public String format(final Length ele) {
-		return format(null, null, ele);
-	}
-
-	public Location parse(final CharSequence text, final ParsePosition pos) {
-		return null;
-	}
-
-	public Location parse(final CharSequence text) {
-		return null;
-	}
-
-	public LocationFormatter withLocal(final Locale locale) {
-		return this;
-	}
+//	public String format(final Latitude lat, final Longitude lon, final Length ele) {
+//		return format(Location.of(lat, lon, ele));
+//	}
+//
+//	public String format(final Latitude lat, final Longitude lon) {
+//		return format(lat, lon, null);
+//	}
+//
+//	public String format(final Latitude lat) {
+//		return format(lat, null, null);
+//	}
+//
+//	public String format(final Longitude lon) {
+//		return format(null, lon, null);
+//	}
+//
+//	public String format(final Length ele) {
+//		return format(null, null, ele);
+//	}
+//
+//	public Location parse(final CharSequence text, final ParsePosition pos) {
+//		return null;
+//	}
+//
+//	public Location parse(final CharSequence text) {
+//		return null;
+//	}
+//
+//	public LocationFormatter withLocal(final Locale locale) {
+//		return this;
+//	}
 
 }
