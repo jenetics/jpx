@@ -41,18 +41,27 @@ import io.jenetics.jpx.Longitude;
  * For example, {@code DD°MM'SS.SSS"X} will format to, for example,
  * {@code 60°15'59.613"N}. A formatter created from a pattern can be used as
  * many times as necessary, it is immutable and is thread-safe.
- *
- * <pre>
- *  Symbol  Meaning                     Presentation      Examples
- *  ------  -------                     ------------      -------
- *   G       era                         text              AD; Anno Domini; A
- *   u       year                        year              2004; 04
- *   y       year-of-era                 year              2004; 04
- *   D       day-of-year                 number            189
- *   M/L     month-of-year               number/text       7; 07; Jul; July; J
- *   d       day-of-month                number            10
- * </pre>
- *
+ * <table class="striped">
+ * <caption><b>Pattern Letters and Symbols</b></caption>
+ * <thead>
+ *  <tr><th scope="col">Symbol</th>   <th scope="col">Meaning</th>         <th scope="col">Examples</th>
+ * </thead>
+ * <tbody>
+ *   <tr><th scope="row">D</th>       <td>degree part of latitude</td>     <td>34; 23.2332</td>
+ *   <tr><th scope="row">M</th>       <td>minute part of latitude</td>     <td>45; 45.6</td>
+ *   <tr><th scope="row">S</th>       <td>second part of latitude</td>     <td>7; 07</td>
+ *   <tr><th scope="row">X</th>       <td>hemisphere (N or S)</td>         <td>N; S</td>
+ *   <tr><th scope="row">d</th>       <td>degree part of longitude</td>    <td>34; 23.2332</td>
+ *   <tr><th scope="row">m</th>       <td>minute part of longitude</td>    <td>45; 45.6</td>
+ *   <tr><th scope="row">s</th>       <td>second part of longitude</td>    <td>7; 07</td>
+ *   <tr><th scope="row">x</th>       <td>east longitude or west longitude (E or W)</td><td>E; W</td>
+ *   <tr><th scope="row">E</th>       <td>elevation in meters</td>         <td>234; 1023</td>
+ *   <tr><th scope="row">'</th>       <td>escape for text</td>             <td></td>
+ *   <tr><th scope="row">''</th>      <td>single quote</td>                <td>'</td>
+ *   <tr><th scope="row">[</th>       <td>optional section start</td>      <td></td>
+ *   <tr><th scope="row">]</th>       <td>optional section end</td>        <td></td>
+ * </tbody>
+ * </table>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
