@@ -19,11 +19,15 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
+import io.jenetics.jpx.Point;
+import io.jenetics.jpx.WayPoint;
 
 /**
  * Aggregation of the three location components: latitude, longitude and
@@ -76,6 +80,37 @@ public final class Location {
 	 */
 	public Optional<Length> elevation() {
 		return Optional.ofNullable(_elevation);
+	}
+
+	/**
+	 * Return a new {@link Point} from {@code this} location. If the
+	 * {@link #latitude()} or the {@link #longitude()} is not given,
+	 * {@link Optional#empty()} is returned
+	 *
+	 * @return a new {@link Point} if the latitude and longitude is given,
+	 *         {@link Optional#empty()} otherwise
+	 */
+	public Optional<Point> toPoint() {
+		return latitude().flatMap(lat ->
+			longitude()
+				.map(lon -> WayPoint.of(lat, lon, _elevation, null))
+		);
+	}
+
+	/**
+	 * Create a new location form the given GPS point.
+	 *
+	 * @param point the GPS point
+	 * @return a new location form the given GPS point
+	 * @throws NullPointerException if the given {@code point} is {@code null}
+	 */
+	public static Location of(final Point point) {
+		requireNonNull(point);
+		return of(
+			point.getLatitude(),
+			point.getLongitude(),
+			point.getElevation().orElse(null)
+		);
 	}
 
 	/**
