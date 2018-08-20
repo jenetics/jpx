@@ -70,7 +70,8 @@ final class LocationFieldFormat implements Format<Location> {
 	 * @param optional marks this field format as optional
 	 * @return a new format object from the given pattern
 	 */
-	static LocationFieldFormat ofPattern(final String pattern, final boolean optional) {
+	static LocationFieldFormat
+	ofPattern(final String pattern, final boolean optional) {
 		return new LocationFieldFormat(
 			LocationField.ofPattern(pattern),
 			ValueFormat.ofPattern(pattern),

@@ -93,7 +93,7 @@ enum LocationField {
 	 */
 	static LocationField ofPattern(final String pattern) {
 		switch (pattern.charAt(0)) {
-			case 'H':
+			case 'E':
 				return ELEVATION;
 			case 'D': case 'M': case 'S': case 'X':
 				return LATITUDE;

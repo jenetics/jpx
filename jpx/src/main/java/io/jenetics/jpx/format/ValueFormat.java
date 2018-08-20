@@ -59,7 +59,7 @@ abstract class ValueFormat implements Format<Double> {
 				return new MinutesFormat(toNumberFormat(pattern));
 			case 'S': case 's':
 				return new SecondsFormat(toNumberFormat(pattern));
-			case 'H': return ele -> new DecimalFormat(pattern).format(ele);
+			case 'E': return ele -> new DecimalFormat(pattern).format(ele);
 			case '+': return new FixSignFormat();
 			case 'X': return new HemisphereFormat();
 			case 'x': return new LonFormat();
