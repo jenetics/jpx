@@ -137,6 +137,10 @@ public class LocationFormatter {
 		private Builder() {
 		}
 
+		public Builder appendLatitudeDegree() {
+			return this;
+		}
+
 		public Builder appendLiteral(final String literal) {
 			_formats.add(ConstFormat.of(literal));
 			return this;

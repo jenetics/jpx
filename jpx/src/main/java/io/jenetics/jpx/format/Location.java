@@ -19,9 +19,12 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Length.Unit.METER;
 
 import java.util.Optional;
+import java.util.function.Function;
 
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
@@ -164,4 +167,81 @@ public final class Location {
 		return new Location(null, longitude, null);
 	}
 
+	/**
+	 * Represents one of the existing location fields: latitude, longitude and
+	 * elevation.
+	 *
+	 * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+	 * @version !__version__!
+	 * @since !__version__!
+	 */
+	enum LocationField {
+
+		LATITUDE(
+			"latitude",
+			loc -> loc.latitude().map(Latitude::toDegrees)
+		),
+
+		LONGITUDE(
+			"longitude",
+			loc -> loc.longitude().map(Longitude::toDegrees)
+		),
+
+		ELEVATION(
+			"elevation",
+			loc -> loc.elevation().map(l -> l.to(METER))
+		);
+
+		private final String _name;
+		private final Function<Location, Optional<Double>> _value;
+
+		LocationField(
+			final String name,
+			final Function<Location, Optional<Double>> value
+		) {
+			_name = requireNonNull(name);
+			_value = requireNonNull(value);
+		}
+
+		/**
+		 * Return the name of the location field.
+		 *
+		 * @return the name of the location field
+		 */
+		String fieldName() {
+			return _name;
+		}
+
+		/**
+		 * Extracts the (double) value from the given location field.
+		 *
+		 * @param location the location
+		 * @return the value of the location field
+		 */
+		Optional<Double> value(final Location location) {
+			return _value.apply(requireNonNull(location));
+		}
+
+		/**
+		 * Return the location field for the given location pattern:
+		 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
+		 *
+		 * @param pattern the location pattern
+		 * @return the location field for the given location pattern
+		 */
+		static LocationField ofPattern(final String pattern) {
+			switch (pattern.charAt(0)) {
+				case 'E':
+					return ELEVATION;
+				case 'D': case 'M': case 'S': case 'X':
+					return LATITUDE;
+				case 'd': case 'm': case 's': case 'x':
+					return LONGITUDE;
+				default: throw new IllegalArgumentException(format(
+					"Unknown field type: %s", pattern
+				));
+			}
+		}
+
+	}
 }

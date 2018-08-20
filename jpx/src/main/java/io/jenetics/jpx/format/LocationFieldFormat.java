@@ -34,12 +34,12 @@ import java.util.Optional;
  */
 final class LocationFieldFormat implements Format<Location> {
 
-	private final LocationField _field;
+	private final Location.LocationField _field;
 	private final Format<Double> _format;
 	private final boolean _optional;
 
 	private LocationFieldFormat(
-		final LocationField field,
+		final Location.LocationField field,
 		final Format<Double> format,
 		final boolean optional
 	) {
@@ -73,7 +73,7 @@ final class LocationFieldFormat implements Format<Location> {
 	static LocationFieldFormat
 	ofPattern(final String pattern, final boolean optional) {
 		return new LocationFieldFormat(
-			LocationField.ofPattern(pattern),
+			Location.LocationField.ofPattern(pattern),
 			ValueFormat.ofPattern(pattern),
 			optional
 		);
