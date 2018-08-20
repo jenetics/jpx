@@ -33,7 +33,7 @@ import io.jenetics.jpx.Longitude;
  * @version !__version__!
  * @since !__version__!
  */
-final class Location {
+public final class Location {
 	private final Latitude _latitude;
 	private final Longitude _longitude;
 	private final Length _elevation;
@@ -48,24 +48,83 @@ final class Location {
 		_elevation = elevation;
 	}
 
-	Optional<Latitude> latitude() {
+	/**
+	 * Return the <em>latitude</em> of {@code this} location.
+	 *
+	 * @return the <em>latitude</em> of {@code this} location, or
+	 *         {@link Optional#empty()} if not available
+	 */
+	public Optional<Latitude> latitude() {
 		return Optional.ofNullable(_latitude);
 	}
 
-	Optional<Longitude> longitude() {
+	/**
+	 * Return the <em>longitude</em> of {@code this} location.
+	 *
+	 * @return the <em>longitude</em> of {@code this} location, or
+	 *         {@link Optional#empty()} if not available
+	 */
+	public Optional<Longitude> longitude() {
 		return Optional.ofNullable(_longitude);
 	}
 
-	Optional<Length> elevation() {
+	/**
+	 * Return the <em>elevation</em> of {@code this} location.
+	 *
+	 * @return the <em>elevation</em> of {@code this} location, or
+	 *         {@link Optional#empty()} if not available
+	 */
+	public Optional<Length> elevation() {
 		return Optional.ofNullable(_elevation);
 	}
 
-	static Location of(
+	/**
+	 * Create a new <em>location</em> object from the given {@code latitude},
+	 * {@code longitude} and {@code elevation}.
+	 *
+	 * @param latitude the latitude of the location, maybe {@code null}
+	 * @param longitude the longitude of the location, maybe {@code null}
+	 * @param elevation the elevation if the location, maybe {@code null}
+	 * @return a new location object from the given input data
+	 */
+	public static Location of(
 		final Latitude latitude,
 		final Longitude longitude,
 		final Length elevation
 	) {
 		return new Location(latitude, longitude, elevation);
+	}
+
+	/**
+	 * Create a new <em>location</em> object from the given {@code latitude}
+	 * and {@code longitude}.
+	 *
+	 * @param latitude the latitude of the location, maybe {@code null}
+	 * @param longitude the longitude of the location, maybe {@code null}
+	 * @return a new location object from the given input data
+	 */
+	public static Location of(final Latitude latitude, final Longitude longitude) {
+		return new Location(latitude, longitude, null);
+	}
+
+	/**
+	 * Create a new <em>location</em> object from the given {@code latitude}.
+	 *
+	 * @param latitude the latitude of the location, maybe {@code null}
+	 * @return a new location object from the given input data
+	 */
+	public static Location of(final Latitude latitude) {
+		return new Location(latitude, null, null);
+	}
+
+	/**
+	 * Create a new <em>location</em> object from the given {@code longitude}.
+	 *
+	 * @param longitude the longitude of the location, maybe {@code null}
+	 * @return a new location object from the given input data
+	 */
+	public static Location of(final Longitude longitude) {
+		return new Location(null, longitude, null);
 	}
 
 }
