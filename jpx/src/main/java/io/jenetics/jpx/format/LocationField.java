@@ -57,7 +57,7 @@ enum LocationField {
 	private final String _name;
 	private final Function<Location, Optional<Double>> _value;
 
-	private LocationField(
+	LocationField(
 		final String name,
 		final Function<Location, Optional<Double>> value
 	) {

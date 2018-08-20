@@ -21,6 +21,8 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
+
 /**
  * This class formats a given location field (latitude, longitude or elevation)
  * with the given double value format. E.g. {@code DD}, {@code ss.sss} or
@@ -34,22 +36,46 @@ final class LocationFieldFormat implements Format<Location> {
 
 	private final LocationField _field;
 	private final Format<Double> _format;
+	private final boolean _optional;
 
 	private LocationFieldFormat(
 		final LocationField field,
-		final Format<Double> format
+		final Format<Double> format,
+		final boolean optional
 	) {
 		_field = requireNonNull(field);
 		_format = requireNonNull(format);
+		_optional = optional;
 	}
 
 	@Override
 	public String format(final Location location) {
-		final double value = _field.value(location)
-			.orElseThrow(() -> new IllegalArgumentException(String.format(
-				"No '%s' value.", _field.fieldName())));
+		final Optional<String> text = _field.value(location)
+			.map(_format::format);
 
-		return _format.format(value);
+		if (!text.isPresent() && !_optional) {
+			throw new IllegalArgumentException(String.format(
+				"No '%s' value.", _field.fieldName())
+			);
+		}
+
+		return text.orElseThrow(AssertionError::new);
+	}
+
+	/**
+	 * Return a new location field format object form the given pattern:
+	 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
+	 *
+	 * @param pattern the location field pattern
+	 * @param optional marks this field format as optional
+	 * @return a new format object from the given pattern
+	 */
+	static LocationFieldFormat ofPattern(final String pattern, final boolean optional) {
+		return new LocationFieldFormat(
+			LocationField.ofPattern(pattern),
+			ValueFormat.ofPattern(pattern),
+			optional
+		);
 	}
 
 	/**
@@ -60,10 +86,7 @@ final class LocationFieldFormat implements Format<Location> {
 	 * @return a new format object from the given pattern
 	 */
 	static LocationFieldFormat ofPattern(final String pattern) {
-		return new LocationFieldFormat(
-			LocationField.ofPattern(pattern),
-			ValueFormat.ofPattern(pattern)
-		);
+		return ofPattern(pattern, false);
 	}
 
 }

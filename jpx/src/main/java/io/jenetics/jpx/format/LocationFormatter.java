@@ -134,7 +134,7 @@ public class LocationFormatter {
 		}
 
 		public Builder appendFieldFormat(final String pattern) {
-			_formats.add(LocationFieldFormat.ofPattern(pattern));
+			_formats.add(LocationFieldFormat.ofPattern(pattern, false));
 			return this;
 		}
 
