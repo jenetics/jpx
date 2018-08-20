@@ -137,7 +137,17 @@ public class LocationFormatter {
 		private Builder() {
 		}
 
-		public Builder appendLatitudeDegree() {
+		/**
+		 *
+		 *
+		 * @param pattern
+		 * @return
+		 */
+		public Builder append(final String pattern) {
+			return null;
+		}
+
+		public Builder append(final Location.Field field, final String pattern) {
 			return this;
 		}
 
@@ -146,6 +156,12 @@ public class LocationFormatter {
 			return this;
 		}
 
+		/**
+		 * Append the given location field pattern to this builder.
+		 *
+		 * @param pattern
+		 * @return
+		 */
 		public Builder appendFieldFormat(final String pattern) {
 			_formats.add(LocationFieldFormat.ofPattern(pattern, false));
 			return this;
