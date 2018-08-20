@@ -21,6 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.ParsePosition;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +163,14 @@ public class LocationFormatter {
 
 	public String format(final Length ele) {
 		return format(null, null, ele);
+	}
+
+	public Location parse(final CharSequence text, final ParsePosition pos) {
+		return null;
+	}
+
+	public Location parse(final CharSequence text) {
+		return null;
 	}
 
 	public LocationFormatter withLocal(final Locale locale) {
