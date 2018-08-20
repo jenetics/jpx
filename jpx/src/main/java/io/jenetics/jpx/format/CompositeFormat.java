@@ -21,22 +21,27 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-final class OptionalFormat implements Format<Location> {
+final class CompositeFormat<T> implements Format<T> {
 
-	private final Format<Location> _format;
+	private final List<Format<T>> _formats;
 
-	OptionalFormat(final Format<Location> format) {
-		_format = requireNonNull(format);
+	CompositeFormat(final List<Format<T>> formats) {
+		_formats = requireNonNull(formats);
 	}
 
 	@Override
-	public String format(Location value) {
-		return _format.format(value);
+	public String format(final T value) {
+		return _formats.stream()
+			.map(format -> format.format(value))
+			.collect(Collectors.joining());
 	}
 
 }
