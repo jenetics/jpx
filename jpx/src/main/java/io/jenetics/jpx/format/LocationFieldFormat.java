@@ -21,7 +21,9 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.NumberFormat;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 import io.jenetics.jpx.format.Location.Field;
 
@@ -37,11 +39,11 @@ import io.jenetics.jpx.format.Location.Field;
 final class LocationFieldFormat implements Format<Location> {
 
 	private final Field _field;
-	private final Format<Double> _format;
+	private final Supplier<NumberFormat> _format;
 
-	private LocationFieldFormat(
+	LocationFieldFormat(
 		final Field field,
-		final Format<Double> format
+		final Supplier<NumberFormat> format
 	) {
 		_field = requireNonNull(field);
 		_format = requireNonNull(format);
@@ -49,7 +51,7 @@ final class LocationFieldFormat implements Format<Location> {
 
 	@Override
 	public Optional<String> format(final Location location) {
-		return _field.value(location).flatMap(_format::format);
+		return _field.apply(location).map(v -> _format.get().format(v));
 	}
 
 	/**
@@ -63,7 +65,7 @@ final class LocationFieldFormat implements Format<Location> {
 	ofPattern(final String pattern) {
 		return new LocationFieldFormat(
 			Field.ofPattern(pattern),
-			ValueFormat.ofPattern(pattern)
+			null //ValueFormat.ofPattern(pattern)
 		);
 	}
 

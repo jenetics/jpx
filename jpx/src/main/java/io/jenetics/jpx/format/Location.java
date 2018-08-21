@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.floor;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Length.Unit.METER;
@@ -180,11 +182,32 @@ public final class Location {
 	 * @version !__version__!
 	 * @since !__version__!
 	 */
-	public enum Field {
+	public enum Field implements Function<Location, Optional<Double>> {
 
 		LATITUDE(
 			"latitude",
 			loc -> loc.latitude().map(Latitude::toDegrees)
+		),
+
+		DEGREE_OF_LATITUDE(
+			"latitude",
+			loc -> loc.latitude()
+				.map(Latitude::toDegrees)
+				.map(Field::toDegrees)
+		),
+
+		MINUTE_OF_LATITUDE(
+			"latitude",
+			loc -> loc.latitude()
+				.map(Latitude::toDegrees)
+				.map(Field::toMinutes)
+		),
+
+		SECOND_OF_LATITUDE(
+			"latitude",
+			loc -> loc.latitude()
+				.map(Latitude::toDegrees)
+				.map(Field::toSeconds)
 		),
 
 		LONGITUDE(
@@ -192,20 +215,42 @@ public final class Location {
 			loc -> loc.longitude().map(Longitude::toDegrees)
 		),
 
+		DEGREE_OF_LONGITUDE(
+			"longitude",
+			loc -> loc.longitude()
+				.map(Longitude::toDegrees)
+				.map(Field::toDegrees)
+		),
+
+		MINUTE_OF_LONGITUDE(
+			"latitude",
+			loc -> loc.longitude()
+				.map(Longitude::toDegrees)
+				.map(Field::toMinutes)
+		),
+
+		SECOND_OF_LONGITUDE(
+			"latitude",
+			loc -> loc.longitude()
+				.map(Longitude::toDegrees)
+				.map(Field::toSeconds)
+		),
+
 		ELEVATION(
 			"elevation",
-			loc -> loc.elevation().map(l -> l.to(METER))
+			loc -> loc.elevation()
+				.map(l -> l.to(METER))
 		);
 
 		private final String _name;
-		private final Function<Location, Optional<Double>> _value;
+		private final Function<Location, Optional<Double>> _accessor;
 
 		Field(
 			final String name,
-			final Function<Location, Optional<Double>> value
+			final Function<Location, Optional<Double>> accessor
 		) {
 			_name = requireNonNull(name);
-			_value = requireNonNull(value);
+			_accessor = requireNonNull(accessor);
 		}
 
 		/**
@@ -213,7 +258,7 @@ public final class Location {
 		 *
 		 * @return the name of the location field
 		 */
-		String fieldName() {
+		public String fieldName() {
 			return _name;
 		}
 
@@ -223,8 +268,8 @@ public final class Location {
 		 * @param location the location
 		 * @return the value of the location field
 		 */
-		Optional<Double> value(final Location location) {
-			return _value.apply(requireNonNull(location));
+		public Optional<Double> apply(final Location location) {
+			return _accessor.apply(requireNonNull(location));
 		}
 
 		/**
@@ -242,19 +287,35 @@ public final class Location {
 			switch (pattern.charAt(0)) {
 				case 'E':
 					return ELEVATION;
-				case 'D': case 'M': case 'S': case 'X':
-					return LATITUDE;
-				case 'd': case 'm': case 's': case 'x':
-					return LONGITUDE;
+				case 'D':
+					return DEGREE_OF_LATITUDE;
+				case 'M':
+					return MINUTE_OF_LATITUDE;
+				case 'S':
+					return SECOND_OF_LATITUDE;
+				case 'X':
 				default: throw new IllegalArgumentException(format(
 					"Unknown field type: %s", pattern
 				));
 			}
 		}
 
-		public enum Part {
-			DEGREE, MINUTE, SECOND, METER
+		private static double toDegrees(final double degrees) {
+			return abs(degrees);
 		}
+
+		private static double toMinutes(final double degrees) {
+			final double dd = abs(degrees);
+			return (dd - floor(dd))*60.0;
+		}
+
+		private static double toSeconds(final double degrees) {
+			final double dd = abs(degrees);
+			final double d = floor(dd);
+			final double m = floor((dd - d)*60.0);
+			return (dd - d - m/60.0)*3600.0;
+		}
+
 	}
 
 }

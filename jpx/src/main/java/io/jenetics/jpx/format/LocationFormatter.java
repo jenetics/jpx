@@ -21,6 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.format.DateTimeFormatter;
@@ -28,13 +29,14 @@ import java.time.format.SignStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.format.Location.Field;
-import io.jenetics.jpx.format.Location.Field.Part;
 
 /**
  * Formatter for printing and parsing geographic location objects.
@@ -74,6 +76,17 @@ import io.jenetics.jpx.format.Location.Field.Part;
 public class LocationFormatter {
 
 	public static final LocationFormatter ISO_HUMAN_LONG = builder()
+		.append(Field.DEGREE_OF_LATITUDE, "##")
+		.appendLiteral("°")
+		.append(Field.MINUTE_OF_LATITUDE, "##")
+		.appendLiteral("'")
+		.append(Field.SECOND_OF_LATITUDE, "##.###")
+		.appendLiteral("\"")
+		.build();
+
+
+		/*
+		builder()
 		.appendFieldFormat("DD")
 		.appendLiteral("°")
 		.appendFieldFormat("MM")
@@ -81,7 +94,7 @@ public class LocationFormatter {
 		.appendFieldFormat("SS")
 		.appendLiteral("\"")
 		.appendFieldFormat("X")
-		.build();
+		.build();*/
 
 	private final List<Format<Location>> _formats;
 
@@ -149,6 +162,21 @@ public class LocationFormatter {
 			return this;
 		}
 
+		public Builder append(
+			final Location.Field field,
+			final Supplier<NumberFormat> format
+		) {
+			_formats.add(new LocationFieldFormat(field, format));
+			return this;
+		}
+
+		public Builder append(
+			final Location.Field field,
+			final String decimalPattern
+		) {
+			return append(field, () -> new DecimalFormat(decimalPattern));
+		}
+
 		/**
 		 * Appends the value of a location field to the formatter providing full
 		 * control over formatting. The value of the field will be output during
@@ -159,7 +187,6 @@ public class LocationFormatter {
 		 * including zero-padding and the positive/negative sign.
 		 *
 		 * @param field the location field to be appended
-		 * @param unit the location unit to be appended
 		 * @param minWidth the minimum field width of the printed field, from 1
 		 *        to 19
 		 * @param maxWidth he maximum field width of the printed field, from 1
@@ -173,7 +200,6 @@ public class LocationFormatter {
 		 */
 		public Builder appendValue(
 			final Location.Field field,
-			final Location.Field.Part unit,
 			final int minWidth,
 			final int maxWidth,
 			final SignStyle signStyle
@@ -195,9 +221,6 @@ public class LocationFormatter {
 					"The maximum width must exceed or equal the minimum width but %d < %d.",
 					maxWidth, minWidth
 				));
-			}
-			if (unit == Part.METER && field != Field.ELEVATION) {
-				throw new IllegalArgumentException();
 			}
 
 			return this;
