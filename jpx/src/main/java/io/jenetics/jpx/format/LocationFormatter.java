@@ -137,12 +137,12 @@ public class LocationFormatter {
 		}
 
 		public Builder appendLiteral(final String literal) {
-			_formats.add(ConstFormat.of(literal));
+			_formats.add(new ConstFormat<>(literal));
 			return this;
 		}
 
 		public Builder appendFieldFormat(final String pattern) {
-			_formats.add(LocationFieldFormat.ofPattern(pattern, false));
+			_formats.add(LocationFieldFormat.ofPattern(pattern));
 			return this;
 		}
 
@@ -158,7 +158,8 @@ public class LocationFormatter {
 		DateTimeFormatter f;
 
 		return _formats.stream()
-			.map(format -> format.format(location))
+			.map(format -> format.format(location)
+				.orElseThrow(() -> new IllegalArgumentException("Invalid location format.")))
 			.collect(Collectors.joining());
 	}
 

@@ -38,30 +38,18 @@ final class LocationFieldFormat implements Format<Location> {
 
 	private final Field _field;
 	private final Format<Double> _format;
-	private final boolean _optional;
 
 	private LocationFieldFormat(
 		final Field field,
-		final Format<Double> format,
-		final boolean optional
+		final Format<Double> format
 	) {
 		_field = requireNonNull(field);
 		_format = requireNonNull(format);
-		_optional = optional;
 	}
 
 	@Override
-	public String format(final Location location) {
-		final Optional<String> text = _field.value(location)
-			.map(_format::format);
-
-		if (!text.isPresent() && !_optional) {
-			throw new IllegalArgumentException(String.format(
-				"No '%s' value.", _field.fieldName())
-			);
-		}
-
-		return text.orElseThrow(AssertionError::new);
+	public Optional<String> format(final Location location) {
+		return _field.value(location).flatMap(_format::format);
 	}
 
 	/**
@@ -69,27 +57,14 @@ final class LocationFieldFormat implements Format<Location> {
 	 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
 	 *
 	 * @param pattern the location field pattern
-	 * @param optional marks this field format as optional
 	 * @return a new format object from the given pattern
 	 */
 	static LocationFieldFormat
-	ofPattern(final String pattern, final boolean optional) {
+	ofPattern(final String pattern) {
 		return new LocationFieldFormat(
 			Field.ofPattern(pattern),
-			ValueFormat.ofPattern(pattern),
-			optional
+			ValueFormat.ofPattern(pattern)
 		);
-	}
-
-	/**
-	 * Return a new location field format object form the given pattern:
-	 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
-	 *
-	 * @param pattern the location field pattern
-	 * @return a new format object from the given pattern
-	 */
-	static LocationFieldFormat ofPattern(final String pattern) {
-		return ofPattern(pattern, false);
 	}
 
 }

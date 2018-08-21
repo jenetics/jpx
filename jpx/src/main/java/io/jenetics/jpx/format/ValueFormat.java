@@ -26,6 +26,7 @@ import static java.util.Objects.requireNonNull;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -59,8 +60,8 @@ abstract class ValueFormat implements Format<Double> {
 				return new MinutesFormat(toNumberFormat(pattern));
 			case 'S': case 's':
 				return new SecondsFormat(toNumberFormat(pattern));
-			case 'E': return ele -> new DecimalFormat(pattern).format(ele);
-			case '+': return new FixSignFormat();
+			case 'E': return new DecFormat(pattern);
+			case '+': return new SignFormat();
 			case 'X': return new HemisphereFormat();
 			case 'x': return new LonFormat();
 			default: throw new IllegalArgumentException(String.format(
@@ -100,9 +101,9 @@ abstract class ValueFormat implements Format<Double> {
 			super(format);
 		}
 		@Override
-		public String format(final Double degrees) {
+		public Optional<String> format(final Double degrees) {
 			final double dd = abs(degrees);
-			return _format.get().format(dd);
+			return Optional.of(_format.get().format(dd));
 		}
 	}
 
@@ -114,10 +115,10 @@ abstract class ValueFormat implements Format<Double> {
 			super(format);
 		}
 		@Override
-		public String format(final Double degrees) {
+		public Optional<String> format(final Double degrees) {
 			final double dd = abs(degrees);
 			final double minutes = (dd - floor(dd))*60.0;
-			return _format.get().format(minutes);
+			return Optional.of(_format.get().format(minutes));
 		}
 	}
 
@@ -129,33 +130,44 @@ abstract class ValueFormat implements Format<Double> {
 			super(format);
 		}
 		@Override
-		public String format(final Double degrees) {
+		public Optional<String> format(final Double degrees) {
 			final double dd = abs(degrees);
 			final double d = floor(dd);
 			final double m = floor((dd - d)*60.0);
 			final double s = (dd - d - m/60.0)*3600.0;
-			return _format.get().format(s);
+			return Optional.of(_format.get().format(s));
 		}
 	}
 
-	private static final class FixSignFormat implements Format<Double> {
+	private static final class SignFormat implements Format<Double> {
 		@Override
-		public String format(final Double value) {
-			return Double.compare(value, 0.0) >= 0 ? "+" : "-";
+		public Optional<String> format(final Double value) {
+			return Optional.of(Double.compare(value, 0.0) >= 0 ? "+" : "-");
 		}
 	}
 
 	private static final class HemisphereFormat implements Format<Double> {
 		@Override
-		public String format(final Double value) {
-			return Double.compare(value, 0.0) >= 0 ? "N" : "S";
+		public Optional<String> format(final Double value) {
+			return Optional.of(Double.compare(value, 0.0) >= 0 ? "N" : "S");
 		}
 	}
 
 	private static final class LonFormat implements Format<Double> {
 		@Override
-		public String format(final Double value) {
-			return Double.compare(value, 0.0) >= 0 ? "E" : "W";
+		public Optional<String> format(final Double value) {
+			return Optional.of(Double.compare(value, 0.0) >= 0 ? "E" : "W");
+		}
+	}
+
+	private static final class DecFormat implements Format<Double> {
+		private final String _pattern;
+		private DecFormat(final String pattern) {
+			_pattern = pattern;
+		}
+		@Override
+		public Optional<String> format(final Double value) {
+			return Optional.of(new DecimalFormat(_pattern).format(value));
 		}
 	}
 

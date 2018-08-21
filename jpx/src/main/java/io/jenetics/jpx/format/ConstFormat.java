@@ -21,6 +21,8 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
+
 /**
  * A format object which returns a constant value.
  *
@@ -28,28 +30,23 @@ import static java.util.Objects.requireNonNull;
  * @version !__version__!
  * @since !__version__!
  */
-final class ConstFormat implements Format<Location> {
+final class ConstFormat<T> implements Format<T> {
 
 	private final String _value;
 
-	private ConstFormat(final String value) {
+	/**
+	 * Create a new <em>constant</em> location format object.
+	 *
+	 * @param value the constant value, returned by the
+	 *        {@link Format#format(Object)} method
+	 */
+	ConstFormat(final String value) {
 		_value = requireNonNull(value);
 	}
 
 	@Override
-	public String format(final Location loc) {
-		return _value;
-	}
-
-	/**
-	 * Return a new <em>constant</em> location format object.
-	 *
-	 * @param value the constant value, returned by the
-	 *        {@link Format#format(Object)} method
-	 * @return a new <em>constant</em> location format object
-	 */
-	static ConstFormat of(final String value) {
-		return new ConstFormat(value);
+	public Optional<String> format(final T value) {
+		return Optional.of(_value);
 	}
 
 }

@@ -22,6 +22,7 @@ package io.jenetics.jpx.format;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -38,10 +39,18 @@ final class CompositeFormat<T> implements Format<T> {
 	}
 
 	@Override
-	public String format(final T value) {
-		return _formats.stream()
+	public Optional<String> format(final T value) {
+		final List<Optional<String>> strings = _formats.stream()
 			.map(format -> format.format(value))
-			.collect(Collectors.joining());
+			.collect(Collectors.toList());
+
+		final boolean complete = strings.stream().allMatch(Optional::isPresent);
+		return complete
+			? Optional.of(
+				strings.stream()
+					.map(s -> s.orElseThrow(AssertionError::new))
+					.collect(Collectors.joining()))
+			: Optional.empty();
 	}
 
 }

@@ -235,6 +235,10 @@ public final class Location {
 		 * @return the location field for the given location pattern
 		 */
 		static Field ofPattern(final String pattern) {
+			if (pattern.isEmpty()) {
+				throw new IllegalArgumentException("No empty pattern allowed.");
+			}
+
 			switch (pattern.charAt(0)) {
 				case 'E':
 					return ELEVATION;
