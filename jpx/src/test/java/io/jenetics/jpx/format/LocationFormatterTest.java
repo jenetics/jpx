@@ -51,13 +51,13 @@ public class LocationFormatterTest {
 	// -7.287954696138044 07°17'17"S 07°17'S -07.28795
 	//@Test
 	public void parsing() {
-		LocationFormatter.ofPattern("DD°MM'SS.SSS\"[NS] dd°mm'ss.sss\"[EW]");
+		//LocationFormatter.ofPattern("DD°MM'SS.SSS\"[NS] dd°mm'ss.sss\"[EW]");
 	}
 
-	//@Test
+	@Test
 	public void format() {
 		final Latitude latitude = Latitude.ofDegrees(16.44977221);
-		System.out.println(LocationFormatter.ISO_HUMAN_LONG.format(Location.of(latitude)));
+		System.out.println(LocationFormatter.ISO_HUMAN_LAT_LONG.format(Location.of(latitude)));
 	}
 
 	//@Test(dataProvider = "latitudes")
@@ -67,7 +67,7 @@ public class LocationFormatterTest {
 
 		final String format = row[1];
 		Assert.assertEquals(
-			LocationFormatter.ISO_HUMAN_LONG.format(Location.of(latitude)),
+			LocationFormatter.ISO_HUMAN_LAT_LONG.format(Location.of(latitude)),
 			format
 		);
 	}

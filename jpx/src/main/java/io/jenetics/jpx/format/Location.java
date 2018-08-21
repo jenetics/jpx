@@ -184,6 +184,10 @@ public final class Location {
 	 */
 	public enum Field implements Function<Location, Optional<Double>> {
 
+		/**
+		 * This field allows you to access the latitude value of a given
+		 * location object. The latitude value is returned in degrees.
+		 */
 		LATITUDE(
 			"latitude",
 			loc -> loc.latitude().map(Latitude::toDegrees)

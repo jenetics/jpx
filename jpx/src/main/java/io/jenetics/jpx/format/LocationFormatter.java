@@ -23,27 +23,20 @@ import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.time.format.DateTimeFormatter;
-import java.time.format.SignStyle;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import io.jenetics.jpx.Latitude;
-import io.jenetics.jpx.Length;
-import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.format.Location.Field;
 
 /**
  * Formatter for printing and parsing geographic location objects.
  * <h3 id="patterns">Patterns for Formatting and Parsing</h3>
  * Patterns are based on a simple sequence of letters and symbols. A pattern is
- * used to create a Formatter using the {@link #ofPattern(String)} and
- * {@link #ofPattern(String, Locale)} methods.
+ * used to create a Formatter using the {@code #ofPattern(String)} and
+ * {@code #ofPattern(String, Locale)} methods.
  * For example, {@code DD°MM'SS.SSS"X} will format to, for example,
  * {@code 60°15'59.613"N}. A formatter created from a pattern can be used as
  * many times as necessary, it is immutable and is thread-safe.
@@ -60,7 +53,7 @@ import io.jenetics.jpx.format.Location.Field;
  *   <tr><th scope="row">d</th>       <td>degree part of longitude</td>    <td>34; 23.2332</td>
  *   <tr><th scope="row">m</th>       <td>minute part of longitude</td>    <td>45; 45.6</td>
  *   <tr><th scope="row">s</th>       <td>second part of longitude</td>    <td>7; 07</td>
- *   <tr><th scope="row">x</th>       <td>east longitude or west longitude (E or W)</td><td>E; W</td>
+ *   <tr><th scope="row">x</th>       <td>hemisphere (E or W)</td>         <td>E; W</td>
  *   <tr><th scope="row">E</th>       <td>elevation in meters</td>         <td>234; 1023</td>
  *   <tr><th scope="row">'</th>       <td>escape for text</td>             <td></td>
  *   <tr><th scope="row">''</th>      <td>single quote</td>                <td>'</td>
@@ -75,58 +68,44 @@ import io.jenetics.jpx.format.Location.Field;
  */
 public class LocationFormatter {
 
-	public static final LocationFormatter ISO_HUMAN_LONG = builder()
-		.append(Field.DEGREE_OF_LATITUDE, "##")
+	/**
+	 * Latitude formatter with the pattern {@code DD°MM'SS.SSS"X}. Example:
+	 * {@code 16°27'59.180"N}.
+	 */
+	public static final LocationFormatter ISO_HUMAN_LAT_LONG = builder()
+		.append(Field.DEGREE_OF_LATITUDE, "00")
 		.appendLiteral("°")
-		.append(Field.MINUTE_OF_LATITUDE, "##")
+		.append(Field.MINUTE_OF_LATITUDE, "00")
 		.appendLiteral("'")
-		.append(Field.SECOND_OF_LATITUDE, "##.###")
+		.append(Field.SECOND_OF_LATITUDE, "00.000")
 		.appendLiteral("\"")
+		.appendNorthSouthHemisphere()
 		.build();
 
-
-		/*
-		builder()
-		.appendFieldFormat("DD")
+	/**
+	 * Longitude formatter with the pattern {@code dd°mm'ss.sss"x}. Example:
+	 * {@code 16°27'59.180"E}.
+	 */
+	public static final LocationFormatter ISO_HUMAN_LON_LONG = builder()
+		.append(Field.DEGREE_OF_LONGITUDE, "00")
 		.appendLiteral("°")
-		.appendFieldFormat("MM")
+		.append(Field.MINUTE_OF_LONGITUDE, "00")
 		.appendLiteral("'")
-		.appendFieldFormat("SS")
+		.append(Field.SECOND_OF_LONGITUDE, "00.000")
 		.appendLiteral("\"")
-		.appendFieldFormat("X")
-		.build();*/
+		.appendEastWestHemisphere()
+		.build();
+
+	public static final LocationFormatter ISO_HUMAN_LONG = builder()
+		.append(ISO_HUMAN_LAT_LONG)
+		.appendLiteral(" ")
+		.append(ISO_HUMAN_LON_LONG)
+		.build();
 
 	private final List<Format<Location>> _formats;
 
 	private LocationFormatter(final List<Format<Location>> formats) {
 		_formats = requireNonNull(formats);
-	}
-
-
-	public static LocationFormatter ofPattern(final String pattern) {
-		final StringBuilder out = new StringBuilder();
-
-		for (int i = 0; i < pattern.length(); ++i) {
-			final char c = pattern.charAt(i);
-			switch (c) {
-				case 'D':
-				case 'M':
-				case 'S':
-				case 'd':
-				case 'm':
-				case 's':
-				case 'H':
-				case '.':
-				case ',':
-				default:
-			}
-		}
-
-		return null;
-	}
-
-	public static LocationFormatter ofPattern(final String patter, final Locale locale) {
-		return null;
 	}
 
 	public static Builder builder() {
@@ -153,13 +132,19 @@ public class LocationFormatter {
 		 * formatter directly to this builder.
 		 *
 		 * @param formatter the formatter to add, not {@code null}
+		 * @param optional optional flag
 		 * @return {@code this}, for chaining, not {@code null}
 		 * @throws NullPointerException if the given {@code formatter} is
 		 *         {@code null}
 		 */
-		public Builder append(final LocationFormatter formatter) {
-			_formats.addAll(formatter._formats);
+		public Builder append(final LocationFormatter formatter, final boolean optional) {
+			final Format<Location> formats = new CompositeFormat<>(formatter._formats);
+			_formats.add(optional ? new OptionalFormat<>(formats) :  formats);
 			return this;
+		}
+
+		public Builder append(final LocationFormatter formatter) {
+			return append(formatter, false);
 		}
 
 		public Builder append(
@@ -170,82 +155,32 @@ public class LocationFormatter {
 			return this;
 		}
 
-		public Builder append(
-			final Location.Field field,
-			final String decimalPattern
-		) {
-			return append(field, () -> new DecimalFormat(decimalPattern));
+		public Builder append(final Location.Field field, final String pattern) {
+			return append(field, () -> new DecimalFormat(pattern));
 		}
 
-		/**
-		 * Appends the value of a location field to the formatter providing full
-		 * control over formatting. The value of the field will be output during
-		 * a format. If the value cannot be obtained then an exception will be
-		 * thrown.
-		 * <p>
-		 * This method provides full control of the numeric formatting,
-		 * including zero-padding and the positive/negative sign.
-		 *
-		 * @param field the location field to be appended
-		 * @param minWidth the minimum field width of the printed field, from 1
-		 *        to 19
-		 * @param maxWidth he maximum field width of the printed field, from 1
-		 *        to 19
-		 * @param signStyle the style
-		 * @return {@code this}, for chaining, not {@code null}
-		 * @throws IllegalArgumentException if {@code minWidth} or
-		 *         {@code maxWidth} is out of range
-		 * @throws NullPointerException if the given {@code formatter} is
-		 *         {@code null}
-		 */
-		public Builder appendValue(
-			final Location.Field field,
-			final int minWidth,
-			final int maxWidth,
-			final SignStyle signStyle
-		) {
-			if (minWidth < 1 || minWidth > 19) {
-				throw new IllegalArgumentException(String.format(
-					"The minimum width must be from 1 to 19 inclusive but was %d.",
-					minWidth
-				));
-			}
-			if (maxWidth < 1 || maxWidth > 19) {
-				throw new IllegalArgumentException(String.format(
-					"The maximum width must be from 1 to 19 inclusive but was %d.",
-					maxWidth
-				));
-			}
-			if (maxWidth < minWidth) {
-				throw new IllegalArgumentException(String.format(
-					"The maximum width must exceed or equal the minimum width but %d < %d.",
-					maxWidth, minWidth
-				));
-			}
-
+		public Builder appendLatitudeSign() {
+			_formats.add(new LatitudeSignFormat());
 			return this;
 		}
 
-		private static NumberFormat fractionFormat(final int minWidth, final int maxWidth) {
-			return null;
+		public Builder appendLongitudeSign() {
+			_formats.add(new LongitudeSignFormat());
+			return this;
 		}
 
-		public Builder appendFraction(
-			final Location.Field field,
-			final int minWidth,
-			final int maxWidth,
-			final boolean decimalPoint
-		) {
+		public Builder appendNorthSouthHemisphere() {
+			_formats.add(new NorthSouthFormat());
+			return this;
+		}
+
+		public Builder appendEastWestHemisphere() {
+			_formats.add(new EastWestFormat());
 			return this;
 		}
 
 		public Builder appendLiteral(final String literal) {
 			_formats.add(new ConstFormat<>(literal));
-			return this;
-		}
-
-		public Builder appendFieldFormat(final String pattern) {
-			_formats.add(LocationFieldFormat.ofPattern(pattern));
 			return this;
 		}
 
