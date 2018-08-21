@@ -251,5 +251,10 @@ public final class Location {
 				));
 			}
 		}
+
+		public enum Part {
+			DEGREE, MINUTE, SECOND, METER
+		}
 	}
+
 }

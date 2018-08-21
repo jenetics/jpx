@@ -21,8 +21,10 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.time.format.DateTimeFormatter;
+import java.time.format.SignStyle;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
+import io.jenetics.jpx.format.Location.Field;
+import io.jenetics.jpx.format.Location.Field.Part;
 
 /**
  * Formatter for printing and parsing geographic location objects.
@@ -117,7 +121,9 @@ public class LocationFormatter {
 	}
 
 	/**
-	 * Builder to create location formatters.
+	 * Builder to create location formatters. This allows a
+	 * {@code LocationFormatter} to be created. All location formatters are
+	 * created ultimately using this builder.
 	 *
 	 * @implNote
 	 * This class is a mutable builder intended for use from a single thread.
@@ -128,11 +134,85 @@ public class LocationFormatter {
 		private Builder() {
 		}
 
-		public Builder append(final String pattern) {
+		/**
+		 * Appends all the elements of a formatter to the builder. This method
+		 * has the same effect as appending each of the constituent parts of the
+		 * formatter directly to this builder.
+		 *
+		 * @param formatter the formatter to add, not {@code null}
+		 * @return {@code this}, for chaining, not {@code null}
+		 * @throws NullPointerException if the given {@code formatter} is
+		 *         {@code null}
+		 */
+		public Builder append(final LocationFormatter formatter) {
+			_formats.addAll(formatter._formats);
+			return this;
+		}
+
+		/**
+		 * Appends the value of a location field to the formatter providing full
+		 * control over formatting. The value of the field will be output during
+		 * a format. If the value cannot be obtained then an exception will be
+		 * thrown.
+		 * <p>
+		 * This method provides full control of the numeric formatting,
+		 * including zero-padding and the positive/negative sign.
+		 *
+		 * @param field the location field to be appended
+		 * @param unit the location unit to be appended
+		 * @param minWidth the minimum field width of the printed field, from 1
+		 *        to 19
+		 * @param maxWidth he maximum field width of the printed field, from 1
+		 *        to 19
+		 * @param signStyle the style
+		 * @return {@code this}, for chaining, not {@code null}
+		 * @throws IllegalArgumentException if {@code minWidth} or
+		 *         {@code maxWidth} is out of range
+		 * @throws NullPointerException if the given {@code formatter} is
+		 *         {@code null}
+		 */
+		public Builder appendValue(
+			final Location.Field field,
+			final Location.Field.Part unit,
+			final int minWidth,
+			final int maxWidth,
+			final SignStyle signStyle
+		) {
+			if (minWidth < 1 || minWidth > 19) {
+				throw new IllegalArgumentException(String.format(
+					"The minimum width must be from 1 to 19 inclusive but was %d.",
+					minWidth
+				));
+			}
+			if (maxWidth < 1 || maxWidth > 19) {
+				throw new IllegalArgumentException(String.format(
+					"The maximum width must be from 1 to 19 inclusive but was %d.",
+					maxWidth
+				));
+			}
+			if (maxWidth < minWidth) {
+				throw new IllegalArgumentException(String.format(
+					"The maximum width must exceed or equal the minimum width but %d < %d.",
+					maxWidth, minWidth
+				));
+			}
+			if (unit == Part.METER && field != Field.ELEVATION) {
+				throw new IllegalArgumentException();
+			}
+
+			return this;
+		}
+
+		private static NumberFormat fractionFormat(final int minWidth, final int maxWidth) {
 			return null;
 		}
 
-		public Builder append(final Location.Field field, final String pattern) {
+		public Builder appendFraction(
+			final Location.Field field,
+			final int minWidth,
+			final int maxWidth,
+			final boolean decimalPoint
+		) {
 			return this;
 		}
 
