@@ -20,6 +20,7 @@
 package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.format.Location.Field.LATITUDE;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -121,6 +122,30 @@ public final class LocationFormatter {
 				.append(ISO_HUMAN_ELE_LONG)
 				.build(),
 			true)
+		.build();
+
+	/**
+	 * DD.DD
+	 */
+	public static final LocationFormatter ISO_LAT_SHORT = builder()
+		.append(Field.LATITUDE, "00.00")
+		.build();
+
+	/**
+	 *  DDMM.MMM
+	 */
+	public static final LocationFormatter ISO_LAT_MEDIUM = builder()
+		.append(Field.LATITUDE, "00")
+		.append(Field.MINUTE_OF_LATITUDE, "00.000")
+		.build();
+
+	/**
+	 *  DDMMSS.SS
+	 */
+	public static final LocationFormatter ISO_LAT_LONG = builder()
+		.append(Field.LATITUDE, "00")
+		.append(Field.MINUTE_OF_LATITUDE, "00")
+		.append(Field.SECOND_OF_LATITUDE, "00.00")
 		.build();
 
 	private final List<Format<Location>> _formats;
