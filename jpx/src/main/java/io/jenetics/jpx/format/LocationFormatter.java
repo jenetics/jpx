@@ -251,7 +251,19 @@ public final class LocationFormatter {
 	/**
 	 * Builder to create location formatters. This allows a
 	 * {@code LocationFormatter} to be created. All location formatters are
-	 * created ultimately using this builder.
+	 * created ultimately using this builder. The following example will create
+	 * a formatter for the latitude field:
+	 * <pre>{@code
+	 * final LocationFormatter formatter = LocationFormatter.builder()
+	 *     .append(Location.Field.DEGREE_OF_LATITUDE, "00")
+	 *     .appendLiteral("°")
+	 *     .append(Location.Field.MINUTE_OF_LATITUDE, "00")
+	 *     .appendLiteral("'")
+	 *     .append(Location.Field.SECOND_OF_LATITUDE, "00.000")
+	 *     .appendLiteral("\"")
+	 *     .appendNorthSouthHemisphere()
+	 *     .build();
+	 * }</pre>
 	 *
 	 * @implNote
 	 * This class is a mutable builder intended for use from a single thread.
