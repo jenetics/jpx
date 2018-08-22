@@ -23,7 +23,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -127,6 +126,11 @@ public class LocationFormatter {
 		_formats = requireNonNull(formats);
 	}
 
+	/**
+	 * Return a new formatter builder instance.
+	 *
+	 * @return a new formatter builder instance
+	 */
 	public static Builder builder() {
 		return new Builder();
 	}
@@ -151,21 +155,45 @@ public class LocationFormatter {
 		 * formatter directly to this builder.
 		 *
 		 * @param formatter the formatter to add, not {@code null}
-		 * @param optional optional flag
+		 * @param optional optional flag. If {@code true}, the created formatter
+		 *        will allow missing location fields.
 		 * @return {@code this}, for chaining, not {@code null}
 		 * @throws NullPointerException if the given {@code formatter} is
 		 *         {@code null}
 		 */
-		public Builder append(final LocationFormatter formatter, final boolean optional) {
+		public Builder append(
+			final LocationFormatter formatter,
+			final boolean optional
+		) {
 			final Format<Location> formats = new CompositeFormat<>(formatter._formats);
 			_formats.add(optional ? new OptionalFormat<>(formats) :  formats);
 			return this;
 		}
 
+		/**
+		 * Appends all the elements of a formatter to the builder. This method
+		 * has the same effect as appending each of the constituent parts of the
+		 * formatter directly to this builder.
+		 *
+		 * @param formatter the formatter to add, not {@code null}
+		 * @return {@code this}, for chaining, not {@code null}
+		 * @throws NullPointerException if the given {@code formatter} is
+		 *         {@code null}
+		 */
 		public Builder append(final LocationFormatter formatter) {
 			return append(formatter, false);
 		}
 
+		/**
+		 * Append a formatter for the given location field, which will be
+		 * formatted using the given number format objects.
+		 *
+		 * @param field the location field to format
+		 * @param format the number formatter used for formatting the defined
+		 *        location field
+		 * @return {@code this}, for chaining, not {@code null}
+		 * @throws NullPointerException if one of the arguments is {@code null}
+		 */
 		public Builder append(
 			final Location.Field field,
 			final Supplier<NumberFormat> format
@@ -174,49 +202,107 @@ public class LocationFormatter {
 			return this;
 		}
 
+		/**
+		 * Append a formatter for the given location field, which will be
+		 * formatted using the given decimal format pattern, as used in the
+		 * {@link DecimalFormat} object
+		 *
+		 * @see DecimalFormat
+		 *
+		 * @param field the location field to format
+		 * @param pattern the decimal format pattern
+		 * @return {@code this}, for chaining, not {@code null}
+		 * @throws NullPointerException if one of the arguments is {@code null}
+		 */
 		public Builder append(final Location.Field field, final String pattern) {
 			return append(field, () -> new DecimalFormat(pattern));
 		}
 
+		/**
+		 * Append a formatter for the sign of the latitude value ('+' or '-').
+		 *
+		 * @return {@code this}, for chaining, not {@code null}
+		 */
 		public Builder appendLatitudeSign() {
 			_formats.add(new LatitudeSignFormat());
 			return this;
 		}
 
+		/**
+		 * Append a formatter for the sign of the longitude value ('+' or '-').
+		 *
+		 * @return {@code this}, for chaining, not {@code null}
+		 */
 		public Builder appendLongitudeSign() {
 			_formats.add(new LongitudeSignFormat());
 			return this;
 		}
 
+		/**
+		 * Append a formatter for the north-south hemisphere ('N' or 'S'). The
+		 * appended formatter will access the <em>latitude</em> value of the
+		 * location.
+		 *
+		 * @return {@code this}, for chaining, not {@code null}
+		 */
 		public Builder appendNorthSouthHemisphere() {
 			_formats.add(new NorthSouthFormat());
 			return this;
 		}
 
+		/**
+		 * Append a formatter for the east-west hemisphere ('E' or 'W'). The
+		 * appended formatter will access the <em>longitude</em> value of the
+		 * location.
+		 *
+		 * @return {@code this}, for chaining, not {@code null}
+		 */
 		public Builder appendEastWestHemisphere() {
 			_formats.add(new EastWestFormat());
 			return this;
 		}
 
+		/**
+		 * Appends a string literal to the formatter. This string will be output
+		 * during a format. If the literal is empty, nothing is added to the
+		 * formatter.
+		 *
+		 * @param literal the {@code literal} to append, not null
+		 * @return {@code this}, for chaining, not {@code null}
+		 * @throws NullPointerException if one of the {@code literal} is
+		 *         {@code null}
+		 */
 		public Builder appendLiteral(final String literal) {
-			_formats.add(new ConstFormat<>(literal));
+			if (!literal.isEmpty()) {
+				_formats.add(new ConstFormat<>(literal));
+			}
 			return this;
 		}
 
+		/**
+		 * Completes this builder by creating the {@code LocationFormatter}.
+		 *
+		 * @return a new location-formatter object
+		 */
 		public LocationFormatter build() {
 			return new LocationFormatter(new ArrayList<>(_formats));
 		}
 
 	}
 
-
+	/**
+	 * Formats the given {@code location} using {@code this} formatter.
+	 *
+	 * @param location the location to format
+	 * @return the format string
+	 * @throws NullPointerException if the given {@code location} is {@code null}
+	 */
 	public String format(final Location location) {
 		requireNonNull(location);
-		DateTimeFormatter f;
-
 		return _formats.stream()
 			.map(format -> format.format(location)
-				.orElseThrow(() -> new IllegalArgumentException("Invalid location format.")))
+				.orElseThrow(() -> new LocationException(
+					"Invalid location format.")))
 			.collect(Collectors.joining());
 	}
 
