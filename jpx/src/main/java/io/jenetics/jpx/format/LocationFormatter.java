@@ -72,8 +72,8 @@ import io.jenetics.jpx.format.Location.Field;
 public final class LocationFormatter {
 
 	/**
-	 * Latitude formatter with the pattern {@code DD°MM'SS.SSS"X}. Example:
-	 * {@code 16°27'59.180"N}.
+	 * Latitude formatter with the pattern <em>{@code DD°MM''SS.SSS"X}</em>.
+	 * Example: <em>{@code 16°27'59.180"N}</em>.
 	 */
 	public static final LocationFormatter ISO_HUMAN_LAT_LONG = builder()
 		.append(Field.DEGREE_OF_LATITUDE, "00")
@@ -86,8 +86,8 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 * Longitude formatter with the pattern {@code dd°mm'ss.sss"x}. Example:
-	 * {@code 16°27'59.180"E}.
+	 * Longitude formatter with the pattern <em>{@code dd°mm''ss.sss"x}</em>.
+	 * Example: <em>{@code 16°27'59.180"E}</em>.
 	 */
 	public static final LocationFormatter ISO_HUMAN_LON_LONG = builder()
 		.append(Field.DEGREE_OF_LONGITUDE, "00")
@@ -100,17 +100,18 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 * Elevation formatter with the pattern {@code E.Em}. Example: {@code 2045m}.
+	 * Elevation formatter with the pattern <em>{@code E.EE'm'}</em>. Example:
+	 * <em>{@code 2045m}</em>.
 	 */
 	public static final LocationFormatter ISO_HUMAN_ELE_LONG = builder()
-		.append(Field.ELEVATION, "#.##")
+		.append(Field.ELEVATION, "0.00")
 		.appendLiteral("m")
 		.build();
 
 	/**
 	 * Elevation formatter with the pattern
-	 * {@code DD°MM'SS.SSS"X dd°mm'ss.sss"x[ E.Em]}.
-	 * Example: {@code 50°03′46.461″S 125°48′26.533″E 978.90m}.
+	 * <em>{@code DD°MM''SS.SSS"X dd°mm''ss.sss"x[ E.EE'm']}</em>.
+	 * Example: <em>{@code 50°03′46.461″S 125°48′26.533″E 978.90m}</em>.
 	 */
 	public static final LocationFormatter ISO_HUMAN_LONG = builder()
 		.append(ISO_HUMAN_LAT_LONG)
@@ -125,7 +126,7 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 * +DD.DD
+	 * ISO 6709 conform latitude format, short: <em>{@code +DD.DD}</em>.
 	 */
 	public static final LocationFormatter ISO_LAT_SHORT = builder()
 		.appendLatitudeSign()
@@ -133,7 +134,7 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 *  +DDMM.MMM
+	 * ISO 6709 conform latitude format, medium: <em>{@code +DDMM.MMM}</em>.
 	 */
 	public static final LocationFormatter ISO_LAT_MEDIUM = builder()
 		.appendLatitudeSign()
@@ -142,7 +143,7 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 *  +DDMMSS.SS
+	 * ISO 6709 conform latitude format, long: <em>{@code +DDMMSS.SS}</em>.
 	 */
 	public static final LocationFormatter ISO_LAT_LONG = builder()
 		.appendLatitudeSign()
@@ -153,7 +154,7 @@ public final class LocationFormatter {
 
 
 	/**
-	 * +ddd.ddd
+	 * ISO 6709 conform longitude format, short: <em>{@code +ddd.dd}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_SHORT = builder()
 		.appendLatitudeSign()
@@ -161,7 +162,7 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 *  +dddmm.mmm
+	 * ISO 6709 conform longitude format, medium: <em>{@code +ddd.mm.mmm}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_MEDIUM = builder()
 		.appendLatitudeSign()
@@ -170,7 +171,7 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 *  dddmmss.ss
+	 * ISO 6709 conform longitude format, long: <em>{@code +ddmmss.ss}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_LONG = builder()
 		.appendLatitudeSign()
@@ -179,41 +180,64 @@ public final class LocationFormatter {
 		.append(Field.SECOND_OF_LONGITUDE, "00.00")
 		.build();
 
+	/**
+	 * ISO 6709 conform elevation format, short: <em>{@code +E'CRS'}</em>.
+	 */
 	public static final LocationFormatter ISO_ELE_SHORT = builder()
 		.appendElevationSign()
 		.append(Field.METER_OF_ELEVATION, "0")
 		.appendLiteral("CRS")
 		.build();
 
+	/**
+	 * ISO 6709 conform elevation format, medium: <em>{@code +E.E'CRS'}</em>.
+	 */
 	public static final LocationFormatter ISO_ELE_MEDIUM = builder()
 		.appendElevationSign()
 		.append(Field.METER_OF_ELEVATION, "0.0")
 		.appendLiteral("CRS")
 		.build();
 
+	/**
+	 * ISO 6709 conform elevation format, long: <em>{@code +E.EE'CRS'}</em>.
+	 */
 	public static final LocationFormatter ISO_ELE_LONG = builder()
 		.appendElevationSign()
 		.append(Field.METER_OF_ELEVATION, "0.00")
 		.appendLiteral("CRS")
 		.build();
 
+	/**
+	 * ISO 6709 conform location format, short:
+	 * <em>{@code +DD.DD+ddd.dd[+E'CRS']}</em>.
+	 */
 	public static final LocationFormatter ISO_SHORT = builder()
 		.append(ISO_LAT_SHORT)
 		.append(ISO_LON_SHORT)
 		.append(ISO_ELE_SHORT, true)
 		.build();
 
+	/**
+	 * ISO 6709 conform location format, medium:
+	 * <em>{@code +DDMM.MMM+ddmm.mmm[+E.E'CRS']}</em>.
+	 */
 	public static final LocationFormatter ISO_MEDIUM = builder()
 		.append(ISO_LAT_MEDIUM)
 		.append(ISO_LON_MEDIUM)
 		.append(ISO_ELE_MEDIUM, true)
 		.build();
 
+	/**
+	 * ISO 6709 conform location format, medium:
+	 * <em>{@code +DDMMSS.SS+ddmmss.ss[+E.EE'CRS']}</em>.
+	 */
 	public static final LocationFormatter ISO_LONG = builder()
 		.append(ISO_LAT_LONG)
 		.append(ISO_LON_LONG)
 		.append(ISO_ELE_LONG, true)
 		.build();
+
+
 
 	private final List<Format<Location>> _formats;
 
