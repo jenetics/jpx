@@ -185,14 +185,19 @@ public final class Location {
 	public enum Field implements Function<Location, Optional<Double>> {
 
 		/**
-		 * This field allows you to access the latitude value of a given
-		 * location object. The latitude value is returned in degrees.
+		 * This field allows to access the latitude value of a given location
+		 * object. The latitude value is returned in degrees.
 		 */
 		LATITUDE(
 			"latitude",
 			loc -> loc.latitude().map(Latitude::toDegrees)
 		),
 
+		/**
+		 * This field allows to access the absolute value of the latitude
+		 * degrees of a given location. If you need to extract the signed
+		 * latitude degrees, use {@link #LATITUDE} instead.
+		 */
 		DEGREE_OF_LATITUDE(
 			"latitude",
 			loc -> loc.latitude()
@@ -200,6 +205,10 @@ public final class Location {
 				.map(Field::toDegrees)
 		),
 
+		/**
+		 * This field allows to access the absolute value of the minute part of
+		 * the latitude of a given location.
+		 */
 		MINUTE_OF_LATITUDE(
 			"latitude",
 			loc -> loc.latitude()
@@ -207,6 +216,10 @@ public final class Location {
 				.map(Field::toMinutes)
 		),
 
+		/**
+		 * This field allows to access the absolute value of the second part of
+		 * the latitude of a given location.
+		 */
 		SECOND_OF_LATITUDE(
 			"latitude",
 			loc -> loc.latitude()
@@ -214,11 +227,20 @@ public final class Location {
 				.map(Field::toSeconds)
 		),
 
+		/**
+		 * This field allows to access the longitude value of a given location
+		 * object. The longitude value is returned in degrees.
+		 */
 		LONGITUDE(
 			"longitude",
 			loc -> loc.longitude().map(Longitude::toDegrees)
 		),
 
+		/**
+		 * This field allows to access the absolute value of the longitude
+		 * degrees of a given location. If you need to extract the signed
+		 * longitude degrees, use {@link #LONGITUDE} instead.
+		 */
 		DEGREE_OF_LONGITUDE(
 			"longitude",
 			loc -> loc.longitude()
@@ -226,6 +248,10 @@ public final class Location {
 				.map(Field::toDegrees)
 		),
 
+		/**
+		 * This field allows to access the absolute value of the minute part of
+		 * the longitude of a given location.
+		 */
 		MINUTE_OF_LONGITUDE(
 			"latitude",
 			loc -> loc.longitude()
@@ -233,6 +259,10 @@ public final class Location {
 				.map(Field::toMinutes)
 		),
 
+		/**
+		 * This field allows to access the absolute value of the second part of
+		 * the longitude of a given location.
+		 */
 		SECOND_OF_LONGITUDE(
 			"latitude",
 			loc -> loc.longitude()
@@ -240,10 +270,13 @@ public final class Location {
 				.map(Field::toSeconds)
 		),
 
+		/**
+		 * This field allows to access the elevation (in meter) of a given
+		 * location.
+		 */
 		ELEVATION(
 			"elevation",
-			loc -> loc.elevation()
-				.map(l -> l.to(METER))
+			loc -> loc.elevation().map(l -> l.to(METER))
 		);
 
 		private final String _name;
@@ -262,7 +295,7 @@ public final class Location {
 		 *
 		 * @return the name of the location field
 		 */
-		public String fieldName() {
+		String fieldName() {
 			return _name;
 		}
 
