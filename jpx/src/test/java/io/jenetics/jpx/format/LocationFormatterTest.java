@@ -19,10 +19,13 @@
  */
 package io.jenetics.jpx.format;
 
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_LONG;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_LONG;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LONG;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,6 +69,9 @@ public class LocationFormatterTest {
 		System.out.println(ISO_LAT_MEDIUM.format(Latitude.ofDegrees(-6.44977221)));
 		System.out.println(ISO_LAT_LONG.format(Latitude.ofDegrees(-6.44977221)));
 		System.out.println(ISO_HUMAN_LONG.toPattern());
+		System.out.println(ISO_ELE_LONG.toPattern());
+		System.out.println(ISO_ELE_LONG.format(Length.of(2343.234, Unit.METER)));
+		System.out.println(ISO_LONG.toPattern());
 	}
 
 	//@Test(dataProvider = "latitudes")

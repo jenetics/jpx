@@ -285,6 +285,15 @@ public final class Location {
 		ELEVATION(
 			"elevation", 'E',
 			loc -> loc.elevation().map(l -> l.to(METER))
+		),
+
+		/**
+		 * This field allows to access the absolute elevation (in meter) of a
+		 * given location.
+		 */
+		METER_OF_ELEVATION(
+			"elevation", 'E',
+			loc -> loc.elevation().map(l -> l.to(METER))
 		);
 
 		private final String _name;

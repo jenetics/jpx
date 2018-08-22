@@ -21,7 +21,10 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * A format object which returns a constant value.
@@ -31,6 +34,10 @@ import java.util.Optional;
  * @since !__version__!
  */
 final class ConstFormat<T> implements Format<T> {
+
+	private static final Set<Character> PROTECTED = new HashSet<>(Arrays.asList(
+		'D', 'M', 'S', 'd', 'm', 's', 'E', 'X', 'x', '+', '[', ']'
+	));
 
 	private final String _value;
 
@@ -51,7 +58,26 @@ final class ConstFormat<T> implements Format<T> {
 
 	@Override
 	public String toString() {
-		return _value;
+		return escape(_value);
+	}
+
+	private static String escape(final String value) {
+		final StringBuilder out = new StringBuilder();
+		boolean quote = false;
+		for (int i = 0; i < value.length(); ++i) {
+			final char c = value.charAt(i);
+			if (PROTECTED.contains(c)) {
+				quote = true;
+			}
+			if (c == '\'') {
+				out.append(c);
+			}
+			out.append(c);
+		}
+
+		return quote
+			? "'" + out.toString() + "'"
+			: out.toString();
 	}
 
 }

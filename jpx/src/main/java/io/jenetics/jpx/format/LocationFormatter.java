@@ -125,27 +125,94 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 * DD.DD
+	 * +DD.DD
 	 */
 	public static final LocationFormatter ISO_LAT_SHORT = builder()
-		.append(Field.LATITUDE, "00.00")
+		.appendLatitudeSign()
+		.append(Field.DEGREE_OF_LATITUDE, "00.00")
 		.build();
 
 	/**
-	 *  DDMM.MMM
+	 *  +DDMM.MMM
 	 */
 	public static final LocationFormatter ISO_LAT_MEDIUM = builder()
-		.append(Field.LATITUDE, "00")
+		.appendLatitudeSign()
+		.append(Field.DEGREE_OF_LATITUDE, "00")
 		.append(Field.MINUTE_OF_LATITUDE, "00.000")
 		.build();
 
 	/**
-	 *  DDMMSS.SS
+	 *  +DDMMSS.SS
 	 */
 	public static final LocationFormatter ISO_LAT_LONG = builder()
-		.append(Field.LATITUDE, "00")
+		.appendLatitudeSign()
+		.append(Field.DEGREE_OF_LATITUDE, "00")
 		.append(Field.MINUTE_OF_LATITUDE, "00")
 		.append(Field.SECOND_OF_LATITUDE, "00.00")
+		.build();
+
+
+	/**
+	 * +ddd.ddd
+	 */
+	public static final LocationFormatter ISO_LON_SHORT = builder()
+		.appendLatitudeSign()
+		.append(Field.DEGREE_OF_LONGITUDE, "000.00")
+		.build();
+
+	/**
+	 *  +dddmm.mmm
+	 */
+	public static final LocationFormatter ISO_LON_MEDIUM = builder()
+		.appendLatitudeSign()
+		.append(Field.DEGREE_OF_LONGITUDE, "00")
+		.append(Field.MINUTE_OF_LONGITUDE, "00.000")
+		.build();
+
+	/**
+	 *  dddmmss.ss
+	 */
+	public static final LocationFormatter ISO_LON_LONG = builder()
+		.appendLatitudeSign()
+		.append(Field.DEGREE_OF_LONGITUDE, "00")
+		.append(Field.MINUTE_OF_LONGITUDE, "00")
+		.append(Field.SECOND_OF_LONGITUDE, "00.00")
+		.build();
+
+	public static final LocationFormatter ISO_ELE_SHORT = builder()
+		.appendElevationSign()
+		.append(Field.METER_OF_ELEVATION, "0")
+		.appendLiteral("CRS")
+		.build();
+
+	public static final LocationFormatter ISO_ELE_MEDIUM = builder()
+		.appendElevationSign()
+		.append(Field.METER_OF_ELEVATION, "0.0")
+		.appendLiteral("CRS")
+		.build();
+
+	public static final LocationFormatter ISO_ELE_LONG = builder()
+		.appendElevationSign()
+		.append(Field.METER_OF_ELEVATION, "0.00")
+		.appendLiteral("CRS")
+		.build();
+
+	public static final LocationFormatter ISO_SHORT = builder()
+		.append(ISO_LAT_SHORT)
+		.append(ISO_LON_SHORT)
+		.append(ISO_ELE_SHORT, true)
+		.build();
+
+	public static final LocationFormatter ISO_MEDIUM = builder()
+		.append(ISO_LAT_MEDIUM)
+		.append(ISO_LON_MEDIUM)
+		.append(ISO_ELE_MEDIUM, true)
+		.build();
+
+	public static final LocationFormatter ISO_LONG = builder()
+		.append(ISO_LAT_LONG)
+		.append(ISO_LON_LONG)
+		.append(ISO_ELE_LONG, true)
 		.build();
 
 	private final List<Format<Location>> _formats;
@@ -402,6 +469,16 @@ public final class LocationFormatter {
 		 */
 		public Builder appendLongitudeSign() {
 			_formats.add(new LongitudeSignFormat());
+			return this;
+		}
+
+		/**
+		 * Append a formatter for the sign of the elevation value ('+' or '-').
+		 *
+		 * @return {@code this}, for chaining, not {@code null}
+		 */
+		public Builder appendElevationSign() {
+			_formats.add(new ElevationSignFormat());
 			return this;
 		}
 
