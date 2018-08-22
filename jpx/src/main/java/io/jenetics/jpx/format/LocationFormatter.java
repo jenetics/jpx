@@ -28,6 +28,9 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.format.Location.Field;
 
 /**
@@ -65,7 +68,7 @@ import io.jenetics.jpx.format.Location.Field;
  * @version !__version__!
  * @since !__version__!
  */
-public class LocationFormatter {
+public final class LocationFormatter {
 
 	/**
 	 * Latitude formatter with the pattern {@code DD°MM'SS.SSS"X}. Example:
@@ -142,6 +145,8 @@ public class LocationFormatter {
 	 * @param location the location to format
 	 * @return the format string
 	 * @throws NullPointerException if the given {@code location} is {@code null}
+	 * @throws LocationException if the formatter tries to format a non-existing,
+	 *         non-optional location field.
 	 */
 	public String format(final Location location) {
 		requireNonNull(location);
@@ -152,26 +157,78 @@ public class LocationFormatter {
 			.collect(Collectors.joining());
 	}
 
+	/**
+	 * Formats the given location elements using {@code this} formatter.
+	 *
+	 * @see #format(Location)
+	 *
+	 * @param lat the latitude part of the location
+	 * @param lon the longitude part of the location
+	 * @param ele the elevation part of the location
+	 * @return the format string
+	 * @throws LocationException if the formatter tries to format a non-existing,
+	 *         non-optional location field.
+	 */
+	public String format(final Latitude lat, final Longitude lon, final Length ele) {
+		return format(Location.of(lat, lon, ele));
+	}
 
-//	public String format(final Latitude lat, final Longitude lon, final Length ele) {
-//		return format(Location.of(lat, lon, ele));
-//	}
-//
-//	public String format(final Latitude lat, final Longitude lon) {
-//		return format(lat, lon, null);
-//	}
-//
-//	public String format(final Latitude lat) {
-//		return format(lat, null, null);
-//	}
-//
-//	public String format(final Longitude lon) {
-//		return format(null, lon, null);
-//	}
-//
-//	public String format(final Length ele) {
-//		return format(null, null, ele);
-//	}
+	/**
+	 * Formats the given location elements using {@code this} formatter.
+	 *
+	 * @see #format(Location)
+	 *
+	 * @param lat the latitude part of the location
+	 * @param lon the longitude part of the location
+	 * @return the format string
+	 * @throws LocationException if the formatter tries to format a non-existing,
+	 *         non-optional location field.
+	 */
+	public String format(final Latitude lat, final Longitude lon) {
+		return format(lat, lon, null);
+	}
+
+	/**
+	 * Formats the given location elements using {@code this} formatter.
+	 *
+	 * @see #format(Location)
+	 *
+	 * @param lat the latitude part of the location
+	 * @return the format string
+	 * @throws LocationException if the formatter tries to format a non-existing,
+	 *         non-optional location field.
+	 */
+	public String format(final Latitude lat) {
+		return format(lat, null, null);
+	}
+
+	/**
+	 * Formats the given location elements using {@code this} formatter.
+	 *
+	 * @see #format(Location)
+	 *
+	 * @param lon the longitude part of the location
+	 * @return the format string
+	 * @throws LocationException if the formatter tries to format a non-existing,
+	 *         non-optional location field.
+	 */
+	public String format(final Longitude lon) {
+		return format(null, lon, null);
+	}
+
+	/**
+	 * Formats the given location elements using {@code this} formatter.
+	 *
+	 * @see #format(Location)
+	 *
+	 * @param ele the elevation part of the location
+	 * @return the format string
+	 * @throws LocationException if the formatter tries to format a non-existing,
+	 *         non-optional location field.
+	 */
+	public String format(final Length ele) {
+		return format(null, null, ele);
+	}
 //
 //	public Location parse(final CharSequence text, final ParsePosition pos) {
 //		return null;
