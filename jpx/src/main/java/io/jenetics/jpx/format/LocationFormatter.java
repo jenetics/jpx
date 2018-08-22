@@ -96,10 +96,21 @@ public class LocationFormatter {
 		.appendEastWestHemisphere()
 		.build();
 
+	public static final LocationFormatter ISO_HUMAN_ELE_LONG = builder()
+		.append(Field.ELEVATION, "#.#")
+		.appendLiteral("m")
+		.build();
+
 	public static final LocationFormatter ISO_HUMAN_LONG = builder()
 		.append(ISO_HUMAN_LAT_LONG)
 		.appendLiteral(" ")
 		.append(ISO_HUMAN_LON_LONG)
+		.append(
+			builder()
+				.appendLiteral(" ")
+				.append(ISO_HUMAN_ELE_LONG)
+				.build(),
+			true)
 		.build();
 
 	private final List<Format<Location>> _formats;

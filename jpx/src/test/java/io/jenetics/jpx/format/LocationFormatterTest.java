@@ -40,6 +40,9 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Length.Unit;
+import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -57,7 +60,12 @@ public class LocationFormatterTest {
 	@Test
 	public void format() {
 		final Latitude latitude = Latitude.ofDegrees(16.44977221);
-		System.out.println(LocationFormatter.ISO_HUMAN_LAT_LONG.format(Location.of(latitude)));
+		final Longitude longitude = Longitude.ofDegrees(45.14937221);
+
+		final LocationFormatter formatter = LocationFormatter.ISO_HUMAN_LONG;
+
+		System.out.println(formatter.format(Location.of(latitude, longitude)));
+		System.out.println(formatter.format(Location.of(latitude, longitude, Length.of(234.23, Unit.METER))));
 	}
 
 	//@Test(dataProvider = "latitudes")
