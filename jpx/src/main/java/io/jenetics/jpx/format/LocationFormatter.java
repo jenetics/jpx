@@ -146,7 +146,7 @@ public final class LocationFormatter {
 	 * @return the format string
 	 * @throws NullPointerException if the given {@code location} is {@code null}
 	 * @throws LocationException if the formatter tries to format a non-existing,
-	 *         non-optional location field.
+	 *         non-optional location fields.
 	 */
 	public String format(final Location location) {
 		requireNonNull(location);
@@ -167,7 +167,7 @@ public final class LocationFormatter {
 	 * @param ele the elevation part of the location
 	 * @return the format string
 	 * @throws LocationException if the formatter tries to format a non-existing,
-	 *         non-optional location field.
+	 *         non-optional location fields.
 	 */
 	public String format(final Latitude lat, final Longitude lon, final Length ele) {
 		return format(Location.of(lat, lon, ele));
@@ -182,7 +182,7 @@ public final class LocationFormatter {
 	 * @param lon the longitude part of the location
 	 * @return the format string
 	 * @throws LocationException if the formatter tries to format a non-existing,
-	 *         non-optional location field.
+	 *         non-optional location fields.
 	 */
 	public String format(final Latitude lat, final Longitude lon) {
 		return format(lat, lon, null);
@@ -196,7 +196,7 @@ public final class LocationFormatter {
 	 * @param lat the latitude part of the location
 	 * @return the format string
 	 * @throws LocationException if the formatter tries to format a non-existing,
-	 *         non-optional location field.
+	 *         non-optional location fields.
 	 */
 	public String format(final Latitude lat) {
 		return format(lat, null, null);
@@ -210,7 +210,7 @@ public final class LocationFormatter {
 	 * @param lon the longitude part of the location
 	 * @return the format string
 	 * @throws LocationException if the formatter tries to format a non-existing,
-	 *         non-optional location field.
+	 *         non-optional location fields.
 	 */
 	public String format(final Longitude lon) {
 		return format(null, lon, null);
