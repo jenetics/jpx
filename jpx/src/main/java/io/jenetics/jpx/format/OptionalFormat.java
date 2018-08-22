@@ -40,4 +40,10 @@ final class OptionalFormat<T> implements Format<T> {
 	public Optional<String> format(final T value) {
 		return Optional.of(_format.format(value).orElse(""));
 	}
+
+	@Override
+	public String toString() {
+		return String.format("[%s]", _format);
+	}
+
 }

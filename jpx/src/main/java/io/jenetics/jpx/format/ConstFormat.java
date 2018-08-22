@@ -49,4 +49,9 @@ final class ConstFormat<T> implements Format<T> {
 		return Optional.of(_value);
 	}
 
+	@Override
+	public String toString() {
+		return _value;
+	}
+
 }

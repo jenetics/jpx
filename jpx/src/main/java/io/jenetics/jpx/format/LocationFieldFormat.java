@@ -54,4 +54,25 @@ final class LocationFieldFormat implements Format<Location> {
 		return _field.apply(location).map(v -> _format.get().format(v));
 	}
 
+	@Override
+	public String toString() {
+		final NumberFormat format = _format.get();
+		final int minValueDigit = format.getMinimumIntegerDigits();
+		final int minFractionDigit = format.getMinimumFractionDigits();
+		final int maxFractionDigit = format.getMaximumFractionDigits();
+
+		final StringBuilder out = new StringBuilder();
+		for (int i = 0; i < minValueDigit; ++i) {
+			out.append(_field.type());
+		}
+		if (minFractionDigit != 0 || maxFractionDigit != 0) {
+			out.append('.');
+		}
+		for (int i = 0; i < minFractionDigit; ++i) {
+			out.append(_field.type());
+		}
+
+		return out.toString();
+	}
+
 }

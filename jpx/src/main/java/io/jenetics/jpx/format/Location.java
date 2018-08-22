@@ -104,6 +104,14 @@ public final class Location {
 		);
 	}
 
+	@Override
+	public String toString() {
+		return format(
+			"[lat=%s, lon=%s, ele=%s]",
+			_latitude, _latitude, _elevation
+		);
+	}
+
 	/**
 	 * Create a new location form the given GPS point.
 	 *
@@ -189,7 +197,7 @@ public final class Location {
 		 * object. The latitude value is returned in degrees.
 		 */
 		LATITUDE(
-			"latitude",
+			"latitude", 'D',
 			loc -> loc.latitude().map(Latitude::toDegrees)
 		),
 
@@ -199,7 +207,7 @@ public final class Location {
 		 * latitude degrees, use {@link #LATITUDE} instead.
 		 */
 		DEGREE_OF_LATITUDE(
-			"latitude",
+			"latitude", 'D',
 			loc -> loc.latitude()
 				.map(Latitude::toDegrees)
 				.map(Field::toDegrees)
@@ -210,7 +218,7 @@ public final class Location {
 		 * the latitude of a given location.
 		 */
 		MINUTE_OF_LATITUDE(
-			"latitude",
+			"latitude", 'M',
 			loc -> loc.latitude()
 				.map(Latitude::toDegrees)
 				.map(Field::toMinutes)
@@ -221,7 +229,7 @@ public final class Location {
 		 * the latitude of a given location.
 		 */
 		SECOND_OF_LATITUDE(
-			"latitude",
+			"latitude", 'S',
 			loc -> loc.latitude()
 				.map(Latitude::toDegrees)
 				.map(Field::toSeconds)
@@ -232,7 +240,7 @@ public final class Location {
 		 * object. The longitude value is returned in degrees.
 		 */
 		LONGITUDE(
-			"longitude",
+			"longitude", 'd',
 			loc -> loc.longitude().map(Longitude::toDegrees)
 		),
 
@@ -242,7 +250,7 @@ public final class Location {
 		 * longitude degrees, use {@link #LONGITUDE} instead.
 		 */
 		DEGREE_OF_LONGITUDE(
-			"longitude",
+			"longitude", 'd',
 			loc -> loc.longitude()
 				.map(Longitude::toDegrees)
 				.map(Field::toDegrees)
@@ -253,7 +261,7 @@ public final class Location {
 		 * the longitude of a given location.
 		 */
 		MINUTE_OF_LONGITUDE(
-			"latitude",
+			"latitude", 'm',
 			loc -> loc.longitude()
 				.map(Longitude::toDegrees)
 				.map(Field::toMinutes)
@@ -264,7 +272,7 @@ public final class Location {
 		 * the longitude of a given location.
 		 */
 		SECOND_OF_LONGITUDE(
-			"latitude",
+			"latitude", 's',
 			loc -> loc.longitude()
 				.map(Longitude::toDegrees)
 				.map(Field::toSeconds)
@@ -275,18 +283,21 @@ public final class Location {
 		 * location.
 		 */
 		ELEVATION(
-			"elevation",
+			"elevation", 'E',
 			loc -> loc.elevation().map(l -> l.to(METER))
 		);
 
 		private final String _name;
+		private final char _type;
 		private final Function<Location, Optional<Double>> _accessor;
 
 		Field(
 			final String name,
+			final char type,
 			final Function<Location, Optional<Double>> accessor
 		) {
 			_name = requireNonNull(name);
+			_type = type;
 			_accessor = requireNonNull(accessor);
 		}
 
@@ -299,6 +310,10 @@ public final class Location {
 			return _name;
 		}
 
+		char type() {
+			return _type;
+		}
+
 		/**
 		 * Extracts the (double) value from the given location field.
 		 *
@@ -307,34 +322,6 @@ public final class Location {
 		 */
 		public Optional<Double> apply(final Location location) {
 			return _accessor.apply(requireNonNull(location));
-		}
-
-		/**
-		 * Return the location field for the given location pattern:
-		 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
-		 *
-		 * @param pattern the location pattern
-		 * @return the location field for the given location pattern
-		 */
-		static Field ofPattern(final String pattern) {
-			if (pattern.isEmpty()) {
-				throw new IllegalArgumentException("No empty pattern allowed.");
-			}
-
-			switch (pattern.charAt(0)) {
-				case 'E':
-					return ELEVATION;
-				case 'D':
-					return DEGREE_OF_LATITUDE;
-				case 'M':
-					return MINUTE_OF_LATITUDE;
-				case 'S':
-					return SECOND_OF_LATITUDE;
-				case 'X':
-				default: throw new IllegalArgumentException(format(
-					"Unknown field type: %s", pattern
-				));
-			}
 		}
 
 		private static double toDegrees(final double degrees) {

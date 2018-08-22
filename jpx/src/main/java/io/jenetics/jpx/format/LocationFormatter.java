@@ -20,12 +20,12 @@
 package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.format.Location.Field.LATITUDE;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -177,8 +177,25 @@ public final class LocationFormatter {
 		requireNonNull(location);
 		return _formats.stream()
 			.map(format -> format.format(location)
-				.orElseThrow(() -> new LocationException(
-					"Invalid location format.")))
+							.orElseThrow(() -> toError(location)))
+			.collect(Collectors.joining());
+	}
+
+	private LocationException toError(final Location location) {
+		return new LocationException(String.format(
+			"Invalid format '%s' for location %s.",
+			toPattern(), location
+		));
+	}
+
+	/**
+	 * Return the pattern string represented by this formatter.
+	 *
+	 * @return the pattern string of {@code this} formatter
+	 */
+	String toPattern() {
+		return _formats.stream()
+			.map(Objects::toString)
 			.collect(Collectors.joining());
 	}
 

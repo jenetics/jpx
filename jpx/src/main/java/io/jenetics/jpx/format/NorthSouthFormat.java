@@ -29,10 +29,16 @@ import io.jenetics.jpx.Latitude;
  * @since !__version__!
  */
 final class NorthSouthFormat implements Format<Location> {
+
 	@Override
 	public Optional<String> format(final Location value) {
 		return value.latitude()
 			.map(Latitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "N" : "S");
+	}
+
+	@Override
+	public String toString() {
+		return "X";
 	}
 }

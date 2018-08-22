@@ -21,7 +21,6 @@ package io.jenetics.jpx.format;
 
 import java.util.Optional;
 
-import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Longitude;
 
 /**
@@ -30,10 +29,17 @@ import io.jenetics.jpx.Longitude;
  * @since !__version__!
  */
 final class EastWestFormat implements Format<Location> {
+
 	@Override
 	public Optional<String> format(final Location value) {
 		return value.longitude()
 			.map(Longitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
 	}
+
+	@Override
+	public String toString() {
+		return "x";
+	}
+
 }
