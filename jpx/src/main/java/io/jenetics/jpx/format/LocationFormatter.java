@@ -96,11 +96,19 @@ public class LocationFormatter {
 		.appendEastWestHemisphere()
 		.build();
 
+	/**
+	 * Elevation formatter with the pattern {@code E.Em}. Example: {@code 2045m}.
+	 */
 	public static final LocationFormatter ISO_HUMAN_ELE_LONG = builder()
-		.append(Field.ELEVATION, "#.#")
+		.append(Field.ELEVATION, "#.##")
 		.appendLiteral("m")
 		.build();
 
+	/**
+	 * Elevation formatter with the pattern
+	 * {@code DD°MM'SS.SSS"X dd°mm'ss.sss"x[ E.Em]}.
+	 * Example: {@code 50°03′46.461″S 125°48′26.533″E 978.90m}.
+	 */
 	public static final LocationFormatter ISO_HUMAN_LONG = builder()
 		.append(ISO_HUMAN_LAT_LONG)
 		.appendLiteral(" ")

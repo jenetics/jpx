@@ -38,12 +38,14 @@ public class LocationFieldFormatTest {
 			null
 		);
 
+		/*
 		final LocationFieldFormat df = LocationFieldFormat.ofPattern("DD");
 		final LocationFieldFormat mf = LocationFieldFormat.ofPattern("MM");
 		final LocationFieldFormat sf = LocationFieldFormat.ofPattern("SS.SSS");
 
 		System.out.println(loc.latitude());
 		System.out.println(df.format(loc) + "°" + mf.format(loc) + "'" + sf.format(loc) + "\"");
+		*/
 	}
 
 }

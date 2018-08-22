@@ -54,19 +54,4 @@ final class LocationFieldFormat implements Format<Location> {
 		return _field.apply(location).map(v -> _format.get().format(v));
 	}
 
-	/**
-	 * Return a new location field format object form the given pattern:
-	 * {@code DD}, {@code ss.sss} or {@code HHHH.H}.
-	 *
-	 * @param pattern the location field pattern
-	 * @return a new format object from the given pattern
-	 */
-	static LocationFieldFormat
-	ofPattern(final String pattern) {
-		return new LocationFieldFormat(
-			Field.ofPattern(pattern),
-			null //ValueFormat.ofPattern(pattern)
-		);
-	}
-
 }
