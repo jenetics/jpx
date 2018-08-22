@@ -135,6 +135,62 @@ public class LocationFormatter {
 		return new Builder();
 	}
 
+
+	/**
+	 * Formats the given {@code location} using {@code this} formatter.
+	 *
+	 * @param location the location to format
+	 * @return the format string
+	 * @throws NullPointerException if the given {@code location} is {@code null}
+	 */
+	public String format(final Location location) {
+		requireNonNull(location);
+		return _formats.stream()
+			.map(format -> format.format(location)
+				.orElseThrow(() -> new LocationException(
+					"Invalid location format.")))
+			.collect(Collectors.joining());
+	}
+
+
+//	public String format(final Latitude lat, final Longitude lon, final Length ele) {
+//		return format(Location.of(lat, lon, ele));
+//	}
+//
+//	public String format(final Latitude lat, final Longitude lon) {
+//		return format(lat, lon, null);
+//	}
+//
+//	public String format(final Latitude lat) {
+//		return format(lat, null, null);
+//	}
+//
+//	public String format(final Longitude lon) {
+//		return format(null, lon, null);
+//	}
+//
+//	public String format(final Length ele) {
+//		return format(null, null, ele);
+//	}
+//
+//	public Location parse(final CharSequence text, final ParsePosition pos) {
+//		return null;
+//	}
+//
+//	public Location parse(final CharSequence text) {
+//		return null;
+//	}
+//
+//	public LocationFormatter withLocal(final Locale locale) {
+//		return this;
+//	}
+
+
+
+	/* *************************************************************************
+	 * Inner classes.
+	 * ************************************************************************/
+
 	/**
 	 * Builder to create location formatters. This allows a
 	 * {@code LocationFormatter} to be created. All location formatters are
@@ -289,54 +345,5 @@ public class LocationFormatter {
 		}
 
 	}
-
-	/**
-	 * Formats the given {@code location} using {@code this} formatter.
-	 *
-	 * @param location the location to format
-	 * @return the format string
-	 * @throws NullPointerException if the given {@code location} is {@code null}
-	 */
-	public String format(final Location location) {
-		requireNonNull(location);
-		return _formats.stream()
-			.map(format -> format.format(location)
-				.orElseThrow(() -> new LocationException(
-					"Invalid location format.")))
-			.collect(Collectors.joining());
-	}
-
-
-//	public String format(final Latitude lat, final Longitude lon, final Length ele) {
-//		return format(Location.of(lat, lon, ele));
-//	}
-//
-//	public String format(final Latitude lat, final Longitude lon) {
-//		return format(lat, lon, null);
-//	}
-//
-//	public String format(final Latitude lat) {
-//		return format(lat, null, null);
-//	}
-//
-//	public String format(final Longitude lon) {
-//		return format(null, lon, null);
-//	}
-//
-//	public String format(final Length ele) {
-//		return format(null, null, ele);
-//	}
-//
-//	public Location parse(final CharSequence text, final ParsePosition pos) {
-//		return null;
-//	}
-//
-//	public Location parse(final CharSequence text) {
-//		return null;
-//	}
-//
-//	public LocationFormatter withLocal(final Locale locale) {
-//		return this;
-//	}
 
 }
