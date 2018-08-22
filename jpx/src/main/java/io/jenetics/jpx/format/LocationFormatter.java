@@ -162,20 +162,20 @@ public final class LocationFormatter {
 		.build();
 
 	/**
-	 * ISO 6709 conform longitude format, medium: <em>{@code +ddd.mm.mmm}</em>.
+	 * ISO 6709 conform longitude format, medium: <em>{@code +dddmm.mmm}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_MEDIUM = builder()
 		.appendLatitudeSign()
-		.append(Field.DEGREE_OF_LONGITUDE, "00")
+		.append(Field.DEGREE_OF_LONGITUDE, "000")
 		.append(Field.MINUTE_OF_LONGITUDE, "00.000")
 		.build();
 
 	/**
-	 * ISO 6709 conform longitude format, long: <em>{@code +ddmmss.ss}</em>.
+	 * ISO 6709 conform longitude format, long: <em>{@code +dddmmss.ss}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_LONG = builder()
 		.appendLatitudeSign()
-		.append(Field.DEGREE_OF_LONGITUDE, "00")
+		.append(Field.DEGREE_OF_LONGITUDE, "000")
 		.append(Field.MINUTE_OF_LONGITUDE, "00")
 		.append(Field.SECOND_OF_LONGITUDE, "00.00")
 		.build();
