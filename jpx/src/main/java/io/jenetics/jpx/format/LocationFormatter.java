@@ -157,7 +157,7 @@ public final class LocationFormatter {
 	 * ISO 6709 conform longitude format, short: <em>{@code +ddd.dd}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_SHORT = builder()
-		.appendLatitudeSign()
+		.appendLongitudeSign()
 		.append(Field.DEGREE_OF_LONGITUDE, "000.00")
 		.build();
 
@@ -165,7 +165,7 @@ public final class LocationFormatter {
 	 * ISO 6709 conform longitude format, medium: <em>{@code +dddmm.mmm}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_MEDIUM = builder()
-		.appendLatitudeSign()
+		.appendLongitudeSign()
 		.append(Field.DEGREE_OF_LONGITUDE, "000")
 		.append(Field.MINUTE_OF_LONGITUDE, "00.000")
 		.build();
@@ -174,7 +174,7 @@ public final class LocationFormatter {
 	 * ISO 6709 conform longitude format, long: <em>{@code +dddmmss.ss}</em>.
 	 */
 	public static final LocationFormatter ISO_LON_LONG = builder()
-		.appendLatitudeSign()
+		.appendLongitudeSign()
 		.append(Field.DEGREE_OF_LONGITUDE, "000")
 		.append(Field.MINUTE_OF_LONGITUDE, "00")
 		.append(Field.SECOND_OF_LONGITUDE, "00.00")
@@ -375,6 +375,11 @@ public final class LocationFormatter {
 //		return this;
 //	}
 
+
+	@Override
+	public String toString() {
+		return String.format("LocationFormat[%s]", toPattern());
+	}
 
 
 	/* *************************************************************************

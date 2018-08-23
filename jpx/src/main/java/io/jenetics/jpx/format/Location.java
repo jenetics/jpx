@@ -108,7 +108,7 @@ public final class Location {
 	public String toString() {
 		return format(
 			"[lat=%s, lon=%s, ele=%s]",
-			_latitude, _latitude, _elevation
+			_latitude, _longitude, _elevation
 		);
 	}
 
@@ -175,6 +175,16 @@ public final class Location {
 	 */
 	public static Location of(final Longitude longitude) {
 		return new Location(null, longitude, null);
+	}
+
+	/**
+	 * Create a new <em>location</em> object from the given {@code elevation}.
+	 *
+	 * @param elevation the elevation of the location, maybe {@code null}
+	 * @return a new location object from the given input data
+	 */
+	public static Location of(final Length elevation) {
+		return new Location(null, null, elevation);
 	}
 
 
@@ -293,7 +303,7 @@ public final class Location {
 		 */
 		METER_OF_ELEVATION(
 			"elevation", 'E',
-			loc -> loc.elevation().map(l -> l.to(METER))
+			loc -> loc.elevation().map(l -> abs(l.to(METER)))
 		);
 
 		private final String _name;
