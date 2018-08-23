@@ -23,9 +23,18 @@ import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.time.temporal.ChronoField;
+import java.time.temporal.IsoFields;
+import java.time.temporal.JulianFields;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -70,6 +79,10 @@ import io.jenetics.jpx.format.Location.Field;
  * @since !__version__!
  */
 public final class LocationFormatter {
+
+	static final Set<Character> PROTECTED_CHARS = new HashSet<>(Arrays.asList(
+		'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H', 'X', 'x', '+', '[', ']'
+	));
 
 	/**
 	 * Latitude formatter with the pattern <em>{@code DD°MM''SS.SSS"X}</em>.
@@ -381,6 +394,12 @@ public final class LocationFormatter {
 		return String.format("LocationFormat[%s]", toPattern());
 	}
 
+	public static LocationFormatter ofPattern(final String pattern) {
+		return builder()
+			.appendPattern(pattern)
+			.build();
+	}
+
 
 	/* *************************************************************************
 	 * Inner classes.
@@ -407,6 +426,7 @@ public final class LocationFormatter {
 	 * This class is a mutable builder intended for use from a single thread.
 	 */
 	public static final class Builder {
+
 		private final List<Format<Location>> _formats = new ArrayList<>();
 
 		private Builder() {
@@ -552,6 +572,11 @@ public final class LocationFormatter {
 			return this;
 		}
 
+		public Builder appendPattern(final String pattern) {
+			parsePattern(pattern);
+			return this;
+		}
+
 		/**
 		 * Completes this builder by creating the {@code LocationFormatter}.
 		 *
@@ -561,6 +586,99 @@ public final class LocationFormatter {
 			return new LocationFormatter(new ArrayList<>(_formats));
 		}
 
+
+		// 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H', 'X', 'x'
+		private void parsePattern(final String pattern) {
+			List<Format<Location>> resultFormats = new ArrayList<>();
+			List<Format<Location>> formats = new ArrayList<>();
+			List<Format<Location>> optionalFormats = new ArrayList<>();
+
+			boolean sign = false;
+			boolean optionalStart = false;
+			Location.Field field = null;
+			StringBuilder format = new StringBuilder();
+
+			Location.Field currentField;
+
+			for (int pos = 0; pos < pattern.length(); ++pos) {
+				char c = pattern.charAt(pos);
+				switch (c) {
+					case '+':
+						sign = true;
+						break;
+					case '[':
+						if (optionalStart) {
+							throw new IllegalArgumentException(
+								"No nested optional formats allowed."
+							);
+						}
+						optionalStart = true;
+						resultFormats.addAll(formats);
+						formats.clear();
+						break;
+					case ']':
+						if (!optionalStart) {
+							throw new IllegalArgumentException();
+						}
+						if (field != null) {
+							final Format<Location> f = new OptionalFormat<>(
+								new CompositeFormat<>(formats)
+							);
+							formats.clear();
+							resultFormats.add(f);
+							format = new StringBuilder();
+							field = null;
+						} else {
+							resultFormats.addAll(formats);
+							formats.clear();
+						}
+						optionalStart = false;
+						break;
+					case 'L':
+					case 'D':
+					case 'M':
+					case 'S':
+					case 'l':
+					case 'd':
+					case 'm':
+					case 's':
+					case 'E':
+					case 'H':
+						currentField = Field.FIELD_MAP.get(c);
+						if (field != null && field != currentField) {
+							final String decimalPattern = format.toString();
+							formats.add(LocationFieldFormat.of(currentField, decimalPattern));
+							format = new StringBuilder();
+							field = null;
+						} else {
+							field = currentField;
+							format.append('0');
+						}
+						break;
+					case '.':
+					case ',':
+						format.append(c);
+						break;
+					case 'X':
+						formats.add(new NorthSouthFormat());
+						break;
+					case 'x':
+					default:
+						throw new IllegalArgumentException();
+				}
+			}
+
+			if (optionalStart) {
+				throw new IllegalArgumentException("Unbalanced optional formats.");
+			}
+
+			resultFormats.addAll(formats);
+			if (field != null) {
+				resultFormats.add(LocationFieldFormat.of(field, format.toString()));
+			}
+
+			_formats.addAll(resultFormats);
+		}
 	}
 
 }

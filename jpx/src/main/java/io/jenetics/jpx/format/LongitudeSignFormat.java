@@ -29,10 +29,17 @@ import io.jenetics.jpx.Longitude;
  * @since !__version__!
  */
 final class LongitudeSignFormat implements Format<Location> {
+
 	@Override
 	public Optional<String> format(final Location value) {
 		return value.longitude()
 			.map(Longitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
 	}
+
+	@Override
+	public String toString() {
+		return "+";
+	}
+
 }

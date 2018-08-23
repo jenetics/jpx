@@ -21,6 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -36,7 +37,7 @@ final class CompositeFormat<T> implements Format<T> {
 	private final List<Format<T>> _formats;
 
 	CompositeFormat(final List<Format<T>> formats) {
-		_formats = requireNonNull(formats);
+		_formats = new ArrayList<>(formats);
 	}
 
 	@Override

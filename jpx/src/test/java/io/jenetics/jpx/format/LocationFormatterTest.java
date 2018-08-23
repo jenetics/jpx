@@ -37,6 +37,10 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 
+import java.text.DecimalFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -56,6 +60,7 @@ public class LocationFormatterTest {
 		final Location location,
 		final String format
 	) {
+		DateTimeFormatter b;
 		Assert.assertEquals(formatter.format(location), format);
 	}
 
@@ -106,6 +111,24 @@ public class LocationFormatterTest {
 				Longitude.ofDegrees(-65.234275),
 				Length.of(-65.234275, METER)), "+245915.49-0651403.39-65.23CRS"}
 		};
+	}
+
+	@Test
+	public void pattern() {
+		System.out.println(ISO_LONG.toPattern());
+	}
+
+	@Test
+	public void parse() {
+		final LocationFormatter formatter = LocationFormatter.ofPattern("[DDMMLL.LLL]");
+
+		final Location location = Location.of(
+			Latitude.ofDegrees(23.987635),
+			Longitude.ofDegrees(-65.234275),
+			Length.of(-65.234275, METER)
+		);
+		System.out.println("LOC: " + formatter.format(location));
+		System.out.println("PAT: " + formatter.toPattern());
 	}
 
 }

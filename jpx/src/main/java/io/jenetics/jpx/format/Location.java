@@ -25,6 +25,8 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Length.Unit.METER;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -207,7 +209,7 @@ public final class Location {
 		 * object. The latitude value is returned in degrees.
 		 */
 		LATITUDE(
-			"latitude", 'D',
+			"latitude", 'L',
 			loc -> loc.latitude().map(Latitude::toDegrees)
 		),
 
@@ -250,7 +252,7 @@ public final class Location {
 		 * object. The longitude value is returned in degrees.
 		 */
 		LONGITUDE(
-			"longitude", 'd',
+			"longitude", 'l',
 			loc -> loc.longitude().map(Longitude::toDegrees)
 		),
 
@@ -302,9 +304,16 @@ public final class Location {
 		 * given location.
 		 */
 		METER_OF_ELEVATION(
-			"elevation", 'E',
+			"elevation", 'H',
 			loc -> loc.elevation().map(l -> abs(l.to(METER)))
 		);
+
+		static final Map<Character, Field> FIELD_MAP = new HashMap<>();
+		static {
+			for (final Field field : values()) {
+				FIELD_MAP.put(field.type(), field);
+			}
+		};
 
 		private final String _name;
 		private final char _type;

@@ -20,11 +20,9 @@
 package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.format.LocationFormatter.PROTECTED_CHARS;
 
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
 
 /**
  * A format object which returns a constant value.
@@ -34,10 +32,6 @@ import java.util.Set;
  * @since !__version__!
  */
 final class ConstFormat<T> implements Format<T> {
-
-	private static final Set<Character> PROTECTED = new HashSet<>(Arrays.asList(
-		'D', 'M', 'S', 'd', 'm', 's', 'E', 'X', 'x', '+', '[', ']'
-	));
 
 	private final String _value;
 
@@ -66,7 +60,7 @@ final class ConstFormat<T> implements Format<T> {
 		boolean quote = false;
 		for (int i = 0; i < value.length(); ++i) {
 			final char c = value.charAt(i);
-			if (PROTECTED.contains(c)) {
+			if (PROTECTED_CHARS.contains(c)) {
 				quote = true;
 			}
 			if (c == '\'') {
