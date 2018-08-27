@@ -368,6 +368,12 @@ public final class Location {
 			return (dd - d - m/60.0)*3600.0;
 		}
 
+		static boolean isLocationField(final char c) {
+			return c == 'L' || c == 'D' || c == 'M' || c == 'S' ||
+				c == 'l' || c == 'd' || c == 'm' || c == 's' ||
+				c == 'E' || c == 'H';
+		}
+
 	}
 
 }

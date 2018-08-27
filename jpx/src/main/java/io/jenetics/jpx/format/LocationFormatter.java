@@ -21,6 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.CharacterIterator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.temporal.ChronoField;
@@ -58,11 +59,13 @@ import io.jenetics.jpx.format.Location.Field;
  *  <tr><th scope="col">Symbol</th>   <th scope="col">Meaning</th>         <th scope="col">Examples</th>
  * </thead>
  * <tbody>
- *   <tr><th scope="row">D</th>       <td>degree part of latitude</td>     <td>34; 23.2332</td>
+ *   <tr><th scope="row">L</th>       <td>the latitude value</td>          <td>-34.4334; 23.2332</td>
+ *   <tr><th scope="row">D</th>       <td>(absolute )degree part of latitude</td>     <td>34; 23.2332</td>
  *   <tr><th scope="row">M</th>       <td>minute part of latitude</td>     <td>45; 45.6</td>
  *   <tr><th scope="row">S</th>       <td>second part of latitude</td>     <td>7; 07</td>
  *   <tr><th scope="row">X</th>       <td>hemisphere (N or S)</td>         <td>N; S</td>
- *   <tr><th scope="row">d</th>       <td>degree part of longitude</td>    <td>34; 23.2332</td>
+ *   <tr><th scope="row">l</th>       <td>the longitude value</td>         <td>34; -23.2332</td>
+ *   <tr><th scope="row">d</th>       <td>(absolute) degree part of longitude</td>    <td>34; 23.2332</td>
  *   <tr><th scope="row">m</th>       <td>minute part of longitude</td>    <td>45; 45.6</td>
  *   <tr><th scope="row">s</th>       <td>second part of longitude</td>    <td>7; 07</td>
  *   <tr><th scope="row">x</th>       <td>hemisphere (E or W)</td>         <td>E; W</td>
@@ -679,6 +682,175 @@ public final class LocationFormatter {
 
 			_formats.addAll(resultFormats);
 		}
+
+
+		// 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H'
+		static List<String> tokenize(final String pattern) {
+			final List<String> tokens = new ArrayList<>();
+			final StringBuilder token = new StringBuilder();
+
+			char pc = '\0';
+			boolean quote = false;
+			for (int i = 0; i < pattern.length(); ++i) {
+				final char c = pattern.charAt(i);
+
+				switch (c) {
+					case 'x':
+					case 'X':
+					case '+':
+					case '[':
+					case ']':
+						if (token.length() > 0) {
+							tokens.add(token.toString());
+						}
+						break;
+					case 'L':
+					case 'D':
+					case 'M':
+					case 'S':
+					case 'l':
+					case 'd':
+					case 'm':
+					case 's':
+					case 'E':
+					case 'H':
+						if (c != pc && pc != ',' && pc != '.') {
+							if (Field.isLocationField(pc)) {
+								if (token.length() > 0) {
+									tokens.add(token.toString());
+								}
+								token.setLength(0);
+								token.append(c);
+							} else {
+								if (token.length() > 0) {
+									tokens.add(token.toString());
+								}
+								token.setLength(0);
+								token.append(c);
+							}
+						} else {
+							token.append(c);
+						}
+						break;
+					case ',':
+					case '.':
+						token.append(c);
+						break;
+					case '\'':
+						quote = !quote;
+						token.append(c);
+						if (!quote) {
+							tokens.add(token.toString());
+							token.setLength(0);
+						}
+					default:
+						if (Field.isLocationField(pc)) {
+							if (token.length() > 0) {
+								tokens.add(token.toString());
+							}
+							token.setLength(0);
+						}
+						token.append(c);
+						break;
+				}
+
+				pc = c;
+			}
+
+			return tokens;
+		}
+
+		private static boolean isTokenSeparator(final char c) {
+			return c == '\'' || c == '[' || c == ']';
+		}
+
 	}
 
+}
+
+final class Tokenizer {
+	private static final int OPTIONAL = 1;
+
+	// 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H'
+	static List<String> tokenize(final String pattern) {
+		final List<String> tokens = new ArrayList<>();
+		final StringBuilder token = new StringBuilder();
+
+		int state = 0;
+		boolean sign = false;
+
+		char pc = '\0';
+		boolean quote = false;
+		for (int i = 0; i < pattern.length(); ++i) {
+			final char c = pattern.charAt(i);
+
+			switch (c) {
+				case '[':
+					state = OPTIONAL;
+					break;
+				case ']':
+					if (state != OPTIONAL) {
+						throw new IllegalArgumentException();
+					}
+					break;
+				case '+':
+					break;
+				case 'x':
+				case 'X':
+
+				case 'L':
+				case 'D':
+				case 'M':
+				case 'S':
+				case 'l':
+				case 'd':
+				case 'm':
+				case 's':
+				case 'E':
+				case 'H':
+					if (c != pc && pc != ',' && pc != '.') {
+						if (Field.isLocationField(pc)) {
+							if (token.length() > 0) {
+								tokens.add(token.toString());
+							}
+							token.setLength(0);
+							token.append(c);
+						} else {
+							if (token.length() > 0) {
+								tokens.add(token.toString());
+							}
+							token.setLength(0);
+							token.append(c);
+						}
+					} else {
+						token.append(c);
+					}
+					break;
+				case ',':
+				case '.':
+					token.append(c);
+					break;
+				case '\'':
+					quote = !quote;
+					token.append(c);
+					if (!quote) {
+						tokens.add(token.toString());
+						token.setLength(0);
+					}
+				default:
+					if (Field.isLocationField(pc)) {
+						if (token.length() > 0) {
+							tokens.add(token.toString());
+						}
+						token.setLength(0);
+					}
+					token.append(c);
+					break;
+			}
+
+			pc = c;
+		}
+
+		return tokens;
+	}
 }

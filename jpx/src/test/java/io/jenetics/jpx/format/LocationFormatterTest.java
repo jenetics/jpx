@@ -119,6 +119,13 @@ public class LocationFormatterTest {
 	}
 
 	@Test
+	public void tokenize() {
+		System.out.println(LocationFormatter.Builder.tokenize("[DDMMLL.LLL]"));
+		System.out.println(LocationFormatter.Builder.tokenize("[DDMMLL.LLLaaaabbbb]"));
+		System.out.println(LocationFormatter.Builder.tokenize("[DDMMLL.LLLaaaa'X'bbbb]"));
+	}
+
+	@Test
 	public void parse() {
 		final LocationFormatter formatter = LocationFormatter.ofPattern("[DDMMLL.LLL]");
 
