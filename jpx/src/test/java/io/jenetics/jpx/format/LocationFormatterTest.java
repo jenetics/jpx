@@ -132,6 +132,7 @@ public class LocationFormatterTest {
 			{"LL''", asList("LL", "'", "'")},
 			{"LL'''", asList("LL", "'", "'", "'")},
 			{"LL.LLL", asList("LL.LLL")},
+			{"LL,LLL", asList("LL,LLL")},
 			{"LLDD", asList("LL", "DD")},
 			{"LL.LDD", asList("LL.L", "DD")},
 			{"LL.LDD.DDD", asList("LL.L", "DD.DDD")},

@@ -585,99 +585,75 @@ public final class LocationFormatter {
 
 		// 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H', 'X', 'x'
 		private void parsePattern(final String pattern) {
-			List<Format<Location>> resultFormats = new ArrayList<>();
-			List<Format<Location>> formats = new ArrayList<>();
-			List<Format<Location>> optionalFormats = new ArrayList<>();
+			final List<Format<Location>> formats = new ArrayList<>();
 
-			boolean sign = false;
-			boolean optionalStart = false;
-			Location.Field field = null;
-			StringBuilder format = new StringBuilder();
+			boolean optional = false;
+			int signs = 0;
+			boolean quote = false;
 
-			Location.Field currentField;
-
-			for (int pos = 0; pos < pattern.length(); ++pos) {
-				char c = pattern.charAt(pos);
-				switch (c) {
-					case '+':
-						sign = true;
-						break;
-					case '[':
-						if (optionalStart) {
-							throw new IllegalArgumentException(
-								"No nested optional formats allowed."
-							);
+			String lastToken = "";
+			for (String token : tokenize(pattern)) {
+				switch (token) {
+					case "X":
+						for (int i = 0; i < signs; ++i) {
+							formats.add(new LatitudeSignFormat());
 						}
-						optionalStart = true;
-						resultFormats.addAll(formats);
-						formats.clear();
-						break;
-					case ']':
-						if (!optionalStart) {
-							throw new IllegalArgumentException();
-						}
-						if (field != null) {
-							final Format<Location> f = new OptionalFormat<>(
-								new CompositeFormat<>(formats)
-							);
-							formats.clear();
-							resultFormats.add(f);
-							format = new StringBuilder();
-							field = null;
-						} else {
-							resultFormats.addAll(formats);
-							formats.clear();
-						}
-						optionalStart = false;
-						break;
-					case 'L':
-					case 'D':
-					case 'M':
-					case 'S':
-					case 'l':
-					case 'd':
-					case 'm':
-					case 's':
-					case 'E':
-					case 'H':
-						currentField = Field.FIELD_MAP.get(c);
-						if (field != null && field != currentField) {
-							final String decimalPattern = format.toString();
-							formats.add(LocationFieldFormat.of(currentField, decimalPattern));
-							format = new StringBuilder();
-							field = null;
-						} else {
-							field = currentField;
-							format.append('0');
-						}
-						break;
-					case '.':
-					case ',':
-						format.append(c);
-						break;
-					case 'X':
+						signs = 0;
 						formats.add(new NorthSouthFormat());
 						break;
-					case 'x':
+					case "x":
+						for (int i = 0; i < signs; ++i) {
+							formats.add(new LongitudeSignFormat());
+						}
+						signs = 0;
+						formats.add(new EastWestFormat());
+						break;
+					case "+":
+						++signs;
+						break;
+					case "[":
+						if (optional) {
+							throw new IllegalArgumentException("No nesting optional.");
+						}
+						if (signs > 0) {
+							throw new IllegalArgumentException("No '[' after '+' allowed.");
+						}
+						optional = true;
+						break;
+					case "]":
+						if (!optional) {
+							throw new IllegalArgumentException("No open optional.");
+						}
+						optional = false;
+
+						_formats.add(new OptionalFormat<>(new CompositeFormat<>(formats)));
+						formats.clear();
+						break;
+					case "'":
+						if ("'".equals(lastToken)) {
+							formats.add(new ConstFormat<>("'"));
+							quote = false;
+						} else {
+							quote = !quote;
+						}
+						break;
 					default:
-						throw new IllegalArgumentException();
 				}
+
+				lastToken = token;
 			}
 
-			if (optionalStart) {
-				throw new IllegalArgumentException("Unbalanced optional formats.");
+			if (optional) {
+				throw new IllegalArgumentException("No closing ']' found.");
+			}
+			if (quote) {
+				throw new IllegalArgumentException("No closing \"'\" character found. ");
 			}
 
-			resultFormats.addAll(formats);
-			if (field != null) {
-				resultFormats.add(LocationFieldFormat.of(field, format.toString()));
-			}
-
-			_formats.addAll(resultFormats);
+			_formats.addAll(formats);
 		}
 
 
-		// 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H'
 		static List<String> tokenize(final String pattern) {
 			final List<String> tokens = new ArrayList<>();
 			final StringBuilder token = new StringBuilder();
