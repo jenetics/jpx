@@ -21,19 +21,12 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
-import java.text.CharacterIterator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.time.temporal.ChronoField;
-import java.time.temporal.IsoFields;
-import java.time.temporal.JulianFields;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -689,19 +682,32 @@ public final class LocationFormatter {
 			final List<String> tokens = new ArrayList<>();
 			final StringBuilder token = new StringBuilder();
 
-			char pc = '\0';
 			boolean quote = false;
+			char pc = '\0';
 			for (int i = 0; i < pattern.length(); ++i) {
 				final char c = pattern.charAt(i);
-
 				switch (c) {
+					case '\'':
+						quote = !quote;
+						if (token.length() > 0) {
+							tokens.add(token.toString());
+							token.setLength(0);
+						}
+						tokens.add(Character.toString(c));
+						break;
 					case 'x':
 					case 'X':
 					case '+':
 					case '[':
 					case ']':
-						if (token.length() > 0) {
-							tokens.add(token.toString());
+						if (quote) {
+							token.append(c);
+						} else {
+							if (token.length() > 0) {
+								tokens.add(token.toString());
+								token.setLength(0);
+							}
+							tokens.add(Character.toString(c));
 						}
 						break;
 					case 'L':
@@ -714,41 +720,24 @@ public final class LocationFormatter {
 					case 's':
 					case 'E':
 					case 'H':
-						if (c != pc && pc != ',' && pc != '.') {
-							if (Field.isLocationField(pc)) {
-								if (token.length() > 0) {
-									tokens.add(token.toString());
-								}
+						if (c != pc && pc != '\0' && pc != '.' && pc != ',' && !quote) {
+							if (token.length() > 0) {
+								tokens.add(token.toString());
 								token.setLength(0);
-								token.append(c);
-							} else {
-								if (token.length() > 0) {
-									tokens.add(token.toString());
-								}
-								token.setLength(0);
-								token.append(c);
 							}
-						} else {
-							token.append(c);
 						}
+						token.append(c);
 						break;
 					case ',':
 					case '.':
 						token.append(c);
 						break;
-					case '\'':
-						quote = !quote;
-						token.append(c);
-						if (!quote) {
-							tokens.add(token.toString());
-							token.setLength(0);
-						}
 					default:
-						if (Field.isLocationField(pc)) {
+						if (PROTECTED_CHARS.contains(pc) || pc == '\'') {
 							if (token.length() > 0) {
 								tokens.add(token.toString());
+								token.setLength(0);
 							}
-							token.setLength(0);
 						}
 						token.append(c);
 						break;
@@ -757,100 +746,13 @@ public final class LocationFormatter {
 				pc = c;
 			}
 
+			if (token.length() > 0) {
+				tokens.add(token.toString());
+			}
+
 			return tokens;
 		}
 
-		private static boolean isTokenSeparator(final char c) {
-			return c == '\'' || c == '[' || c == ']';
-		}
-
 	}
 
-}
-
-final class Tokenizer {
-	private static final int OPTIONAL = 1;
-
-	// 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H'
-	static List<String> tokenize(final String pattern) {
-		final List<String> tokens = new ArrayList<>();
-		final StringBuilder token = new StringBuilder();
-
-		int state = 0;
-		boolean sign = false;
-
-		char pc = '\0';
-		boolean quote = false;
-		for (int i = 0; i < pattern.length(); ++i) {
-			final char c = pattern.charAt(i);
-
-			switch (c) {
-				case '[':
-					state = OPTIONAL;
-					break;
-				case ']':
-					if (state != OPTIONAL) {
-						throw new IllegalArgumentException();
-					}
-					break;
-				case '+':
-					break;
-				case 'x':
-				case 'X':
-
-				case 'L':
-				case 'D':
-				case 'M':
-				case 'S':
-				case 'l':
-				case 'd':
-				case 'm':
-				case 's':
-				case 'E':
-				case 'H':
-					if (c != pc && pc != ',' && pc != '.') {
-						if (Field.isLocationField(pc)) {
-							if (token.length() > 0) {
-								tokens.add(token.toString());
-							}
-							token.setLength(0);
-							token.append(c);
-						} else {
-							if (token.length() > 0) {
-								tokens.add(token.toString());
-							}
-							token.setLength(0);
-							token.append(c);
-						}
-					} else {
-						token.append(c);
-					}
-					break;
-				case ',':
-				case '.':
-					token.append(c);
-					break;
-				case '\'':
-					quote = !quote;
-					token.append(c);
-					if (!quote) {
-						tokens.add(token.toString());
-						token.setLength(0);
-					}
-				default:
-					if (Field.isLocationField(pc)) {
-						if (token.length() > 0) {
-							tokens.add(token.toString());
-						}
-						token.setLength(0);
-					}
-					token.append(c);
-					break;
-			}
-
-			pc = c;
-		}
-
-		return tokens;
-	}
 }

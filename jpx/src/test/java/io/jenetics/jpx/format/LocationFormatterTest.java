@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.util.Arrays.asList;
 import static io.jenetics.jpx.Length.Unit.METER;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_LONG;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_MEDIUM;
@@ -37,9 +38,8 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 
-import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
+import java.util.List;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -118,11 +118,34 @@ public class LocationFormatterTest {
 		System.out.println(ISO_LONG.toPattern());
 	}
 
-	@Test
-	public void tokenize() {
-		System.out.println(LocationFormatter.Builder.tokenize("[DDMMLL.LLL]"));
-		System.out.println(LocationFormatter.Builder.tokenize("[DDMMLL.LLLaaaabbbb]"));
-		System.out.println(LocationFormatter.Builder.tokenize("[DDMMLL.LLLaaaa'X'bbbb]"));
+	@Test(dataProvider = "tokens")
+	public void tokenize(final String pattern, final List<String> tokens) {
+		final List<String> t = LocationFormatter.Builder.tokenize(pattern);
+		Assert.assertEquals(t, tokens, String.format("%s != %s", t, tokens));
+	}
+
+	@DataProvider
+	public Object[][] tokens() {
+		return new Object[][] {
+			{"LL", asList("LL")},
+			{".LL", asList(".LL")},
+			{"LL''", asList("LL", "'", "'")},
+			{"LL'''", asList("LL", "'", "'", "'")},
+			{"LL.LLL", asList("LL.LLL")},
+			{"LLDD", asList("LL", "DD")},
+			{"LL.LDD", asList("LL.L", "DD")},
+			{"LL.LDD.DDD", asList("LL.L", "DD.DDD")},
+			{"LL.L123DD.DDD", asList("LL.L", "123", "DD.DDD")},
+			{"LL.L123DD.DDD4567", asList("LL.L", "123", "DD.DDD", "4567")},
+			{"+LL.LDD.DDD", asList("+", "LL.L", "DD.DDD")},
+			{"+LL.LDD.DDDx", asList("+", "LL.L", "DD.DDD", "x")},
+			{"+LL.LDD.DDD''x", asList("+", "LL.L", "DD.DDD", "'", "'", "x")},
+			{"+LL.LDD.DDD'x'", asList("+", "LL.L", "DD.DDD", "'", "x", "'")},
+			{"+LL.LDD.DDD[x]ss", asList("+", "LL.L", "DD.DDD", "[", "x", "]", "ss")},
+			{"+LL.LDD.DDD[x]'ss", asList("+", "LL.L", "DD.DDD", "[", "x", "]", "'", "ss")},
+			{"+DD.DD[SSS]'XXX'sss.smm", asList("+", "DD.DD", "[", "SSS", "]", "'", "XXX", "'", "sss.s", "mm")},
+			{"+DD.DD[SSS]'XXXsss.smm", asList("+", "DD.DD", "[", "SSS", "]", "'", "XXXsss.smm")}
+		};
 	}
 
 	@Test
