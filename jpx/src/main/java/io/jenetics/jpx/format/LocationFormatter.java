@@ -53,7 +53,7 @@ import io.jenetics.jpx.format.Location.Field;
  * </thead>
  * <tbody>
  *   <tr><th scope="row">L</th>       <td>the latitude value</td>          <td>-34.4334; 23.2332</td>
- *   <tr><th scope="row">D</th>       <td>(absolute )degree part of latitude</td>     <td>34; 23.2332</td>
+ *   <tr><th scope="row">D</th>       <td>(absolute) degree part of latitude</td>     <td>34; 23.2332</td>
  *   <tr><th scope="row">M</th>       <td>minute part of latitude</td>     <td>45; 45.6</td>
  *   <tr><th scope="row">S</th>       <td>second part of latitude</td>     <td>7; 07</td>
  *   <tr><th scope="row">X</th>       <td>hemisphere (N or S)</td>         <td>N; S</td>
