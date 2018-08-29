@@ -273,7 +273,7 @@ public final class LocationFormatter {
 	 * @param location the location to format
 	 * @return the format string
 	 * @throws NullPointerException if the given {@code location} is {@code null}
-	 * @throws LocationException if the formatter tries to format a non-existing,
+	 * @throws FormatterException if the formatter tries to format a non-existing,
 	 *         non-optional location fields.
 	 */
 	public String format(final Location location) {
@@ -284,8 +284,8 @@ public final class LocationFormatter {
 			.collect(Collectors.joining());
 	}
 
-	private LocationException toError(final Location location) {
-		return new LocationException(String.format(
+	private FormatterException toError(final Location location) {
+		return new FormatterException(String.format(
 			"Invalid format '%s' for location %s.",
 			toPattern(), location
 		));
@@ -313,7 +313,7 @@ public final class LocationFormatter {
 	 * @param lon the longitude part of the location
 	 * @param ele the elevation part of the location
 	 * @return the format string
-	 * @throws LocationException if the formatter tries to format a non-existing,
+	 * @throws FormatterException if the formatter tries to format a non-existing,
 	 *         non-optional location fields.
 	 */
 	public String format(final Latitude lat, final Longitude lon, final Length ele) {
@@ -328,7 +328,7 @@ public final class LocationFormatter {
 	 * @param lat the latitude part of the location
 	 * @param lon the longitude part of the location
 	 * @return the format string
-	 * @throws LocationException if the formatter tries to format a non-existing,
+	 * @throws FormatterException if the formatter tries to format a non-existing,
 	 *         non-optional location fields.
 	 */
 	public String format(final Latitude lat, final Longitude lon) {
@@ -342,7 +342,7 @@ public final class LocationFormatter {
 	 *
 	 * @param lat the latitude part of the location
 	 * @return the format string
-	 * @throws LocationException if the formatter tries to format a non-existing,
+	 * @throws FormatterException if the formatter tries to format a non-existing,
 	 *         non-optional location fields.
 	 */
 	public String format(final Latitude lat) {
@@ -356,7 +356,7 @@ public final class LocationFormatter {
 	 *
 	 * @param lon the longitude part of the location
 	 * @return the format string
-	 * @throws LocationException if the formatter tries to format a non-existing,
+	 * @throws FormatterException if the formatter tries to format a non-existing,
 	 *         non-optional location fields.
 	 */
 	public String format(final Longitude lon) {
@@ -370,7 +370,7 @@ public final class LocationFormatter {
 	 *
 	 * @param ele the elevation part of the location
 	 * @return the format string
-	 * @throws LocationException if the formatter tries to format a non-existing,
+	 * @throws FormatterException if the formatter tries to format a non-existing,
 	 *         non-optional location field.
 	 */
 	public String format(final Length ele) {

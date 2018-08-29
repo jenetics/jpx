@@ -26,13 +26,13 @@ package io.jenetics.jpx.format;
  * @version !__version__!
  * @since !__version__!
  */
-public class LocationException extends RuntimeException {
+public class FormatterException extends RuntimeException {
 	private static final long serialVersionUID = 1;
 
 	/**
 	 * Create a new exception with {@code null} as its detail message.
 	 */
-	public LocationException() {
+	public FormatterException() {
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class LocationException extends RuntimeException {
 	 *
 	 * @param message the detail message
 	 */
-	public LocationException(final String message) {
+	public FormatterException(final String message) {
 		super(message);
 	}
 
@@ -51,7 +51,7 @@ public class LocationException extends RuntimeException {
 	 * @param message the detail message
 	 * @param cause the exception cause
 	 */
-	public LocationException(final String message, final Throwable cause) {
+	public FormatterException(final String message, final Throwable cause) {
 		super(message, cause);
 	}
 
@@ -60,7 +60,7 @@ public class LocationException extends RuntimeException {
 	 *
 	 * @param cause the exception cause
 	 */
-	public LocationException(final Throwable cause) {
+	public FormatterException(final Throwable cause) {
 		super(cause);
 	}
 
