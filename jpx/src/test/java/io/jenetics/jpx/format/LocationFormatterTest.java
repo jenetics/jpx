@@ -38,7 +38,6 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 
@@ -61,7 +60,6 @@ public class LocationFormatterTest {
 		final Location location,
 		final String format
 	) {
-		DateTimeFormatter b;
 		Assert.assertEquals(formatter.format(location), format);
 	}
 
@@ -113,7 +111,10 @@ public class LocationFormatterTest {
 				Length.of(-65.234275, METER)), "+245915.49-0651403.39-65.23CRS"},
 
 			{LocationFormatter.ofPattern("LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "24g'g"},
-			{LocationFormatter.ofPattern("+LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24g'g"}
+			{LocationFormatter.ofPattern("+LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24g'g"},
+			{LocationFormatter.ofPattern("+L+L[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24+24g'g"},
+			{LocationFormatter.ofPattern("+++LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+++24g'g"},
+			{LocationFormatter.ofPattern("+++LL[g''g]++"), Location.of(Latitude.ofDegrees(23.987635)), "+++24g'g"}
 		};
 	}
 
@@ -131,6 +132,7 @@ public class LocationFormatterTest {
 			{"LL''", asList("LL", "'", "'")},
 			{"LL'''", asList("LL", "'", "'", "'")},
 			{"LL.LLL", asList("LL.LLL")},
+			{"+++LL[g''g]", asList("+", "+", "+", "LL", "[", "g", "'", "'", "g", "]")},
 			{"LL,LLL", asList("LL,LLL")},
 			{"LLDD", asList("LL", "DD")},
 			{"LL.LDD", asList("LL.L", "DD")},

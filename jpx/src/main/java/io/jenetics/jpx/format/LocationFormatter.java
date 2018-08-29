@@ -682,11 +682,17 @@ public final class LocationFormatter {
 							if (field.isPresent()) {
 								if (signs > 0) {
 									if (field.get().isLatitude()) {
-										fmt.add(new LatitudeSignFormat());
+										for (int i = 0; i < signs; ++i) {
+											fmt.add(new LatitudeSignFormat());
+										}
 									} else if (field.get().isLongitude()) {
-										fmt.add(new LongitudeSignFormat());
+										for (int i = 0; i < signs; ++i) {
+											fmt.add(new LongitudeSignFormat());
+										}
 									} else if (field.get().isElevation()) {
-										fmt.add(new ElevationSignFormat());
+										for (int i = 0; i < signs; ++i) {
+											fmt.add(new ElevationSignFormat());
+										}
 									}
 								}
 								fmt.add(new LocationFieldFormat(
@@ -695,8 +701,8 @@ public final class LocationFormatter {
 							} else {
 								fmt.add(new ConstFormat<>(token));
 							}
-							signs = 0;
 						}
+						signs = 0;
 						break;
 				}
 			}
