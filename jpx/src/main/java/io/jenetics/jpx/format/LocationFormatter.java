@@ -64,7 +64,8 @@ import io.jenetics.jpx.format.Location.Field;
  *   <tr><th scope="row">m</th>       <td>minute part of longitude</td>    <td>45; 45.6</td>
  *   <tr><th scope="row">s</th>       <td>second part of longitude</td>    <td>7; 07</td>
  *   <tr><th scope="row">x</th>       <td>hemisphere (E or W)</td>         <td>E; W</td>
- *   <tr><th scope="row">E</th>       <td>elevation in meters</td>         <td>234; 1023</td>
+ *   <tr><th scope="row">E</th>       <td>elevation in meters</td>         <td>234; 1023; -12</td>
+ *   <tr><th scope="row">H</th>       <td>(absolute) elevation in meters</td> <td>234; 1023; 12</td>
  *   <tr><th scope="row">'</th>       <td>escape for text</td>             <td></td>
  *   <tr><th scope="row">''</th>      <td>single quote</td>                <td>'</td>
  *   <tr><th scope="row">[</th>       <td>optional section start</td>      <td></td>
@@ -383,10 +384,6 @@ public final class LocationFormatter {
 //	public Location parse(final CharSequence text) {
 //		return null;
 //	}
-//
-//	public LocationFormatter withLocal(final Locale locale) {
-//		return this;
-//	}
 
 
 	@Override
@@ -401,6 +398,8 @@ public final class LocationFormatter {
 
 	/**
 	 * Creates a formatter using the specified pattern.
+	 *
+	 * @see #toPattern()
 	 *
 	 * @param pattern the formatter pattern
 	 * @return the location-formatter of the given {@code pattern}

@@ -20,7 +20,7 @@
 package io.jenetics.jpx.format;
 
 /**
- * This exception is thrown if formatting or parsing of a location object fails.
+ * This exception is thrown if formatting of a location object fails.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
