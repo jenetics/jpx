@@ -617,7 +617,6 @@ public final class LocationFormatter {
 			boolean quote = false;
 
 			List<Format<Location>> fmt;
-
 			for (Tokens tokens = new Tokens(tokenize(pattern)); tokens.hasNext();) {
 				final String token = tokens.next();
 				switch (token) {
@@ -642,20 +641,28 @@ public final class LocationFormatter {
 						break;
 					case "[":
 						if (optional) {
-							throw new IllegalArgumentException("No nesting optional.");
+							throw new IllegalArgumentException(
+								"No nesting '[' (optional) allowed."
+							);
 						}
 						if (signs > 0) {
-							throw new IllegalArgumentException("No '[' after '+' allowed.");
+							throw new IllegalArgumentException(
+								"No '[' after '+' allowed."
+							);
 						}
 						optional = true;
 						break;
 					case "]":
 						if (!optional) {
-							throw new IllegalArgumentException("No open optional.");
+							throw new IllegalArgumentException(
+								"Missing open '[' bracket."
+							);
 						}
 						optional = false;
 
-						_formats.add(new OptionalFormat<>(new CompositeFormat<>(formats)));
+						_formats.add(new OptionalFormat<>(
+							new CompositeFormat<>(formats)
+						));
 						formats.clear();
 						break;
 					case "'":
@@ -667,7 +674,10 @@ public final class LocationFormatter {
 						}
 						if (quote) {
 							if (tokens.before().isPresent()) {
-								fmt.add(new ConstFormat<>(tokens.before().orElseThrow(AssertionError::new)));
+								fmt.add(new ConstFormat<>(
+									tokens.before()
+										.orElseThrow(AssertionError::new)
+								));
 							}
 							quote = false;
 						} else {
@@ -695,7 +705,9 @@ public final class LocationFormatter {
 									}
 								}
 								fmt.add(new LocationFieldFormat(
-									field.get(), () -> new DecimalFormat(field.get().toDecimalPattern(token))
+									field.get(),
+									() -> new DecimalFormat(
+										field.get().toDecimalPattern(token))
 								));
 							} else {
 								fmt.add(new ConstFormat<>(token));
@@ -710,7 +722,9 @@ public final class LocationFormatter {
 				throw new IllegalArgumentException("No closing ']' found.");
 			}
 			if (quote) {
-				throw new IllegalArgumentException("No closing ' character found. ");
+				throw new IllegalArgumentException(
+					"Missing closing ' character."
+				);
 			}
 
 			_formats.addAll(formats);
@@ -759,7 +773,9 @@ public final class LocationFormatter {
 					case 's':
 					case 'E':
 					case 'H':
-						if (c != pc && pc != '\0' && pc != '.' && pc != ',' && !quote) {
+						if (c != pc && pc != '\0' && pc != '.' &&
+							pc != ',' && !quote)
+						{
 							if (token.length() > 0) {
 								tokens.add(token.toString());
 								token.setLength(0);
