@@ -374,6 +374,40 @@ public final class Location {
 				c == 'E' || c == 'H';
 		}
 
+		static Optional<Field> ofPattern(final String pattern) {
+			for (int i = 0; i < pattern.length(); ++i) {
+				for (Field field : Field.values()) {
+					if (field.type() == pattern.charAt(i)) {
+						return Optional.of(field);
+					}
+				}
+			}
+
+			return Optional.empty();
+		}
+
+		String toDecimalPattern(final String pattern) {
+			return pattern.replace(type(), '0');
+		}
+
+		boolean isLatitude() {
+			return this == LATITUDE ||
+				this == DEGREE_OF_LATITUDE ||
+				this == MINUTE_OF_LATITUDE ||
+				this == SECOND_OF_LATITUDE;
+		}
+
+		boolean isLongitude() {
+			return this == LONGITUDE ||
+				this == DEGREE_OF_LONGITUDE ||
+				this == MINUTE_OF_LONGITUDE ||
+				this == SECOND_OF_LONGITUDE;
+		}
+
+		boolean isElevation() {
+			return this == ELEVATION || this == METER_OF_ELEVATION;
+		}
+
 	}
 
 }

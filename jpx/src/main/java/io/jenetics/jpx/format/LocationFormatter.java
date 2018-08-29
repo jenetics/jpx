@@ -26,8 +26,10 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -591,22 +593,26 @@ public final class LocationFormatter {
 			int signs = 0;
 			boolean quote = false;
 
-			String lastToken = "";
-			for (String token : tokenize(pattern)) {
+			List<Format<Location>> fmt = _formats;
+
+			for (Tokens tokens = new Tokens(tokenize(pattern)); tokens.hasNext();) {
+				final String token = tokens.next();
 				switch (token) {
 					case "X":
+						fmt = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) {
-							formats.add(new LatitudeSignFormat());
+							fmt.add(new LatitudeSignFormat());
 						}
 						signs = 0;
-						formats.add(new NorthSouthFormat());
+						fmt.add(new NorthSouthFormat());
 						break;
 					case "x":
+						fmt = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) {
-							formats.add(new LongitudeSignFormat());
+							fmt.add(new LongitudeSignFormat());
 						}
 						signs = 0;
-						formats.add(new EastWestFormat());
+						fmt.add(new EastWestFormat());
 						break;
 					case "+":
 						++signs;
@@ -630,24 +636,52 @@ public final class LocationFormatter {
 						formats.clear();
 						break;
 					case "'":
-						if ("'".equals(lastToken)) {
-							formats.add(new ConstFormat<>("'"));
+						fmt = optional ? formats : _formats;
+						if (tokens.after().filter("'"::equals).isPresent()) {
+							fmt.add(new ConstFormat<>("'"));
+							tokens.next();
+							break;
+						}
+						if (quote) {
+							if (tokens.before().isPresent()) {
+								fmt.add(new ConstFormat<>(tokens.before().orElseThrow(AssertionError::new)));
+							}
 							quote = false;
 						} else {
-							quote = !quote;
+							quote = true;
 						}
 						break;
 					default:
+						fmt = optional ? formats : _formats;
+						if (!quote) {
+							final Optional<Field> field = Field.ofPattern(token);
+							if (field.isPresent()) {
+								if (signs > 0) {
+									if (field.get().isLatitude()) {
+										fmt.add(new LatitudeSignFormat());
+									} else if (field.get().isLongitude()) {
+										fmt.add(new LongitudeSignFormat());
+									} else if (field.get().isElevation()) {
+										fmt.add(new ElevationSignFormat());
+									}
+								}
+								fmt.add(new LocationFieldFormat(
+									field.get(), () -> new DecimalFormat(field.get().toDecimalPattern(token))
+								));
+							} else {
+								fmt.add(new ConstFormat<>(token));
+							}
+							signs = 0;
+						}
+						break;
 				}
-
-				lastToken = token;
 			}
 
 			if (optional) {
 				throw new IllegalArgumentException("No closing ']' found.");
 			}
 			if (quote) {
-				throw new IllegalArgumentException("No closing \"'\" character found. ");
+				throw new IllegalArgumentException("No closing ' character found. ");
 			}
 
 			_formats.addAll(formats);
@@ -727,6 +761,39 @@ public final class LocationFormatter {
 			}
 
 			return tokens;
+		}
+
+	}
+
+	private static final class Tokens implements Iterator<String> {
+		private final List<String> _tokens;
+
+		private int _index = 0;
+
+		private Tokens(final List<String> tokens) {
+			_tokens = requireNonNull(tokens);
+		}
+
+		@Override
+		public boolean hasNext() {
+			return _index < _tokens.size();
+		}
+
+		@Override
+		public String next() {
+			return _tokens.get(_index++);
+		}
+
+		Optional<String> before() {
+			return _index - 1 > 0
+				? Optional.of(_tokens.get(_index - 2))
+				: Optional.empty();
+		}
+
+		Optional<String> after() {
+			return hasNext()
+				? Optional.of(_tokens.get(_index))
+				: Optional.empty();
 		}
 
 	}

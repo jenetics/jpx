@@ -39,6 +39,7 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 
 import org.testng.Assert;
@@ -149,17 +150,35 @@ public class LocationFormatterTest {
 		};
 	}
 
-	@Test
-	public void parse() {
-		final LocationFormatter formatter = LocationFormatter.ofPattern("[DDMMLL.LLL]");
+	@Test(dataProvider = "patterns")
+	public void parse(final String pattern) {
+		Assert.assertEquals(LocationFormatter.ofPattern(pattern).toPattern(), pattern);
+	}
 
-		final Location location = Location.of(
-			Latitude.ofDegrees(23.987635),
-			Longitude.ofDegrees(-65.234275),
-			Length.of(-65.234275, METER)
+	@DataProvider
+	public Object[][] patterns() {
+		final List<LocationFormatter> formatters = Arrays.asList(
+			ISO_ELE_LONG,
+			ISO_ELE_MEDIUM,
+			ISO_ELE_SHORT,
+			ISO_HUMAN_ELE_LONG,
+			ISO_HUMAN_LAT_LONG,
+			ISO_HUMAN_LONG,
+			ISO_HUMAN_LON_LONG,
+			ISO_LAT_LONG,
+			ISO_LAT_MEDIUM,
+			ISO_LAT_SHORT,
+			ISO_LONG,
+			ISO_LON_LONG,
+			ISO_LON_MEDIUM,
+			ISO_LON_SHORT,
+			ISO_MEDIUM,
+			ISO_SHORT
 		);
-		System.out.println("LOC: " + formatter.format(location));
-		System.out.println("PAT: " + formatter.toPattern());
+
+		return formatters.stream()
+			.map(f -> new Object[]{f.toPattern()})
+			.toArray(Object[][]::new);
 	}
 
 }
