@@ -202,7 +202,7 @@ public final class Location {
 	 * @version !__version__!
 	 * @since !__version__!
 	 */
-	public enum Field implements Function<Location, Optional<Double>> {
+	public enum Field {
 
 		/**
 		 * This field allows to access the latitude value of a given location
@@ -348,7 +348,7 @@ public final class Location {
 		 * @param location the location
 		 * @return the value of the location field
 		 */
-		public Optional<Double> apply(final Location location) {
+		Optional<Double> apply(final Location location) {
 			return _accessor.apply(requireNonNull(location));
 		}
 
@@ -366,12 +366,6 @@ public final class Location {
 			final double d = floor(dd);
 			final double m = floor((dd - d)*60.0);
 			return (dd - d - m/60.0)*3600.0;
-		}
-
-		static boolean isLocationField(final char c) {
-			return c == 'L' || c == 'D' || c == 'M' || c == 'S' ||
-				c == 'l' || c == 'd' || c == 'm' || c == 's' ||
-				c == 'E' || c == 'H';
 		}
 
 		static Optional<Field> ofPattern(final String pattern) {
