@@ -20,7 +20,7 @@
 package io.jenetics.jpx.format;
 
 /**
- * This exception is thrown if formatting of a location object fails.
+ * This exception is thrown if formatting or parsing of a location object fails.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
@@ -30,38 +30,12 @@ public class FormatterException extends RuntimeException {
 	private static final long serialVersionUID = 1;
 
 	/**
-	 * Create a new exception with {@code null} as its detail message.
-	 */
-	public FormatterException() {
-	}
-
-	/**
 	 * Create a new exception with the given detail {@code message}.
 	 *
 	 * @param message the detail message
 	 */
 	public FormatterException(final String message) {
 		super(message);
-	}
-
-	/**
-	 * Create a new exception with the given detail {@code message} and
-	 * exception {@code cause}.
-	 *
-	 * @param message the detail message
-	 * @param cause the exception cause
-	 */
-	public FormatterException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
-
-	/**
-	 * Create a new exception with the given exception {@code cause}.
-	 *
-	 * @param cause the exception cause
-	 */
-	public FormatterException(final Throwable cause) {
-		super(cause);
 	}
 
 }
