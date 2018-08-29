@@ -114,11 +114,6 @@ public class LocationFormatterTest {
 		};
 	}
 
-	@Test
-	public void pattern() {
-		System.out.println(ISO_LONG.toPattern());
-	}
-
 	@Test(dataProvider = "tokens")
 	public void tokenize(final String pattern, final List<String> tokens) {
 		final List<String> t = LocationFormatter.Builder.tokenize(pattern);
