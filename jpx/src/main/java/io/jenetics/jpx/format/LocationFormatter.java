@@ -293,9 +293,11 @@ public final class LocationFormatter {
 	/**
 	 * Return the pattern string represented by this formatter.
 	 *
+	 * @see #ofPattern(String)
+	 *
 	 * @return the pattern string of {@code this} formatter
 	 */
-	String toPattern() {
+	public String toPattern() {
 		return _formats.stream()
 			.map(Objects::toString)
 			.collect(Collectors.joining());
@@ -392,6 +394,19 @@ public final class LocationFormatter {
 		return String.format("LocationFormat[%s]", toPattern());
 	}
 
+
+	/* *************************************************************************
+	 * Static factory methods.
+	 * ************************************************************************/
+
+	/**
+	 * Creates a formatter using the specified pattern.
+	 *
+	 * @param pattern the formatter pattern
+	 * @return the location-formatter of the given {@code pattern}
+	 * @throws NullPointerException if the given {@code pattern} is {@code null}
+	 * @throws IllegalArgumentException if the given {@code pattern} is invalid
+	 */
 	public static LocationFormatter ofPattern(final String pattern) {
 		return builder()
 			.appendPattern(pattern)
@@ -570,6 +585,16 @@ public final class LocationFormatter {
 			return this;
 		}
 
+		/**
+		 * Appends the elements defined by the specified pattern to the builder.
+		 *
+		 * @param pattern the pattern to add
+		 * @return {@code this}, for chaining, not {@code null}
+		 * @throws NullPointerException if the given {@code pattern} is
+		 *         {@code null}
+		 * @throws IllegalArgumentException if the given {@code pattern} is
+		 *         invalid
+		 */
 		public Builder appendPattern(final String pattern) {
 			parsePattern(pattern);
 			return this;
@@ -584,16 +609,15 @@ public final class LocationFormatter {
 			return new LocationFormatter(new ArrayList<>(_formats));
 		}
 
-
-		// 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H', 'X', 'x'
 		private void parsePattern(final String pattern) {
+			requireNonNull(pattern);
 			final List<Format<Location>> formats = new ArrayList<>();
 
 			boolean optional = false;
 			int signs = 0;
 			boolean quote = false;
 
-			List<Format<Location>> fmt = _formats;
+			List<Format<Location>> fmt;
 
 			for (Tokens tokens = new Tokens(tokenize(pattern)); tokens.hasNext();) {
 				final String token = tokens.next();

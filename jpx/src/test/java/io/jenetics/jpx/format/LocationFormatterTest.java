@@ -110,7 +110,10 @@ public class LocationFormatterTest {
 			{ISO_LONG, Location.of(
 				Latitude.ofDegrees(23.987635),
 				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "+245915.49-0651403.39-65.23CRS"}
+				Length.of(-65.234275, METER)), "+245915.49-0651403.39-65.23CRS"},
+
+			{LocationFormatter.ofPattern("LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "24g'g"},
+			{LocationFormatter.ofPattern("+LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24g'g"}
 		};
 	}
 
@@ -148,31 +151,35 @@ public class LocationFormatterTest {
 	@Test(dataProvider = "patterns")
 	public void parse(final String pattern) {
 		Assert.assertEquals(LocationFormatter.ofPattern(pattern).toPattern(), pattern);
+		//System.out.println(LocationFormatter.ofPattern(pattern).toPattern());
 	}
 
 	@DataProvider
 	public Object[][] patterns() {
-		final List<LocationFormatter> formatters = Arrays.asList(
-			ISO_ELE_LONG,
-			ISO_ELE_MEDIUM,
-			ISO_ELE_SHORT,
-			ISO_HUMAN_ELE_LONG,
-			ISO_HUMAN_LAT_LONG,
-			ISO_HUMAN_LONG,
-			ISO_HUMAN_LON_LONG,
-			ISO_LAT_LONG,
-			ISO_LAT_MEDIUM,
-			ISO_LAT_SHORT,
-			ISO_LONG,
-			ISO_LON_LONG,
-			ISO_LON_MEDIUM,
-			ISO_LON_SHORT,
-			ISO_MEDIUM,
-			ISO_SHORT
+		final List<String> patterns = Arrays.asList(
+			ISO_ELE_LONG.toPattern(),
+			ISO_ELE_MEDIUM.toPattern(),
+			ISO_ELE_SHORT.toPattern(),
+			ISO_HUMAN_ELE_LONG.toPattern(),
+			ISO_HUMAN_LAT_LONG.toPattern(),
+			ISO_HUMAN_LONG.toPattern(),
+			ISO_HUMAN_LON_LONG.toPattern(),
+			ISO_LAT_LONG.toPattern(),
+			ISO_LAT_MEDIUM.toPattern(),
+			ISO_LAT_SHORT.toPattern(),
+			ISO_LONG.toPattern(),
+			ISO_LON_LONG.toPattern(),
+			ISO_LON_MEDIUM.toPattern(),
+			ISO_LON_SHORT.toPattern(),
+			ISO_MEDIUM.toPattern(),
+			ISO_SHORT.toPattern(),
+			".LLf",
+			"LL[gg]",
+			"LL[g''g]"
 		);
 
-		return formatters.stream()
-			.map(f -> new Object[]{f.toPattern()})
+		return patterns.stream()
+			.map(f -> new Object[]{f})
 			.toArray(Object[][]::new);
 	}
 
