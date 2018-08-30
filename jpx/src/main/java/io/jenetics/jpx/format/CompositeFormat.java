@@ -29,8 +29,8 @@ import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.4
+ * @since 1.4
  */
 final class CompositeFormat<T> implements Format<T> {
 

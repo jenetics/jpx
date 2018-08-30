@@ -23,8 +23,8 @@ package io.jenetics.jpx.format;
  * This exception is thrown if formatting or parsing of a location object fails.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.4
+ * @since 1.4
  */
 public class FormatterException extends RuntimeException {
 	private static final long serialVersionUID = 1;

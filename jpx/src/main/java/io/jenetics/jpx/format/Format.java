@@ -26,8 +26,8 @@ import java.util.Optional;
  * representation.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.4
+ * @since 1.4
  */
 interface Format<T> {
 

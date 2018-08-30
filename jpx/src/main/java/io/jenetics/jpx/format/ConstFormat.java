@@ -28,8 +28,8 @@ import java.util.Optional;
  * A format object which returns a constant value.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.4
+ * @since 1.4
  */
 final class ConstFormat<T> implements Format<T> {
 

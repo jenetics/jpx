@@ -43,8 +43,8 @@ import io.jenetics.jpx.WayPoint;
  * @see Point
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.4
+ * @since 1.4
  */
 public final class Location {
 	private final Latitude _latitude;
@@ -199,8 +199,8 @@ public final class Location {
 	 * elevation.
 	 *
 	 * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
-	 * @version !__version__!
-	 * @since !__version__!
+	 * @version 1.4
+	 * @since 1.4
 	 */
 	public enum Field {
 

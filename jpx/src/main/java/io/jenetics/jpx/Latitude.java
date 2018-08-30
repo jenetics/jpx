@@ -33,7 +33,7 @@ import java.io.Serializable;
  * the range of {@code [-90..90]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.4
  * @since 1.0
  */
 public final class Latitude extends Number implements Serializable {
@@ -43,14 +43,14 @@ public final class Latitude extends Number implements Serializable {
 	/**
 	 * A constant holding the maximum value a {@code Latitude} value can have, -90.
 	 *
-	 * @since !__version__!
+	 * @since 1.4
 	 */
 	public static final Latitude MIN_VALUE = ofDegrees(-90);
 
 	/**
 	 * A constant holding the maximum value a {@code Latitude} value can have, 90.
 	 *
-	 * @since !__version__!
+	 * @since 1.4
 	 */
 	public static final Latitude MAX_VALUE = ofDegrees(90);
 

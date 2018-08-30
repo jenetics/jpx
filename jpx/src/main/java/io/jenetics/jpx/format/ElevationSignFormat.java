@@ -25,8 +25,8 @@ import io.jenetics.jpx.Length;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.4
+ * @since 1.4
  */
 enum ElevationSignFormat implements Format<Location> {
 

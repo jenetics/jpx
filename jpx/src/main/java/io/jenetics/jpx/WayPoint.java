@@ -1742,7 +1742,7 @@ public final class WayPoint implements Point, Serializable {
 	 * {@code point} is already a {@code WayPoint} instance, the input is casted
 	 * to a {@code WayPoint} and returned.
 	 *
-	 * @since !__version__!
+	 * @since 1.4
 	 *
 	 * @param point the input {@code point} to create the {@code WayPoint} from
 	 * @return a newly created {@code WayPoint} instance, or the input

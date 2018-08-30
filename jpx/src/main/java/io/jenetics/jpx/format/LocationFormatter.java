@@ -74,8 +74,8 @@ import io.jenetics.jpx.format.Location.Field;
  * </table>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.4
+ * @since 1.4
  */
 public final class LocationFormatter {
 
