@@ -73,7 +73,7 @@ allprojects { Project prj ->
 	}
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.6'
+task upgradeGradle(type: Wrapper) {
+	gradleVersion = '4.9'
 }
 
