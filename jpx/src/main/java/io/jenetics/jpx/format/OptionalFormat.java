@@ -21,6 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,7 +33,7 @@ final class OptionalFormat<T> implements Format<T> {
 
 	private final Format<T> _format;
 
-	OptionalFormat(final Format<T> format) {
+	private OptionalFormat(final Format<T> format) {
 		_format = requireNonNull(format);
 	}
 
@@ -44,6 +45,14 @@ final class OptionalFormat<T> implements Format<T> {
 	@Override
 	public String toString() {
 		return String.format("[%s]", _format);
+	}
+
+	static <T> OptionalFormat<T> of(final Format<T> format) {
+		return new OptionalFormat<>(format);
+	}
+
+	static <T> OptionalFormat<T> of(final List<Format<T>> formats) {
+		return new OptionalFormat<>(CompositeFormat.of(formats));
 	}
 
 }

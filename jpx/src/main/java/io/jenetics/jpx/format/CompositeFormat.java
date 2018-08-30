@@ -36,7 +36,7 @@ final class CompositeFormat<T> implements Format<T> {
 
 	private final List<Format<T>> _formats;
 
-	CompositeFormat(final List<Format<T>> formats) {
+	private CompositeFormat(final List<Format<T>> formats) {
 		_formats = new ArrayList<>(formats);
 	}
 
@@ -60,6 +60,10 @@ final class CompositeFormat<T> implements Format<T> {
 		return _formats.stream()
 			.map(Objects::toString)
 			.collect(Collectors.joining());
+	}
+
+	static <T> CompositeFormat<T> of(final List<Format<T>> formats) {
+		return new CompositeFormat<>(formats);
 	}
 
 }

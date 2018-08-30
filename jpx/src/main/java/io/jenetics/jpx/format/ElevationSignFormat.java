@@ -28,7 +28,9 @@ import io.jenetics.jpx.Length;
  * @version !__version__!
  * @since !__version__!
  */
-final class ElevationSignFormat implements Format<Location> {
+enum ElevationSignFormat implements Format<Location> {
+
+	INSTANCE;
 
 	@Override
 	public Optional<String> format(final Location value) {

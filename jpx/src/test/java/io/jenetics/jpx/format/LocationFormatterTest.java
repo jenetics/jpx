@@ -110,6 +110,11 @@ public class LocationFormatterTest {
 				Longitude.ofDegrees(-65.234275),
 				Length.of(-65.234275, METER)), "+245915.49-0651403.39-65.23CRS"},
 
+			{LocationFormatter.ofPattern("DD°MMSS dd°mmss"),Location.of(
+				Latitude.ofDegrees(23.987635),
+				Longitude.ofDegrees(-65.234275),
+				Length.of(-65.234275, METER)), "24°5915 65°1403"},
+
 			{LocationFormatter.ofPattern("LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "24g'g"},
 			{LocationFormatter.ofPattern("+LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24g'g"},
 			{LocationFormatter.ofPattern("+L+L[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24+24g'g"},

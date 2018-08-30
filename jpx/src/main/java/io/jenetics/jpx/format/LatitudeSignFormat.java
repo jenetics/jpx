@@ -28,7 +28,9 @@ import io.jenetics.jpx.Latitude;
  * @version !__version__!
  * @since !__version__!
  */
-final class LatitudeSignFormat implements Format<Location> {
+enum LatitudeSignFormat implements Format<Location> {
+
+	INSTANCE;
 
 	@Override
 	public Optional<String> format(final Location value) {

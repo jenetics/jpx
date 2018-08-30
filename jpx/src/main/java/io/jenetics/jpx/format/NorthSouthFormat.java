@@ -28,7 +28,9 @@ import io.jenetics.jpx.Latitude;
  * @version !__version__!
  * @since !__version__!
  */
-final class NorthSouthFormat implements Format<Location> {
+enum NorthSouthFormat implements Format<Location> {
+
+	INSTANCE;
 
 	@Override
 	public Optional<String> format(final Location value) {

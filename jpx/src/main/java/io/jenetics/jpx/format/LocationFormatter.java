@@ -460,8 +460,10 @@ public final class LocationFormatter {
 			final LocationFormatter formatter,
 			final boolean optional
 		) {
-			final Format<Location> formats = new CompositeFormat<>(formatter._formats);
-			_formats.add(optional ? new OptionalFormat<>(formats) :  formats);
+			_formats.add(optional
+				? OptionalFormat.of(formatter._formats)
+				:  CompositeFormat.of(formatter._formats)
+			);
 			return this;
 		}
 
@@ -493,7 +495,7 @@ public final class LocationFormatter {
 			final Location.Field field,
 			final Supplier<NumberFormat> format
 		) {
-			_formats.add(new LocationFieldFormat(field, format));
+			_formats.add(LocationFieldFormat.of(field, format));
 			return this;
 		}
 
@@ -519,7 +521,7 @@ public final class LocationFormatter {
 		 * @return {@code this}, for chaining, not {@code null}
 		 */
 		public Builder appendLatitudeSign() {
-			_formats.add(new LatitudeSignFormat());
+			_formats.add(LatitudeSignFormat.INSTANCE);
 			return this;
 		}
 
@@ -529,7 +531,7 @@ public final class LocationFormatter {
 		 * @return {@code this}, for chaining, not {@code null}
 		 */
 		public Builder appendLongitudeSign() {
-			_formats.add(new LongitudeSignFormat());
+			_formats.add(LongitudeSignFormat.INSTANCE);
 			return this;
 		}
 
@@ -539,7 +541,7 @@ public final class LocationFormatter {
 		 * @return {@code this}, for chaining, not {@code null}
 		 */
 		public Builder appendElevationSign() {
-			_formats.add(new ElevationSignFormat());
+			_formats.add(ElevationSignFormat.INSTANCE);
 			return this;
 		}
 
@@ -551,7 +553,7 @@ public final class LocationFormatter {
 		 * @return {@code this}, for chaining, not {@code null}
 		 */
 		public Builder appendNorthSouthHemisphere() {
-			_formats.add(new NorthSouthFormat());
+			_formats.add(NorthSouthFormat.INSTANCE);
 			return this;
 		}
 
@@ -563,7 +565,7 @@ public final class LocationFormatter {
 		 * @return {@code this}, for chaining, not {@code null}
 		 */
 		public Builder appendEastWestHemisphere() {
-			_formats.add(new EastWestFormat());
+			_formats.add(EastWestFormat.INSTANCE);
 			return this;
 		}
 
@@ -579,7 +581,7 @@ public final class LocationFormatter {
 		 */
 		public Builder appendLiteral(final String literal) {
 			if (!literal.isEmpty()) {
-				_formats.add(new ConstFormat<>(literal));
+				_formats.add(ConstFormat.of(literal));
 			}
 			return this;
 		}
@@ -623,18 +625,18 @@ public final class LocationFormatter {
 					case "X":
 						fmt = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) {
-							fmt.add(new LatitudeSignFormat());
+							fmt.add(LatitudeSignFormat.INSTANCE);
 						}
 						signs = 0;
-						fmt.add(new NorthSouthFormat());
+						fmt.add(NorthSouthFormat.INSTANCE);
 						break;
 					case "x":
 						fmt = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) {
-							fmt.add(new LongitudeSignFormat());
+							fmt.add(LongitudeSignFormat.INSTANCE);
 						}
 						signs = 0;
-						fmt.add(new EastWestFormat());
+						fmt.add(EastWestFormat.INSTANCE);
 						break;
 					case "+":
 						++signs;
@@ -660,21 +662,19 @@ public final class LocationFormatter {
 						}
 						optional = false;
 
-						_formats.add(new OptionalFormat<>(
-							new CompositeFormat<>(formats)
-						));
+						_formats.add(OptionalFormat.of(formats));
 						formats.clear();
 						break;
 					case "'":
 						fmt = optional ? formats : _formats;
 						if (tokens.after().filter("'"::equals).isPresent()) {
-							fmt.add(new ConstFormat<>("'"));
+							fmt.add(ConstFormat.of("'"));
 							tokens.next();
 							break;
 						}
 						if (quote) {
 							if (tokens.before().isPresent()) {
-								fmt.add(new ConstFormat<>(
+								fmt.add(ConstFormat.of(
 									tokens.before()
 										.orElseThrow(AssertionError::new)
 								));
@@ -692,25 +692,25 @@ public final class LocationFormatter {
 								if (signs > 0) {
 									if (field.get().isLatitude()) {
 										for (int i = 0; i < signs; ++i) {
-											fmt.add(new LatitudeSignFormat());
+											fmt.add(LatitudeSignFormat.INSTANCE);
 										}
 									} else if (field.get().isLongitude()) {
 										for (int i = 0; i < signs; ++i) {
-											fmt.add(new LongitudeSignFormat());
+											fmt.add(LongitudeSignFormat.INSTANCE);
 										}
 									} else if (field.get().isElevation()) {
 										for (int i = 0; i < signs; ++i) {
-											fmt.add(new ElevationSignFormat());
+											fmt.add(ElevationSignFormat.INSTANCE);
 										}
 									}
 								}
-								fmt.add(new LocationFieldFormat(
+								fmt.add(LocationFieldFormat.of(
 									field.get(),
 									() -> new DecimalFormat(
 										field.get().toDecimalPattern(token))
 								));
 							} else {
-								fmt.add(new ConstFormat<>(token));
+								fmt.add(ConstFormat.of(token));
 							}
 						}
 						signs = 0;

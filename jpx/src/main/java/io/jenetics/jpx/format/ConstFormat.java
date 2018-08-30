@@ -41,7 +41,7 @@ final class ConstFormat<T> implements Format<T> {
 	 * @param value the constant value, returned by the
 	 *        {@link Format#format(Object)} method
 	 */
-	ConstFormat(final String value) {
+	private ConstFormat(final String value) {
 		_value = requireNonNull(value);
 	}
 
@@ -72,6 +72,10 @@ final class ConstFormat<T> implements Format<T> {
 		return quote
 			? "'" + out.toString() + "'"
 			: out.toString();
+	}
+
+	static <T> ConstFormat<T> of(final String value) {
+		return new ConstFormat<>(value);
 	}
 
 }

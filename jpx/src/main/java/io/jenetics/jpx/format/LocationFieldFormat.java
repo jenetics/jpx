@@ -42,7 +42,7 @@ final class LocationFieldFormat implements Format<Location> {
 	private final Field _field;
 	private final Supplier<NumberFormat> _format;
 
-	LocationFieldFormat(
+	private LocationFieldFormat(
 		final Field field,
 		final Supplier<NumberFormat> format
 	) {
@@ -80,6 +80,13 @@ final class LocationFieldFormat implements Format<Location> {
 		}
 
 		return out.toString();
+	}
+
+	static LocationFieldFormat of(
+		final Field field,
+		final Supplier<NumberFormat> format
+	) {
+		return new LocationFieldFormat(field, format);
 	}
 
 }

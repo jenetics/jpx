@@ -28,7 +28,9 @@ import io.jenetics.jpx.Longitude;
  * @version !__version__!
  * @since !__version__!
  */
-final class LongitudeSignFormat implements Format<Location> {
+enum LongitudeSignFormat implements Format<Location> {
+
+	INSTANCE;
 
 	@Override
 	public Optional<String> format(final Location value) {
