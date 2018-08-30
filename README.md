@@ -9,15 +9,10 @@
 Beside the basic functionality of reading and writing GPX files, the library also allows to manipulate the read GPX object in a functional way.
 
 
-## Requirements
+## Dependencies
 
-### Runtime
-*  **JRE 8**: Java runtime version 8 is needed for using the library.
+No external dependencies are needed by the _JPX_ library. It only needs Java 8 to compile and run.
 
-### Build time
-*  **JDK 8**: The Java [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) must be installed.
-*  **Gradle 4.x**: [Gradle](http://www.gradle.org/) is used for building the library. (Gradle is download automatically, if you are using the Gradle Wrapper script `./gradlew`, located in the base directory, for building the library.)
-*  **TestNG 6.13**: JPX uses [TestNG](http://testng.org/doc/index.html) framework for unit tests.
 
 ## Building JPX
 
