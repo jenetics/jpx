@@ -116,6 +116,30 @@ final GPX gpx11 = gpx10.toBuilder()
 GPX.write(gpx11, "track-v11.gpx");
 ```
 
+### ISO 6709 location strings
+
+With the `LocationFormatter` class it is possible to create ISO 6709 compatible strings.
+
+```java
+final Point p = WayPoint.of(...);
+final Location loc = Location.of(p);
+final LocationFormatter format = LocationFormatter.ISO_HUMAN_LONG;
+System.out.println(format.format(loc));
+```
+The printed location will look like this
+
+    24°59'15.486"N 65°14'03.390"W 65.23m
+
+It is also possible to define your own formatter from a given pattern string,
+
+```java
+final LocationFormatter format = 
+    LocationFormatter.ofPattern("DD°MMSS dd°mmss");
+```
+which leads to the following output
+
+    24°5915 65°1403
+
 ### Geodetic calculations
 
 #### Distance between two points
