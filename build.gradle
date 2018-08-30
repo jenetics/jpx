@@ -63,8 +63,8 @@ allprojects { Project prj ->
 		'finally',
 		'overrides',
 		'rawtypes',
-		//'serial',
-		//'try',
+		'serial',
+		'try',
 		'unchecked'
 	]
 
