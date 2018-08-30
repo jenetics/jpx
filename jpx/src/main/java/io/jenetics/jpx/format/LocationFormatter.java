@@ -436,6 +436,10 @@ public final class LocationFormatter {
 	 *
 	 * @implNote
 	 * This class is a mutable builder intended for use from a single thread.
+	 *
+	 * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+	 * @version 1.4
+	 * @since 1.4
 	 */
 	public static final class Builder {
 
