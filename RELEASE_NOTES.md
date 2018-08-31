@@ -1,5 +1,12 @@
 ## Release notes
 
+### [1.4.0](https://github.com/jenetics/jpx/releases/tag/v1.4.0)
+
+#### Enhancement
+
+* [#65](https://github.com/jenetics/jpx/issues/65): Make it compatible with JSR-173 stax-api 1.0.1.
+* [#70](https://github.com/jenetics/jpx/issues/70): ISO 6709 string representation for GPS coordinate
+
 ### [1.3.0](https://github.com/jenetics/jpx/releases/tag/v1.3.0)
 
 #### Enhancement

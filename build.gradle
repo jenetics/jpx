@@ -41,7 +41,7 @@ ext {
 
 allprojects {
 	group = 'io.jenetics'
-	version = '1.3.0'
+	version = '1.4.0'
 
 	repositories {
 		mavenCentral()
@@ -63,8 +63,8 @@ allprojects { Project prj ->
 		'finally',
 		'overrides',
 		'rawtypes',
-		//'serial',
-		//'try',
+		'serial',
+		'try',
 		'unchecked'
 	]
 
@@ -73,7 +73,7 @@ allprojects { Project prj ->
 	}
 }
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '4.6'
+task upgradeGradle(type: Wrapper) {
+	gradleVersion = '4.10'
 }
 
