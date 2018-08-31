@@ -25,7 +25,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
  * @version 1.0
  */
 
-description = 'JPX - Java GPX Library'
+description = 'JPX - Java GPX (GPS) Library'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -81,7 +81,7 @@ test {
 	useTestNG {
 		preserveOrder true
 		parallel = 'tests' // 'methods'
-		threadCount = Math.max(Runtime.runtime.availableProcessors() + 1, 4)
+		threadCount = Runtime.runtime.availableProcessors() + 1
 	}
 }
 
@@ -141,7 +141,7 @@ afterEvaluate { project ->
 				pom.project {
 					name 'JPX'
 					packaging 'pom'
-					description 'JPX - Java GPX library'
+					description 'JPX - Java GPX (GPS) library'
 					url 'https://github.com/jenetics/jpx'
 					inceptionYear '2016'
 
