@@ -4,20 +4,15 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.jenetics/jpx/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22)
 [![Javadoc](https://www.javadoc.io/badge/io.jenetics/jpx.svg)](http://www.javadoc.io/doc/io.jenetics/jpx)
 
-**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API.
+**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
 
 Beside the basic functionality of reading and writing GPX files, the library also allows to manipulate the read GPX object in a functional way.
 
 
-## Requirements
+## Dependencies
 
-### Runtime
-*  **JRE 8**: Java runtime version 8 is needed for using the library.
+No external dependencies are needed by the _JPX_ library. It only needs Java 8 to compile and run.
 
-### Build time
-*  **JDK 8**: The Java [JDK 8](http://www.oracle.com/technetwork/java/javase/downloads/index.html) must be installed.
-*  **Gradle 4.x**: [Gradle](http://www.gradle.org/) is used for building the library. (Gradle is download automatically, if you are using the Gradle Wrapper script `./gradlew`, located in the base directory, for building the library.)
-*  **TestNG 6.13**: JPX uses [TestNG](http://testng.org/doc/index.html) framework for unit tests.
 
 ## Building JPX
 
@@ -115,6 +110,30 @@ final GPX gpx11 = gpx10.toBuilder()
 // Writing GPX to file.
 GPX.write(gpx11, "track-v11.gpx");
 ```
+
+### ISO 6709 location strings
+
+With the `LocationFormatter` class it is possible to create ISO 6709 compatible strings.
+
+```java
+final Point p = WayPoint.of(...);
+final Location loc = Location.of(p);
+final LocationFormatter format = LocationFormatter.ISO_HUMAN_LONG;
+System.out.println(format.format(loc));
+```
+The printed location will look like this
+
+    24°59'15.486"N 65°14'03.390"W 65.23m
+
+It is also possible to define your own formatter from a given pattern string,
+
+```java
+final LocationFormatter format = 
+    LocationFormatter.ofPattern("DD°MMSS dd°mmss");
+```
+which leads to the following output
+
+    24°5915 65°1403
 
 ### Geodetic calculations
 
@@ -239,9 +258,11 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.2.3](https://github.com/jenetics/jpx/releases/tag/v1.2.3)
+### [1.4.0](https://github.com/jenetics/jpx/releases/tag/v1.4.0)
 
-#### Bug fixes
+#### Enhancement
 
-* [#49](https://github.com/jenetics/jpx/issues/49): Improve thrown exceptions for invalid files and let the _lenient_ read ignore unknown XML tags.
-* [#51](https://github.com/jenetics/jpx/issues/51): GPX reader does not handle XML comments correctly.
+* [#65](https://github.com/jenetics/jpx/issues/65): Make it compatible with JSR-173 stax-api 1.0.1.
+* [#70](https://github.com/jenetics/jpx/issues/70): ISO 6709 string representation for GPS coordinate
+
+

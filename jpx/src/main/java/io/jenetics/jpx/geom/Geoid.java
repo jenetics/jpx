@@ -27,6 +27,7 @@ import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
 import java.util.stream.Collector;
@@ -78,13 +79,8 @@ public final class Geoid {
 
 	private final Ellipsoid _ellipsoid;
 
-	// Major semi-axes of the ellipsoid.
-	private final double A;
-	private final double AA;
-
 	// Minor semi-axes of the ellipsoid.
 	private final double B;
-	private final double BB;
 
 	private final double AABBBB;
 
@@ -92,7 +88,7 @@ public final class Geoid {
 	private final double F;
 
 	// The maximal iteration of the 'distance'
-	private static final int DISTANCE_ITERATION_MAX = 100;
+	private static final int DISTANCE_ITERATION_MAX = 1000;
 
 	// The epsilon of the result, when to stop iteration.
 	private static final double DISTANCE_ITERATION_EPSILON = 1E-12;
@@ -106,11 +102,13 @@ public final class Geoid {
 	private Geoid(final Ellipsoid ellipsoid) {
 		_ellipsoid = requireNonNull(ellipsoid);
 
-		A = ellipsoid.A();
-		AA = A*A;
+		final double a = ellipsoid.A();
+		final double aa = a*a;
+
 		B = ellipsoid.B();
-		BB = B*B;
-		AABBBB = (AA - BB)/BB;
+		final double bb = B*B;
+
+		AABBBB = (aa - bb)/bb;
 		F = 1.0/ellipsoid.F();
 	}
 
@@ -124,7 +122,10 @@ public final class Geoid {
 	}
 
 	/**
-	 * Calculate the distance between points on an ellipsoidal earth model.
+	 * Calculate the distance between points on an ellipsoidal earth model. This
+	 * method will throw an {@link ArithmeticException} if the algorithm doesn't
+	 * converge while calculating the distance, which is the case for a point
+	 * and its (near) antidote.
 	 *
 	 * @see <a href="http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf">DIRECT AND
 	 *               INVERSE SOLUTIONS OF GEODESICS 0 THE ELLIPSOID
@@ -136,6 +137,9 @@ public final class Geoid {
 	 * @param end the end point
 	 * @return the distance between {@code start} and {@code end} in meters
 	 * @throws NullPointerException if one of the points is {@code null}
+	 * @throws ArithmeticException if the algorithm used for calculating the
+	 *         distance between {@code start} and {@code end} didn't converge,
+	 *         which is the case for a point and its (near) antidote.
 	 */
 	public Length distance(final Point start, final Point end) {
 		final double lat1 = start.getLatitude().toRadians();
@@ -229,6 +233,13 @@ public final class Geoid {
 
 		} while (iteration++ < DISTANCE_ITERATION_MAX &&
 			(abs((lambda - lambda0)/lambda) > DISTANCE_ITERATION_EPSILON));
+
+		if (iteration >= DISTANCE_ITERATION_MAX) {
+			throw new ArithmeticException(format(
+				"Calculating distance between %s and %s didn't converge.",
+				start, end
+			));
+		}
 
 		// Eq. 19
 		final double s = B*a*(sigma - deltasigma);

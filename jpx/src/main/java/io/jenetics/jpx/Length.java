@@ -50,7 +50,7 @@ public final class Length
 	/**
 	 * Represents a given length unit.
 	 */
-	public static enum Unit {
+	public enum Unit {
 
 		/**
 		 * Represents a meter.
@@ -95,7 +95,7 @@ public final class Length
 		/**
 		 * Represents a nautical mile: ≙ 1,853.184 m.
 		 */
-		NAUTICAL_MILE(1853.184);
+		NAUTICAL_MILE(1_853.184);
 
 		private final double _factor;
 

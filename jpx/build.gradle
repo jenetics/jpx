@@ -25,7 +25,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
  * @version 1.0
  */
 
-description = 'JPX - Java GPX Library'
+description = 'JPX - Java GPX (GPS) Library'
 
 apply plugin: 'java'
 apply plugin: 'maven'
@@ -37,8 +37,8 @@ repositories {
 }
 
 dependencies {
-	testCompile 'org.testng:testng:6.13.1'
-	testCompile 'nl.jqno.equalsverifier:equalsverifier:2.4'
+	testCompile 'org.testng:testng:6.14.3'
+	testCompile 'nl.jqno.equalsverifier:equalsverifier:2.5.2'
 }
 
 javadoc {
@@ -55,8 +55,11 @@ javadoc {
 		windowTitle = "JPX ${project.version}"
 		docTitle = "<h1>JPX ${project.version}</h1>"
 		bottom = "&copy; ${copyrightYear} Franz Wilhelmst&ouml;tter  &nbsp;<i>(${dateformat.format(now)})</i>"
-
 		exclude '**/internal/**'
+
+		options.tags = ["apiNote:a:API Note:",
+						"implSpec:a:Implementation Requirements:",
+						"implNote:a:Implementation Note:"]
 	}
 
 	// Copy the doc-files.
@@ -78,7 +81,7 @@ test {
 	useTestNG {
 		preserveOrder true
 		parallel = 'tests' // 'methods'
-		threadCount = Math.max(Runtime.runtime.availableProcessors() + 1, 4)
+		threadCount = Runtime.runtime.availableProcessors() + 1
 	}
 }
 
@@ -138,7 +141,7 @@ afterEvaluate { project ->
 				pom.project {
 					name 'JPX'
 					packaging 'pom'
-					description 'JPX - Java GPX library'
+					description 'JPX - Java GPX (GPS) library'
 					url 'https://github.com/jenetics/jpx'
 					inceptionYear '2016'
 
