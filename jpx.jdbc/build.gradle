@@ -24,13 +24,19 @@
  * @version 1.0
  */
 
-description = 'JPX - Java GPX Library'
+import io.franzbecker.gradle.lombok.task.DelombokTask
+
+plugins {
+	id 'io.franzbecker.gradle-lombok' version '1.10'
+}
 
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'signing'
 
 compileTestJava.dependsOn tasks.getByPath(':jpx:compileTestJava')
+
+description = 'JPX - Java GPX Library'
 
 repositories {
 	mavenCentral()
@@ -46,7 +52,26 @@ dependencies {
 	testCompile 'mysql:mysql-connector-java:6.0.5'
 }
 
+lombok {
+	version = '1.18.2'
+	sha256 = ""
+}
+
+task delombok(type: DelombokTask, dependsOn: compileJava) {
+	ext.outputDir = file("$buildDir/delombok")
+	outputs.dir(outputDir)
+	sourceSets.main.java.srcDirs.each {
+		inputs.dir(it)
+		args(it, "-d", outputDir)
+	}
+	doFirst {
+		outputDir.deleteDir()
+	}
+}
+
 javadoc {
+	dependsOn delombok
+
 	project.configure(options) {
 		memberLevel = 'PROTECTED'
 		version = true
@@ -78,13 +103,10 @@ javadoc {
 }
 
 test {
-	outputs.upToDateWhen { false }
 	testLogging.showStandardStreams = true
-
 	useTestNG {
 		preserveOrder true
 		parallel = 'tests' // 'methods'
-		threadCount = Math.max(Runtime.runtime.availableProcessors() + 1, 4)
 	}
 }
 
