@@ -19,59 +19,27 @@
  */
 package io.jenetics.jpx.jdbc.model;
 
+import lombok.Builder;
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import io.jenetics.jpx.Link;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
+@Data(staticConstructor = "of")
+@Builder(builderClassName = "Builder", toBuilder = true)
+@Accessors(fluent = true)
 public final class LinkRow {
-	public final long id;
-
-	public String href;
-	public String text;
-	public String type;
-
-	public LinkRow(
-		final long id,
-		final String href,
-		final String text,
-		final String type
-	) {
-		this.id = id;
-		this.href = href;
-		this.text = text;
-		this.type = type;
-	}
-
-	public LinkRow(final long id) {
-		this.id = id;
-	}
-
-	public LinkRow fill(final LinkRow link) {
-		href = link.href;
-		text = link.text;
-		type = link.type;
-		return this;
-	}
-
-	public LinkRow copy() {
-		return new LinkRow(id, href, text, type);
-	}
+	private final long id;
+	private final String href;
+	private final String text;
+	private final String type;
 
 	public Link toLink() {
 		return Link.of(href, text, type);
 	}
-
-	public static LinkRow of(final Stored<Link> link) {
-		return new LinkRow(
-			link.id(),
-			link.value().getHref().toString(),
-			link.value().getText().orElse(null),
-			link.value().getType().orElse(null)
-		);
-	}
-
 }

@@ -55,7 +55,7 @@ public final class LinkDAO
 		super(conn);
 	}
 
-	private static final RowParser<LinkRow> RowParser = rs -> new LinkRow(
+	private static final RowParser<LinkRow> RowParser = rs -> LinkRow.of(
 		rs.getLong("id"),
 		rs.getString("href"),
 		rs.getString("text"),
