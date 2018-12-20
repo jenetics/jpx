@@ -723,12 +723,11 @@ public final class GPX implements Serializable {
 		}
 
 
-
-
-
 		/**
 		 * Sets the tracks of the {@code GPX} object. The list of tracks may be
 		 * {@code null}.
+		 *
+		 * @since !__version__!
 		 *
 		 * @param extensions the {@code GPX} tracks
 		 * @return {@code this} {@code Builder} for method chaining
@@ -742,6 +741,8 @@ public final class GPX implements Serializable {
 		/**
 		 * Add a track the {@code GPX} object.
 		 *
+		 * @since !__version__!
+		 *
 		 * @param extension the track to add
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given {@code track} is {@code null}
@@ -754,7 +755,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current tracks. The returned list is mutable.
 		 *
-		 * @since 1.1
+		 * @since !__version__!
 		 *
 		 * @return the current, mutable track list
 		 */

@@ -71,7 +71,12 @@ final class Nodes {
 
 		final Element root = doc.createElement("extensions");
 		doc.appendChild(root);
-		nodes.forEach(root::appendChild);
+		nodes.forEach(node -> {
+			//final Node n = node.getOwnerDocument().importNode(node, true);
+			//root.appendChild(n);
+			final Node n = doc.importNode(node, true);
+			root.appendChild(n);
+		});
 		final DOMSource source = new DOMSource(doc);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -93,12 +98,14 @@ final class Nodes {
 
 	static List<Node> read(final DataInput in) throws IOException {
 		final int size = IO.readInt(in);
+		System.out.println("SIZE: " + size);
 		if (size == 0) {
 			return Collections.emptyList();
 		}
 
 		final byte[] data = new byte[size];
 		in.readFully(data);
+		System.out.println(new String(data));
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
 
@@ -118,6 +125,7 @@ final class Nodes {
 
 		final List<Node> nodes = new ArrayList<>();
 		for (int i = 0; i < children.getLength(); ++i) {
+			System.out.println(children.item(i));
 			nodes.add(children.item(i));
 		}
 

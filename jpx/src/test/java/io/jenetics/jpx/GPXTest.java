@@ -36,6 +36,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -44,11 +45,15 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
@@ -81,8 +86,24 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
 			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
 			random.nextBoolean() ? TrackTest.nextTracks(random) : null,
-			Collections.emptyList()
+			Arrays.asList(
+				toNode("<f:name>African Coffee Table</f:name>"),
+				toNode("<f:width>80</f:width>"),
+				toNode("<f:length>120</f:length>")
+			)
 		);
+	}
+
+	static Node toNode(final String xml) {
+		try {
+			return DocumentBuilderFactory
+				.newInstance()
+				.newDocumentBuilder()
+				.parse(new ByteArrayInputStream(xml.getBytes()))
+				.getDocumentElement();
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	//@Test
