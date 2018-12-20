@@ -80,7 +80,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
 			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
 			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
-			random.nextBoolean() ? TrackTest.nextTracks(random) : null
+			random.nextBoolean() ? TrackTest.nextTracks(random) : null,
+			Collections.emptyList()
 		);
 	}
 
@@ -652,6 +653,19 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
 			return GPX.reader(Version.V10, Mode.STRICT).read(in);
 		}
+	}
+
+	private GPX readV11(final String name) throws IOException {
+		final String resource = "/io/jenetics/jpx/" + name;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			return GPX.reader(Version.V11, Mode.LENIENT).read(in);
+		}
+	}
+
+	@Test
+	public void readGPXExtensions() throws IOException {
+		final GPX gpx = readV11("GPX_extensions.gpx");
+		System.out.println(gpx);
 	}
 
 	public static void main(final String[] args) throws IOException {
