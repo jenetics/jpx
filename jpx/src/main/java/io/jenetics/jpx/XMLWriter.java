@@ -29,7 +29,6 @@ import javax.xml.stream.XMLStreamWriter;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 
 /**
  * Helper class for simplifying XML stream writing.
@@ -207,7 +206,7 @@ interface XMLWriter<T> {
 					data.renameNode(root, data.getNamespaceURI(), name);
 				}
 				data.removeChild(root);
-				XML.copy(root, new CloseableXMLStreamWriter(xml) {
+				XML.copy(root, new XMLStreamWriterAdapter(xml) {
 					@Override
 					public void writeEndDocument() throws XMLStreamException {
 					}

@@ -1230,7 +1230,7 @@ public final class GPX implements Serializable {
 			throws IOException
 		{
 			final XMLOutputFactory factory = XMLOutputFactory.newInstance();
-			try (CloseableXMLStreamWriter xml = writer(factory, output)) {
+			try (XMLStreamWriterAdapter xml = writer(factory, output)) {
 				xml.writeStartDocument("UTF-8", "1.0");
 				GPX.xmlWriter(gpx._version).write(xml, gpx);
 				xml.writeEndDocument();
@@ -1239,7 +1239,7 @@ public final class GPX implements Serializable {
 			}
 		}
 
-		private CloseableXMLStreamWriter writer(
+		private XMLStreamWriterAdapter writer(
 			final XMLOutputFactory factory,
 			final OutputStream output
 		)
@@ -1249,7 +1249,7 @@ public final class GPX implements Serializable {
 				new NonCloseableOutputStream(output);
 
 			return _indent == null
-				? new CloseableXMLStreamWriter(factory
+				? new XMLStreamWriterAdapter(factory
 					.createXMLStreamWriter(out, "UTF-8"))
 				: new IndentingXMLStreamWriter(factory
 					.createXMLStreamWriter(out, "UTF-8"), _indent);
