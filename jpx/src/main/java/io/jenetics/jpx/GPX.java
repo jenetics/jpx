@@ -277,7 +277,7 @@ public final class GPX implements Serializable {
 		_wayPoints = immutable(wayPoints);
 		_routes = immutable(routes);
 		_tracks = immutable(tracks);
-		_extensions = extensions;
+		_extensions = XML.isEmpty(extensions) ? null : XML.removeNS(extensions);
 	}
 
 	/**
@@ -364,7 +364,13 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Return the extensions document of this GPX.
+	 * Return the extensions document of this GPX. The root element of the
+	 * returned document has the name {@code extensions}.
+	 * <pre>{@code
+	 * <extensions>
+	 *     ...
+	 * </extensions>
+	 * }</pre>
 	 *
 	 * @since !__version__!
 	 *
@@ -725,15 +731,31 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Sets the tracks of the {@code GPX} object. The list of tracks may be
-		 * {@code null}.
+		 * {@code null}. The root element of the extensions document must be
+		 * {@code extensions}.
+		 * <pre>{@code
+		 * <extensions>
+		 *     ...
+		 * </extensions>
+		 * }</pre>
 		 *
 		 * @since !__version__!
 		 *
 		 * @param extensions the {@code GPX} tracks
 		 * @return {@code this} {@code Builder} for method chaining
-		 * @throws NullPointerException if one of the tracks is {@code null}
+		 * @throws IllegalArgumentException if the root element has not the
+		 *         name {@code extensions}
 		 */
 		public Builder extensions(final Document extensions) {
+			if (extensions != null &&
+				!"extensions".equals(extensions.getDocumentElement().getNodeName()))
+			{
+				throw new IllegalArgumentException(format(
+					"Expected 'extensions' root element, but got '%s'.",
+					extensions.getDocumentElement().getNodeName()
+				));
+			}
+
 			_extensions = extensions;
 			return this;
 		}

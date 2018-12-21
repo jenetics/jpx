@@ -691,20 +691,56 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 	}
 
-	private GPX readV11(final String name) throws IOException {
+	private GPX readV11(final String name, final Mode mode) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.V11, Mode.LENIENT).read(in);
+			return GPX.reader(Version.V11, mode).read(in);
 		}
+	}
+
+	private GPX readV11(final String name) throws IOException {
+		return readV11(name, Mode.STRICT);
 	}
 
 	@Test
 	public void readGPXExtensions() throws IOException {
 		final GPX gpx = readV11("GPX_extensions.gpx");
 
+		final Document expected = doc();
 
-		//GPX.writer("    ").write(gpx, System.out);
-		//System.out.println(XML.toString(gpx.getExtensions().get()));
+		System.out.println(XML.toString(expected));
+		System.out.println(XML.toString(gpx.getExtensions().get()));
+
+		Assert.assertTrue(XML.equals(expected, gpx.getExtensions().get()));
+	}
+
+	@Test(expectedExceptions = IOException.class)
+	public void readInvalidGPXExtensions1() throws IOException {
+		final GPX gpx = readV11("GPX_invalid_extensions.gpx");
+	}
+
+	@Test
+	public void readEmptyGPXExtensions() throws IOException {
+		final GPX gpx = readV11("GPX_empty_extensions.gpx");
+		Assert.assertEquals(gpx.getExtensions(), Optional.empty());
+	}
+
+	@Test
+	public void extensionsRoot() throws IOException {
+		final Document extensions = XML.parse("<extensions xmlns=\"adsf\">some test</extensions>");
+		final GPX gpx = GPX.builder()
+			.extensions(extensions)
+			.build();
+
+		GPX.writer("    ").write(gpx, System.out);
+		Assert.assertTrue(XML.equals(extensions, gpx.getExtensions().get()));
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void invalidExtensionsRoot() {
+		final Document extensions = XML.parse("<foo>some test</foo>");
+		GPX.builder()
+			.extensions(extensions);
 	}
 
 	public static void main(final String[] args) throws IOException {

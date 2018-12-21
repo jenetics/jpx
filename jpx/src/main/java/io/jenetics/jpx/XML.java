@@ -37,7 +37,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -51,6 +50,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -137,6 +137,7 @@ final class XML {
 
 			factory.setValidating(true);
 			factory.setIgnoringElementContentWhitespace(true);
+			factory.setNamespaceAware(true);
 
 			return factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
@@ -200,6 +201,24 @@ final class XML {
 
 	static int hashCode(final Node node) {
 		return node != null ? toString(node).hashCode() : 0;
+	}
+
+	static boolean isEmpty(final Document doc) {
+		return doc == null ||
+			doc.getDocumentElement().getChildNodes().getLength() == 0;
+	}
+
+	static Document removeNS(final Document xml) {
+		final Node root = xml.getDocumentElement();
+		final NodeList children = root.getChildNodes();
+		final Element newRoot = xml.createElement(root.getNodeName());
+
+		for (int i = 0; i < children.getLength(); ++i) {
+			newRoot.appendChild(children.item(i).cloneNode(true));
+		}
+
+		xml.replaceChild(newRoot, root);
+		return xml;
 	}
 
 }
