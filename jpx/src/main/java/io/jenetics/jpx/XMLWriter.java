@@ -205,23 +205,17 @@ interface XMLWriter<T> {
 				if (!name.equals(root.getLocalName())) {
 					data.renameNode(root, data.getNamespaceURI(), name);
 				}
-				data.removeChild(root);
-				XML.copy(root, new XMLStreamWriterAdapter(xml) {
-					@Override
-					public void writeEndDocument() throws XMLStreamException {
-					}
+				data.normalizeDocument();
 
+				XML.copy(XML.clean(root), new XMLStreamWriterAdapter(xml) {
 					@Override
-					public void writeStartDocument() throws XMLStreamException {
-					}
-
+					public void writeEndDocument() {}
 					@Override
-					public void writeStartDocument(String version) throws XMLStreamException {
-					}
-
+					public void writeStartDocument() {}
 					@Override
-					public void writeStartDocument(String encoding, String version) throws XMLStreamException {
-					}
+					public void writeStartDocument(String version) {}
+					@Override
+					public void writeStartDocument(String encoding, String version) {}
 				});
 			}
 		};

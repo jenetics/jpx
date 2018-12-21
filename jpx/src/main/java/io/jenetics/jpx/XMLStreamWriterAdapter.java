@@ -37,6 +37,10 @@ class XMLStreamWriterAdapter implements XMLStreamWriter, AutoCloseable {
 		_adoptee = requireNonNull(writer);
 	}
 
+	XMLStreamWriter adoptee() {
+		return _adoptee;
+	}
+
 	@Override
 	public void writeStartElement(final String localName)
 		throws XMLStreamException

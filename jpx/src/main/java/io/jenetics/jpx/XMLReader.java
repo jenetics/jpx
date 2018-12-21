@@ -40,9 +40,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -502,8 +499,9 @@ final class DocReader extends XMLReader<Document> {
 	{
 		Document doc = null;
 		try {
-			doc = builder().newDocument();
+			doc = XML.builder().newDocument();
 			XML.copy(xml, doc);
+			XML.clean(doc);
 		} catch (XMLStreamException e) {
 			if (!lenient) {
 				throw e;
@@ -511,16 +509,6 @@ final class DocReader extends XMLReader<Document> {
 		}
 
 		return doc;
-	}
-
-	private static DocumentBuilder builder()
-		throws XMLStreamException
-	{
-		try {
-			return DocumentBuilderFactory.newInstance().newDocumentBuilder();
-		} catch (ParserConfigurationException e) {
-			throw new XMLStreamException(e);
-		}
 	}
 
 }
