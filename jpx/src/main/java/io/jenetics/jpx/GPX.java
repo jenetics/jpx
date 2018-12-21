@@ -409,7 +409,7 @@ public final class GPX implements Serializable {
 		hash += 17*Objects.hashCode(_wayPoints) + 31;
 		hash += 17*Objects.hashCode(_routes) + 31;
 		hash += 17*Objects.hashCode(_tracks) + 31;
-		//hash += 17*Objects.hashCode(_extensions) + 31;
+		//hash += 17*XML.hashCode(_extensions) + 31;
 		return hash;
 	}
 
@@ -422,8 +422,8 @@ public final class GPX implements Serializable {
 			Objects.equals(((GPX)obj)._metadata, _metadata) &&
 			Objects.equals(((GPX)obj)._wayPoints, _wayPoints) &&
 			Objects.equals(((GPX)obj)._routes, _routes) &&
-			Objects.equals(((GPX)obj)._tracks, _tracks);// &&
-			//Objects.equals(((GPX)obj)._extensions, _extensions);
+			Objects.equals(((GPX)obj)._tracks, _tracks); // &&
+			//XML.equals(((GPX)obj)._extensions, _extensions);
 	}
 
 
@@ -1655,7 +1655,6 @@ public final class GPX implements Serializable {
 		return XMLWriter.elem("gpx", WRITERS.writers(version));
 	}
 
-	@SuppressWarnings("unchecked")
 	static XMLReader<GPX> xmlReader(final Version version) {
 		return XMLReader.elem(
 			version == Version.V10 ? GPX::toGPXv10 : GPX::toGPXv11,

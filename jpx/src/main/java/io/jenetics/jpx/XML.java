@@ -118,6 +118,16 @@ final class XML {
 		return out.toString();
 	}
 
+	static byte[] toBytes(final Node source) {
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			copy(source, out);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return out.toByteArray();
+	}
+
 	static DocumentBuilder builder()
 		throws XMLStreamException
 	{

@@ -527,7 +527,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Test
 	public void equalsVerifier() {
-		EqualsVerifier.forClass(GPX.class).verify();
+		EqualsVerifier.forClass(GPX.class)
+			.withIgnoredFields("_extensions")
+			.verify();
 	}
 
 
