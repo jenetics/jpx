@@ -205,7 +205,7 @@ interface XMLWriter<T> {
 				if (!name.equals(root.getLocalName())) {
 					data.renameNode(root, data.getNamespaceURI(), name);
 				}
-				data.normalizeDocument();
+				//data.normalizeDocument();
 
 				XML.copy(XML.clean(root), new XMLStreamWriterAdapter(xml) {
 					@Override

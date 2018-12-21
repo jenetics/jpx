@@ -1538,7 +1538,7 @@ public final class GPX implements Serializable {
 			IO.reads(WayPoint::read, in),
 			IO.reads(Route::read, in),
 			IO.reads(Track::read, in),
-			IO.readNullable(IO::read, in)
+			IO.readNullable(IO::readDoc, in)
 		);
 	}
 
@@ -1673,7 +1673,7 @@ public final class GPX implements Serializable {
 			(List<WayPoint>)v[3],
 			(List<Route>)v[4],
 			(List<Track>)v[5],
-			(Document) v[6]
+			(Document)v[6]
 		);
 	}
 

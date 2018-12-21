@@ -448,7 +448,7 @@ final class IO {
 	 * @throws NullPointerException if the given data input is {@code null}
 	 * @throws IOException if an I/O error occurs
 	 */
-	static Document read(final DataInput in) throws IOException {
+	static Document readDoc(final DataInput in) throws IOException {
 		final int length = IO.readInt(in);
 		final byte[] data = new byte[length];
 		in.readFully(data);

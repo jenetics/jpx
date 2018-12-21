@@ -20,6 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
+import static javax.xml.transform.OutputKeys.VERSION;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,6 +37,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -73,6 +76,9 @@ final class XML {
 			final Transformer transformer = TransformerFactory
 				.newInstance()
 				.newTransformer();
+
+			transformer.setOutputProperty(OMIT_XML_DECLARATION, "yes");
+			transformer.setOutputProperty(VERSION, "1.0");
 
 			transformer.transform(source, sink);
 		} catch (TransformerException e) {
@@ -119,8 +125,8 @@ final class XML {
 			final DocumentBuilderFactory factory =
 				DocumentBuilderFactory.newInstance();
 
-			//factory.setValidating(true);
-			//factory.setIgnoringElementContentWhitespace(true);
+			factory.setValidating(true);
+			factory.setIgnoringElementContentWhitespace(true);
 
 			return factory.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
@@ -178,15 +184,12 @@ final class XML {
 
 	static boolean equals(final Node n1, final Node n2) {
 		if (n1 == n2) return true;
-		if (n1 != null && n2 != null) {
-			return n1.isEqualNode(n2);
-		}
-		return false;
+		if (n1 == null) return false;
+		return toString(n1).equals(toString(n2));
 	}
 
 	static int hashCode(final Node node) {
-
-		return 1;
+		return node != null ? toString(node).hashCode() : 0;
 	}
 
 }
