@@ -32,10 +32,10 @@ import javax.xml.stream.XMLStreamReader;
  * @version 1.3
  * @since 1.3
  */
-class CloseableXMLStreamReader implements XMLStreamReader, AutoCloseable {
+class XMLStreamReaderAdapter implements XMLStreamReader, AutoCloseable {
 	private final XMLStreamReader _reader;
 
-	CloseableXMLStreamReader(final XMLStreamReader reader) {
+	XMLStreamReaderAdapter(final XMLStreamReader reader) {
 		_reader = requireNonNull(reader);
 	}
 

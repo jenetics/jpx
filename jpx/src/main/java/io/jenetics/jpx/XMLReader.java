@@ -40,9 +40,6 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -503,7 +500,7 @@ final class DocReader extends XMLReader<Document> {
 		Document doc = null;
 		try {
 			doc = XML.builder().newDocument();
-			XML.copy(new CloseableXMLStreamReader(xml) {
+			XML.copy(new XMLStreamReaderAdapter(xml) {
 				@Override
 				public String getVersion() {
 					return "1.0";

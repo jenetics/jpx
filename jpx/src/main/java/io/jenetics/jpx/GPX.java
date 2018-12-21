@@ -1108,7 +1108,7 @@ public final class GPX implements Serializable {
 			throws IOException
 		{
 			final XMLInputFactory factory = XMLInputFactory.newInstance();
-			try  (CloseableXMLStreamReader reader = new CloseableXMLStreamReader(
+			try  (XMLStreamReaderAdapter reader = new XMLStreamReaderAdapter(
 						factory.createXMLStreamReader(input)))
 			{
 				if (reader.hasNext()) {
