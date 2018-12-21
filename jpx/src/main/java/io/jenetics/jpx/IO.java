@@ -19,12 +19,20 @@
  */
 package io.jenetics.jpx;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Helper methods needed for implementing the Java serializations.
@@ -406,6 +414,54 @@ final class IO {
 			}
 		}
 		return l;
+	}
+
+	/**
+	 * Write the given XML document to the given data output.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param value the value to write
+	 * @param out the data output the integer value is written to
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static void write(final Document value, final DataOutput out)
+		throws IOException
+	{
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		XML.copy(value, bout);
+
+		final byte[] data = bout.toByteArray();
+		IO.writeInt(data.length, out);
+		out.write(data);
+	}
+
+	/**
+	 * Reads a long value from the given data input. The integer value must have
+	 * been written by the {@link #writeInt(int, DataOutput)} before.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param in the data input where the value is read from
+	 * @return the read XML document
+	 * @throws NullPointerException if the given data input is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static Document read(final DataInput in) throws IOException {
+		final int length = IO.readInt(in);
+		final byte[] data = new byte[length];
+		in.readFully(data);
+
+		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
+		try {
+			return DocumentBuilderFactory
+				.newInstance()
+				.newDocumentBuilder()
+				.parse(bin);
+		} catch (ParserConfigurationException|SAXException e) {
+			throw new IOException(e);
+		}
 	}
 
 }

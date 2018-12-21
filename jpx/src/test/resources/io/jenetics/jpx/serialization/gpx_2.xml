@@ -60252,4 +60252,39 @@
             </trkpt>
         </trkseg>
     </trk>
+    <extensions>
+			
+        <ele>212.0</ele>
+			
+        <time>2016-08-21T12:24:27Z</time>
+			
+        <course>341.6</course>
+			
+        <speed>0.67052215</speed>
+			
+        <src>gps</src>
+			
+        <sat>14</sat>
+
+		
+        <h:table xmlns:h="http://www.w3.org/TR/html4/">
+			
+            <h:tr>
+				
+                <h:td>Apples</h:td>
+				
+                <h:td>Bananas</h:td>
+			</h:tr>
+		</h:table>
+
+		
+        <f:table xmlns:f="https://www.w3schools.com/furniture">
+
+            <f:name>African Coffee Table</f:name>
+
+            <f:width>80</f:width>
+
+            <f:length>120</f:length>
+		</f:table>
+	</extensions>
 </gpx>

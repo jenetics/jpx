@@ -23,20 +23,10 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
-import static javax.xml.XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
-import static javax.xml.stream.XMLInputFactory.IS_NAMESPACE_AWARE;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
 import static javax.xml.stream.XMLStreamConstants.COMMENT;
-import static javax.xml.stream.XMLStreamConstants.DTD;
-import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
-import static javax.xml.stream.XMLStreamConstants.ENTITY_DECLARATION;
-import static javax.xml.stream.XMLStreamConstants.ENTITY_REFERENCE;
-import static javax.xml.stream.XMLStreamConstants.NOTATION_DECLARATION;
-import static javax.xml.stream.XMLStreamConstants.PROCESSING_INSTRUCTION;
-import static javax.xml.stream.XMLStreamConstants.SPACE;
-import static javax.xml.stream.XMLStreamConstants.START_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 
 import java.util.ArrayList;
@@ -57,9 +47,6 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import io.jenetics.jpx.XMLReader.Type;
 
@@ -374,8 +361,8 @@ abstract class XMLReader<T> {
 		return new ListReader<T>(reader);
 	}
 
-	public static XMLReader<List<Node>> nodes(final String name) {
-		return new NodesReader(name);
+	public static XMLReader<Document> doc(final String name) {
+		return new DocReader(name);
 	}
 }
 
@@ -503,26 +490,27 @@ final class IgnoreReader extends XMLReader<Object> {
  * @version !__version__!
  * @since !__version__!
  */
-final class NodesReader extends XMLReader<List<Node>> {
+final class DocReader extends XMLReader<Document> {
 
-	NodesReader(final String name) {
+	DocReader(final String name) {
 		super(name, Type.ELEM);
 	}
 
 	@Override
-	public List<Node> read(final XMLStreamReader xml, final boolean lenient)
+	public Document read(final XMLStreamReader xml, final boolean lenient)
 		throws XMLStreamException
 	{
-		final Document doc = builder().newDocument();
-		read(xml, doc, lenient);
-
-		final List<Node> elements = new ArrayList<>();
-		final NodeList children = doc.getDocumentElement().getChildNodes();
-		for (int i = 0; i < children.getLength(); ++i) {
-			elements.add(children.item(i));
+		Document doc = null;
+		try {
+			doc = builder().newDocument();
+			XML.copy(xml, doc);
+		} catch (XMLStreamException e) {
+			if (!lenient) {
+				throw e;
+			}
 		}
 
-		return elements;
+		return doc;
 	}
 
 	private static DocumentBuilder builder()
@@ -533,122 +521,6 @@ final class NodesReader extends XMLReader<List<Node>> {
 		} catch (ParserConfigurationException e) {
 			throw new XMLStreamException(e);
 		}
-	}
-
-	private void read(
-		final XMLStreamReader xml,
-		final Document doc,
-		final boolean lenient
-	)
-		throws XMLStreamException
-	{
-		final boolean complete = xml.getEventType() == START_DOCUMENT;
-		final boolean nsAware = isNamespaceAware(xml);
-
-		Node current = doc;
-		main:
-		for (int type = xml.getEventType();; type = xml.next()) {
-			Node child;
-
-			switch (type) {
-				case CDATA:
-					child = doc.createCDATASection(xml.getText());
-					break;
-				case SPACE:
-					if (current == doc) continue;
-				case CHARACTERS:
-					child = doc.createTextNode(xml.getText());
-					break;
-				case COMMENT:
-					child = doc.createComment(xml.getText());
-					break;
-				case END_DOCUMENT:
-					break main;
-				case END_ELEMENT:
-					current = current != null ? current.getParentNode() : null;
-					if (current == null || current == doc) {
-						if (!complete) break main;
-					}
-					continue main;
-				case NOTATION_DECLARATION:
-				case ENTITY_DECLARATION:
-					continue main;
-				case ENTITY_REFERENCE:
-					child = doc.createEntityReference(xml.getLocalName());
-					break;
-				case PROCESSING_INSTRUCTION:
-					child = doc.createProcessingInstruction(
-						xml.getPITarget(), xml.getPIData()
-					);
-					break;
-				case START_ELEMENT: {
-					final Element elem = nsAware
-						? doc.createElementNS(xml.getNamespaceURI(), prefixedName(xml))
-						: doc.createElement(xml.getLocalName());
-
-					for (int i = 0; i < xml.getNamespaceCount(); ++i) {
-						final String prefix = xml.getNamespacePrefix(i);
-
-						elem.setAttributeNS(
-							XMLNS_ATTRIBUTE_NS_URI,
-							prefix == null || prefix.isEmpty()
-								? "xmlns"
-								: "xmlns:" + prefix,
-							xml.getNamespaceURI(i)
-						);
-					}
-
-					// And then the attributes:
-					for (int i = 0, len = xml.getAttributeCount(); i < len; ++i) {
-						String name = xml.getAttributeLocalName(i);
-						if (nsAware) {
-							final String prefix = xml.getAttributePrefix(i);
-							if (prefix != null && !prefix.isEmpty()) {
-								name = prefix + ":" + name;
-							}
-							elem.setAttributeNS(
-								xml.getAttributeNamespace(i),
-								name,
-								xml.getAttributeValue(i)
-							);
-						} else {
-							elem.setAttribute(name, xml.getAttributeValue(i));
-						}
-					}
-
-					assert current != null;
-					current.appendChild(elem);
-					current = elem;
-					continue main;
-				}
-				case START_DOCUMENT:
-				case DTD:
-					continue main;
-				default:
-					if (!lenient) {
-						throw new XMLStreamException(format(
-							"Unexpected event type: %d.", type
-						));
-					} else {
-						continue main;
-					}
-			}
-
-			if (child != null && current != null) {
-				current.appendChild(child);
-			}
-		}
-	}
-
-	private static String prefixedName(final XMLStreamReader xml) {
-		return xml.getPrefix().isEmpty()
-			? xml.getLocalName()
-			: xml.getPrefix() + ":" + xml.getLocalName();
-	}
-
-	private static boolean isNamespaceAware(final XMLStreamReader xml) {
-		final Object o = xml.getProperty(IS_NAMESPACE_AWARE);
-		return !(o instanceof Boolean) || (Boolean)o;
 	}
 
 }

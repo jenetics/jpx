@@ -54,4 +54,9 @@
 		</f:table>
 	</extensions>
 
+	<wpt lat="48.2033471" lon="16.3608048">
+		<time>2016-08-21T12:51:30Z</time>
+		<name>khm</name>
+		<src>network</src>
+	</wpt>
 </gpx>

@@ -27,6 +27,10 @@ import java.util.function.Function;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+
 /**
  * Helper class for simplifying XML stream writing.
  *
@@ -189,6 +193,37 @@ interface XMLWriter<T> {
 		return (xml, data) -> {
 			if (data != null) {
 				xml.writeCharacters(Double.toString(data.doubleValue()));
+			}
+		};
+	}
+
+	static XMLWriter<Document> doc(final String name) {
+		requireNonNull(name);
+
+		return (xml, data) -> {
+			if (data != null) {
+				final Element root = data.getDocumentElement();
+				if (!name.equals(root.getLocalName())) {
+					data.renameNode(root, data.getNamespaceURI(), name);
+				}
+				data.removeChild(root);
+				XML.copy(root, new CloseableXMLStreamWriter(xml) {
+					@Override
+					public void writeEndDocument() throws XMLStreamException {
+					}
+
+					@Override
+					public void writeStartDocument() throws XMLStreamException {
+					}
+
+					@Override
+					public void writeStartDocument(String version) throws XMLStreamException {
+					}
+
+					@Override
+					public void writeStartDocument(String encoding, String version) throws XMLStreamException {
+					}
+				});
 			}
 		};
 	}
