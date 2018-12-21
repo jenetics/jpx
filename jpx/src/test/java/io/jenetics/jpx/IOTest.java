@@ -28,6 +28,7 @@ import java.util.Random;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -70,6 +71,22 @@ public class IOTest {
 
 			Assert.assertEquals(read, value);
 		}
+	}
+
+	@Test
+	public void readWriteDoc() throws IOException {
+		final Document value = GPXTest.doc();
+
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream(9);
+		final DataOutputStream dout = new DataOutputStream(bout);
+		IO.write(value, dout);
+		dout.flush();
+
+		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+		final DataInputStream din = new DataInputStream(bin);
+		final Document read = IO.readDoc(din);
+
+		Assert.assertTrue(XML.equals(value, read));
 	}
 
 }

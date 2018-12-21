@@ -503,7 +503,9 @@ final class DocReader extends XMLReader<Document> {
 			XML.copy(new XMLStreamReaderAdapter(xml) {
 				@Override
 				public String getVersion() {
-					return "1.0";
+					return super.getVersion() != null
+						? super.getVersion()
+						: "1.0";
 				}
 			}, doc);
 			XML.clean(doc);

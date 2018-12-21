@@ -44,14 +44,12 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLStreamException;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
@@ -84,33 +82,12 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
 			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
 			random.nextBoolean() ? TrackTest.nextTracks(random) : null,
-			toDoc("\t<extensions>\n" +
-				"\t\t\t<ele>212.0</ele>\n" +
-				"\t\t\t<time>2016-08-21T12:24:27Z</time>\n" +
-				"\t\t\t<course>341.6</course>\n" +
-				"\t\t\t<speed>0.67052215</speed>\n" +
-				"\t\t\t<src>gps</src>\n" +
-				"\t\t\t<sat>14</sat>\n" +
-				"\n" +
-				"\t\t<h:table xmlns:h=\"http://www.w3.org/TR/html4/\">\n" +
-				"\t\t\t<h:tr>\n" +
-				"\t\t\t\t<h:td>Apples</h:td>\n" +
-				"\t\t\t\t<h:td>Bananas</h:td>\n" +
-				"\t\t\t</h:tr>\n" +
-				"\t\t</h:table>\n" +
-				"\n" +
-				"\t\t<f:table xmlns:f=\"https://www.w3schools.com/furniture\">\n" +
-				"<f:name>African Coffee Table</f:name>\n" +
-				"<f:width>80</f:width>\n" +
-				"<f:length>120</f:length>\n" +
-				"\t\t</f:table>\n" +
-				"\t</extensions>")
+			random.nextBoolean() ? doc() : null
 		);
 	}
 
-	@Test
-	public void foo() {
-		final Document doc = toDoc("\t<extensions>\n" +
+	static Document doc() {
+		return XML.parse("\t<extensions>\n" +
 			"\t\t\t<ele>212.0</ele>\n" +
 			"\t\t\t<time>2016-08-21T12:24:27Z</time>\n" +
 			"\t\t\t<course>341.6</course>\n" +
@@ -131,21 +108,15 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			"<f:length>120</f:length>\n" +
 			"\t\t</f:table>\n" +
 			"\t</extensions>");
-
-		final Element root = doc.getDocumentElement();
-		//doc.removeChild(root);
-		System.out.println(XML.toString(doc.getChildNodes().item(1)));
 	}
 
-	static Document toDoc(final String xml) {
-		try {
-			return DocumentBuilderFactory
-				.newInstance()
-				.newDocumentBuilder()
-				.parse(new ByteArrayInputStream(xml.getBytes()));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+	//@Test
+	public void foo() {
+		final Document doc1 = doc();
+		final Document doc2 = doc();
+		System.out.println(doc1.equals(doc2));
+		System.out.println(doc1.hashCode() + ":" + doc2.hashCode());
+		System.out.println(doc1.isEqualNode(doc2));
 	}
 
 	//@Test
@@ -728,8 +699,10 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test
 	public void readGPXExtensions() throws IOException {
 		final GPX gpx = readV11("GPX_extensions.gpx");
-		System.out.println(gpx);
-		System.out.println(XML.toString(gpx.getExtensions().get()));
+
+
+		//GPX.writer("    ").write(gpx, System.out);
+		//System.out.println(XML.toString(gpx.getExtensions().get()));
 	}
 
 	public static void main(final String[] args) throws IOException {

@@ -92,7 +92,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		assertEquals(actual, expected);
 	}
 
-	@Test(invocationCount = 10)
+	@Test(invocationCount = 10, dependsOnMethods = "marshallingV10")
 	public void marshallingV11() throws Exception {
 		final Params<T> params = params(Version.V11, _random);
 
