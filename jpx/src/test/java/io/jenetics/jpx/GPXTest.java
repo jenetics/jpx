@@ -87,27 +87,20 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	static Document doc() {
-		return XML.parse("\t<extensions>\n" +
-			"\t\t\t<ele>212.0</ele>\n" +
-			"\t\t\t<time>2016-08-21T12:24:27Z</time>\n" +
-			"\t\t\t<course>341.6</course>\n" +
-			"\t\t\t<speed>0.67052215</speed>\n" +
-			"\t\t\t<src>gps</src>\n" +
-			"\t\t\t<sat>14</sat>\n" +
-			"\n" +
-			"\t\t<h:table xmlns:h=\"http://www.w3.org/TR/html4/\">\n" +
-			"\t\t\t<h:tr>\n" +
-			"\t\t\t\t<h:td>Apples</h:td>\n" +
-			"\t\t\t\t<h:td>Bananas</h:td>\n" +
-			"\t\t\t</h:tr>\n" +
-			"\t\t</h:table>\n" +
-			"\n" +
-			"\t\t<f:table xmlns:f=\"https://www.w3schools.com/furniture\">\n" +
-			"<f:name>African Coffee Table</f:name>\n" +
-			"<f:width>80</f:width>\n" +
-			"<f:length>120</f:length>\n" +
-			"\t\t</f:table>\n" +
-			"\t</extensions>");
+		return XML.parse("<extensions>\n" +
+			"\t<gpxdata:lap xmlns:gpxdata=\"http://www.cluetrust.com/XML/GPXDATA/1/0\">\n" +
+			"\t\t<gpxdata:index>1</gpxdata:index>\n" +
+			"\t\t<gpxdata:startPoint lat=\"51.219983\" lon=\"6.765224\"/>\n" +
+			"\t\t<gpxdata:endPoint lat=\"51.220137\" lon=\"6.765098\" />\n" +
+			"\t\t<gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>\n" +
+			"\t\t<gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>\n" +
+			"\t\t<gpxdata:calories>1</gpxdata:calories>\n" +
+			"\t\t<gpxdata:distance>0.5881348</gpxdata:distance>\n" +
+			"\t\t<gpxdata:summary name=\"AverageHeartRateBpm\" kind=\"avg\">163</gpxdata:summary>\n" +
+			"\t\t<gpxdata:trigger kind=\"manual\" />\n" +
+			"\t\t<gpxdata:intensity>active</gpxdata:intensity>\n" +
+			"\t</gpxdata:lap>\n" +
+			"</extensions>");
 	}
 
 	//@Test
@@ -708,9 +701,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final Document expected = doc();
 
-		System.out.println(XML.toString(expected));
-		System.out.println(XML.toString(gpx.getExtensions().get()));
-
+		//System.out.println(XML.toString(expected));
+		//System.out.println(XML.toString(gpx.getExtensions().get()));
 		Assert.assertTrue(XML.equals(expected, gpx.getExtensions().get()));
 	}
 
@@ -732,7 +724,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.extensions(extensions)
 			.build();
 
-		GPX.writer("    ").write(gpx, System.out);
+		//GPX.writer("    ").write(gpx, System.out);
 		Assert.assertTrue(XML.equals(extensions, gpx.getExtensions().get()));
 	}
 

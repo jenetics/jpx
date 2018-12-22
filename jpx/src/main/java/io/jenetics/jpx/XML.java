@@ -158,6 +158,7 @@ final class XML {
 	}
 
 	static <T extends Node> T clean(final T node) {
+		node.normalize();
 		final List<Node> remove = new ArrayList<>();
 		clean(node, remove);
 		for (Node n : remove) {

@@ -4946,22 +4946,17 @@
         </trkseg>
     </trk>
     <extensions>
-        <ele>212.0</ele>
-        <time>2016-08-21T12:24:27Z</time>
-        <course>341.6</course>
-        <speed>0.67052215</speed>
-        <src>gps</src>
-        <sat>14</sat>
-        <h:table xmlns:h="http://www.w3.org/TR/html4/">
-            <h:tr>
-                <h:td>Apples</h:td>
-                <h:td>Bananas</h:td>
-            </h:tr>
-        </h:table>
-        <f:table xmlns:f="https://www.w3schools.com/furniture">
-            <f:name>African Coffee Table</f:name>
-            <f:width>80</f:width>
-            <f:length>120</f:length>
-        </f:table>
+        <gpxdata:lap xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0">
+            <gpxdata:index>1</gpxdata:index>
+            <gpxdata:startPoint lat="51.219983" lon="6.765224"></gpxdata:startPoint>
+            <gpxdata:endPoint lat="51.220137" lon="6.765098"></gpxdata:endPoint>
+            <gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>
+            <gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>
+            <gpxdata:calories>1</gpxdata:calories>
+            <gpxdata:distance>0.5881348</gpxdata:distance>
+            <gpxdata:summary kind="avg" name="AverageHeartRateBpm">163</gpxdata:summary>
+            <gpxdata:trigger kind="manual"></gpxdata:trigger>
+            <gpxdata:intensity>active</gpxdata:intensity>
+        </gpxdata:lap>
     </extensions>
 </gpx>
