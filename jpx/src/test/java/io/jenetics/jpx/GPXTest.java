@@ -49,6 +49,7 @@ import javax.xml.stream.XMLStreamException;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.w3c.dom.Document;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
@@ -80,8 +81,35 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
 			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
 			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
-			random.nextBoolean() ? TrackTest.nextTracks(random) : null
+			random.nextBoolean() ? TrackTest.nextTracks(random) : null,
+			random.nextBoolean() ? doc() : null
 		);
+	}
+
+	static Document doc() {
+		return XML.parse("<extensions>\n" +
+			"\t<gpxdata:lap xmlns:gpxdata=\"http://www.cluetrust.com/XML/GPXDATA/1/0\">\n" +
+			"\t\t<gpxdata:index>1</gpxdata:index>\n" +
+			"\t\t<gpxdata:startPoint lat=\"51.219983\" lon=\"6.765224\"/>\n" +
+			"\t\t<gpxdata:endPoint lat=\"51.220137\" lon=\"6.765098\" />\n" +
+			"\t\t<gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>\n" +
+			"\t\t<gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>\n" +
+			"\t\t<gpxdata:calories>1</gpxdata:calories>\n" +
+			"\t\t<gpxdata:distance>0.5881348</gpxdata:distance>\n" +
+			"\t\t<gpxdata:summary name=\"AverageHeartRateBpm\" kind=\"avg\">163</gpxdata:summary>\n" +
+			"\t\t<gpxdata:trigger kind=\"manual\" />\n" +
+			"\t\t<gpxdata:intensity>active</gpxdata:intensity>\n" +
+			"\t</gpxdata:lap>\n" +
+			"</extensions>");
+	}
+
+	//@Test
+	public void foo() {
+		final Document doc1 = doc();
+		final Document doc2 = doc();
+		System.out.println(doc1.equals(doc2));
+		System.out.println(doc1.hashCode() + ":" + doc2.hashCode());
+		System.out.println(doc1.isEqualNode(doc2));
 	}
 
 	//@Test
@@ -492,7 +520,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Test
 	public void equalsVerifier() {
-		EqualsVerifier.forClass(GPX.class).verify();
+		EqualsVerifier.forClass(GPX.class)
+			.withIgnoredFields("_extensions")
+			.verify();
 	}
 
 
@@ -652,6 +682,56 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
 			return GPX.reader(Version.V10, Mode.STRICT).read(in);
 		}
+	}
+
+	private GPX readV11(final String name, final Mode mode) throws IOException {
+		final String resource = "/io/jenetics/jpx/" + name;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			return GPX.reader(Version.V11, mode).read(in);
+		}
+	}
+
+	private GPX readV11(final String name) throws IOException {
+		return readV11(name, Mode.STRICT);
+	}
+
+	@Test
+	public void readGPXExtensions() throws IOException {
+		final GPX gpx = readV11("GPX_extensions.gpx");
+		final Document expected = doc();
+
+		Assert.assertTrue(XML.equals(expected, gpx.getExtensions().get()));
+	}
+
+	@Test(expectedExceptions = IOException.class)
+	public void readInvalidGPXExtensions1() throws IOException {
+		final GPX gpx = readV11("GPX_invalid_extensions.gpx");
+	}
+
+	@Test
+	public void readEmptyGPXExtensions() throws IOException {
+		final GPX gpx = readV11("GPX_empty_extensions.gpx");
+		Assert.assertEquals(gpx.getExtensions(), Optional.empty());
+	}
+
+	@Test
+	public void extensionsRoot() throws IOException {
+		final Document extensions = XML.parse("<extensions xmlns=\"adsf\">some test</extensions>");
+		final GPX gpx = GPX.builder()
+			.extensions(extensions)
+			.build();
+
+		Assert.assertTrue(XML.equals(
+			XML.removeNS(extensions),
+			gpx.getExtensions().get()
+		));
+	}
+
+	@Test(expectedExceptions = IllegalArgumentException.class)
+	public void invalidExtensionsRoot() {
+		final Document extensions = XML.parse("<foo>some test</foo>");
+		GPX.builder()
+			.extensions(extensions);
 	}
 
 	public static void main(final String[] args) throws IOException {

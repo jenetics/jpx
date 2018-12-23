@@ -93,7 +93,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	}
 
 	@Test
-	public void ignoreExtensions() throws IOException {
+	public void withExtensions() throws IOException {
 		final String resource = "/io/jenetics/jpx/extensions-waypoint.gpx";
 
 		final GPX gpx;
@@ -111,6 +111,10 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 				.name("Wien")
 				.build()
 		);
+		Assert.assertTrue(XML.equals(
+			gpx.getWayPoints().get(0).getExtensions().get(),
+			XML.parse("<extensions><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo></extensions>")
+		));
 	}
 
 	@Test
@@ -129,7 +133,9 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 	@Test
 	public void equalsVerifier() {
-		EqualsVerifier.forClass(WayPoint.class).verify();
+		EqualsVerifier.forClass(WayPoint.class)
+			.withIgnoredFields("_extensions")
+			.verify();
 	}
 
 	@Test(invocationCount = 1)

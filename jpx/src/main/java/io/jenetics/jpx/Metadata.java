@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
-import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;
@@ -38,6 +37,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.w3c.dom.Document;
 
 /**
  * Information about the GPX file, author, and copyright restrictions goes in
@@ -68,6 +69,7 @@ public final class Metadata implements Serializable {
 	private final ZonedDateTime _time;
 	private final String _keywords;
 	private final Bounds _bounds;
+	private final Document _extensions;
 
 	/**
 	 * Create a new {@code Metadata} object with the given parameters.
@@ -83,6 +85,7 @@ public final class Metadata implements Serializable {
 	 *        databases can use this information to classify the data.
 	 * @param bounds minimum and maximum coordinates which describe the extent
 	 *        of the coordinates in the file
+	 * @param extensions the XML extensions document
 	 */
 	private Metadata(
 		final String name,
@@ -92,7 +95,8 @@ public final class Metadata implements Serializable {
 		final List<Link> links,
 		final ZonedDateTime time,
 		final String keywords,
-		final Bounds bounds
+		final Bounds bounds,
+		final Document extensions
 	) {
 		_name = name;
 		_description = description;
@@ -102,6 +106,7 @@ public final class Metadata implements Serializable {
 		_time = time;
 		_keywords = keywords;
 		_bounds = bounds;
+		_extensions = XML.extensions(extensions);
 	}
 
 	/**
@@ -181,6 +186,25 @@ public final class Metadata implements Serializable {
 	}
 
 	/**
+	 * Return the (cloned) extensions document. The root element of the returned
+	 * document has the name {@code extensions}.
+	 * <pre>{@code
+	 * <extensions>
+	 *     ...
+	 * </extensions>
+	 * }</pre>
+	 *
+	 * @since !__version__!
+	 *
+	 * @return the extensions document
+	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
+	 *         because of an errornous XML configuration
+	 */
+	public Optional<Document> getExtensions() {
+		return Optional.ofNullable(_extensions).map(XML::clone);
+	}
+
+	/**
 	 * Convert the <em>immutable</em> metadata object into a <em>mutable</em>
 	 * builder initialized with the current metadata values.
 	 *
@@ -198,7 +222,8 @@ public final class Metadata implements Serializable {
 			.links(_links)
 			.time(_time)
 			.keywords(_keywords)
-			.bounds(_bounds);
+			.bounds(_bounds)
+			.extensions(_extensions);
 	}
 
 	/**
@@ -214,7 +239,8 @@ public final class Metadata implements Serializable {
 			_links.isEmpty() &&
 			_time == null &&
 			_keywords == null &&
-			_bounds == null;
+			_bounds == null &&
+			_extensions == null;
 	}
 
 	/**
@@ -276,6 +302,7 @@ public final class Metadata implements Serializable {
 		private ZonedDateTime _time;
 		private String _keywords;
 		private Bounds _bounds;
+		private Document _extensions;
 
 		private Builder() {
 		}
@@ -295,6 +322,7 @@ public final class Metadata implements Serializable {
 			_time = metadata._time;
 			_keywords = metadata._keywords;
 			_bounds = metadata._bounds;
+			_extensions = metadata._extensions;
 
 			return this;
 		}
@@ -562,6 +590,38 @@ public final class Metadata implements Serializable {
 		}
 
 		/**
+		 * Sets the extensions object, which may be {@code null}. The root
+		 * element of the extensions document must be {@code extensions}.
+		 * <pre>{@code
+		 * <extensions>
+		 *     ...
+		 * </extensions>
+		 * }</pre>
+		 *
+		 * @since !__version__!
+		 *
+		 * @param extensions the document
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the root element is not the
+		 *         an {@code extensions} node
+		 */
+		public Builder extensions(final Document extensions) {
+			_extensions = XML.checkExtensions(extensions);
+			return this;
+		}
+
+		/**
+		 * Return the current extensions
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the extensions document
+		 */
+		public Optional<Document> extensions() {
+			return Optional.ofNullable(_extensions);
+		}
+
+		/**
 		 * Create an immutable {@code Metadata} object from the current builder
 		 * state.
 		 *
@@ -577,7 +637,8 @@ public final class Metadata implements Serializable {
 				_links,
 				_time,
 				_keywords,
-				_bounds
+				_bounds,
+				_extensions
 			);
 		}
 	}
@@ -632,7 +693,53 @@ public final class Metadata implements Serializable {
 			links,
 			time,
 			keywords,
-			bounds
+			bounds,
+			null
+		);
+	}
+
+	/**
+	 * Create a new {@code Metadata} object with the given parameters.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param name the name of the GPX file
+	 * @param description a description of the contents of the GPX file
+	 * @param author the person or organization who created the GPX file
+	 * @param copyright copyright and license information governing use of the
+	 *        file
+	 * @param links URLs associated with the location described in the file
+	 * @param time the creation date of the file
+	 * @param keywords keywords associated with the file. Search engines or
+	 *        databases can use this information to classify the data.
+	 * @param bounds minimum and maximum coordinates which describe the extent
+	 *        of the coordinates in the file
+	 * @param extensions the extensions document
+	 * @return a new {@code Metadata} object with the given parameters
+	 * @throws NullPointerException if the given {@code links} sequence is
+	 *        {@code null}
+	 */
+	public static Metadata of(
+		final String name,
+		final String description,
+		final Person author,
+		final Copyright copyright,
+		final List<Link> links,
+		final ZonedDateTime time,
+		final String keywords,
+		final Bounds bounds,
+		final Document extensions
+	) {
+		return new Metadata(
+			name,
+			description,
+			author == null || author.isEmpty() ? null : author,
+			copyright,
+			links,
+			time,
+			keywords,
+			bounds,
+			extensions
 		);
 	}
 
@@ -660,6 +767,7 @@ public final class Metadata implements Serializable {
 		IO.writeNullable(_time, ZonedDateTimes::write, out);
 		IO.writeNullableString(_keywords, out);
 		IO.writeNullable(_bounds, Bounds::write, out);
+		IO.writeNullable(_extensions, IO::write, out);
 	}
 
 	static Metadata read(final DataInput in) throws IOException {
@@ -671,7 +779,8 @@ public final class Metadata implements Serializable {
 			IO.reads(Link::read, in),
 			IO.readNullable(ZonedDateTimes::read, in),
 			IO.readNullableString(in),
-			IO.readNullable(Bounds::read, in)
+			IO.readNullable(Bounds::read, in),
+			IO.readNullable(IO::readDoc, in)
 		);
 	}
 
@@ -688,7 +797,8 @@ public final class Metadata implements Serializable {
 		XMLWriter.elems(Link.WRITER).map(md -> md._links),
 		XMLWriter.elem("time").map(md -> format(md._time)),
 		XMLWriter.elem("keywords").map(md -> md._keywords),
-		Bounds.WRITER.map(md -> md._bounds)
+		Bounds.WRITER.map(md -> md._bounds),
+		XMLWriter.doc("extensions").map(gpx -> gpx._extensions)
 	);
 
 	@SuppressWarnings("unchecked")
@@ -701,7 +811,8 @@ public final class Metadata implements Serializable {
 			(List<Link>)v[4],
 			(ZonedDateTime)v[5],
 			(String)v[6],
-			(Bounds)v[7]
+			(Bounds)v[7],
+			(Document)v[8]
 		),
 		"metadata",
 		XMLReader.elem("name"),
@@ -712,7 +823,7 @@ public final class Metadata implements Serializable {
 		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
 		XMLReader.elem("keywords"),
 		Bounds.READER,
-		XMLReader.ignore("extensions")
+		XMLReader.doc("extensions")
 	);
 
 }

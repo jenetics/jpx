@@ -30,11 +30,15 @@ import javax.xml.stream.XMLStreamWriter;
  * @version 1.0
  * @since 1.0
  */
-class CloseableXMLStreamWriter implements XMLStreamWriter, AutoCloseable {
+class XMLStreamWriterAdapter implements XMLStreamWriter, AutoCloseable {
 	private final XMLStreamWriter _adoptee;
 
-	CloseableXMLStreamWriter(final XMLStreamWriter writer) {
+	XMLStreamWriterAdapter(final XMLStreamWriter writer) {
 		_adoptee = requireNonNull(writer);
+	}
+
+	XMLStreamWriter adoptee() {
+		return _adoptee;
 	}
 
 	@Override

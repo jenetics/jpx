@@ -57,6 +57,8 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
+import org.w3c.dom.Document;
+
 import io.jenetics.jpx.GPX.Reader.Mode;
 
 /**
@@ -243,6 +245,7 @@ public final class GPX implements Serializable {
 	private final List<WayPoint> _wayPoints;
 	private final List<Route> _routes;
 	private final List<Track> _tracks;
+	private final Document _extensions;
 
 	/**
 	 * Create a new {@code GPX} object with the given data.
@@ -255,6 +258,7 @@ public final class GPX implements Serializable {
 	 * @param wayPoints the way-points
 	 * @param routes the routes
 	 * @param tracks the tracks
+	 * @param extensions the XML extensions document
 	 * @throws NullPointerException if the {@code creator} or {@code version} is
 	 *         {@code null}
 	 */
@@ -264,7 +268,8 @@ public final class GPX implements Serializable {
 		final Metadata metadata,
 		final List<WayPoint> wayPoints,
 		final List<Route> routes,
-		final List<Track> tracks
+		final List<Track> tracks,
+		final Document extensions
 	) {
 		_version = requireNonNull(version);
 		_creator = requireNonNull(creator);
@@ -272,6 +277,7 @@ public final class GPX implements Serializable {
 		_wayPoints = immutable(wayPoints);
 		_routes = immutable(routes);
 		_tracks = immutable(tracks);
+		_extensions = XML.extensions(extensions);
 	}
 
 	/**
@@ -358,6 +364,23 @@ public final class GPX implements Serializable {
 	}
 
 	/**
+	 * Return the (cloned) extensions document. The root element of the returned
+	 * document has the name {@code extensions}.
+	 * <pre>{@code
+	 * <extensions>
+	 *     ...
+	 * </extensions>
+	 * }</pre>
+	 *
+	 * @since !__version__!
+	 *
+	 * @return the extensions document
+	 */
+	public Optional<Document> getExtensions() {
+		return Optional.ofNullable(_extensions).map(XML::clone);
+	}
+
+	/**
 	 * Convert the <em>immutable</em> GPX object into a <em>mutable</em>
 	 * builder initialized with the current GPX values.
 	 *
@@ -371,7 +394,8 @@ public final class GPX implements Serializable {
 			.metadata(_metadata)
 			.wayPoints(_wayPoints)
 			.routes(_routes)
-			.tracks(_tracks);
+			.tracks(_tracks)
+			.extensions(_extensions);
 	}
 
 	@Override
@@ -406,7 +430,6 @@ public final class GPX implements Serializable {
 			Objects.equals(((GPX)obj)._tracks, _tracks);
 	}
 
-
 	/**
 	 * Builder class for creating immutable {@code GPX} objects.
 	 * <p>
@@ -428,6 +451,7 @@ public final class GPX implements Serializable {
 		private final List<WayPoint> _wayPoints = new ArrayList<>();
 		private final List<Route> _routes = new ArrayList<>();
 		private final List<Track> _tracks = new ArrayList<>();
+		private Document _extensions;
 
 		private Builder(final Version version, final String creator) {
 			_version = requireNonNull(version);
@@ -701,6 +725,39 @@ public final class GPX implements Serializable {
 			return new NonNullList<>(_tracks);
 		}
 
+
+		/**
+		 * Sets the extensions object, which may be {@code null}. The root
+		 * element of the extensions document must be {@code extensions}.
+		 * <pre>{@code
+		 * <extensions>
+		 *     ...
+		 * </extensions>
+		 * }</pre>
+		 *
+		 * @since !__version__!
+		 *
+		 * @param extensions the extensions document
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the root element is not the
+		 *         an {@code extensions} node
+		 */
+		public Builder extensions(final Document extensions) {
+			_extensions = XML.checkExtensions(extensions);
+			return this;
+		}
+
+		/**
+		 * Return the current extensions
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the extensions document
+		 */
+		public Optional<Document> extensions() {
+			return Optional.ofNullable(_extensions);
+		}
+
 		/**
 		 * Create an immutable {@code GPX} object from the current builder state.
 		 *
@@ -713,7 +770,8 @@ public final class GPX implements Serializable {
 				_metadata,
 				_wayPoints,
 				_routes,
-				_tracks
+				_tracks,
+				_extensions
 			);
 		}
 
@@ -1059,7 +1117,7 @@ public final class GPX implements Serializable {
 			throws IOException
 		{
 			final XMLInputFactory factory = XMLInputFactory.newInstance();
-			try  (CloseableXMLStreamReader reader = new CloseableXMLStreamReader(
+			try  (XMLStreamReaderAdapter reader = new XMLStreamReaderAdapter(
 						factory.createXMLStreamReader(input)))
 			{
 				if (reader.hasNext()) {
@@ -1181,7 +1239,7 @@ public final class GPX implements Serializable {
 			throws IOException
 		{
 			final XMLOutputFactory factory = XMLOutputFactory.newInstance();
-			try (CloseableXMLStreamWriter xml = writer(factory, output)) {
+			try (XMLStreamWriterAdapter xml = writer(factory, output)) {
 				xml.writeStartDocument("UTF-8", "1.0");
 				GPX.xmlWriter(gpx._version).write(xml, gpx);
 				xml.writeEndDocument();
@@ -1190,7 +1248,7 @@ public final class GPX implements Serializable {
 			}
 		}
 
-		private CloseableXMLStreamWriter writer(
+		private XMLStreamWriterAdapter writer(
 			final XMLOutputFactory factory,
 			final OutputStream output
 		)
@@ -1200,7 +1258,7 @@ public final class GPX implements Serializable {
 				new NonCloseableOutputStream(output);
 
 			return _indent == null
-				? new CloseableXMLStreamWriter(factory
+				? new XMLStreamWriterAdapter(factory
 					.createXMLStreamWriter(out, "UTF-8"))
 				: new IndentingXMLStreamWriter(factory
 					.createXMLStreamWriter(out, "UTF-8"), _indent);
@@ -1303,7 +1361,44 @@ public final class GPX implements Serializable {
 			metadata,
 			wayPoints,
 			routes,
-			tracks
+			tracks,
+			null
+		);
+	}
+
+	/**
+	 * Create a new {@code GPX} object with the given data.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param creator the name or URL of the software that created your GPX
+	 *        document. This allows others to inform the creator of a GPX
+	 *        instance document that fails to validate.
+	 * @param metadata the metadata about the GPS file
+	 * @param wayPoints the way-points
+	 * @param routes the routes
+	 * @param tracks the tracks
+	 * @param extensions the XML extensions
+	 * @return a new {@code GPX} object with the given data
+	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
+	 *         {@code routes} or {@code tracks} is {@code null}
+	 */
+	public static GPX of(
+		final String creator,
+		final Metadata metadata,
+		final List<WayPoint> wayPoints,
+		final List<Route> routes,
+		final List<Track> tracks,
+		final Document extensions
+	) {
+		return new GPX(
+			Version.V11,
+			creator,
+			metadata,
+			wayPoints,
+			routes,
+			tracks,
+			extensions
 		);
 	}
 
@@ -1336,7 +1431,46 @@ public final class GPX implements Serializable {
 			metadata == null || metadata.isEmpty() ? null : metadata,
 			wayPoints,
 			routes,
-			tracks
+			tracks,
+			null
+		);
+	}
+
+	/**
+	 * Create a new {@code GPX} object with the given data.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param creator the name or URL of the software that created your GPX
+	 *        document. This allows others to inform the creator of a GPX
+	 *        instance document that fails to validate.
+	 * @param  version the GPX version
+	 * @param metadata the metadata about the GPS file
+	 * @param wayPoints the way-points
+	 * @param routes the routes
+	 * @param tracks the tracks
+	 * @param extensions the XML extensions
+	 * @return a new {@code GPX} object with the given data
+	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
+	 *         {@code routes} or {@code tracks} is {@code null}
+	 */
+	public static GPX of(
+		final Version version,
+		final String creator,
+		final Metadata metadata,
+		final List<WayPoint> wayPoints,
+		final List<Route> routes,
+		final List<Track> tracks,
+		final Document extensions
+	) {
+		return new GPX(
+			version,
+			creator,
+			metadata == null || metadata.isEmpty() ? null : metadata,
+			wayPoints,
+			routes,
+			tracks,
+			extensions
 		);
 	}
 
@@ -1375,7 +1509,8 @@ public final class GPX implements Serializable {
 			metadata,
 			wayPoints,
 			routes,
-			tracks
+			tracks,
+			null
 		);
 	}
 
@@ -1401,6 +1536,7 @@ public final class GPX implements Serializable {
 		IO.writes(_wayPoints, WayPoint::write, out);
 		IO.writes(_routes, Route::write, out);
 		IO.writes(_tracks, Track::write, out);
+		IO.writeNullable(_extensions, IO::write, out);
 	}
 
 	static GPX read(final DataInput in) throws IOException {
@@ -1410,7 +1546,8 @@ public final class GPX implements Serializable {
 			IO.readNullable(Metadata::read, in),
 			IO.reads(WayPoint::read, in),
 			IO.reads(Route::read, in),
-			IO.reads(Track::read, in)
+			IO.reads(Track::read, in),
+			IO.readNullable(IO::readDoc, in)
 		);
 	}
 
@@ -1496,7 +1633,8 @@ public final class GPX implements Serializable {
 		.v10(XMLWriter.elems(Route.xmlWriter(Version.V10)).map(gpx -> gpx._routes))
 		.v11(XMLWriter.elems(Route.xmlWriter(Version.V11)).map(gpx -> gpx._routes))
 		.v10(XMLWriter.elems(Track.xmlWriter(Version.V10)).map(gpx -> gpx._tracks))
-		.v11(XMLWriter.elems(Track.xmlWriter(Version.V11)).map(gpx -> gpx._tracks));
+		.v11(XMLWriter.elems(Track.xmlWriter(Version.V11)).map(gpx -> gpx._tracks))
+		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
 
 
 	// Define the needed readers for the different versions.
@@ -1519,14 +1657,13 @@ public final class GPX implements Serializable {
 		.v11(XMLReader.elems(Route.xmlReader(Version.V11)))
 		.v10(XMLReader.elems(Track.xmlReader(Version.V10)))
 		.v11(XMLReader.elems(Track.xmlReader(Version.V11)))
-		.v00(XMLReader.ignore("extensions"));
+		.v00(XMLReader.doc("extensions"));
 
 
 	static XMLWriter<GPX> xmlWriter(final Version version) {
 		return XMLWriter.elem("gpx", WRITERS.writers(version));
 	}
 
-	@SuppressWarnings("unchecked")
 	static XMLReader<GPX> xmlReader(final Version version) {
 		return XMLReader.elem(
 			version == Version.V10 ? GPX::toGPXv10 : GPX::toGPXv11,
@@ -1543,7 +1680,8 @@ public final class GPX implements Serializable {
 			(Metadata)v[2],
 			(List<WayPoint>)v[3],
 			(List<Route>)v[4],
-			(List<Track>)v[5]
+			(List<Track>)v[5],
+			(Document)v[6]
 		);
 	}
 
@@ -1572,7 +1710,8 @@ public final class GPX implements Serializable {
 			),
 			(List<WayPoint>)v[11],
 			(List<Route>)v[12],
-			(List<Track>)v[13]
+			(List<Track>)v[13],
+			(Document)v[14]
 		);
 	}
 

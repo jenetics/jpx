@@ -43,13 +43,15 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.w3c.dom.Document;
+
 import io.jenetics.jpx.XMLReader.Type;
 
 /**
  * Simplifies the usage of the {@link XMLStreamReader}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 abstract class XMLReader<T> {
@@ -355,6 +357,10 @@ abstract class XMLReader<T> {
 	public static <T> XMLReader<List<T>> elems(final XMLReader<? extends T> reader) {
 		return new ListReader<T>(reader);
 	}
+
+	public static XMLReader<Document> doc(final String name) {
+		return new DocReader(name);
+	}
 }
 
 
@@ -442,8 +448,21 @@ final class ListReader<T> extends XMLReader<List<T>> {
 			? Collections.singletonList(element)
 			: emptyList();
 	}
+
+	XMLReader<? extends T> reader() {
+		return _adoptee;
+	}
+
 }
 
+/**
+ * This reader implementation ignores the content of the element with the given
+ * name.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version 1.2
+ * @since 1.2
+ */
 final class IgnoreReader extends XMLReader<Object> {
 
 	private final XMLReader<Object> _reader;
@@ -459,6 +478,57 @@ final class IgnoreReader extends XMLReader<Object> {
 	{
 		return _reader.read(xml, true);
 	}
+}
+
+/**
+ * This reader implementation reads the XML nodes from a given base node.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
+ */
+final class DocReader extends XMLReader<Document> {
+
+	DocReader(final String name) {
+		super(name, Type.ELEM);
+	}
+
+	@Override
+	public Document read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException
+	{
+		Document doc = null;
+		try {
+			doc = XML.builder().newDocument();
+			XML.copy(new XMLStreamReaderAdapter(xml) {
+				@Override
+				public String getVersion() {
+// Workaround for this bug:
+//Caused by: java.lang.NullPointerException
+//	at java.xml/com.sun.org.apache.xerces.internal.dom.CoreDocumentImpl.setXmlVersion(CoreDocumentImpl.java:865)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.SAX2DOM.setDocumentInfo(SAX2DOM.java:145)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.SAX2DOM.startElement(SAX2DOM.java:155)
+//	at java.xml/com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler.closeStartTag(ToXMLSAXHandler.java:206)
+//	at java.xml/com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler.characters(ToXMLSAXHandler.java:526)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.handleCharacters(StAXStream2SAX.java:248)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.bridge(StAXStream2SAX.java:155)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.parse(StAXStream2SAX.java:104)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transformIdentity(TransformerImpl.java:707)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transform(TransformerImpl.java:774)
+					return super.getVersion() != null
+						? super.getVersion()
+						: "1.0";
+				}
+			}, doc);
+		} catch (XMLStreamException e) {
+			if (!lenient) {
+				throw e;
+			}
+		}
+
+		return doc;
+	}
+
 }
 
 /**
@@ -544,7 +614,7 @@ final class ElemReader<T> extends XMLReader<T> {
 						}
 						break;
 					case START_ELEMENT:
-						final Integer index = _readerIndexMapping
+						Integer index = _readerIndexMapping
 							.get(xml.getLocalName());
 
 						if (index == null && !lenient) {

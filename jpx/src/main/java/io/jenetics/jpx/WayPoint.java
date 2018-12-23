@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.w3c.dom.Document;
+
 import io.jenetics.jpx.GPX.Version;
 
 /**
@@ -90,6 +92,7 @@ public final class WayPoint implements Point, Serializable {
 	private final Duration _ageOfGPSData;
 	private final DGPSStation _dgpsID;
 	private final Degrees _course;
+	private final Document _extensions;
 
 	/**
 	 * Create a new way-point with the given parameter.
@@ -130,6 +133,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
 	 * @param dgpsID ID of DGPS station used in differential correction (optional)
 	 * @param course the Instantaneous course at the point
+	 * @param extensions the XML extensions document
 	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
 	 *         is {@code null}
 	 */
@@ -155,7 +159,8 @@ public final class WayPoint implements Point, Serializable {
 		final Double pdop,
 		final Duration ageOfGPSData,
 		final DGPSStation dgpsID,
-		final Degrees course
+		final Degrees course,
+		final Document extensions
 	) {
 		_latitude = requireNonNull(latitude);
 		_longitude = requireNonNull(longitude);
@@ -180,6 +185,7 @@ public final class WayPoint implements Point, Serializable {
 		_ageOfGPSData = ageOfGPSData;
 		_dgpsID = dgpsID;
 		_course = course;
+		_extensions = XML.extensions(extensions);
 	}
 
 	@Override
@@ -378,6 +384,25 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	/**
+	 * Return the (cloned) extensions document. The root element of the returned
+	 * document has the name {@code extensions}.
+	 * <pre>{@code
+	 * <extensions>
+	 *     ...
+	 * </extensions>
+	 * }</pre>
+	 *
+	 * @since !__version__!
+	 *
+	 * @return the extensions document
+	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
+	 *         because of an errornous XML configuration
+	 */
+	public Optional<Document> getExtensions() {
+		return Optional.ofNullable(_extensions).map(XML::clone);
+	}
+
+	/**
 	 * Convert the <em>immutable</em> way-point object into a <em>mutable</em>
 	 * builder initialized with the current way-point values.
 	 *
@@ -409,7 +434,8 @@ public final class WayPoint implements Point, Serializable {
 			.pdop(_pdop)
 			.ageofdgpsdata(_ageOfGPSData)
 			.dgpsid(_dgpsID)
-			.course(_course);
+			.course(_course)
+			.extensions(_extensions);
 	}
 
 	@Override
@@ -515,6 +541,7 @@ public final class WayPoint implements Point, Serializable {
 		private Duration _ageOfDGPSData;
 		private DGPSStation _dgpsID;
 		private Degrees _course;
+		private Document _extensions;
 
 		private Builder() {
 		}
@@ -1274,6 +1301,38 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
+		 * Sets the extensions object, which may be {@code null}. The root
+		 * element of the extensions document must be {@code extensions}.
+		 * <pre>{@code
+		 * <extensions>
+		 *     ...
+		 * </extensions>
+		 * }</pre>
+		 *
+		 * @since !__version__!
+		 *
+		 * @param extensions the document
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the root element is not the
+		 *         an {@code extensions} node
+		 */
+		public Builder extensions(final Document extensions) {
+			_extensions = XML.checkExtensions(extensions);
+			return this;
+		}
+
+		/**
+		 * Return the current extensions
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the extensions document
+		 */
+		public Optional<Document> extensions() {
+			return Optional.ofNullable(_extensions);
+		}
+
+		/**
 		 * Create a new way-point with the given latitude and longitude value.
 		 *
 		 * @param latitude the latitude of the way-point
@@ -1335,7 +1394,8 @@ public final class WayPoint implements Point, Serializable {
 				_pdop,
 				_ageOfDGPSData,
 				_dgpsID,
-				_course
+				_course,
+				_extensions
 			);
 		}
 
@@ -1371,6 +1431,7 @@ public final class WayPoint implements Point, Serializable {
 		return new WayPoint(
 			latitude,
 			longitude,
+			null,
 			null,
 			null,
 			null,
@@ -1450,6 +1511,7 @@ public final class WayPoint implements Point, Serializable {
 			null,
 			null,
 			null,
+			null,
 			null
 		);
 	}
@@ -1500,6 +1562,7 @@ public final class WayPoint implements Point, Serializable {
 			elevation,
 			null,
 			time,
+			null,
 			null,
 			null,
 			null,
@@ -1638,6 +1701,7 @@ public final class WayPoint implements Point, Serializable {
 			pdop,
 			ageOfGPSData,
 			dgpsID,
+			null,
 			null
 		);
 	}
@@ -1733,7 +1797,106 @@ public final class WayPoint implements Point, Serializable {
 			pdop,
 			ageOfGPSData,
 			dgpsID,
-			course
+			course,
+			null
+		);
+	}
+
+	/**
+	 * Create a new way-point with the given parameter.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
+	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
+	 * @param elevation the elevation (in meters) of the point (optional)
+	 * @param speed the current GPS speed (optional)
+	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 *        8601 specification for date/time representation. Fractional seconds
+	 *        are allowed for millisecond timing in tracklogs. (optional)
+	 * @param magneticVariation the magnetic variation at the point (optional)
+	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
+	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
+	 * @param name the GPS name of the way-point. This field will be transferred
+	 *        to and from the GPS. GPX does not place restrictions on the length
+	 *        of this field or the characters contained in it. It is up to the
+	 *        receiving application to validate the field before sending it to
+	 *        the GPS. (optional)
+	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
+	 * @param description a text description of the element. Holds additional
+	 *        information about the element intended for the user, not the GPS.
+	 *        (optional)
+	 * @param source source of data. Included to give user some idea of
+	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
+	 *        Boston North", e.g. (optional)
+	 * @param links links to additional information about the way-point. May be
+	 *        empty, but not {@code null}.
+	 * @param symbol text of GPS symbol name. For interchange with other
+	 *        programs, use the exact spelling of the symbol as displayed on the
+	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
+	 * @param type type (classification) of the way-point (optional)
+	 * @param fix type of GPX fix (optional)
+	 * @param sat number of satellites used to calculate the GPX fix (optional)
+	 * @param hdop horizontal dilution of precision (optional)
+	 * @param vdop vertical dilution of precision (optional)
+	 * @param pdop position dilution of precision. (optional)
+	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
+	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @param course the Instantaneous course at the point
+	 * @param extensions the extensions document
+	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
+	 *         is {@code null}
+	 * @return a new {@code WayPoint}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Length elevation,
+		final Speed speed,
+		final ZonedDateTime time,
+		final Degrees magneticVariation,
+		final Length geoidHeight,
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final String symbol,
+		final String type,
+		final Fix fix,
+		final UInt sat,
+		final Double hdop,
+		final Double vdop,
+		final Double pdop,
+		final Duration ageOfGPSData,
+		final DGPSStation dgpsID,
+		final Degrees course,
+		final Document extensions
+	) {
+		return new WayPoint(
+			latitude,
+			longitude,
+			elevation,
+			speed,
+			time,
+			magneticVariation,
+			geoidHeight,
+			name,
+			comment,
+			description,
+			source,
+			links,
+			symbol,
+			type,
+			fix,
+			sat,
+			hdop,
+			vdop,
+			pdop,
+			ageOfGPSData,
+			dgpsID,
+			course,
+			extensions
 		);
 	}
 
@@ -1797,6 +1960,7 @@ public final class WayPoint implements Point, Serializable {
 		if (_ageOfGPSData != null) existing |= 1 << 17;
 		if (_dgpsID != null) existing |= 1 << 18;
 		if (_course != null) existing |= 1 << 19;
+		if (_extensions != null) existing |= 1 << 20;
 
 		out.writeInt(existing);
 		out.writeDouble(_latitude.toDegrees());
@@ -1821,6 +1985,7 @@ public final class WayPoint implements Point, Serializable {
 		if ((existing & (1 << 17)) != 0) out.writeLong(_ageOfGPSData.toMillis());
 		if ((existing & (1 << 18)) != 0) _dgpsID.write(out);
 		if ((existing & (1 << 19)) != 0) _course.write(out);
+		if ((existing & (1 << 20)) != 0) IO.write(_extensions, out);
 	}
 
 	static WayPoint read(final DataInput in) throws IOException {
@@ -1847,7 +2012,8 @@ public final class WayPoint implements Point, Serializable {
 			((existing & (1 << 16)) != 0) ? in.readDouble() : null,
 			((existing & (1 << 17)) != 0) ? Duration.ofMillis(in.readLong()) : null,
 			((existing & (1 << 18)) != 0) ? DGPSStation.read(in) : null,
-			((existing & (1 << 19)) != 0) ? Degrees.read(in) : null
+			((existing & (1 << 19)) != 0) ? Degrees.read(in) : null,
+			((existing & (1 << 20)) != 0) ? IO.readDoc(in) : null
 		);
 	}
 
@@ -1893,7 +2059,8 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)))
 		.v00(XMLWriter.elem("ageofdgpsdata").map(wp -> durationString(wp._ageOfGPSData)))
 		.v00(XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID)))
-		.v10(XMLWriter.elem("course").map(wp -> doubleString(wp._course)));
+		.v10(XMLWriter.elem("course").map(wp -> doubleString(wp._course)))
+		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
 
 	// Define the needed readers for the different versions.
 	private static final XMLReaders READERS = new XMLReaders()
@@ -1921,7 +2088,7 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLReader.elem("ageofdgpsdata").map(Format::parseDuration))
 		.v00(XMLReader.elem("dgpsid").map(DGPSStation::parse))
 		.v10(XMLReader.elem("course").map(Degrees::parse))
-		.v00(XMLReader.ignore("extensions"));
+		.v00(XMLReader.doc("extensions"));
 
 	static XMLWriter<WayPoint> xmlWriter(final Version version, final String name) {
 		return XMLWriter.elem(name, WRITERS.writers(version));
@@ -1962,7 +2129,8 @@ public final class WayPoint implements Point, Serializable {
 			(Double)v[18],
 			(Duration)v[19],
 			(DGPSStation)v[20],
-			null
+			null,
+			(Document)v[21]
 		);
 	}
 
@@ -1991,7 +2159,8 @@ public final class WayPoint implements Point, Serializable {
 			(Double)v[19],
 			(Duration)v[20],
 			(DGPSStation)v[21],
-			(Degrees)v[22]
+			(Degrees)v[22],
+			(Document)v[23]
 		);
 	}
 

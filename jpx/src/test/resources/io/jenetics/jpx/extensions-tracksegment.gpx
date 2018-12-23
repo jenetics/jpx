@@ -3,7 +3,6 @@
 	<trk>
 		<trkseg>
 			<extensions>
-				asdf
 				<foo>asdf</foo>
 				<foo>asdf</foo>
 				<!--
