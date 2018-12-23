@@ -94,6 +94,31 @@ $ [lat=48.2081743, lon=48.2081743, ele=162]
 
 ```
 
+### Reading GPX extensions
+
+The library is also able to read arbitrary GPX _extensions_.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="JPX - Java GPX library" xmlns="http://www.topografix.com/GPX/1/1">
+    ...
+    <extensions>
+        <gpxdata:lap xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0">
+            <gpxdata:index>1</gpxdata:index>
+            <gpxdata:startPoint lat="51.219983" lon="6.765224"/>
+            <gpxdata:endPoint lat="51.220137" lon="6.765098" />
+        </gpxdata:lap>
+    </extensions>
+</gpx>
+
+```
+
+The extensions are available via a `org.w3c.dom.Document` object, with an `extensions` root element.
+
+```java
+final Optional<Document> extensions = gpx.getExtensions();
+```
+
 ### Reading GPX 1.0 and writing GPX 1.1
 
 By default, JPX is reading and writing the GPX files in version 1.1. But it is possible to read and write GPX files in version 1.0 as well.
