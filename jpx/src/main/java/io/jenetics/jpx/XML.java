@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 import static javax.xml.transform.OutputKeys.VERSION;
@@ -267,6 +268,18 @@ final class XML {
 	static Document extensions(final Document extensions) {
 		final Document doc = XML.removeNS(XML.clean(XML.clone(extensions)));
 		return XML.isEmpty(doc) ? null : doc;
+	}
+
+	static Document checkExtensions(final Document extensions) {
+		if (extensions != null &&
+			!"extensions".equals(extensions.getDocumentElement().getNodeName()))
+		{
+			throw new IllegalArgumentException(format(
+				"Expected 'extensions' root element, but got '%s'.",
+				extensions.getDocumentElement().getNodeName()
+			));
+		}
+		return extensions;
 	}
 
 }

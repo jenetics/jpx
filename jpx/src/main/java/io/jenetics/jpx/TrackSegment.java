@@ -269,16 +269,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 *         an {@code extensions} node
 		 */
 		public Builder extensions(final Document extensions) {
-			if (extensions != null &&
-				!"extensions".equals(extensions.getDocumentElement().getNodeName()))
-			{
-				throw new IllegalArgumentException(String.format(
-					"Expected 'extensions' root element, but got '%s'.",
-					extensions.getDocumentElement().getNodeName()
-				));
-			}
-
-			_extensions = extensions;
+			_extensions = XML.checkExtensions(extensions);
 			return this;
 		}
 
