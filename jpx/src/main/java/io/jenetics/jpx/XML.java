@@ -264,4 +264,9 @@ final class XML {
 		return doc;
 	}
 
+	static Document extensions(final Document extensions) {
+		final Document doc = XML.removeNS(XML.clean(XML.clone(extensions)));
+		return XML.isEmpty(doc) ? null : doc;
+	}
+
 }

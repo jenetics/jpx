@@ -277,9 +277,7 @@ public final class GPX implements Serializable {
 		_wayPoints = immutable(wayPoints);
 		_routes = immutable(routes);
 		_tracks = immutable(tracks);
-
-		final Document doc = XML.removeNS(XML.clean(XML.clone(extensions)));
-		_extensions = XML.isEmpty(doc) ? null : doc;
+		_extensions = XML.extensions(extensions);
 	}
 
 	/**
