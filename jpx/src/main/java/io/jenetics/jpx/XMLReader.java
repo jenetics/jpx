@@ -503,12 +503,23 @@ final class DocReader extends XMLReader<Document> {
 			XML.copy(new XMLStreamReaderAdapter(xml) {
 				@Override
 				public String getVersion() {
+// Workaround for this bug:
+//Caused by: java.lang.NullPointerException
+//	at java.xml/com.sun.org.apache.xerces.internal.dom.CoreDocumentImpl.setXmlVersion(CoreDocumentImpl.java:865)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.SAX2DOM.setDocumentInfo(SAX2DOM.java:145)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.SAX2DOM.startElement(SAX2DOM.java:155)
+//	at java.xml/com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler.closeStartTag(ToXMLSAXHandler.java:206)
+//	at java.xml/com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler.characters(ToXMLSAXHandler.java:526)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.handleCharacters(StAXStream2SAX.java:248)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.bridge(StAXStream2SAX.java:155)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.parse(StAXStream2SAX.java:104)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transformIdentity(TransformerImpl.java:707)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transform(TransformerImpl.java:774)
 					return super.getVersion() != null
 						? super.getVersion()
 						: "1.0";
 				}
 			}, doc);
-			XML.clean(doc);
 		} catch (XMLStreamException e) {
 			if (!lenient) {
 				throw e;

@@ -211,9 +211,9 @@ final class XML {
 
 	static Document removeNS(final Document xml) {
 		final Node root = xml.getDocumentElement();
-		final NodeList children = root.getChildNodes();
 		final Element newRoot = xml.createElement(root.getNodeName());
 
+		final NodeList children = root.getChildNodes();
 		for (int i = 0; i < children.getLength(); ++i) {
 			newRoot.appendChild(children.item(i).cloneNode(true));
 		}

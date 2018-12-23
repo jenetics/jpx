@@ -203,7 +203,7 @@ interface XMLWriter<T> {
 			if (data != null) {
 				final Element root = data.getDocumentElement();
 
-				XML.copy(XML.clean(root), new XMLStreamWriterAdapter(xml) {
+				XML.copy(root, new XMLStreamWriterAdapter(xml) {
 					@Override
 					public void writeEndDocument() {}
 					@Override
