@@ -44,6 +44,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.w3c.dom.Document;
+
 import io.jenetics.jpx.GPX.Version;
 
 /**
@@ -80,6 +82,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	private final List<Link> _links;
 	private final UInt _number;
 	private final String _type;
+	private final Document _extensions;
 	private final List<TrackSegment> _segments;
 
 	/**
@@ -93,6 +96,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * @param links the links to external information about track
 	 * @param number the GPS track number
 	 * @param type the type (classification) of track
+	 * @param extensions the extensions document
 	 * @param segments the track-segments holds a list of track-points which are
 	 *        logically connected in order. To represent a single GPS track
 	 *        where GPS reception was lost, or the GPS receiver was turned off,
@@ -106,6 +110,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		final List<Link> links,
 		final UInt number,
 		final String type,
+		final Document extensions,
 		final List<TrackSegment> segments
 	) {
 		_name = name;
@@ -115,6 +120,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		_links = immutable(links);
 		_number = number;
 		_type = type;
+		_extensions = XML.extensions(extensions);
 		_segments = immutable(segments);
 	}
 
@@ -183,6 +189,25 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	}
 
 	/**
+	 * Return the (cloned) extensions document. The root element of the returned
+	 * document has the name {@code extensions}.
+	 * <pre>{@code
+	 * <extensions>
+	 *     ...
+	 * </extensions>
+	 * }</pre>
+	 *
+	 * @since !__version__!
+	 *
+	 * @return the extensions document
+	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
+	 *         because of an errornous XML configuration
+	 */
+	public Optional<Document> getExtensions() {
+		return Optional.ofNullable(_extensions).map(XML::clone);
+	}
+
+	/**
 	 * Return the sequence of route points.
 	 *
 	 * @return the sequence of route points
@@ -222,6 +247,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			.src(_source)
 			.links(_links)
 			.number(_number)
+			.extensions(_extensions)
 			.segments(_segments);
 	}
 
@@ -237,6 +263,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			_source == null &&
 			_links.isEmpty() &&
 			_number == null &&
+			_extensions == null &&
 			(_segments.isEmpty() ||
 				_segments.stream().allMatch(TrackSegment::isEmpty));
 	}
@@ -313,6 +340,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		private final List<Link> _links = new ArrayList<>();
 		private UInt _number;
 		private String _type;
+		private Document _extensions;
 		private final List<TrackSegment> _segments = new ArrayList<>();
 
 		private Builder() {
@@ -506,6 +534,47 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		}
 
 		/**
+		 * Sets the extensions object, which may be {@code null}. The root
+		 * element of the extensions document must be {@code extensions}.
+		 * <pre>{@code
+		 * <extensions>
+		 *     ...
+		 * </extensions>
+		 * }</pre>
+		 *
+		 * @since !__version__!
+		 *
+		 * @param extensions the document
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the root element is not the
+		 *         an {@code extensions} node
+		 */
+		public Builder extensions(final Document extensions) {
+			if (extensions != null &&
+				!"extensions".equals(extensions.getDocumentElement().getNodeName()))
+			{
+				throw new IllegalArgumentException(String.format(
+					"Expected 'extensions' root element, but got '%s'.",
+					extensions.getDocumentElement().getNodeName()
+				));
+			}
+
+			_extensions = extensions;
+			return this;
+		}
+
+		/**
+		 * Return the current extensions
+		 *
+		 * @since !__version__!
+		 *
+		 * @return the extensions document
+		 */
+		public Optional<Document> extensions() {
+			return Optional.ofNullable(_extensions);
+		}
+
+		/**
 		 * Set the track segments of the track. The list may be {@code null}.
 		 *
 		 * @param segments the track segments
@@ -635,6 +704,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				_links,
 				_number,
 				_type,
+				_extensions,
 				_segments
 			);
 		}
@@ -648,6 +718,51 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
+
+	/**
+	 * Create a new {@code Track} with the given parameters.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param name the GPS name of the track
+	 * @param comment the GPS comment for the track
+	 * @param description user description of the track
+	 * @param source the source of data. Included to give user some idea of
+	 *        reliability and accuracy of data.
+	 * @param links the links to external information about track
+	 * @param number the GPS track number
+	 * @param type the type (classification) of track
+	 * @param segments the track-segments holds a list of track-points which are
+	 *        logically connected in order. To represent a single GPS track
+	 *        where GPS reception was lost, or the GPS receiver was turned off,
+	 *        start a new track-segment for each continuous span of track data.
+	 * @return a new {@code Track} with the given parameters
+	 * @throws NullPointerException if the {@code links} or the {@code segments}
+	 *         sequence is {@code null}
+	 */
+	public static Track of(
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final UInt number,
+		final String type,
+		final Document extensions,
+		final List<TrackSegment> segments
+	) {
+		return new Track(
+			name,
+			comment,
+			description,
+			source,
+			links,
+			number,
+			type,
+			extensions,
+			segments
+		);
+	}
 
 	/**
 	 * Create a new {@code Track} with the given parameters.
@@ -686,6 +801,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			links,
 			number,
 			type,
+			null,
 			segments
 		);
 	}
@@ -713,6 +829,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		IO.writes(_links, Link::write, out);
 		IO.writeNullable(_number, UInt::write, out);
 		IO.writeNullableString(_type, out);
+		IO.writeNullable(_extensions, IO::write, out);
 		IO.writes(_segments, TrackSegment::write, out);
 	}
 
@@ -725,6 +842,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			IO.reads(Link::read, in),
 			IO.readNullable(UInt::read, in),
 			IO.readNullableString(in),
+			IO.readNullable(IO::readDoc, in),
 			IO.reads(TrackSegment::read, in)
 		);
 	}
@@ -756,6 +874,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v10(XMLWriter.elem("urlname").map(Track::urlname))
 		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
 		.v00(XMLWriter.elem("type").map(r -> r._type))
+		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
 		.v10(XMLWriter.elems(TrackSegment.xmlWriter(Version.V10)).map(r -> r._segments))
 		.v11(XMLWriter.elems(TrackSegment.xmlWriter(Version.V11)).map(r -> r._segments));
 
@@ -770,9 +889,9 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v10(XMLReader.elem("urlname"))
 		.v00(XMLReader.elem("number").map(UInt::parse))
 		.v00(XMLReader.elem("type"))
+		.v00(XMLReader.doc("extensions"))
 		.v10(XMLReader.elems(TrackSegment.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)))
-		.v00(XMLReader.ignore("extensions"));
+		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)));
 
 	static XMLWriter<Track> xmlWriter(final Version version) {
 		return XMLWriter.elem("trk", WRITERS.writers(version));
@@ -797,7 +916,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(List<Link>)v[4],
 			(UInt)v[5],
 			(String)v[6],
-			(List<TrackSegment>)v[7]
+			(Document)v[7],
+			(List<TrackSegment>)v[8]
 		);
 	}
 
@@ -813,7 +933,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				: null,
 			(UInt)v[6],
 			(String)v[7],
-			(List<TrackSegment>)v[8]
+			(Document)v[8],
+			(List<TrackSegment>)v[9]
 		);
 	}
 
