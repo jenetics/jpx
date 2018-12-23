@@ -723,6 +723,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * @param links the links to external information about track
 	 * @param number the GPS track number
 	 * @param type the type (classification) of track
+	 * @param extensions the extensions document
 	 * @param segments the track-segments holds a list of track-points which are
 	 *        logically connected in order. To represent a single GPS track
 	 *        where GPS reception was lost, or the GPS receiver was turned off,
