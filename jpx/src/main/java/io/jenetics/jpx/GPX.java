@@ -364,8 +364,8 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Return the (cloned) extensions document of this GPX. The root element of
-	 * the returned document has the name {@code extensions}.
+	 * Return the (cloned) extensions document. The root element of the returned
+	 * document has the name {@code extensions}.
 	 * <pre>{@code
 	 * <extensions>
 	 *     ...
@@ -374,9 +374,7 @@ public final class GPX implements Serializable {
 	 *
 	 * @since !__version__!
 	 *
-	 * @return the extensions document of this GPX
-	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
-	 *         because of an errornous XML configuration
+	 * @return the extensions document
 	 */
 	public Optional<Document> getExtensions() {
 		return Optional.ofNullable(_extensions).map(XML::clone);
@@ -729,9 +727,8 @@ public final class GPX implements Serializable {
 
 
 		/**
-		 * Sets the tracks of the {@code GPX} object. The list of tracks may be
-		 * {@code null}. The root element of the extensions document must be
-		 * {@code extensions}.
+		 * Sets the extensions object, which may be {@code null}. The root
+		 * element of the extensions document must be {@code extensions}.
 		 * <pre>{@code
 		 * <extensions>
 		 *     ...
@@ -740,7 +737,7 @@ public final class GPX implements Serializable {
 		 *
 		 * @since !__version__!
 		 *
-		 * @param extensions the {@code GPX} tracks
+		 * @param extensions the extensions document
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws IllegalArgumentException if the root element is not the
 		 *         an {@code extensions} node
@@ -764,7 +761,7 @@ public final class GPX implements Serializable {
 		 *
 		 * @since !__version__!
 		 *
-		 * @return the current extensions
+		 * @return the extensions document
 		 */
 		public Optional<Document> extensions() {
 			return Optional.ofNullable(_extensions);
