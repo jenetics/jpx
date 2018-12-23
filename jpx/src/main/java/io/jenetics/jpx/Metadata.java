@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
-import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.immutable;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;

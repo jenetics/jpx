@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -51,6 +52,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -116,16 +118,6 @@ final class XML {
 			throw new UncheckedIOException(e);
 		}
 		return out.toString();
-	}
-
-	static byte[] toBytes(final Node source) {
-		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {
-			copy(source, out);
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
-		return out.toByteArray();
 	}
 
 	static DocumentBuilder builder()
@@ -196,8 +188,34 @@ final class XML {
 
 	static boolean equals(final Node n1, final Node n2) {
 		if (n1 == n2) return true;
-		if (n1 == null) return false;
-		return toString(n1).equals(toString(n2));
+		if (n1 == null || n2 == null) return false;
+		if (!Objects.equals(n1.getNodeValue(), n2.getNodeValue())) return false;
+		if (!equals(n1.getAttributes(), n2.getAttributes())) return false;
+
+		final NodeList nl1 = n1.getChildNodes();
+		final NodeList nl2 = n2.getChildNodes();
+		if (nl1.getLength() != nl2.getLength()) return false;
+		for (int i = 0; i < nl1.getLength(); ++i) {
+			if (!equals(nl1.item(i), nl2.item(i))) return false;
+		}
+
+		return true;
+	}
+
+	private static boolean equals(final NamedNodeMap a1, final NamedNodeMap a2) {
+		if (a1 == null && a2 == null) return true;
+		if (a1 == null || a2 == null) return false;
+		if (a1.getLength() != a2.getLength()) return false;
+
+		for (int i = 0; i < a1.getLength(); ++i) {
+			final String n1 = a1.item(i).getNodeName();
+			final String v1 = a1.item(i).getNodeValue();
+			final String v2 = a2.getNamedItem(a1.item(i).getNodeName()).getNodeValue();
+
+			if (!Objects.equals(v1, v2)) return false;
+		}
+
+		return true;
 	}
 
 	static int hashCode(final Node node) {
