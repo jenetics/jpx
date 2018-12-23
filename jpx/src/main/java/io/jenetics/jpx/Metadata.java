@@ -710,6 +710,8 @@ public final class Metadata implements Serializable {
 	/**
 	 * Create a new {@code Metadata} object with the given parameters.
 	 *
+	 * @since !__version__!
+	 *
 	 * @param name the name of the GPX file
 	 * @param description a description of the contents of the GPX file
 	 * @param author the person or organization who created the GPX file
