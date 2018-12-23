@@ -721,7 +721,10 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.extensions(extensions)
 			.build();
 
-		Assert.assertTrue(XML.equals(extensions, gpx.getExtensions().get()));
+		Assert.assertTrue(XML.equals(
+			XML.removeNS(extensions),
+			gpx.getExtensions().get()
+		));
 	}
 
 	@Test(expectedExceptions = IllegalArgumentException.class)

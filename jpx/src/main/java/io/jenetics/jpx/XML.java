@@ -41,6 +41,7 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -50,6 +51,7 @@ import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -150,6 +152,8 @@ final class XML {
 	}
 
 	static <T extends Node> T clean(final T node) {
+		if (node == null) return null;
+
 		node.normalize();
 		final List<Node> remove = new ArrayList<>();
 		clean(node, remove);
@@ -186,6 +190,25 @@ final class XML {
 		return true;
 	}
 
+	static Document clone(final Document doc) {
+		if (doc == null) return null;
+
+		try {
+			final Transformer transformer = TransformerFactory
+				.newInstance()
+				.newTransformer();
+
+			final DOMSource source = new DOMSource(doc);
+			final DOMResult result = new DOMResult();
+			transformer.transform(source,result);
+			return (Document)result.getNode();
+		} catch (TransformerException e) {
+			throw (DOMException)
+				new DOMException(DOMException.NOT_SUPPORTED_ERR, e.getMessage())
+					.initCause(e);
+		}
+	}
+
 	static boolean equals(final Node n1, final Node n2) {
 		if (n1 == n2) return true;
 		if (n1 == null || n2 == null) return false;
@@ -208,7 +231,6 @@ final class XML {
 		if (a1.getLength() != a2.getLength()) return false;
 
 		for (int i = 0; i < a1.getLength(); ++i) {
-			final String n1 = a1.item(i).getNodeName();
 			final String v1 = a1.item(i).getNodeValue();
 			final String v2 = a2.getNamedItem(a1.item(i).getNodeName()).getNodeValue();
 
@@ -227,17 +249,19 @@ final class XML {
 			doc.getDocumentElement().getChildNodes().getLength() == 0;
 	}
 
-	static Document removeNS(final Document xml) {
-		final Node root = xml.getDocumentElement();
-		final Element newRoot = xml.createElement(root.getNodeName());
+	static Document removeNS(final Document doc) {
+		if (doc == null) return null;
+
+		final Node root = doc.getDocumentElement();
+		final Element newRoot = doc.createElement(root.getNodeName());
 
 		final NodeList children = root.getChildNodes();
 		for (int i = 0; i < children.getLength(); ++i) {
 			newRoot.appendChild(children.item(i).cloneNode(true));
 		}
 
-		xml.replaceChild(newRoot, root);
-		return xml;
+		doc.replaceChild(newRoot, root);
+		return doc;
 	}
 
 }

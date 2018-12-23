@@ -277,9 +277,9 @@ public final class GPX implements Serializable {
 		_wayPoints = immutable(wayPoints);
 		_routes = immutable(routes);
 		_tracks = immutable(tracks);
-		_extensions = XML.isEmpty(extensions)
-			? null
-			: XML.removeNS(XML.clean(extensions));
+
+		final Document doc = XML.removeNS(XML.clean(XML.clone(extensions)));
+		_extensions = XML.isEmpty(doc) ? null : doc;
 	}
 
 	/**
@@ -366,8 +366,8 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Return the extensions document of this GPX. The root element of the
-	 * returned document has the name {@code extensions}.
+	 * Return the (cloned) extensions document of this GPX. The root element of
+	 * the returned document has the name {@code extensions}.
 	 * <pre>{@code
 	 * <extensions>
 	 *     ...
@@ -377,9 +377,11 @@ public final class GPX implements Serializable {
 	 * @since !__version__!
 	 *
 	 * @return the extensions document of this GPX
+	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
+	 *         because of an errornous XML configuration
 	 */
 	public Optional<Document> getExtensions() {
-		return Optional.ofNullable(_extensions);
+		return Optional.ofNullable(_extensions).map(XML::clone);
 	}
 
 	/**
@@ -417,7 +419,6 @@ public final class GPX implements Serializable {
 		hash += 17*Objects.hashCode(_wayPoints) + 31;
 		hash += 17*Objects.hashCode(_routes) + 31;
 		hash += 17*Objects.hashCode(_tracks) + 31;
-		//hash += 17*XML.hashCode(_extensions) + 31;
 		return hash;
 	}
 
@@ -430,10 +431,8 @@ public final class GPX implements Serializable {
 			Objects.equals(((GPX)obj)._metadata, _metadata) &&
 			Objects.equals(((GPX)obj)._wayPoints, _wayPoints) &&
 			Objects.equals(((GPX)obj)._routes, _routes) &&
-			Objects.equals(((GPX)obj)._tracks, _tracks); // &&
-			//XML.equals(((GPX)obj)._extensions, _extensions);
+			Objects.equals(((GPX)obj)._tracks, _tracks);
 	}
-
 
 	/**
 	 * Builder class for creating immutable {@code GPX} objects.
@@ -745,8 +744,8 @@ public final class GPX implements Serializable {
 		 *
 		 * @param extensions the {@code GPX} tracks
 		 * @return {@code this} {@code Builder} for method chaining
-		 * @throws IllegalArgumentException if the root element has not the
-		 *         name {@code extensions}
+		 * @throws IllegalArgumentException if the root element is not the
+		 *         an {@code extensions} node
 		 */
 		public Builder extensions(final Document extensions) {
 			if (extensions != null &&
