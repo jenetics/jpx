@@ -174,20 +174,22 @@ public final class GPX implements Serializable {
 		 *
 		 * @see <a href="http://www.topografix.com/gpx_manual.asp">GPX 1.0</a>
 		 */
-		V10("1.0"),
+		V10("1.0", "http://www.topografix.com/GPX/1/0"),
 
 		/**
 		 * The GPX version 1.1. This is the default version and can be read and
 		 * written.
 		 *
-		 * @see <a href="http://www.topografix.com/GPX/1/1/">GPX 1.1</a>
+		 * @see <a href="http://www.topografix.com/GPX/1/1">GPX 1.1</a>
 		 */
-		V11("1.1");
+		V11("1.1", "http://www.topografix.com/GPX/1/1");
 
 		private final String _value;
+		private final String _namespaceURI;
 
-		Version(final String value) {
+		Version(final String value, final String namespaceURI) {
 			_value = value;
+			_namespaceURI = namespaceURI;
 		}
 
 		/**
@@ -197,6 +199,17 @@ public final class GPX implements Serializable {
 		 */
 		public String getValue() {
 			return _value;
+		}
+
+		/**
+		 * Return the namespace URI of this version.
+		 *
+		 * @since 1.5
+		 *
+		 * @return the namespace URI of this version
+		 */
+		public String getNamespaceURI() {
+			return _namespaceURI;
 		}
 
 		/**
