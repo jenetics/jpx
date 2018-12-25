@@ -2,6 +2,6 @@ sudo: false
 language: java
 jdk:
   - oraclejdk8
-  - openjdk10
+  - openjdk11
 
 script: "./gradlew check --info --stacktrace"
