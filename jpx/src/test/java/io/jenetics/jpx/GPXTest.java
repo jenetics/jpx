@@ -712,7 +712,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test
 	public void readGPXExtensions2() throws IOException {
 		final GPX gpx = readV11("extensions.gpx");
-		GPX.writer("    ").write(gpx, System.out);
+		//GPX.writer("    ").write(gpx, System.out);
 	}
 
 	@Test(expectedExceptions = IOException.class)
