@@ -703,13 +703,16 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		//System.out.println(XML.toString(expected.getDocumentElement()));
 		//System.out.println(XML.toString(gpx.getExtensions().get().getDocumentElement()));
 		//GPX.writer("    ").write(gpx, System.out);
-		Assert.assertTrue(XML.equals(expected.getDocumentElement(), gpx.getExtensions().get().getDocumentElement()));
+		Assert.assertTrue(XML.equals(
+			expected.getDocumentElement(),
+			gpx.getExtensions().get().getDocumentElement()
+		));
 	}
 
 	@Test
 	public void readGPXExtensions2() throws IOException {
 		final GPX gpx = readV11("extensions.gpx");
-		//GPX.writer("    ").write(gpx, System.out);
+		GPX.writer("    ").write(gpx, System.out);
 	}
 
 	@Test(expectedExceptions = IOException.class)

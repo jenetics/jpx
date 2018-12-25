@@ -64,6 +64,17 @@ import org.w3c.dom.NodeList;
  * @since !__version__!
  */
 final class XML {
+
+	private static final class TFHolder {
+		private static final TFHolder INSTANCE = new TFHolder();
+
+		final TransformerFactory factory;
+
+		private TFHolder() {
+			factory = TransformerFactory.newInstance();
+		}
+	}
+
 	private XML() {
 	}
 
@@ -77,8 +88,7 @@ final class XML {
 		throws XMLStreamException
 	{
 		try {
-			final Transformer transformer = TransformerFactory
-				.newInstance()
+			final Transformer transformer = TFHolder.INSTANCE.factory
 				.newTransformer();
 
 			transformer.setOutputProperty(OMIT_XML_DECLARATION, "yes");
@@ -155,8 +165,7 @@ final class XML {
 		if (doc == null) return null;
 
 		try {
-			final Transformer transformer = TransformerFactory
-				.newInstance()
+			final Transformer transformer = TFHolder.INSTANCE.factory
 				.newTransformer();
 
 			final DOMSource source = new DOMSource(doc);
