@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.sort;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
