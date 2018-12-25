@@ -137,7 +137,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 
 		Assert.assertTrue(XML.equals(
 			md.getExtensions().get(),
-			XML.parse("<extensions><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo></extensions>")
+			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
 		));
 	}
 

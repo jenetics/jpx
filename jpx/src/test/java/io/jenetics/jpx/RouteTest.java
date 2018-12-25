@@ -93,7 +93,7 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 		);
 		Assert.assertTrue(XML.equals(
 			gpx.getRoutes().get(0).getExtensions().get(),
-			XML.parse("<extensions><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo></extensions>")
+			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
 		));
 	}
 

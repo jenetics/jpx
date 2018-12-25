@@ -106,7 +106,7 @@ public final class Metadata implements Serializable {
 		_time = time;
 		_keywords = keywords;
 		_bounds = bounds;
-		_extensions = XML.extensions(extensions);
+		_extensions = extensions;
 	}
 
 	/**
@@ -629,7 +629,7 @@ public final class Metadata implements Serializable {
 		 *         state
 		 */
 		public Metadata build() {
-			return new Metadata(
+			return of(
 				_name,
 				_description,
 				_author,
@@ -656,47 +656,6 @@ public final class Metadata implements Serializable {
 	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
-
-	/**
-	 * Create a new {@code Metadata} object with the given parameters.
-	 *
-	 * @param name the name of the GPX file
-	 * @param description a description of the contents of the GPX file
-	 * @param author the person or organization who created the GPX file
-	 * @param copyright copyright and license information governing use of the
-	 *        file
-	 * @param links URLs associated with the location described in the file
-	 * @param time the creation date of the file
-	 * @param keywords keywords associated with the file. Search engines or
-	 *        databases can use this information to classify the data.
-	 * @param bounds minimum and maximum coordinates which describe the extent
-	 *        of the coordinates in the file
-	 * @return a new {@code Metadata} object with the given parameters
-	 * @throws NullPointerException if the given {@code links} sequence is
-	 *        {@code null}
-	 */
-	public static Metadata of(
-		final String name,
-		final String description,
-		final Person author,
-		final Copyright copyright,
-		final List<Link> links,
-		final ZonedDateTime time,
-		final String keywords,
-		final Bounds bounds
-	) {
-		return new Metadata(
-			name,
-			description,
-			author == null || author.isEmpty() ? null : author,
-			copyright,
-			links,
-			time,
-			keywords,
-			bounds,
-			null
-		);
-	}
 
 	/**
 	 * Create a new {@code Metadata} object with the given parameters.
@@ -739,7 +698,48 @@ public final class Metadata implements Serializable {
 			time,
 			keywords,
 			bounds,
-			extensions
+			XML.extensions(XML.clone(extensions))
+		);
+	}
+
+	/**
+	 * Create a new {@code Metadata} object with the given parameters.
+	 *
+	 * @param name the name of the GPX file
+	 * @param description a description of the contents of the GPX file
+	 * @param author the person or organization who created the GPX file
+	 * @param copyright copyright and license information governing use of the
+	 *        file
+	 * @param links URLs associated with the location described in the file
+	 * @param time the creation date of the file
+	 * @param keywords keywords associated with the file. Search engines or
+	 *        databases can use this information to classify the data.
+	 * @param bounds minimum and maximum coordinates which describe the extent
+	 *        of the coordinates in the file
+	 * @return a new {@code Metadata} object with the given parameters
+	 * @throws NullPointerException if the given {@code links} sequence is
+	 *        {@code null}
+	 */
+	public static Metadata of(
+		final String name,
+		final String description,
+		final Person author,
+		final Copyright copyright,
+		final List<Link> links,
+		final ZonedDateTime time,
+		final String keywords,
+		final Bounds bounds
+	) {
+		return of(
+			name,
+			description,
+			author,
+			copyright,
+			links,
+			time,
+			keywords,
+			bounds,
+			null
 		);
 	}
 
@@ -804,7 +804,7 @@ public final class Metadata implements Serializable {
 	@SuppressWarnings("unchecked")
 	static final XMLReader<Metadata> READER = XMLReader.elem(
 		v -> {
-			final Metadata metadata = Metadata.of(
+			final Metadata metadata = new Metadata(
 				(String)v[0],
 				(String)v[1],
 				(Person)v[2],
@@ -813,7 +813,7 @@ public final class Metadata implements Serializable {
 				(ZonedDateTime)v[5],
 				(String)v[6],
 				(Bounds)v[7],
-				(Document)v[8]
+				XML.extensions((Document)v[8])
 			);
 
 			return metadata.isEmpty() ? null : metadata;

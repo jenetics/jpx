@@ -709,8 +709,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test
 	public void readGPXExtensions2() throws IOException {
 		final GPX gpx = readV11("extensions.gpx");
-
-		GPX.writer("    ").write(gpx, System.out);
+		//GPX.writer("    ").write(gpx, System.out);
 	}
 
 	@Test(expectedExceptions = IOException.class)
@@ -737,7 +736,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		));
 	}
 
-	@Test
+	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void invalidExtensionsRoot1() {
 		final Document extensions = XML.parse("<extensions xmlns=\"adsf\">some test</extensions>");
 		final GPX gpx = GPX.builder()
@@ -752,7 +751,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.extensions(extensions);
 	}
 
-	public static void main(final String[] args) throws IOException {
+	public static void main1(final String[] args) throws IOException {
 		final String baseDir = "jpx/src/test/resources/io/jenetics/jpx/serialization";
 
 		final Random random = new Random(123);

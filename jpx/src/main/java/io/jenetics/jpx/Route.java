@@ -113,7 +113,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		_links = immutable(links);
 		_number = number;
 		_type = type;
-		_extensions = XML.extensions(extensions);
+		_extensions = extensions;
 		_points = immutable(points);
 	}
 
@@ -681,7 +681,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		@Override
 		public Route build() {
-			return new Route(
+			return of(
 				_name,
 				_comment,
 				_description,
@@ -736,7 +736,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			links,
 			number,
 			type,
-			extensions,
+			XML.extensions(XML.clone(extensions)),
 			points
 		);
 	}
@@ -765,7 +765,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		final String type,
 		final List<WayPoint> points
 	) {
-		return new Route(
+		return of(
 			name,
 			comment,
 			description,
@@ -789,7 +789,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		final String name,
 		final List<WayPoint> points
 	) {
-		return new Route(
+		return of(
 			name,
 			null,
 			null,
@@ -809,7 +809,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * @return a new route object with the given parameters
 	 */
 	public static Route of(final List<WayPoint> points) {
-		return new Route(
+		return of(
 			null,
 			null,
 			null,
@@ -925,7 +925,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	private static Route toRouteV11(final Object[] v) {
-		return Route.of(
+		return new Route(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -933,14 +933,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			(List<Link>)v[4],
 			(UInt)v[5],
 			(String)v[6],
-			(Document)v[7],
+			XML.extensions((Document)v[7]),
 			(List<WayPoint>)v[8]
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static Route toRouteV10(final Object[] v) {
-		return Route.of(
+		return new Route(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -950,7 +950,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				: null,
 			(UInt)v[6],
 			(String)v[7],
-			(Document)v[8],
+			XML.extensions((Document)v[8]),
 			(List<WayPoint>)v[9]
 		);
 	}

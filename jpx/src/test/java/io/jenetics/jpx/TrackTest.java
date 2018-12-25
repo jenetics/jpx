@@ -106,7 +106,7 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 
 		Assert.assertTrue(XML.equals(
 			gpx.getTracks().get(0).getExtensions().get(),
-			XML.parse("<extensions><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo><foo xmlns=\"http://www.topografix.com/GPX/1/1\">asdf</foo></extensions>")
+			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
 		));
 	}
 

@@ -120,7 +120,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		_links = immutable(links);
 		_number = number;
 		_type = type;
-		_extensions = XML.extensions(extensions);
+		_extensions = extensions;
 		_segments = immutable(segments);
 	}
 
@@ -687,7 +687,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 */
 		@Override
 		public Track build() {
-			return new Track(
+			return of(
 				_name,
 				_comment,
 				_description,
@@ -751,7 +751,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			links,
 			number,
 			type,
-			extensions,
+			XML.extensions(XML.clone(extensions)),
 			segments
 		);
 	}
@@ -785,7 +785,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		final String type,
 		final List<TrackSegment> segments
 	) {
-		return new Track(
+		return of(
 			name,
 			comment,
 			description,
@@ -900,7 +900,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	private static Track toTrackV11(final Object[] v) {
-		return Track.of(
+		return new Track(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -908,14 +908,14 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(List<Link>)v[4],
 			(UInt)v[5],
 			(String)v[6],
-			(Document)v[7],
+			XML.extensions((Document)v[7]),
 			(List<TrackSegment>)v[8]
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static Track toTrackV10(final Object[] v) {
-		return Track.of(
+		return new Track(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -925,7 +925,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				: null,
 			(UInt)v[6],
 			(String)v[7],
-			(Document)v[8],
+			XML.extensions((Document)v[8]),
 			(List<TrackSegment>)v[9]
 		);
 	}

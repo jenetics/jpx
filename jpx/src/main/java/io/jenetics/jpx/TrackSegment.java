@@ -70,7 +70,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 */
 	private TrackSegment(final List<WayPoint> points, final Document extensions) {
 		_points = immutable(points);
-		_extensions = XML.extensions(extensions);
+		_extensions = extensions;
 	}
 
 	/**
@@ -341,7 +341,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 */
 		@Override
 		public TrackSegment build() {
-			return new TrackSegment(_points, _extensions);
+			return of(_points, _extensions);
 		}
 
 	}
@@ -375,7 +375,10 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		final List<WayPoint> points,
 		final Document extensions
 	) {
-		return new TrackSegment(points, extensions);
+		return new TrackSegment(
+			points,
+			XML.extensions(XML.clone(extensions))
+		);
 	}
 
 	/**
@@ -387,7 +390,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *        {@code null}
 	 */
 	public static TrackSegment of(final List<WayPoint> points) {
-		return new TrackSegment(points, null);
+		return of(points, null);
 	}
 
 
@@ -433,8 +436,10 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<TrackSegment> xmlReader(final Version version) {
-		return XMLReader.elem(a ->
-				new TrackSegment((List<WayPoint>)a[0], (Document)a[1]),
+		return XMLReader.elem(a -> new TrackSegment(
+				(List<WayPoint>)a[0],
+				XML.extensions((Document)a[1])
+			),
 			"trkseg",
 			XMLReader.elems(WayPoint.xmlReader(version,"trkpt")),
 			XMLReader.doc("extensions")

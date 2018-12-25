@@ -185,7 +185,7 @@ public final class WayPoint implements Point, Serializable {
 		_ageOfGPSData = ageOfGPSData;
 		_dgpsID = dgpsID;
 		_course = course;
-		_extensions = XML.extensions(extensions);
+		_extensions = extensions;
 	}
 
 	@Override
@@ -1372,7 +1372,7 @@ public final class WayPoint implements Point, Serializable {
 				);
 			}
 
-			return new WayPoint(
+			return of(
 				_latitude,
 				_longitude,
 				_elevation,
@@ -1416,6 +1416,104 @@ public final class WayPoint implements Point, Serializable {
 	 * ************************************************************************/
 
 	/**
+	 * Create a new way-point with the given parameter.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
+	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
+	 * @param elevation the elevation (in meters) of the point (optional)
+	 * @param speed the current GPS speed (optional)
+	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 *        8601 specification for date/time representation. Fractional seconds
+	 *        are allowed for millisecond timing in tracklogs. (optional)
+	 * @param magneticVariation the magnetic variation at the point (optional)
+	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
+	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
+	 * @param name the GPS name of the way-point. This field will be transferred
+	 *        to and from the GPS. GPX does not place restrictions on the length
+	 *        of this field or the characters contained in it. It is up to the
+	 *        receiving application to validate the field before sending it to
+	 *        the GPS. (optional)
+	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
+	 * @param description a text description of the element. Holds additional
+	 *        information about the element intended for the user, not the GPS.
+	 *        (optional)
+	 * @param source source of data. Included to give user some idea of
+	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
+	 *        Boston North", e.g. (optional)
+	 * @param links links to additional information about the way-point. May be
+	 *        empty, but not {@code null}.
+	 * @param symbol text of GPS symbol name. For interchange with other
+	 *        programs, use the exact spelling of the symbol as displayed on the
+	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
+	 * @param type type (classification) of the way-point (optional)
+	 * @param fix type of GPX fix (optional)
+	 * @param sat number of satellites used to calculate the GPX fix (optional)
+	 * @param hdop horizontal dilution of precision (optional)
+	 * @param vdop vertical dilution of precision (optional)
+	 * @param pdop position dilution of precision. (optional)
+	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
+	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @param course the Instantaneous course at the point
+	 * @param extensions the extensions document
+	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
+	 *         is {@code null}
+	 * @return a new {@code WayPoint}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Length elevation,
+		final Speed speed,
+		final ZonedDateTime time,
+		final Degrees magneticVariation,
+		final Length geoidHeight,
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final String symbol,
+		final String type,
+		final Fix fix,
+		final UInt sat,
+		final Double hdop,
+		final Double vdop,
+		final Double pdop,
+		final Duration ageOfGPSData,
+		final DGPSStation dgpsID,
+		final Degrees course,
+		final Document extensions
+	) {
+		return new WayPoint(
+			latitude,
+			longitude,
+			elevation,
+			speed,
+			time,
+			magneticVariation,
+			geoidHeight,
+			name,
+			comment,
+			description,
+			source,
+			links,
+			symbol,
+			type,
+			fix,
+			sat,
+			hdop,
+			vdop,
+			pdop,
+			ageOfGPSData,
+			dgpsID,
+			course,
+			XML.extensions(XML.clone(extensions))
+		);
+	}
+
+	/**
 	 * Create a new {@code WayPoint} with the given {@code latitude} and
 	 * {@code longitude} value.
 	 *
@@ -1428,7 +1526,7 @@ public final class WayPoint implements Point, Serializable {
 		final Latitude latitude,
 		final Longitude longitude
 	) {
-		return new WayPoint(
+		return of(
 			latitude,
 			longitude,
 			null,
@@ -1489,7 +1587,7 @@ public final class WayPoint implements Point, Serializable {
 		final Longitude longitude,
 		final ZonedDateTime time
 	) {
-		return new WayPoint(
+		return of(
 			latitude,
 			longitude,
 			null,
@@ -1556,7 +1654,7 @@ public final class WayPoint implements Point, Serializable {
 		final Length elevation,
 		final ZonedDateTime time
 	) {
-		return new WayPoint(
+		return of(
 			latitude,
 			longitude,
 			elevation,
@@ -1679,7 +1777,7 @@ public final class WayPoint implements Point, Serializable {
 		final Duration ageOfGPSData,
 		final DGPSStation dgpsID
 	) {
-		return new WayPoint(
+		return of(
 			latitude,
 			longitude,
 			elevation,
@@ -1775,7 +1873,7 @@ public final class WayPoint implements Point, Serializable {
 		final DGPSStation dgpsID,
 		final Degrees course
 	) {
-		return new WayPoint(
+		return of(
 			latitude,
 			longitude,
 			elevation,
@@ -1799,104 +1897,6 @@ public final class WayPoint implements Point, Serializable {
 			dgpsID,
 			course,
 			null
-		);
-	}
-
-	/**
-	 * Create a new way-point with the given parameter.
-	 *
-	 * @since !__version__!
-	 *
-	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
-	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
-	 * @param elevation the elevation (in meters) of the point (optional)
-	 * @param speed the current GPS speed (optional)
-	 * @param time creation/modification timestamp for element. Conforms to ISO
-	 *        8601 specification for date/time representation. Fractional seconds
-	 *        are allowed for millisecond timing in tracklogs. (optional)
-	 * @param magneticVariation the magnetic variation at the point (optional)
-	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
-	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
-	 * @param name the GPS name of the way-point. This field will be transferred
-	 *        to and from the GPS. GPX does not place restrictions on the length
-	 *        of this field or the characters contained in it. It is up to the
-	 *        receiving application to validate the field before sending it to
-	 *        the GPS. (optional)
-	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
-	 * @param description a text description of the element. Holds additional
-	 *        information about the element intended for the user, not the GPS.
-	 *        (optional)
-	 * @param source source of data. Included to give user some idea of
-	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
-	 *        Boston North", e.g. (optional)
-	 * @param links links to additional information about the way-point. May be
-	 *        empty, but not {@code null}.
-	 * @param symbol text of GPS symbol name. For interchange with other
-	 *        programs, use the exact spelling of the symbol as displayed on the
-	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
-	 * @param type type (classification) of the way-point (optional)
-	 * @param fix type of GPX fix (optional)
-	 * @param sat number of satellites used to calculate the GPX fix (optional)
-	 * @param hdop horizontal dilution of precision (optional)
-	 * @param vdop vertical dilution of precision (optional)
-	 * @param pdop position dilution of precision. (optional)
-	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
-	 * @param dgpsID ID of DGPS station used in differential correction (optional)
-	 * @param course the Instantaneous course at the point
-	 * @param extensions the extensions document
-	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
-	 *         is {@code null}
-	 * @return a new {@code WayPoint}
-	 */
-	public static WayPoint of(
-		final Latitude latitude,
-		final Longitude longitude,
-		final Length elevation,
-		final Speed speed,
-		final ZonedDateTime time,
-		final Degrees magneticVariation,
-		final Length geoidHeight,
-		final String name,
-		final String comment,
-		final String description,
-		final String source,
-		final List<Link> links,
-		final String symbol,
-		final String type,
-		final Fix fix,
-		final UInt sat,
-		final Double hdop,
-		final Double vdop,
-		final Double pdop,
-		final Duration ageOfGPSData,
-		final DGPSStation dgpsID,
-		final Degrees course,
-		final Document extensions
-	) {
-		return new WayPoint(
-			latitude,
-			longitude,
-			elevation,
-			speed,
-			time,
-			magneticVariation,
-			geoidHeight,
-			name,
-			comment,
-			description,
-			source,
-			links,
-			symbol,
-			type,
-			fix,
-			sat,
-			hdop,
-			vdop,
-			pdop,
-			ageOfGPSData,
-			dgpsID,
-			course,
-			extensions
 		);
 	}
 
@@ -2107,7 +2107,7 @@ public final class WayPoint implements Point, Serializable {
 
 	@SuppressWarnings("unchecked")
 	private static WayPoint toWayPointV11(final Object[] v) {
-		return WayPoint.of(
+		return new WayPoint(
 			(Latitude)v[0],
 			(Longitude)v[1],
 			(Length)v[2],
@@ -2130,12 +2130,12 @@ public final class WayPoint implements Point, Serializable {
 			(Duration)v[19],
 			(DGPSStation)v[20],
 			null,
-			(Document)v[21]
+			XML.extensions((Document)v[21])
 		);
 	}
 
 	private static WayPoint toWayPointV10(final Object[] v) {
-		return WayPoint.of(
+		return new WayPoint(
 			(Latitude)v[0],
 			(Longitude)v[1],
 			(Length)v[2],
@@ -2160,7 +2160,7 @@ public final class WayPoint implements Point, Serializable {
 			(Duration)v[20],
 			(DGPSStation)v[21],
 			(Degrees)v[22],
-			(Document)v[23]
+			XML.extensions((Document)v[23])
 		);
 	}
 

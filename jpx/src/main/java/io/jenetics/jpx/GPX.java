@@ -274,9 +274,9 @@ public final class GPX implements Serializable {
 		_version = requireNonNull(version);
 		_creator = requireNonNull(creator);
 		_metadata = metadata;
-		_wayPoints = wayPoints;
-		_routes = routes;
-		_tracks = tracks;
+		_wayPoints = immutable(wayPoints);
+		_routes = immutable(routes);
+		_tracks = immutable(tracks);
 		_extensions = extensions;
 	}
 
@@ -764,7 +764,7 @@ public final class GPX implements Serializable {
 		 * @return an immutable {@code GPX} object from the current builder state
 		 */
 		public GPX build() {
-			return new GPX(
+			return of(
 				_version,
 				_creator,
 				_metadata,
@@ -1365,10 +1365,10 @@ public final class GPX implements Serializable {
 			version,
 			creator,
 			metadata == null || metadata.isEmpty() ? null : metadata,
-			immutable(wayPoints),
-			immutable(routes),
-			immutable(tracks),
-			XML.extensions(extensions)
+			wayPoints,
+			routes,
+			tracks,
+			XML.extensions(XML.clone(extensions))
 		);
 	}
 

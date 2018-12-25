@@ -64721,7 +64721,7 @@
             </trkpt>
         </trkseg>
     </trk>
-    <extensions>
+    <extensions xmlns="http://www.topografix.com/GPX/1/1">
         <gpxdata:lap xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0">
             <gpxdata:index>1</gpxdata:index>
             <gpxdata:startPoint lat="51.219983" lon="6.765224"></gpxdata:startPoint>
