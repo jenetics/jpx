@@ -42,7 +42,6 @@ import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
@@ -152,45 +151,6 @@ final class XML {
 		}
 	}
 
-	static <T extends Node> T clean(final T node) {
-		if (node == null) return null;
-
-		node.normalize();
-		final List<Node> remove = new ArrayList<>();
-		clean(node, remove);
-		for (Node n : remove) {
-			if (n.getParentNode() != null) {
-				n.getParentNode().removeChild(n);
-			}
-		}
-
-		return node;
-	}
-
-	private static void clean(final Node node, final List<Node> remove) {
-		if (node.getNodeType() == Node.TEXT_NODE
-			&& isEmpty(node.getTextContent()))
-		{
-			remove.add(node);
-		}
-
-		final NodeList list = node.getChildNodes();
-		for (int i = 0; i < list.getLength(); i++) {
-			clean(list.item(i), remove);
-		}
-	}
-
-	private static boolean isEmpty(final String text) {
-		if (text == null) return true;
-		if (text.isEmpty()) return true;
-		for (int i = 0; i < text.length(); ++i) {
-			if (!Character.isWhitespace(text.charAt(i))) {
-				return false;
-			}
-		}
-		return true;
-	}
-
 	static Document clone(final Document doc) {
 		if (doc == null) return null;
 
@@ -232,10 +192,13 @@ final class XML {
 		if (a1.getLength() != a2.getLength()) return false;
 
 		for (int i = 0; i < a1.getLength(); ++i) {
-			final String v1 = a1.item(i).getNodeValue();
-			final String v2 = a2.getNamedItem(a1.item(i).getNodeName()).getNodeValue();
+			final String name = a1.item(i).getNodeName();
+			if (!"xmlns".equals(name)) {
+				final String v1 = a1.item(i).getNodeValue();
+				final String v2 = a2.getNamedItem(a1.item(i).getNodeName()).getNodeValue();
 
-			if (!Objects.equals(v1, v2)) return false;
+				if (!Objects.equals(v1, v2)) return false;
+			}
 		}
 
 		return true;
@@ -248,6 +211,45 @@ final class XML {
 	static boolean isEmpty(final Document doc) {
 		return doc == null ||
 			doc.getDocumentElement().getChildNodes().getLength() == 0;
+	}
+
+	static <T extends Node> T clean(final T node) {
+		if (node == null) return null;
+
+		node.normalize();
+		final List<Node> remove = new ArrayList<>();
+		clean(node, remove);
+		for (Node n : remove) {
+			if (n.getParentNode() != null) {
+				n.getParentNode().removeChild(n);
+			}
+		}
+
+		return node;
+	}
+
+	private static void clean(final Node node, final List<Node> remove) {
+		if (node.getNodeType() == Node.TEXT_NODE
+			&& isEmpty(node.getTextContent()))
+		{
+			remove.add(node);
+		}
+
+		final NodeList list = node.getChildNodes();
+		for (int i = 0; i < list.getLength(); i++) {
+			clean(list.item(i), remove);
+		}
+	}
+
+	private static boolean isEmpty(final String text) {
+		if (text == null) return true;
+		if (text.isEmpty()) return true;
+		for (int i = 0; i < text.length(); ++i) {
+			if (!Character.isWhitespace(text.charAt(i))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	static Document removeNS(final Document doc) {
@@ -266,7 +268,7 @@ final class XML {
 	}
 
 	static Document extensions(final Document extensions) {
-		final Document doc = XML.removeNS(XML.clean(XML.clone(extensions)));
+		final Document doc = XML.clean(extensions);
 		return XML.isEmpty(doc) ? null : doc;
 	}
 
@@ -278,6 +280,19 @@ final class XML {
 				"Expected 'extensions' root element, but got '%s'.",
 				extensions.getDocumentElement().getNodeName()
 			));
+		}
+		if (extensions != null &&
+			extensions.getDocumentElement().getNamespaceURI() != null)
+		{
+			final String ns = extensions.getDocumentElement().getNamespaceURI();
+			if (!ns.isEmpty() &&
+				!ns.startsWith("http://www.topografix.com/GPX/1/1") &&
+				!ns.startsWith("http://www.topografix.com/GPX/1/0"))
+			{
+				throw new IllegalArgumentException(format(
+					"Invalid document namespace: '%s'.", ns
+				));
+			}
 		}
 		return extensions;
 	}

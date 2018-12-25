@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.Lists.immutable;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
@@ -211,7 +213,7 @@ final class IO {
 		for (int i = 0; i < length; ++i) {
 			elements.add(reader.read(in));
 		}
-		return elements;
+		return immutable(elements);
 	}
 
 	/**

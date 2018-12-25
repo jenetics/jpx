@@ -274,10 +274,10 @@ public final class GPX implements Serializable {
 		_version = requireNonNull(version);
 		_creator = requireNonNull(creator);
 		_metadata = metadata;
-		_wayPoints = immutable(wayPoints);
-		_routes = immutable(routes);
-		_tracks = immutable(tracks);
-		_extensions = XML.extensions(extensions);
+		_wayPoints = wayPoints;
+		_routes = routes;
+		_tracks = tracks;
+		_extensions = extensions;
 	}
 
 	/**
@@ -1337,6 +1337,44 @@ public final class GPX implements Serializable {
 	/**
 	 * Create a new {@code GPX} object with the given data.
 	 *
+	 * @since !__version__!
+	 *
+	 * @param creator the name or URL of the software that created your GPX
+	 *        document. This allows others to inform the creator of a GPX
+	 *        instance document that fails to validate.
+	 * @param  version the GPX version
+	 * @param metadata the metadata about the GPS file
+	 * @param wayPoints the way-points
+	 * @param routes the routes
+	 * @param tracks the tracks
+	 * @param extensions the XML extensions
+	 * @return a new {@code GPX} object with the given data
+	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
+	 *         {@code routes} or {@code tracks} is {@code null}
+	 */
+	public static GPX of(
+		final Version version,
+		final String creator,
+		final Metadata metadata,
+		final List<WayPoint> wayPoints,
+		final List<Route> routes,
+		final List<Track> tracks,
+		final Document extensions
+	) {
+		return new GPX(
+			version,
+			creator,
+			metadata == null || metadata.isEmpty() ? null : metadata,
+			immutable(wayPoints),
+			immutable(routes),
+			immutable(tracks),
+			XML.extensions(extensions)
+		);
+	}
+
+	/**
+	 * Create a new {@code GPX} object with the given data.
+	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
 	 *        instance document that fails to validate.
@@ -1355,7 +1393,7 @@ public final class GPX implements Serializable {
 		final List<Route> routes,
 		final List<Track> tracks
 	) {
-		return new GPX(
+		return of(
 			Version.V11,
 			creator,
 			metadata,
@@ -1391,7 +1429,7 @@ public final class GPX implements Serializable {
 		final List<Track> tracks,
 		final Document extensions
 	) {
-		return new GPX(
+		return of(
 			Version.V11,
 			creator,
 			metadata,
@@ -1425,7 +1463,7 @@ public final class GPX implements Serializable {
 		final List<Route> routes,
 		final List<Track> tracks
 	) {
-		return new GPX(
+		return of(
 			version,
 			creator,
 			metadata == null || metadata.isEmpty() ? null : metadata,
@@ -1436,43 +1474,7 @@ public final class GPX implements Serializable {
 		);
 	}
 
-	/**
-	 * Create a new {@code GPX} object with the given data.
-	 *
-	 * @since !__version__!
-	 *
-	 * @param creator the name or URL of the software that created your GPX
-	 *        document. This allows others to inform the creator of a GPX
-	 *        instance document that fails to validate.
-	 * @param  version the GPX version
-	 * @param metadata the metadata about the GPS file
-	 * @param wayPoints the way-points
-	 * @param routes the routes
-	 * @param tracks the tracks
-	 * @param extensions the XML extensions
-	 * @return a new {@code GPX} object with the given data
-	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
-	 *         {@code routes} or {@code tracks} is {@code null}
-	 */
-	public static GPX of(
-		final Version version,
-		final String creator,
-		final Metadata metadata,
-		final List<WayPoint> wayPoints,
-		final List<Route> routes,
-		final List<Track> tracks,
-		final Document extensions
-	) {
-		return new GPX(
-			version,
-			creator,
-			metadata == null || metadata.isEmpty() ? null : metadata,
-			wayPoints,
-			routes,
-			tracks,
-			extensions
-		);
-	}
+
 
 	/**
 	 * Create a new {@code GPX} object with the given data.
@@ -1503,7 +1505,7 @@ public final class GPX implements Serializable {
 		final List<Route> routes,
 		final List<Track> tracks
 	) {
-		return new GPX(
+		return of(
 			Version.of(version),
 			creator,
 			metadata,
@@ -1674,20 +1676,20 @@ public final class GPX implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	private static GPX toGPXv11(final Object[] v) {
-		return GPX.of(
+		return new GPX(
 			(Version)v[0],
 			(String)v[1],
 			(Metadata)v[2],
 			(List<WayPoint>)v[3],
 			(List<Route>)v[4],
 			(List<Track>)v[5],
-			(Document)v[6]
+			XML.extensions((Document)v[6])
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static GPX toGPXv10(final Object[] v) {
-		return GPX.of(
+		return new GPX(
 			(Version)v[0],
 			(String)v[1],
 			Metadata.of(
@@ -1711,7 +1713,7 @@ public final class GPX implements Serializable {
 			(List<WayPoint>)v[11],
 			(List<Route>)v[12],
 			(List<Track>)v[13],
-			(Document)v[14]
+			XML.extensions((Document)v[14])
 		);
 	}
 

@@ -803,17 +803,21 @@ public final class Metadata implements Serializable {
 
 	@SuppressWarnings("unchecked")
 	static final XMLReader<Metadata> READER = XMLReader.elem(
-		v -> Metadata.of(
-			(String)v[0],
-			(String)v[1],
-			(Person)v[2],
-			(Copyright)v[3],
-			(List<Link>)v[4],
-			(ZonedDateTime)v[5],
-			(String)v[6],
-			(Bounds)v[7],
-			(Document)v[8]
-		),
+		v -> {
+			final Metadata metadata = Metadata.of(
+				(String)v[0],
+				(String)v[1],
+				(Person)v[2],
+				(Copyright)v[3],
+				(List<Link>)v[4],
+				(ZonedDateTime)v[5],
+				(String)v[6],
+				(Bounds)v[7],
+				(Document)v[8]
+			);
+
+			return metadata.isEmpty() ? null : metadata;
+		},
 		"metadata",
 		XMLReader.elem("name"),
 		XMLReader.elem("desc"),

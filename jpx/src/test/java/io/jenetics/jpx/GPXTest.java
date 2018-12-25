@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.sort;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -87,7 +88,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	static Document doc() {
-		return XML.parse("<extensions>\n" +
+		return XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
 			"\t<gpxdata:lap xmlns:gpxdata=\"http://www.cluetrust.com/XML/GPXDATA/1/0\">\n" +
 			"\t\t<gpxdata:index>1</gpxdata:index>\n" +
 			"\t\t<gpxdata:startPoint lat=\"51.219983\" lon=\"6.765224\"/>\n" +
@@ -699,13 +700,13 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void readGPXExtensions() throws IOException {
 		final GPX gpx = readV11("GPX_extensions.gpx");
 		final Document expected = doc();
-		System.out.println(XML.toString(expected));
-		System.out.println(XML.toString(gpx.getExtensions().get()));
-
-		Assert.assertTrue(XML.equals(expected, gpx.getExtensions().get()));
+		//System.out.println(XML.toString(expected.getDocumentElement()));
+		//System.out.println(XML.toString(gpx.getExtensions().get().getDocumentElement()));
+		//GPX.writer("    ").write(gpx, System.out);
+		Assert.assertTrue(XML.equals(expected.getDocumentElement(), gpx.getExtensions().get().getDocumentElement()));
 	}
 
-	//@Test
+	@Test
 	public void readGPXExtensions2() throws IOException {
 		final GPX gpx = readV11("extensions.gpx");
 
@@ -724,8 +725,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
-	public void extensionsRoot() throws IOException {
-		final Document extensions = XML.parse("<extensions xmlns=\"adsf\">some test</extensions>");
+	public void extensionsRoot() {
+		final Document extensions = XML.parse("<extensions>some test</extensions>");
 		final GPX gpx = GPX.builder()
 			.extensions(extensions)
 			.build();
@@ -736,8 +737,16 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		));
 	}
 
+	@Test
+	public void invalidExtensionsRoot1() {
+		final Document extensions = XML.parse("<extensions xmlns=\"adsf\">some test</extensions>");
+		final GPX gpx = GPX.builder()
+			.extensions(extensions)
+			.build();
+	}
+
 	@Test(expectedExceptions = IllegalArgumentException.class)
-	public void invalidExtensionsRoot() {
+	public void invalidExtensionsRoot2() {
 		final Document extensions = XML.parse("<foo>some test</foo>");
 		GPX.builder()
 			.extensions(extensions);
