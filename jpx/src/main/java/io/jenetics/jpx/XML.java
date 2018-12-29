@@ -78,13 +78,8 @@ final class XML {
 	private XML() {
 	}
 
-	static void copy(final XMLStreamReader source, final XMLStreamWriter sink)
-		throws XMLStreamException
-	{
-		copy(new StAXSource(source), new StAXResult(sink));
-	}
 
-	private static void copy(final Source source, final Result sink)
+	private static void __copy(final Source source, final Result sink)
 		throws XMLStreamException
 	{
 		try {
@@ -103,20 +98,20 @@ final class XML {
 	static void copy(final XMLStreamReader source, final Document sink)
 		throws XMLStreamException
 	{
-		copy(new StAXSource(source), new DOMResult(sink));
+		__copy(new StAXSource(source), new DOMResult(sink));
 	}
 
 	static void copy(final Node source, final XMLStreamWriter sink)
 		throws XMLStreamException
 	{
-		copy(new DOMSource(source), new StAXResult(sink));
+		__copy(new DOMSource(source), new StAXResult(sink));
 	}
 
 	static void copy(final Node source, final OutputStream sink)
 		throws IOException
 	{
 		try {
-			copy(new DOMSource(source), new StreamResult(sink));
+			__copy(new DOMSource(source), new StreamResult(sink));
 		} catch (XMLStreamException e) {
 			throw new IOException(e);
 		}
@@ -154,7 +149,7 @@ final class XML {
 			final Document doc = builder().newDocument();
 
 			final ByteArrayInputStream in = new ByteArrayInputStream(xml.getBytes(UTF_8));
-			copy(new StreamSource(in), new DOMResult(doc));
+			__copy(new StreamSource(in), new DOMResult(doc));
 			return clean(doc);
 		} catch (Exception e) {
 			throw new IllegalArgumentException(e);

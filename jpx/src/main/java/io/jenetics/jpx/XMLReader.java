@@ -521,7 +521,7 @@ final class DocReader extends XMLReader<Document> {
 						: "1.0";
 				}
 			}, doc);
-		} catch (XMLStreamException e) {
+		} catch (XMLStreamException|RuntimeException e) {
 			if (!lenient) {
 				throw e;
 			}
