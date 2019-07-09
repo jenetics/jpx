@@ -385,7 +385,7 @@ public final class GPX implements Serializable {
 	 * </extensions>
 	 * }</pre>
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @return the extensions document
 	 */
@@ -748,7 +748,7 @@ public final class GPX implements Serializable {
 		 * </extensions>
 		 * }</pre>
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @param extensions the extensions document
 		 * @return {@code this} {@code Builder} for method chaining
@@ -763,7 +763,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return the current extensions
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @return the extensions document
 		 */
@@ -1350,7 +1350,7 @@ public final class GPX implements Serializable {
 	/**
 	 * Create a new {@code GPX} object with the given data.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
@@ -1420,7 +1420,7 @@ public final class GPX implements Serializable {
 	/**
 	 * Create a new {@code GPX} object with the given data.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX

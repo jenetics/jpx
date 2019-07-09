@@ -392,7 +392,7 @@ public final class WayPoint implements Point, Serializable {
 	 * </extensions>
 	 * }</pre>
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @return the extensions document
 	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
@@ -1309,7 +1309,7 @@ public final class WayPoint implements Point, Serializable {
 		 * </extensions>
 		 * }</pre>
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @param extensions the document
 		 * @return {@code this} {@code Builder} for method chaining
@@ -1324,7 +1324,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current extensions
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @return the extensions document
 		 */
@@ -1418,7 +1418,7 @@ public final class WayPoint implements Point, Serializable {
 	/**
 	 * Create a new way-point with the given parameter.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
 	 * @param longitude the longitude of the point, WGS84 datum (mandatory)

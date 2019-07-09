@@ -421,7 +421,7 @@ final class IO {
 	/**
 	 * Write the given XML document to the given data output.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param value the value to write
 	 * @param out the data output the integer value is written to
@@ -443,7 +443,7 @@ final class IO {
 	 * Reads a long value from the given data input. The integer value must have
 	 * been written by the {@link #writeInt(int, DataOutput)} before.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param in the data input where the value is read from
 	 * @return the read XML document

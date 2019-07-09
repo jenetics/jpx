@@ -52,7 +52,7 @@ import io.jenetics.jpx.XMLReader.Type;
  * Simplifies the usage of the {@link XMLStreamReader}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.5
  * @since 1.0
  */
 abstract class XMLReader<T> {
@@ -485,8 +485,8 @@ final class IgnoreReader extends XMLReader<Object> {
  * This reader implementation reads the XML nodes from a given base node.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.5
+ * @since 1.5
  */
 final class DocReader extends XMLReader<Document> {
 

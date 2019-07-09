@@ -197,7 +197,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * </extensions>
 	 * }</pre>
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @return the extensions document
 	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
@@ -542,7 +542,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * </extensions>
 		 * }</pre>
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @param extensions the document
 		 * @return {@code this} {@code Builder} for method chaining
@@ -557,7 +557,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Return the current extensions
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @return the extensions document
 		 */
@@ -713,7 +713,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	/**
 	 * Create a new {@code Track} with the given parameters.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param name the GPS name of the track
 	 * @param comment the GPS comment for the track

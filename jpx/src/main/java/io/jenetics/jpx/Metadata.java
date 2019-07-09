@@ -194,7 +194,7 @@ public final class Metadata implements Serializable {
 	 * </extensions>
 	 * }</pre>
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @return the extensions document
 	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
@@ -598,7 +598,7 @@ public final class Metadata implements Serializable {
 		 * </extensions>
 		 * }</pre>
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @param extensions the document
 		 * @return {@code this} {@code Builder} for method chaining
@@ -613,7 +613,7 @@ public final class Metadata implements Serializable {
 		/**
 		 * Return the current extensions
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @return the extensions document
 		 */
@@ -660,7 +660,7 @@ public final class Metadata implements Serializable {
 	/**
 	 * Create a new {@code Metadata} object with the given parameters.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param name the name of the GPX file
 	 * @param description a description of the contents of the GPX file

@@ -60,8 +60,8 @@ import org.w3c.dom.NodeList;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.5
+ * @since 1.5
  */
 final class XML {
 

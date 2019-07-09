@@ -106,7 +106,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * </extensions>
 	 * }</pre>
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @return the extensions document
 	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
@@ -261,7 +261,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * </extensions>
 		 * }</pre>
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @param extensions the document
 		 * @return {@code this} {@code Builder} for method chaining
@@ -276,7 +276,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current extensions
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @return the extensions document
 		 */
@@ -363,7 +363,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	/**
 	 * Create a new track-segment with the given points.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param points the points of the track-segment
 	 * @param extensions the extensions document

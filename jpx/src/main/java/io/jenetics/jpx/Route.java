@@ -208,7 +208,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * </extensions>
 	 * }</pre>
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @return the extensions document
 	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
@@ -552,7 +552,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * </extensions>
 		 * }</pre>
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @param extensions the document
 		 * @return {@code this} {@code Builder} for method chaining
@@ -567,7 +567,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Return the current extensions
 		 *
-		 * @since !__version__!
+		 * @since 1.5
 		 *
 		 * @return the extensions document
 		 */
@@ -703,7 +703,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	/**
 	 * Create a new {@code Route} with the given parameters and way-points.
 	 *
-	 * @since !__version__!
+	 * @since 1.5
 	 *
 	 * @param name the GPS name of the route
 	 * @param comment the GPS comment of the route
