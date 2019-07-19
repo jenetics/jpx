@@ -201,7 +201,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *
 	 * @return the extensions document
 	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
-	 *         because of an errornous XML configuration
+	 *         because of an erroneous XML configuration
 	 */
 	public Optional<Document> getExtensions() {
 		return Optional.ofNullable(_extensions).map(XML::clone);
