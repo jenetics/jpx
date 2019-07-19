@@ -45,6 +45,9 @@ import org.xml.sax.SAXException;
  */
 final class IO {
 
+	private IO() {
+	}
+
 	/**
 	 * Object writer interface.
 	 *
