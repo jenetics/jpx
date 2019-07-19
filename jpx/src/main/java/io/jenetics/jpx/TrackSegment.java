@@ -53,7 +53,7 @@ import io.jenetics.jpx.GPX.Version;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.3
+ * @version 1.5
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
