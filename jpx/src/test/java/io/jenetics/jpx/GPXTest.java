@@ -519,6 +519,20 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
+	public void issue77_XMLComment() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-77.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+		Assert.assertEquals(
+			gpx.getTracks().get(0).getName().orElse(null),
+			"09-OKT-18 15:12:08"
+		);
+	}
+
+	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(GPX.class)
 			.withIgnoredFields("_extensions")

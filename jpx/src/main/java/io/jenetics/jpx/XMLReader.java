@@ -584,6 +584,9 @@ final class ElemReader<T> extends XMLReader<T> {
 	public T read(final XMLStreamReader xml, final boolean lenient)
 		throws XMLStreamException
 	{
+		while (xml.getEventType() == COMMENT) {
+			consumeComment(xml);
+		}
 		xml.require(START_ELEMENT, null, name());
 
 		final List<ReaderResult> results = _children.stream()
@@ -594,8 +597,8 @@ final class ElemReader<T> extends XMLReader<T> {
 			? results.get(_textReaderIndex[0])
 			: null;
 
-		for (int i = 0; i < _attrReaderIndexes.length; ++i) {
-			final ReaderResult result = results.get(_attrReaderIndexes[i]);
+		for (int attrReaderIndex : _attrReaderIndexes) {
+			final ReaderResult result = results.get(attrReaderIndex);
 			try {
 				result.put(result.reader().read(xml, lenient));
 			} catch (IllegalArgumentException|NullPointerException e) {
@@ -610,9 +613,7 @@ final class ElemReader<T> extends XMLReader<T> {
 			do {
 				switch (xml.getEventType()) {
 					case COMMENT:
-						if (xml.hasNext()) {
-							xml.next();
-						}
+						consumeComment(xml);
 						break;
 					case START_ELEMENT:
 						Integer index = _readerIndexMapping
@@ -676,6 +677,13 @@ final class ElemReader<T> extends XMLReader<T> {
 		throw new XMLStreamException(format(
 			"Premature end of file while reading '%s'.", name()
 		));
+	}
+
+	private void consumeComment(final XMLStreamReader xml) throws XMLStreamException {
+		assert xml.getEventType() == COMMENT;
+		if (xml.hasNext()) {
+			xml.next();
+		}
 	}
 
 	private void throwUnexpectedElement(
