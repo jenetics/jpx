@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.3
+ * @version 1.5
  * @since 1.3
  */
 final class NonCloseableInputStream extends InputStream {
