@@ -65,6 +65,31 @@ final class IO {
 
 	/**
 	 * Write the given, possible {@code null}, {@code value} to the data output
+	 * using the given {@code writer}. The value is only written if it is non
+	 * {@code null}.
+	 *
+	 * @param value the, possible {@code null}, value to write
+	 * @param writer the object writer
+	 * @param out the data output
+	 * @param <T> the object type
+	 * @throws NullPointerException if the {@code writer} or data output is
+	 *         {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static <T> void writeNonNull(
+		final T value,
+		 final Writer<? super T> writer,
+		 final DataOutput out
+	)
+		throws IOException
+	{
+		if (value != null) {
+			writer.write(value, out);
+		}
+	}
+
+	/**
+	 * Write the given, possible {@code null}, {@code value} to the data output
 	 * using the given {@code writer}.
 	 *
 	 * @param value the, possible {@code null}, value to write

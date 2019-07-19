@@ -24,6 +24,7 @@ import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -138,9 +139,9 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			.verify();
 	}
 
-	@Test(invocationCount = 1)
+	@Test(invocationCount = 25)
 	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextWayPoint(new Random(1));
+		final WayPoint object = nextWayPoint(new Random());
 		Serialization.test(object);
 
 		/*
