@@ -69,12 +69,12 @@ final class NonCloseableInputStream extends InputStream {
 	}
 
 	@Override
-	public void mark(final int readlimit) {
+	public synchronized void mark(final int readlimit) {
 		_input.mark(readlimit);
 	}
 
 	@Override
-	public void reset() throws IOException {
+	public synchronized void reset() throws IOException {
 		_input.reset();
 	}
 

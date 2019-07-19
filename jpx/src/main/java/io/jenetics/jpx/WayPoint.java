@@ -1365,7 +1365,7 @@ public final class WayPoint implements Point, Serializable {
 		 *         not been set, respectively.
 		 */
 		public WayPoint build() {
-			if (_latitude == null || _latitude == null) {
+			if (_latitude == null || _longitude == null) {
 				throw new IllegalStateException(
 					"Latitude and longitude value must be set " +
 					"for creating a new 'WayPoint'."
@@ -1965,27 +1965,90 @@ public final class WayPoint implements Point, Serializable {
 		out.writeInt(existing);
 		out.writeDouble(_latitude.toDegrees());
 		out.writeDouble(_longitude.toDegrees());
-		if ((existing & (1 <<  0)) != 0) _elevation.write(out);
-		if ((existing & (1 <<  1)) != 0) _speed.write(out);
-		if ((existing & (1 <<  2)) != 0) ZonedDateTimes.write(_time, out);
-		if ((existing & (1 <<  3)) != 0) _magneticVariation.write(out);
-		if ((existing & (1 <<  4)) != 0) _geoidHeight.write(out);
-		if ((existing & (1 <<  5)) != 0) IO.writeString(_name, out);
-		if ((existing & (1 <<  6)) != 0) IO.writeString(_comment, out);
-		if ((existing & (1 <<  7)) != 0) IO.writeString(_description, out);
-		if ((existing & (1 <<  8)) != 0) IO.writeString(_source, out);
-		if ((existing & (1 <<  9)) != 0) IO.writes(_links, Link::write, out);
-		if ((existing & (1 << 10)) != 0) IO.writeString(_symbol, out);
-		if ((existing & (1 << 11)) != 0) IO.writeString(_type, out);
-		if ((existing & (1 << 12)) != 0) IO.writeString(_fix.name(), out);
-		if ((existing & (1 << 13)) != 0) _sat.write(out);
-		if ((existing & (1 << 14)) != 0) out.writeDouble(_hdop);
-		if ((existing & (1 << 15)) != 0) out.writeDouble(_vdop);
-		if ((existing & (1 << 16)) != 0) out.writeDouble(_pdop);
-		if ((existing & (1 << 17)) != 0) out.writeLong(_ageOfGPSData.toMillis());
-		if ((existing & (1 << 18)) != 0) _dgpsID.write(out);
-		if ((existing & (1 << 19)) != 0) _course.write(out);
-		if ((existing & (1 << 20)) != 0) IO.write(_extensions, out);
+		if ((existing & (1 <<  0)) != 0) {
+			assert _elevation != null;
+			_elevation.write(out);
+		}
+		if ((existing & (1 <<  1)) != 0) {
+			assert _speed != null;
+			_speed.write(out);
+		}
+		if ((existing & (1 <<  2)) != 0) {
+			assert _time != null;
+			ZonedDateTimes.write(_time, out);
+		}
+		if ((existing & (1 <<  3)) != 0) {
+			assert _magneticVariation != null;
+			_magneticVariation.write(out);
+		}
+		if ((existing & (1 <<  4)) != 0) {
+			assert _geoidHeight != null;
+			_geoidHeight.write(out);
+		}
+		if ((existing & (1 <<  5)) != 0) {
+			assert _name != null;
+			IO.writeString(_name, out);
+		}
+		if ((existing & (1 <<  6)) != 0) {
+			assert _comment != null;
+			IO.writeString(_comment, out);
+		}
+		if ((existing & (1 <<  7)) != 0) {
+			assert _description != null;
+			IO.writeString(_description, out);
+		}
+		if ((existing & (1 <<  8)) != 0) {
+			assert _source != null;
+			IO.writeString(_source, out);
+		}
+		if ((existing & (1 <<  9)) != 0) {
+			assert _links != null;
+			IO.writes(_links, Link::write, out);
+		}
+		if ((existing & (1 << 10)) != 0) {
+			assert _symbol != null;
+			IO.writeString(_symbol, out);
+		}
+		if ((existing & (1 << 11)) != 0) {
+			assert _type != null;
+			IO.writeString(_type, out);
+		}
+		if ((existing & (1 << 12)) != 0) {
+			assert _fix != null;
+			IO.writeString(_fix.name(), out);
+		}
+		if ((existing & (1 << 13)) != 0) {
+			assert _sat != null;
+			_sat.write(out);
+		}
+		if ((existing & (1 << 14)) != 0) {
+			assert _hdop != null;
+			out.writeDouble(_hdop);
+		}
+		if ((existing & (1 << 15)) != 0) {
+			assert _vdop != null;
+			out.writeDouble(_vdop);
+		}
+		if ((existing & (1 << 16)) != 0) {
+			assert _pdop != null;
+			out.writeDouble(_pdop);
+		}
+		if ((existing & (1 << 17)) != 0) {
+			assert _ageOfGPSData != null;
+			out.writeLong(_ageOfGPSData.toMillis());
+		}
+		if ((existing & (1 << 18)) != 0) {
+			assert _dgpsID != null;
+			_dgpsID.write(out);
+		}
+		if ((existing & (1 << 19)) != 0) {
+			assert _course != null;
+			_course.write(out);
+		}
+		if ((existing & (1 << 20)) != 0) {
+			assert _extensions != null;
+			IO.write(_extensions, out);
+		}
 	}
 
 	static WayPoint read(final DataInput in) throws IOException {
