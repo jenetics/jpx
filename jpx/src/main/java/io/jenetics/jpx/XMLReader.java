@@ -26,6 +26,7 @@ import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
 import static javax.xml.stream.XMLStreamConstants.COMMENT;
+import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
 import static io.jenetics.jpx.Lists.immutable;
@@ -652,21 +653,20 @@ final class ElemReader<T> extends XMLReader<T> {
 
 						break;
 					case END_ELEMENT:
-						if (name().equals(xml.getLocalName())) {
-							try {
-								return _creator.apply(
-									results.stream()
-										.map(ReaderResult::value)
-										.toArray()
+					case END_DOCUMENT:
+						try {
+							return _creator.apply(
+								results.stream()
+									.map(ReaderResult::value)
+									.toArray()
+							);
+						} catch (IllegalArgumentException|NullPointerException e) {
+							if (!lenient) {
+								throw new XMLStreamException(format(
+									"Invalid value for '%s'.", name()), e
 								);
-							} catch (IllegalArgumentException|NullPointerException e) {
-								if (!lenient) {
-									throw new XMLStreamException(format(
-										"Invalid value for '%s'.", name()), e
-									);
-								} else {
-									return null;
-								}
+							} else {
+								return null;
 							}
 						}
 				}

@@ -408,40 +408,36 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
-	@Test
+	@Test(invocationCount = 10)
 	public void readWriteRandomIndentedGPX() throws IOException {
-		final Random random = new Random(1234);
-		for (int i = 0; i < 10; ++i) {
-			final GPX gpx = nextGPX(random);
+		final Random random = new Random();
+		final GPX gpx = nextGPX(random);
 
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.writer("    ").write(gpx, bout);
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		GPX.writer("    ").write(gpx, bout);
 
-			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-			final GPX read = GPX.read(bin);
+		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+		final GPX read = GPX.read(bin);
 
-			Assert.assertEquals(read, gpx);
-		}
+		Assert.assertEquals(read, gpx);
 	}
 
-	@Test
+	@Test(invocationCount = 10)
 	public void readWriteRandomNonIndentedGPX() throws IOException {
-		final Random random = new Random(1234);
-		for (int i = 0; i < 10; ++i) {
-			final GPX gpx = nextGPX(random);
+		final Random random = new Random();
+		final GPX gpx = nextGPX(random);
 
-			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-			GPX.writer("    ").write(gpx, bout);
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		GPX.writer().write(gpx, bout);
 
-			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-			final GPX read = GPX.read(bin);
+		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+		final GPX read = GPX.read(bin);
 
 
-			if (!read.equals(gpx)) {
-				System.out.println(new String(bout.toByteArray()));
-			}
-			Assert.assertEquals(read, gpx);
+		if (!read.equals(gpx)) {
+			System.out.println(new String(bout.toByteArray()));
 		}
+		Assert.assertEquals(read, gpx);
 	}
 
 	@Test(dataProvider = "readWriteGPX")
@@ -529,6 +525,20 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		Assert.assertEquals(
 			gpx.getTracks().get(0).getName().orElse(null),
 			"09-OKT-18 15:12:08"
+		);
+	}
+
+	@Test
+	public void issue78_Parsing() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-78.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+		Assert.assertEquals(
+			gpx.getWayPoints().get(0).getName().orElse(null),
+			"Wien"
 		);
 	}
 
