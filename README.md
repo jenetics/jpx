@@ -285,11 +285,16 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.4.0](https://github.com/jenetics/jpx/releases/tag/v1.4.0)
+### [1.5.0](https://github.com/jenetics/jpx/releases/tag/v1.5.0)
 
 #### Enhancement
 
-* [#65](https://github.com/jenetics/jpx/issues/65): Make it compatible with JSR-173 stax-api 1.0.1.
-* [#70](https://github.com/jenetics/jpx/issues/70): ISO 6709 string representation for GPS coordinate
+* [#59](https://github.com/jenetics/jpx/issues/59): Add GPX `extensions`.
+
+#### Bugs
+
+* [#73](https://github.com/jenetics/jpx/issues/73): Fix alerts found by [LGTM](https://lgtm.com/projects/g/jenetics/jpx/alerts?mode=list).
+* [#77](https://github.com/jenetics/jpx/issues/77): Fix handling of XML comments.
+
 
 
