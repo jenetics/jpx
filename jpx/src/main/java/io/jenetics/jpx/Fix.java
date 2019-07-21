@@ -32,7 +32,7 @@ import java.util.Optional;
  * @version 1.2
  * @since 1.0
  */
-public enum Fix {
+public enum  Fix {
 
 	NONE("none"),
 	DIM_2("2d"),
