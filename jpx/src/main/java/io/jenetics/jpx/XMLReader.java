@@ -26,8 +26,10 @@ import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
 import static javax.xml.stream.XMLStreamConstants.COMMENT;
+import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
+import static io.jenetics.jpx.Lists.immutable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,13 +45,15 @@ import java.util.stream.Stream;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.w3c.dom.Document;
+
 import io.jenetics.jpx.XMLReader.Type;
 
 /**
  * Simplifies the usage of the {@link XMLStreamReader}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 1.5
  * @since 1.0
  */
 abstract class XMLReader<T> {
@@ -355,6 +359,10 @@ abstract class XMLReader<T> {
 	public static <T> XMLReader<List<T>> elems(final XMLReader<? extends T> reader) {
 		return new ListReader<T>(reader);
 	}
+
+	public static XMLReader<Document> doc(final String name) {
+		return new DocReader(name);
+	}
 }
 
 
@@ -442,8 +450,21 @@ final class ListReader<T> extends XMLReader<List<T>> {
 			? Collections.singletonList(element)
 			: emptyList();
 	}
+
+	XMLReader<? extends T> reader() {
+		return _adoptee;
+	}
+
 }
 
+/**
+ * This reader implementation ignores the content of the element with the given
+ * name.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version 1.2
+ * @since 1.2
+ */
 final class IgnoreReader extends XMLReader<Object> {
 
 	private final XMLReader<Object> _reader;
@@ -459,6 +480,57 @@ final class IgnoreReader extends XMLReader<Object> {
 	{
 		return _reader.read(xml, true);
 	}
+}
+
+/**
+ * This reader implementation reads the XML nodes from a given base node.
+ *
+ * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version 1.5
+ * @since 1.5
+ */
+final class DocReader extends XMLReader<Document> {
+
+	DocReader(final String name) {
+		super(name, Type.ELEM);
+	}
+
+	@Override
+	public Document read(final XMLStreamReader xml, final boolean lenient)
+		throws XMLStreamException
+	{
+		Document doc = null;
+		try {
+			doc = XML.builder().newDocument();
+			XML.copy(new XMLStreamReaderAdapter(xml) {
+				@Override
+				public String getVersion() {
+// Workaround for this bug:
+//Caused by: java.lang.NullPointerException
+//	at java.xml/com.sun.org.apache.xerces.internal.dom.CoreDocumentImpl.setXmlVersion(CoreDocumentImpl.java:865)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.SAX2DOM.setDocumentInfo(SAX2DOM.java:145)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.SAX2DOM.startElement(SAX2DOM.java:155)
+//	at java.xml/com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler.closeStartTag(ToXMLSAXHandler.java:206)
+//	at java.xml/com.sun.org.apache.xml.internal.serializer.ToXMLSAXHandler.characters(ToXMLSAXHandler.java:526)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.handleCharacters(StAXStream2SAX.java:248)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.bridge(StAXStream2SAX.java:155)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.StAXStream2SAX.parse(StAXStream2SAX.java:104)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transformIdentity(TransformerImpl.java:707)
+//	at java.xml/com.sun.org.apache.xalan.internal.xsltc.trax.TransformerImpl.transform(TransformerImpl.java:774)
+					return super.getVersion() != null
+						? super.getVersion()
+						: "1.0";
+				}
+			}, doc);
+		} catch (XMLStreamException|RuntimeException e) {
+			if (!lenient) {
+				throw e;
+			}
+		}
+
+		return doc;
+	}
+
 }
 
 /**
@@ -513,6 +585,9 @@ final class ElemReader<T> extends XMLReader<T> {
 	public T read(final XMLStreamReader xml, final boolean lenient)
 		throws XMLStreamException
 	{
+		while (xml.getEventType() == COMMENT) {
+			consumeComment(xml);
+		}
 		xml.require(START_ELEMENT, null, name());
 
 		final List<ReaderResult> results = _children.stream()
@@ -523,8 +598,8 @@ final class ElemReader<T> extends XMLReader<T> {
 			? results.get(_textReaderIndex[0])
 			: null;
 
-		for (int i = 0; i < _attrReaderIndexes.length; ++i) {
-			final ReaderResult result = results.get(_attrReaderIndexes[i]);
+		for (int attrReaderIndex : _attrReaderIndexes) {
+			final ReaderResult result = results.get(attrReaderIndex);
 			try {
 				result.put(result.reader().read(xml, lenient));
 			} catch (IllegalArgumentException|NullPointerException e) {
@@ -539,12 +614,10 @@ final class ElemReader<T> extends XMLReader<T> {
 			do {
 				switch (xml.getEventType()) {
 					case COMMENT:
-						if (xml.hasNext()) {
-							xml.next();
-						}
+						consumeComment(xml);
 						break;
 					case START_ELEMENT:
-						final Integer index = _readerIndexMapping
+						Integer index = _readerIndexMapping
 							.get(xml.getLocalName());
 
 						if (index == null && !lenient) {
@@ -580,21 +653,20 @@ final class ElemReader<T> extends XMLReader<T> {
 
 						break;
 					case END_ELEMENT:
-						if (name().equals(xml.getLocalName())) {
-							try {
-								return _creator.apply(
-									results.stream()
-										.map(ReaderResult::value)
-										.toArray()
+					case END_DOCUMENT:
+						try {
+							return _creator.apply(
+								results.stream()
+									.map(ReaderResult::value)
+									.toArray()
+							);
+						} catch (IllegalArgumentException|NullPointerException e) {
+							if (!lenient) {
+								throw new XMLStreamException(format(
+									"Invalid value for '%s'.", name()), e
 								);
-							} catch (IllegalArgumentException|NullPointerException e) {
-								if (!lenient) {
-									throw new XMLStreamException(format(
-										"Invalid value for '%s'.", name()), e
-									);
-								} else {
-									return null;
-								}
+							} else {
+								return null;
 							}
 						}
 				}
@@ -605,6 +677,13 @@ final class ElemReader<T> extends XMLReader<T> {
 		throw new XMLStreamException(format(
 			"Premature end of file while reading '%s'.", name()
 		));
+	}
+
+	private void consumeComment(final XMLStreamReader xml) throws XMLStreamException {
+		assert xml.getEventType() == COMMENT;
+		if (xml.hasNext()) {
+			xml.next();
+		}
 	}
 
 	private void throwUnexpectedElement(
@@ -739,7 +818,7 @@ final class ListResult implements ReaderResult {
 
 	@Override
 	public List<Object> value() {
-		return _value;
+		return immutable(_value);
 	}
 
 }

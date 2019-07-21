@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<gpx version="1.1" creator="creator_90" xmlns="http://www.topografix.com/GPX/1/1">
+
+	<wpt lat="48.2033471" lon="16.3608048">
+		<time>2016-08-21T12:51:30Z</time>
+		<name>khm</name>
+		<src>network</src>
+	</wpt>
+	<trk>
+		<trkseg>
+			<trkpt lat="48.19949341" lon="16.40377444">
+				<ele>212.0</ele>
+				<time>2016-08-21T12:24:27Z</time>
+				<speed>0.67052215</speed>
+				<src>gps</src>
+				<sat>14</sat>
+			</trkpt>
+			<trkpt lat="48.19948359" lon="16.40371021">
+				<ele>212.0</ele>
+				<time>2016-08-21T12:24:31Z</time>
+				<speed>0.7424285</speed>
+				<geoidheight>43.0</geoidheight>
+				<src>gps</src>
+				<sat>2</sat>
+				<hdop>0.7</hdop>
+				<vdop>0.8</vdop>
+				<pdop>1.1</pdop>
+			</trkpt>
+		</trkseg>
+	</trk>
+
+	<extensions>
+
+
+	</extensions>
+
+	<wpt lat="48.2033471" lon="16.3608048">
+		<time>2016-08-21T12:51:30Z</time>
+		<name>khm</name>
+		<src>network</src>
+	</wpt>
+</gpx>

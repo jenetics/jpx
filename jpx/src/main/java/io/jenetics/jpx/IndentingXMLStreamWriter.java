@@ -32,7 +32,7 @@ import javax.xml.stream.XMLStreamWriter;
  * @version 1.0
  * @since 1.0
  */
-final class IndentingXMLStreamWriter extends CloseableXMLStreamWriter {
+final class IndentingXMLStreamWriter extends XMLStreamWriterAdapter {
 
 	private enum State {
 		SEEN_NOTHING,

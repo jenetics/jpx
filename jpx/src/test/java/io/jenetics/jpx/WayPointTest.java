@@ -24,6 +24,7 @@ import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -93,7 +94,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	}
 
 	@Test
-	public void ignoreExtensions() throws IOException {
+	public void withExtensions() throws IOException {
 		final String resource = "/io/jenetics/jpx/extensions-waypoint.gpx";
 
 		final GPX gpx;
@@ -111,6 +112,10 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 				.name("Wien")
 				.build()
 		);
+		Assert.assertTrue(XML.equals(
+			gpx.getWayPoints().get(0).getExtensions().get(),
+			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
+		));
 	}
 
 	@Test
@@ -129,12 +134,14 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 	@Test
 	public void equalsVerifier() {
-		EqualsVerifier.forClass(WayPoint.class).verify();
+		EqualsVerifier.forClass(WayPoint.class)
+			.withIgnoredFields("_extensions")
+			.verify();
 	}
 
-	@Test(invocationCount = 1)
+	@Test(invocationCount = 25)
 	public void serialize() throws IOException, ClassNotFoundException {
-		final Object object = nextWayPoint(new Random(1));
+		final WayPoint object = nextWayPoint(new Random());
 		Serialization.test(object);
 
 		/*

@@ -107,7 +107,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 	}
 
 	@Test
-	public void ignoreExtensions() throws IOException {
+	public void withExtensions() throws IOException {
 		final String resource = "/io/jenetics/jpx/extensions-metadata.gpx";
 
 		final GPX gpx;
@@ -134,11 +134,18 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 					null))
 				.build()
 		);
+
+		Assert.assertTrue(XML.equals(
+			md.getExtensions().get(),
+			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
+		));
 	}
 
 	@Test
 	public void equalsVerifier() {
-		EqualsVerifier.forClass(Metadata.class).verify();
+		EqualsVerifier.forClass(Metadata.class)
+			.withIgnoredFields("_extensions")
+			.verify();
 	}
 
 	@Test(invocationCount = 10)

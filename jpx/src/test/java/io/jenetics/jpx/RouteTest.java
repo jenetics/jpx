@@ -74,7 +74,7 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 	}
 
 	@Test
-	public void ignoreExtensions() throws IOException {
+	public void withExtensions() throws IOException {
 		final String resource = "/io/jenetics/jpx/extensions-route.gpx";
 
 		final GPX gpx;
@@ -91,6 +91,10 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 				.cmt("comment_69")
 				.build()
 		);
+		Assert.assertTrue(XML.equals(
+			gpx.getRoutes().get(0).getExtensions().get(),
+			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
+		));
 	}
 
 	@Test
@@ -174,7 +178,9 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 
 	@Test
 	public void equalsVerifier() {
-		EqualsVerifier.forClass(Route.class).verify();
+		EqualsVerifier.forClass(Route.class)
+			.withIgnoredFields("_extensions")
+			.verify();
 	}
 
 	@Test(invocationCount = 10)

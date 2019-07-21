@@ -3,7 +3,6 @@
 	<wpt lat="48.2081743" lon="16.3738189">
 		<ele>171.0</ele>
 		<extensions>
-			asdf
 			<foo>asdf</foo>
 			<foo>asdf</foo>
 			<!--

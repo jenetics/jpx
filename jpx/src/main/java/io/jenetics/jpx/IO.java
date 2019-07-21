@@ -19,12 +19,22 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.Lists.immutable;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Helper methods needed for implementing the Java serializations.
@@ -34,6 +44,9 @@ import java.util.List;
  * @since 1.2
  */
 final class IO {
+
+	private IO() {
+	}
 
 	/**
 	 * Object writer interface.
@@ -51,6 +64,31 @@ final class IO {
 	 */
 	interface Reader<T> {
 		T read(final DataInput in) throws IOException;
+	}
+
+	/**
+	 * Write the given, possible {@code null}, {@code value} to the data output
+	 * using the given {@code writer}. The value is only written if it is non
+	 * {@code null}.
+	 *
+	 * @param value the, possible {@code null}, value to write
+	 * @param writer the object writer
+	 * @param out the data output
+	 * @param <T> the object type
+	 * @throws NullPointerException if the {@code writer} or data output is
+	 *         {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static <T> void writeNonNull(
+		final T value,
+		 final Writer<? super T> writer,
+		 final DataOutput out
+	)
+		throws IOException
+	{
+		if (value != null) {
+			writer.write(value, out);
+		}
 	}
 
 	/**
@@ -203,7 +241,7 @@ final class IO {
 		for (int i = 0; i < length; ++i) {
 			elements.add(reader.read(in));
 		}
-		return elements;
+		return immutable(elements);
 	}
 
 	/**
@@ -406,6 +444,54 @@ final class IO {
 			}
 		}
 		return l;
+	}
+
+	/**
+	 * Write the given XML document to the given data output.
+	 *
+	 * @since 1.5
+	 *
+	 * @param value the value to write
+	 * @param out the data output the integer value is written to
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static void write(final Document value, final DataOutput out)
+		throws IOException
+	{
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		XML.copy(value, bout);
+
+		final byte[] data = bout.toByteArray();
+		IO.writeInt(data.length, out);
+		out.write(data);
+	}
+
+	/**
+	 * Reads a long value from the given data input. The integer value must have
+	 * been written by the {@link #writeInt(int, DataOutput)} before.
+	 *
+	 * @since 1.5
+	 *
+	 * @param in the data input where the value is read from
+	 * @return the read XML document
+	 * @throws NullPointerException if the given data input is {@code null}
+	 * @throws IOException if an I/O error occurs
+	 */
+	static Document readDoc(final DataInput in) throws IOException {
+		final int length = IO.readInt(in);
+		final byte[] data = new byte[length];
+		in.readFully(data);
+
+		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
+		try {
+			return DocumentBuilderFactory
+				.newInstance()
+				.newDocumentBuilder()
+				.parse(bin);
+		} catch (ParserConfigurationException|SAXException e) {
+			throw new IOException(e);
+		}
 	}
 
 }

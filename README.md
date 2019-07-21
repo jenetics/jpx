@@ -3,6 +3,8 @@
 [![Build Status](https://travis-ci.org/jenetics/jpx.svg?branch=master)](https://travis-ci.org/jenetics/jpx)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.jenetics/jpx/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22)
 [![Javadoc](https://www.javadoc.io/badge/io.jenetics/jpx.svg)](http://www.javadoc.io/doc/io.jenetics/jpx)
+[![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/jenetics/jpx.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jenetics/jpx/context:java)
+[![Total Alerts](https://img.shields.io/lgtm/alerts/g/jenetics/jpx.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jenetics/jpx/alerts)
 
 **JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
 
@@ -92,6 +94,31 @@ $ [lat=48.2081743, lon=48.2081743, ele=160]
 $ [lat=48.2081743, lon=48.2081743, ele=161]
 $ [lat=48.2081743, lon=48.2081743, ele=162]
 
+```
+
+### Reading GPX extensions
+
+The library is also able to read arbitrary GPX _extensions_.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="JPX - Java GPX library" xmlns="http://www.topografix.com/GPX/1/1">
+    ...
+    <extensions>
+        <gpxdata:lap xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0">
+            <gpxdata:index>1</gpxdata:index>
+            <gpxdata:startPoint lat="51.219983" lon="6.765224"/>
+            <gpxdata:endPoint lat="51.220137" lon="6.765098" />
+        </gpxdata:lap>
+    </extensions>
+</gpx>
+
+```
+
+The extensions are available via a `org.w3c.dom.Document` object, with an `extensions` root element.
+
+```java
+final Optional<Document> extensions = gpx.getExtensions();
 ```
 
 ### Reading GPX 1.0 and writing GPX 1.1
@@ -258,11 +285,16 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [1.4.0](https://github.com/jenetics/jpx/releases/tag/v1.4.0)
+### [1.5.0](https://github.com/jenetics/jpx/releases/tag/v1.5.0)
 
 #### Enhancement
 
-* [#65](https://github.com/jenetics/jpx/issues/65): Make it compatible with JSR-173 stax-api 1.0.1.
-* [#70](https://github.com/jenetics/jpx/issues/70): ISO 6709 string representation for GPS coordinate
+* [#59](https://github.com/jenetics/jpx/issues/59): Add GPX `extensions`.
+
+#### Bugs
+
+* [#73](https://github.com/jenetics/jpx/issues/73): Fix alerts found by [LGTM](https://lgtm.com/projects/g/jenetics/jpx/alerts?mode=list).
+* [#77](https://github.com/jenetics/jpx/issues/77): Fix handling of XML comments.
+
 
 
