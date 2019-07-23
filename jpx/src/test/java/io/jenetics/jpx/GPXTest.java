@@ -43,6 +43,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -460,88 +461,6 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		};
 	}
 
-	@Test(timeOut = 2000)
-	public void issue49_NPEForInvalidGPX() {
-		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
-
-		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
-			Assert.assertFalse(true, "GXP.read must throw.");
-		} catch (IOException e) {
-			Assert.assertEquals(e.getCause().getClass(), XMLStreamException.class);
-			Assert.assertTrue(e.getMessage().contains("Unexpected element"));
-		}
-	}
-
-	@Test(timeOut = 2000)
-	public void issue49_NPEForInvalidGPXLenient() throws IOException {
-		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
-
-		final GPX gpx;
-		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.reader(Mode.LENIENT).read(in);
-		}
-
-		Assert.assertEquals(gpx.getWayPoints().size(), 1);
-		Assert.assertEquals(
-			gpx.getWayPoints().get(0),
-			WayPoint.builder()
-				.lat(51.39709).lon(4.501519).name("START")
-				.build()
-		);
-
-		final List<WayPoint> points = gpx.tracks()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
-
-		Assert.assertEquals(points.size(), 26);
-	}
-
-	@Test(timeOut = 2000)
-	public void issue51_XMLComment() throws IOException {
-		final String resource = "/io/jenetics/jpx/ISSUE-51.gpx";
-
-		final GPX gpx;
-		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
-		}
-
-		Assert.assertTrue(gpx.getMetadata().isPresent());
-		final Metadata md = gpx.getMetadata().get();
-		Assert.assertFalse(md.getName().isPresent());
-		Assert.assertTrue(md.getLinks().isEmpty());
-		Assert.assertEquals(gpx.getWayPoints().size(), 3);
-	}
-
-	@Test
-	public void issue77_XMLComment() throws IOException {
-		final String resource = "/io/jenetics/jpx/ISSUE-77.gpx";
-
-		final GPX gpx;
-		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
-		}
-		Assert.assertEquals(
-			gpx.getTracks().get(0).getName().orElse(null),
-			"09-OKT-18 15:12:08"
-		);
-	}
-
-	@Test
-	public void issue78_Parsing() throws IOException {
-		final String resource = "/io/jenetics/jpx/ISSUE-78.gpx";
-
-		final GPX gpx;
-		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
-		}
-		Assert.assertEquals(
-			gpx.getWayPoints().get(0).getName().orElse(null),
-			"Wien"
-		);
-	}
-
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(GPX.class)
@@ -791,6 +710,119 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 				oout.writeObject(gpx);
 			}
 		}
+	}
+
+
+
+	/* *************************************************************************
+	 * Testing specific issues.
+	 * ************************************************************************/
+
+	@Test(timeOut = 2000)
+	public void issue49_NPEForInvalidGPX() {
+		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
+
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			GPX.read(in);
+			Assert.assertFalse(true, "GXP.read must throw.");
+		} catch (IOException e) {
+			Assert.assertEquals(e.getCause().getClass(), XMLStreamException.class);
+			Assert.assertTrue(e.getMessage().contains("Unexpected element"));
+		}
+	}
+
+	@Test(timeOut = 2000)
+	public void issue49_NPEForInvalidGPXLenient() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.reader(Mode.LENIENT).read(in);
+		}
+
+		Assert.assertEquals(gpx.getWayPoints().size(), 1);
+		Assert.assertEquals(
+			gpx.getWayPoints().get(0),
+			WayPoint.builder()
+				.lat(51.39709).lon(4.501519).name("START")
+				.build()
+		);
+
+		final List<WayPoint> points = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.collect(Collectors.toList());
+
+		Assert.assertEquals(points.size(), 26);
+	}
+
+	@Test(timeOut = 2000)
+	public void issue51_XMLComment() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-51.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertTrue(gpx.getMetadata().isPresent());
+		final Metadata md = gpx.getMetadata().get();
+		Assert.assertFalse(md.getName().isPresent());
+		Assert.assertTrue(md.getLinks().isEmpty());
+		Assert.assertEquals(gpx.getWayPoints().size(), 3);
+	}
+
+	@Test
+	public void issue77_XMLComment() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-77.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+		Assert.assertEquals(
+			gpx.getTracks().get(0).getName().orElse(null),
+			"09-OKT-18 15:12:08"
+		);
+	}
+
+	@Test
+	public void issue78_Parsing() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-78.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+		Assert.assertEquals(
+			gpx.getWayPoints().get(0).getName().orElse(null),
+			"Wien"
+		);
+	}
+
+	@Test
+	public void issue82_Parsing() throws IOException {
+		final String resource = "/io/jenetics/jpx/ISSUE-82.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		final long count = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.count();
+		Assert.assertEquals(count, 479L);
+
+		final long extensions = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.flatMap(p -> p.getExtensions()
+				.map(Stream::of)
+				.orElse(Stream.empty()))
+			.count();
+		Assert.assertEquals(extensions, 479L);
 	}
 
 }
