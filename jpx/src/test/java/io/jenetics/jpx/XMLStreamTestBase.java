@@ -139,9 +139,11 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		throws XMLStreamException
 	{
 		final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
-		final XMLStreamReader streamReader = XMLInputFactory
-			.newFactory()
-			.createXMLStreamReader(in);
+		final XMLStreamReaderAdapter streamReader = new XMLStreamReaderAdapter(
+			XMLInputFactory
+				.newFactory()
+				.createXMLStreamReader(in)
+		);
 
 		streamReader.next();
 		return reader.read(streamReader, false);

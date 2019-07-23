@@ -1,5 +1,11 @@
 ## Release notes
 
+### [1.5.1](https://github.com/jenetics/jpx/releases/tag/v1.5.1)
+
+#### Bugs
+
+* [#82](https://github.com/jenetics/jpx/issues/82): Fix parsing of GPX `extensions`.
+
 ### [1.5.0](https://github.com/jenetics/jpx/releases/tag/v1.5.0)
 
 #### Enhancement
