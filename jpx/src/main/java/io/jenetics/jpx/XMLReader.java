@@ -118,7 +118,7 @@ abstract class XMLReader<T> {
 	 * @throws NullPointerException if the given {@code xml} stream reader is
 	 *         {@code null}
 	 */
-	public abstract T read(final XMLStreamReader xml, final boolean lenient)
+	public abstract T read(final XMLStreamReaderAdapter xml, final boolean lenient)
 		throws XMLStreamException;
 
 	/**
@@ -135,7 +135,7 @@ abstract class XMLReader<T> {
 
 		return new XMLReader<B>(_name, _type) {
 			@Override
-			public B read(final XMLStreamReader xml, final boolean lenient)
+			public B read(final XMLStreamReaderAdapter xml, final boolean lenient)
 				throws XMLStreamException
 			{
 				try {
@@ -384,7 +384,7 @@ final class AttrReader extends XMLReader<String> {
 	}
 
 	@Override
-	public String read(final XMLStreamReader xml, final boolean lenient)
+	public String read(final XMLStreamReaderAdapter xml, final boolean lenient)
 		throws XMLStreamException
 	{
 		xml.require(START_ELEMENT, null, null);
@@ -407,7 +407,7 @@ final class TextReader extends XMLReader<String> {
 	}
 
 	@Override
-	public String read(final XMLStreamReader xml, final boolean lenient)
+	public String read(final XMLStreamReaderAdapter xml, final boolean lenient)
 		throws XMLStreamException
 	{
 		final StringBuilder out = new StringBuilder();
@@ -416,7 +416,6 @@ final class TextReader extends XMLReader<String> {
 		do {
 			out.append(xml.getText());
 		} while (xml.hasNext() && (type = xml.next()) == CHARACTERS || type == CDATA);
-
 
 		return out.toString();
 	}
@@ -441,7 +440,7 @@ final class ListReader<T> extends XMLReader<List<T>> {
 	}
 
 	@Override
-	public List<T> read(final XMLStreamReader xml, final boolean lenient)
+	public List<T> read(final XMLStreamReaderAdapter xml, final boolean lenient)
 		throws XMLStreamException
 	{
 		xml.require(START_ELEMENT, null, name());
@@ -475,7 +474,7 @@ final class IgnoreReader extends XMLReader<Object> {
 	}
 
 	@Override
-	public Object read(final XMLStreamReader xml, final boolean lenient)
+	public Object read(final XMLStreamReaderAdapter xml, final boolean lenient)
 		throws XMLStreamException
 	{
 		return _reader.read(xml, true);
@@ -496,7 +495,7 @@ final class DocReader extends XMLReader<Document> {
 	}
 
 	@Override
-	public Document read(final XMLStreamReader xml, final boolean lenient)
+	public Document read(final XMLStreamReaderAdapter xml, final boolean lenient)
 		throws XMLStreamException
 	{
 		Document doc = null;
@@ -527,7 +526,8 @@ final class DocReader extends XMLReader<Document> {
 				throw e;
 			}
 		}
-
+		// Mark the next XML element as consumed, by the StaX transformer: #82
+		xml.consumed();
 		return doc;
 	}
 
@@ -582,7 +582,7 @@ final class ElemReader<T> extends XMLReader<T> {
 	}
 
 	@Override
-	public T read(final XMLStreamReader xml, final boolean lenient)
+	public T read(final XMLStreamReaderAdapter xml, final boolean lenient)
 		throws XMLStreamException
 	{
 		while (xml.getEventType() == COMMENT) {
@@ -607,9 +607,7 @@ final class ElemReader<T> extends XMLReader<T> {
 			}
 		}
 
-		if (xml.hasNext()) {
-			xml.next();
-
+		if (xml.safeNext()) {
 			boolean hasNext = false;
 			do {
 				switch (xml.getEventType()) {
@@ -617,8 +615,8 @@ final class ElemReader<T> extends XMLReader<T> {
 						consumeComment(xml);
 						break;
 					case START_ELEMENT:
-						Integer index = _readerIndexMapping
-							.get(xml.getLocalName());
+						final String localName = xml.getLocalName();
+						Integer index = _readerIndexMapping.get(localName);
 
 						if (index == null && !lenient) {
 							throw new XMLStreamException(format(
@@ -633,12 +631,7 @@ final class ElemReader<T> extends XMLReader<T> {
 
 						if (result != null) {
 							throwUnexpectedElement(xml, lenient, result);
-							if (xml.hasNext()) {
-								hasNext = true;
-								xml.next();
-							} else {
-								hasNext = false;
-							}
+							hasNext = xml.safeNext();
 						}
 
 						break;
@@ -687,7 +680,7 @@ final class ElemReader<T> extends XMLReader<T> {
 	}
 
 	private void throwUnexpectedElement(
-		final XMLStreamReader xml,
+		final XMLStreamReaderAdapter xml,
 		final boolean lenient,
 		final ReaderResult text
 	)

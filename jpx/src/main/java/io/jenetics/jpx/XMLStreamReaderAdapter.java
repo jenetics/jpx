@@ -35,12 +35,30 @@ import javax.xml.stream.XMLStreamReader;
 class XMLStreamReaderAdapter implements XMLStreamReader, AutoCloseable {
 	private final XMLStreamReader _reader;
 
+	private boolean _consumed;
+
 	XMLStreamReaderAdapter(final XMLStreamReader reader) {
 		_reader = requireNonNull(reader);
 	}
 
+	void consumed() {
+		_consumed = true;
+	}
+
+	boolean safeNext() throws XMLStreamException {
+		final boolean result = hasNext();
+		try {
+			if (result && !_consumed) {
+				next();
+			}
+		} finally {
+			_consumed = false;
+		}
+		return result;
+	}
+
 	@Override
-	public Object getProperty(final String name) throws IllegalArgumentException {
+	public Object getProperty(final String name) {
 		return _reader.getProperty(name);
 	}
 
