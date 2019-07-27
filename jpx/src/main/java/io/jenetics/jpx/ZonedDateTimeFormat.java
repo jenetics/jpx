@@ -131,7 +131,7 @@ enum ZonedDateTimeFormat {
 		return time != null
 			? ZonedDateTimeFormat.parseOptional(time).orElseThrow(() ->
 			new IllegalArgumentException(
-				String.format("Can't parse time: %s'", time)))
+				String.format("Can't parse time: '%s'", time)))
 			: null;
 	}
 
