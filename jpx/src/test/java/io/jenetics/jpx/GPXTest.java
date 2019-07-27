@@ -825,4 +825,21 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		Assert.assertEquals(extensions, 479L);
 	}
 
+	@Test
+	public void issue86_Parsing() throws IOException {
+		String resource = "/io/jenetics/jpx/GPX-full.gpx";
+		final GPX expected;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			expected = GPX.read(in);
+		}
+
+		resource = "/io/jenetics/jpx/ISSUE-86.gpx";
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		Assert.assertEquals(gpx, expected);
+	}
+
 }
