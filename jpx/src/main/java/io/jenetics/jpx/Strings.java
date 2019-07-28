@@ -23,8 +23,8 @@ package io.jenetics.jpx;
  * Some string helper methods.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 1.5.2
+ * @since 1.5.2
  */
 final class Strings {
 	private Strings() {
