@@ -1,5 +1,11 @@
 ## Release notes
 
+### [1.5.2](https://github.com/jenetics/jpx/releases/tag/v1.5.2)
+
+#### Bugs
+
+* [#86](https://github.com/jenetics/jpx/issues/86): Fix parsing of GPX `time` fields.
+
 ### [1.5.1](https://github.com/jenetics/jpx/releases/tag/v1.5.1)
 
 #### Bugs
