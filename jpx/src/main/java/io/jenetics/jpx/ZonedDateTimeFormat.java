@@ -124,7 +124,7 @@ enum ZonedDateTimeFormat {
 	/**
 	 * Parses the given object to a zoned data time object.
 	 *
-	 * @param time the string to parse
+	 * @param value the string to parse
 	 * @return the parsed object
 	 */
 	static ZonedDateTime parse(final String value) {
