@@ -128,9 +128,11 @@ public final class DGPSStation
 		return new DGPSStation(value);
 	}
 
-	static DGPSStation parse(final String string) {
-		return string != null
-			? DGPSStation.of(Integer.parseInt(string))
+	static DGPSStation parse(final String value) {
+		final String stat = Strings.trim(value);
+
+		return stat != null
+			? DGPSStation.of(Integer.parseInt(stat))
 			: null;
 	}
 

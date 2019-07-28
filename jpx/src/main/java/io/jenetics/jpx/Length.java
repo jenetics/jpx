@@ -212,9 +212,11 @@ public final class Length
 		return new Length(Unit.METER.convert(length, unit));
 	}
 
-	static Length parse(final String string) {
-		return string != null
-			? Length.of(Double.parseDouble(string), Unit.METER)
+	static Length parse(final String value) {
+		final String length = Strings.trim(value);
+
+		return length != null
+			? Length.of(Double.parseDouble(length), Unit.METER)
 			: null;
 	}
 

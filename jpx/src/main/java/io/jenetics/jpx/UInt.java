@@ -130,9 +130,11 @@ public final class UInt
 		return new UInt(value);
 	}
 
-	static UInt parse(final String string) {
-		return string != null
-			? UInt.of(Integer.parseInt(string))
+	static UInt parse(final String value) {
+		final String uint = Strings.trim(value);
+
+		return uint != null
+			? UInt.of(Integer.parseInt(uint))
 			: null;
 	}
 
