@@ -42,7 +42,7 @@ final class Format {
 	 * Convert the given {@code object} into a duration value. If the
 	 * {@code object} is {@code null}, {@code null} is returned.
 	 *
-	 * @param string the object to convert
+	 * @param value the object to convert
 	 * @return the converted object
 	 */
 	static Duration parseDuration(final String value) {
@@ -63,11 +63,12 @@ final class Format {
 	 * Convert the given {@code object} into a year value. If the
 	 * {@code object} is {@code null}, {@code null} is returned.
 	 *
-	 * @param string the string value to parse
+	 * @param value the string value to parse
 	 * @return the converted object
 	 */
-	static Year parseYear(final String string) {
-		return string != null ? Year.of(Integer.parseInt(string)) : null;
+	static Year parseYear(final String value) {
+		final String year = Strings.trim(value);
+		return year != null ? Year.of(Integer.parseInt(year)) : null;
 	}
 
 	static String yearString(final Year year) {
@@ -78,15 +79,16 @@ final class Format {
 	 * Convert the given {@code object} into a URI value. If the
 	 * {@code object} is {@code null}, {@code null} is returned.
 	 *
-	 * @param string the string to convert
+	 * @param value the string to convert
 	 * @return the converted object
 	 */
-	static URI parseURI(final String string) {
+	static URI parseURI(final String value) {
 		try {
-			return string != null ? new URI(string) : null;
+			final String uri = Strings.trim(value);
+			return uri != null ? new URI(uri) : null;
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(format(
-				"Invalid URI value: '%s'.", string
+				"Invalid URI value: '%s'.", value
 			));
 		}
 	}
