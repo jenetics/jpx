@@ -194,9 +194,10 @@ public final class Speed
 		return new Speed(Unit.METERS_PER_SECOND.convert(speed, unit));
 	}
 
-	static Speed parse(final String string) {
-		return string != null
-			? Speed.of(Double.parseDouble(string), Unit.METERS_PER_SECOND)
+	static Speed parse(final String value) {
+		final String speed = Strings.trim(value);
+		return speed != null
+			? Speed.of(Double.parseDouble(speed), Unit.METERS_PER_SECOND)
 			: null;
 	}
 

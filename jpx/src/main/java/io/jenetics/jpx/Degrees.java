@@ -162,9 +162,11 @@ public final class Degrees
 		return new Degrees(Math.toDegrees(radians));
 	}
 
-	static Degrees parse(final String string) {
-		return string != null
-			? Degrees.ofDegrees(Double.parseDouble(string))
+	static Degrees parse(final String value) {
+		final String deg = Strings.trim(value);
+
+		return deg != null
+			? Degrees.ofDegrees(Double.parseDouble(deg))
 			: null;
 	}
 

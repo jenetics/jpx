@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="creator_53" xmlns="http://www.topografix.com/GPX/1/1">
+	<metadata>
+		<name>name_56</name>
+		<desc>description_8</desc>
+		<author>
+			<name>name_24</name>
+			<email id="id_17" domain="domain_89"></email>
+			<link href="http://link_30">
+				<text>text_16</text>
+				<type>type_74</type>
+			</link>
+		</author>
+		<copyright author="author_19">
+			<year>856</year>
+			<license>http://uri.com/5</license>
+		</copyright>
+		<link href="http://link_64">
+			<text>text_14</text>
+			<type>type_67</type>
+		</link>
+		<time>2028-10-05T18:39:31Z</time>
+		<keywords>keywords_32</keywords>
+		<bounds minlat="12.0" minlon="63.0" maxlat="23.0" maxlon="57.0"></bounds>
+	</metadata>
+	<wpt lat="48.67218737562126" lon="17.01383166844617">
+		<ele>533.0</ele>
+		<speed>94.75368382667327</speed>
+		<time>2015-10-24T16:52:00Z</time>
+		<magvar>6.741529644762463</magvar>
+		<geoidheight>499.0</geoidheight>
+		<name>name_53</name>
+		<cmt>comment_78</cmt>
+		<desc>description_56</desc>
+		<src>source_42</src>
+		<link href="http://link_29">
+			<text>text_28</text>
+			<type>type_43</type>
+		</link>
+		<sym>symbol_89</sym>
+		<type>type_57</type>
+		<fix>2d</fix>
+		<sat>42</sat>
+		<hdop>2.777716680429299</hdop>
+		<vdop>2.1230395800515214</vdop>
+		<pdop>2.902715486434789</pdop>
+		<ageofdgpsdata>608</ageofdgpsdata>
+		<dgpsid>87</dgpsid>
+	</wpt>
+	<rte>
+		<name>name_52</name>
+		<cmt>comment_65</cmt>
+		<desc>description_23</desc>
+		<src>source_30</src>
+		<link href="http://link_96">
+			<text>text_80</text>
+			<type>type_25</type>
+		</link>
+		<number>9</number>
+		<type>type_72</type>
+		<rtept lat="48.1483480145327" lon="16.37734289003217">
+			<ele>958.0</ele>
+			<speed>96.53259833976092</speed>
+			<time>1984-08-13T05:05:01Z</time>
+			<magvar>7.744558879076466</magvar>
+			<geoidheight>648.0</geoidheight>
+			<name>name_48</name>
+			<cmt>comment_82</cmt>
+			<desc>description_59</desc>
+			<src>source_28</src>
+			<link href="http://link_92">
+				<text>text_53</text>
+				<type>type_71</type>
+			</link>
+			<sym>symbol_21</sym>
+			<type>type_86</type>
+			<fix>2d</fix>
+			<sat>67</sat>
+			<hdop>2.1003894834241827</hdop>
+			<vdop>2.6562100889037796</vdop>
+			<pdop>2.931248039161473</pdop>
+			<ageofdgpsdata>369</ageofdgpsdata>
+			<dgpsid>76</dgpsid>
+		</rtept>
+	</rte>
+	<trk>
+		<name>name_43</name>
+		<cmt>comment_10</cmt>
+		<desc>description_50</desc>
+		<src>source_62</src>
+		<link href="http://link_57">
+			<text>text_67</text>
+			<type>type_57</type>
+		</link>
+		<number>52</number>
+		<type>type_23</type>
+		<trkseg>
+			<trkpt lat="49.26976543041766" lon="17.958734531880403">
+				<ele>1.0</ele>
+				<speed>8.281567600967666</speed>
+				<time>1985-10-23T16:24:06Z</time>
+				<magvar>9.284696616811988</magvar>
+				<geoidheight>69.0</geoidheight>
+				<name>name_46</name>
+				<cmt>comment_9</cmt>
+				<desc>description_72</desc>
+				<src>source_18</src>
+				<link href="http://link_84">
+					<text>text_79</text>
+					<type>type_55</type>
+				</link>
+				<sym>symbol_35</sym>
+				<type>type_81</type>
+				<fix>pps</fix>
+				<sat>93</sat>
+				<hdop>2.375846322376357</hdop>
+				<vdop>2.1255903247050654</vdop>
+				<pdop>2.4347694054721187</pdop>
+				<ageofdgpsdata>336</ageofdgpsdata>
+				<dgpsid>60</dgpsid>
+			</trkpt>
+		</trkseg>
+	</trk>
+	<extensions xmlns="http://www.topografix.com/GPX/1/1">
+		<gpxdata:lap xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0">
+			<gpxdata:index>1</gpxdata:index>
+			<gpxdata:startPoint lat="51.219983" lon="6.765224"></gpxdata:startPoint>
+			<gpxdata:endPoint lat="51.220137" lon="6.765098"></gpxdata:endPoint>
+			<gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>
+			<gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>
+			<gpxdata:calories>1</gpxdata:calories>
+			<gpxdata:distance>0.5881348</gpxdata:distance>
+			<gpxdata:summary kind="avg" name="AverageHeartRateBpm">163</gpxdata:summary>
+			<gpxdata:trigger kind="manual"></gpxdata:trigger>
+			<gpxdata:intensity>active</gpxdata:intensity>
+		</gpxdata:lap>
+	</extensions>
+</gpx>
