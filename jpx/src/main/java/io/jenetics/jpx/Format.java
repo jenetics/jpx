@@ -38,6 +38,13 @@ final class Format {
 	private Format() {
 	}
 
+	static Double parseDouble(final String value) {
+		final String d = Strings.trim(value);
+		return d != null
+			? Double.parseDouble(d)
+			: null;
+	}
+
 	/**
 	 * Convert the given {@code object} into a duration value. If the
 	 * {@code object} is {@code null}, {@code null} is returned.

@@ -162,9 +162,10 @@ public final class Latitude extends Number implements Serializable {
 		return new Latitude(Math.toDegrees(radians));
 	}
 
-	static Latitude parse(final String string) {
-		return string != null
-			? Latitude.ofDegrees(Double.parseDouble(string))
+	static Latitude parse(final String value) {
+		final String lat = Strings.trim(value);
+		return lat != null
+			? Latitude.ofDegrees(Double.parseDouble(lat))
 			: null;
 	}
 
