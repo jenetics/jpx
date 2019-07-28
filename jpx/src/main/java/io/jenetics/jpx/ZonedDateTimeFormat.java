@@ -127,7 +127,9 @@ enum ZonedDateTimeFormat {
 	 * @param time the string to parse
 	 * @return the parsed object
 	 */
-	static ZonedDateTime parse(final String time) {
+	static ZonedDateTime parse(final String value) {
+		final String time = Strings.trim(value);
+
 		return time != null
 			? ZonedDateTimeFormat.parseOptional(time).orElseThrow(() ->
 			new IllegalArgumentException(

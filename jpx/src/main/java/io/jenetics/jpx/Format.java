@@ -45,9 +45,11 @@ final class Format {
 	 * @param string the object to convert
 	 * @return the converted object
 	 */
-	static Duration parseDuration(final String string) {
-		return string != null
-			? Duration.ofSeconds(Long.parseLong(string))
+	static Duration parseDuration(final String value) {
+		final String duration = Strings.trim(value);
+
+		return duration != null
+			? Duration.ofSeconds(Long.parseLong(duration))
 			: null;
 	}
 
@@ -84,7 +86,7 @@ final class Format {
 			return string != null ? new URI(string) : null;
 		} catch (URISyntaxException e) {
 			throw new IllegalArgumentException(format(
-				"Invalid URI value: %s.", string
+				"Invalid URI value: '%s'.", string
 			));
 		}
 	}
