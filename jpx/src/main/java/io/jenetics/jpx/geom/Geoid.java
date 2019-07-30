@@ -30,11 +30,14 @@ import static java.lang.Math.tan;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import java.time.ZonedDateTime;
+import java.util.Optional;
 import java.util.stream.Collector;
 
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Length.Unit;
 import io.jenetics.jpx.Point;
+import io.jenetics.jpx.Speed;
 
 /**
  * Implementation of <em>geodetic</em> functions.
@@ -43,7 +46,7 @@ import io.jenetics.jpx.Point;
  * @see Ellipsoid
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Geoid {
@@ -304,7 +307,43 @@ public final class Geoid {
 		);
 	}
 
+	/**
+	 * Calculating the speed of point {@code p1} with the given predecessor point
+	 * {@code p0}. {@link Optional#empty()} is returned if the time property of
+	 * one of the given points is <em>empty</em>.
+	 *
+	 * @since !__version__!
+	 *
+	 * @param p0 the start point
+	 * @param p1 the destination
+	 * @return the calculated (average) speed between the two given points
+	 * @throws NullPointerException if one of the points is {@code null}
+	 */
+	public Optional<Speed> speed(final Point p0, final Point p1) {
+		return duration(p0, p1)
+			.map(sec -> Speed.of(
+				distance(p0, p1).doubleValue()/sec,
+				Speed.Unit.METERS_PER_SECOND)
+			);
+	}
 
+	private static Optional<Double> duration(final Point p0, final Point p1) {
+		return p0.getTime().flatMap(t0 ->
+			p1.getTime().map(t1 ->
+				minus(t0, t1)/1_000.0
+			)
+		);
+	}
+
+	private static long minus(final ZonedDateTime t1, final ZonedDateTime t2) {
+		final long i1 = t1.toInstant().toEpochMilli();
+		final long i2 = t2.toInstant().toEpochMilli();
+		return i2 - i1;
+	}
+
+	/* *************************************************************************
+	 * Factory methods
+	 * ************************************************************************/
 
 	/**
 	 * Create a new {@code Geoid} object with the given ellipsoid.
