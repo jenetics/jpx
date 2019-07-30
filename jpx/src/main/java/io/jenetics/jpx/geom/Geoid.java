@@ -308,36 +308,36 @@ public final class Geoid {
 	}
 
 	/**
-	 * Calculating the speed of point {@code p1} with the given predecessor point
-	 * {@code p0}. {@link Optional#empty()} is returned if the time property of
+	 * Calculating the speed of point {@code b} with the given predecessor point
+	 * {@code a}. {@link Optional#empty()} is returned if the time property of
 	 * one of the given points is <em>empty</em>.
 	 *
 	 * @since !__version__!
 	 *
-	 * @param p0 the start point
-	 * @param p1 the destination
+	 * @param a the start point
+	 * @param b the destination
 	 * @return the calculated (average) speed between the two given points
 	 * @throws NullPointerException if one of the points is {@code null}
 	 */
-	public Optional<Speed> speed(final Point p0, final Point p1) {
-		return duration(p0, p1)
+	public Optional<Speed> speed(final Point a, final Point b) {
+		return duration(a, b)
 			.map(sec -> Speed.of(
-				distance(p0, p1).doubleValue()/sec,
+				distance(a, b).doubleValue()/sec,
 				Speed.Unit.METERS_PER_SECOND)
 			);
 	}
 
-	private static Optional<Double> duration(final Point p0, final Point p1) {
-		return p0.getTime().flatMap(t0 ->
-			p1.getTime().map(t1 ->
+	private static Optional<Double> duration(final Point a, final Point b) {
+		return a.getTime().flatMap(t0 ->
+			b.getTime().map(t1 ->
 				minus(t0, t1)/1_000.0
 			)
 		);
 	}
 
-	private static long minus(final ZonedDateTime t1, final ZonedDateTime t2) {
-		final long i1 = t1.toInstant().toEpochMilli();
-		final long i2 = t2.toInstant().toEpochMilli();
+	private static long minus(final ZonedDateTime a, final ZonedDateTime b) {
+		final long i1 = a.toInstant().toEpochMilli();
+		final long i2 = b.toInstant().toEpochMilli();
 		return i2 - i1;
 	}
 
