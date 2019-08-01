@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
@@ -84,5 +85,10 @@ public interface Filter<T, R> {
 	 * @return a new object created from the given filter
 	 */
 	public R build();
+
+
+	public static <T> Function<List<T>, List<T>> listMaps(final BinaryOperator<T> op) {
+		return null;
+	}
 
 }

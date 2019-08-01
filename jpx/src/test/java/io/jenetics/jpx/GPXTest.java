@@ -45,12 +45,16 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
@@ -60,6 +64,37 @@ import io.jenetics.jpx.Length.Unit;
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class GPXTest extends XMLStreamTestBase<GPX> {
+
+@Test
+public void extensions() throws ParserConfigurationException {
+	final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+	final DocumentBuilder db = dbf.newDocumentBuilder();
+	final Document doc = db.newDocument();
+
+	GPX gpx = GPX.builder()
+		.extensions(doc)
+		.build();
+}
+
+	@Test
+	public void foo1() throws ParserConfigurationException, IOException {
+		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		DocumentBuilder db = dbf.newDocumentBuilder();
+		Document doc = db.newDocument();
+		Element ext = doc.createElement("extesions");
+		Element elem = doc.createElement( "property");
+		elem.setAttribute("name", "my_attribute");
+		elem.setTextContent("Some Attribute Value");
+
+		ext.appendChild(elem);
+		doc.appendChild(ext);
+
+		GPX gpx = GPX.builder()
+			.extensions(doc)
+			.build();
+
+		GPX.writer("    ").write(gpx, System.out);
+	}
 
 	@Override
 	public Supplier<GPX> factory(Random random) {

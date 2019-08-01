@@ -19,7 +19,10 @@
  */
 package io.jenetics.jpx.geom;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,7 +31,13 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.Point;
+import io.jenetics.jpx.Speed;
+import io.jenetics.jpx.Speed.Unit;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.WayPointTest;
 
@@ -132,6 +141,38 @@ public class GeoidTest {
 			.limit(1000)
 			.parallel()
 			.collect(GEOID.toPathLength());
+	}
+
+	@Test
+	public void speed() throws IOException  {
+		final String resource = "/io/jenetics/jpx/geom/Track_1.gpx";
+
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.reader(Mode.LENIENT).read(in);
+		}
+
+		GPX.writer("    ").write(gpx, System.out);
+
+		final List<WayPoint> points = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.collect(Collectors.toList());
+
+		/*
+		Point p0 = points.get(0);
+		for (int i = 1; i < points.size(); ++i) {
+			final Point p1 = points.get(i);
+			final Optional<Speed> speed = Geoid.DEFAULT.speed(p0, p1);
+			speed
+				.map(s -> s.to(Unit.KILOMETERS_PER_HOUR))
+				.ifPresent(System.out::println);
+
+			p0 = p1;
+		}
+
+		 */
+
 	}
 
 }
