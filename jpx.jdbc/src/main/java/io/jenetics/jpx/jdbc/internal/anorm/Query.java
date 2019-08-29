@@ -19,10 +19,19 @@
  */
 package io.jenetics.jpx.jdbc.internal.anorm;
 
+import static java.lang.String.format;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import io.jenetics.jpx.jdbc.internal.db.PreparedSQL;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -31,11 +40,38 @@ import java.util.List;
  */
 public class Query {
 
-	private final String _sql;
-	private final List<String> _names = new ArrayList<>();
+	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
 
-	public Query(final String sql) {
+	private final String _sql;
+	private final List<String> _names;
+
+	private Query(final String sql, final List<String> names) {
 		_sql = requireNonNull(sql);
+		_names = unmodifiableList(names);
+	}
+
+	public String sql() {
+		return _sql;
+	}
+
+	public List<String> names() {
+		return _names;
+	}
+
+	public static Query of(final String sql) {
+		final List<String> names = new ArrayList<>();
+		final StringBuffer parsedQuery = new StringBuffer();
+
+		final Matcher matcher = PARAM_PATTERN.matcher(sql);
+		while (matcher.find()) {
+			final String name = matcher.group(1);
+			names.add(name);
+
+			matcher.appendReplacement(parsedQuery, "?");
+		}
+		matcher.appendTail(parsedQuery);
+
+		return new Query(parsedQuery.toString(), names);
 	}
 
 }
