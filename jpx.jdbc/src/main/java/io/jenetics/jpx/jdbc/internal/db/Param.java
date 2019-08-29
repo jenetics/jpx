@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 /**
- * Represents a query parameter with <em>name</em> and <em>value</em>. Tbe
+ * Represents a query parameter with <em>name</em> and <em>value</em>. The
  * parameter value is evaluated lazily.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

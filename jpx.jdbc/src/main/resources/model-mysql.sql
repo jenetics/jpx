@@ -102,7 +102,9 @@ CREATE TABLE way_point(
 	vdop DOUBLE PRECISION,
 	pdop DOUBLE PRECISION,
 	ageofdgpsdata INT,
-	dgpsid INT
+	dgpsid INT,
+	course DOUBLE PRECISION,
+	extensions TEXT
 );
 CREATE INDEX i_way_point_lat ON way_point(lat);
 CREATE INDEX i_way_point_lon ON way_point(lon);

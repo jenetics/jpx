@@ -94,6 +94,10 @@ public final class Results implements ResultSet {
 		return value != null ? mapper.apply(value) : null;
 	}
 
+	public Integer getInteger(final String columnName) throws SQLException {
+		return get(Integer.class, columnName);
+	}
+
 	public ZonedDateTime getZonedDateTime(final String columnName)
 		throws SQLException
 	{
