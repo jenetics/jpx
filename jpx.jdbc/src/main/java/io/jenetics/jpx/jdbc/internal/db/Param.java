@@ -99,6 +99,22 @@ public final class Param {
 	}
 
 	/**
+	 * Return a new parameter object with the given name and long values.
+	 *
+	 * @param name the parameter name
+	 * @param values the parameter values
+	 * @return a new parameter object
+	 */
+	public static Param values(final String name, final long... values) {
+		return new Param(
+			name,
+			LongStream.of(values)
+				.boxed()
+				.collect(Collectors.toList())
+		);
+	}
+
+	/**
 	 * Create a ne parameter object with the given name and values.
 	 *
 	 * @param name the parameter name
@@ -117,22 +133,6 @@ public final class Param {
 			.collect(Collectors.toList());
 
 		return new Param(name, converted);
-	}
-
-	/**
-	 * Return a new parameter object with the given name and long values.
-	 *
-	 * @param name the parameter name
-	 * @param values the parameter values
-	 * @return a new parameter object
-	 */
-	public static Param values(final String name, final long... values) {
-		return new Param(
-			name,
-			LongStream.of(values)
-				.boxed()
-				.collect(Collectors.toList())
-		);
 	}
 
 }
