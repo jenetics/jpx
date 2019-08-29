@@ -35,11 +35,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.w3c.dom.Document;
 
 import io.jenetics.jpx.GPX.Version;
 
@@ -50,7 +53,7 @@ import io.jenetics.jpx.GPX.Version;
  * span of track data.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.3
+ * @version 1.5
  * @since 1.0
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
@@ -58,14 +61,16 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	private static final long serialVersionUID = 2L;
 
 	private final List<WayPoint> _points;
+	private final Document _extensions;
 
 	/**
 	 * Create a new track-segment with the given points.
 	 *
 	 * @param points the points of the track-segment
 	 */
-	private TrackSegment(final List<WayPoint> points) {
+	private TrackSegment(final List<WayPoint> points, final Document extensions) {
 		_points = immutable(points);
+		_extensions = extensions;
 	}
 
 	/**
@@ -91,6 +96,26 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return _points.iterator();
 	}
 
+
+	/**
+	 * Return the (cloned) extensions document. The root element of the returned
+	 * document has the name {@code extensions}.
+	 * <pre>{@code
+	 * <extensions>
+	 *     ...
+	 * </extensions>
+	 * }</pre>
+	 *
+	 * @since 1.5
+	 *
+	 * @return the extensions document
+	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
+	 *         because of an erroneous XML configuration
+	 */
+	public Optional<Document> getExtensions() {
+		return Optional.ofNullable(_extensions).map(XML::clone);
+	}
+
 	/**
 	 * Convert the <em>immutable</em> track-segment object into a
 	 * <em>mutable</em> builder initialized with the current track-segment
@@ -102,7 +127,9 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *        {@code this} track-segment
 	 */
 	public Builder toBuilder() {
-		return builder().points(_points);
+		return builder()
+			.points(_points)
+			.extensions(_extensions);
 	}
 
 	/**
@@ -160,6 +187,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 */
 	public static final class Builder implements Filter<WayPoint, TrackSegment> {
 		private final List<WayPoint> _points = new ArrayList<>();
+		private Document _extensions;
 
 		private Builder() {
 		}
@@ -224,6 +252,38 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			return new NonNullList<>(_points);
 		}
 
+		/**
+		 * Sets the extensions object, which may be {@code null}. The root
+		 * element of the extensions document must be {@code extensions}.
+		 * <pre>{@code
+		 * <extensions>
+		 *     ...
+		 * </extensions>
+		 * }</pre>
+		 *
+		 * @since 1.5
+		 *
+		 * @param extensions the document
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the root element is not the
+		 *         an {@code extensions} node
+		 */
+		public Builder extensions(final Document extensions) {
+			_extensions = XML.checkExtensions(extensions);
+			return this;
+		}
+
+		/**
+		 * Return the current extensions
+		 *
+		 * @since 1.5
+		 *
+		 * @return the extensions document
+		 */
+		public Optional<Document> extensions() {
+			return Optional.ofNullable(_extensions);
+		}
+
 		@Override
 		public Builder filter(final Predicate<? super WayPoint> predicate) {
 			points(
@@ -281,7 +341,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 */
 		@Override
 		public TrackSegment build() {
-			return new TrackSegment(_points);
+			return of(_points, _extensions);
 		}
 
 	}
@@ -303,13 +363,34 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	/**
 	 * Create a new track-segment with the given points.
 	 *
+	 * @since 1.5
+	 *
+	 * @param points the points of the track-segment
+	 * @param extensions the extensions document
+	 * @return a new track-segment with the given points
+	 * @throws NullPointerException if the given {@code points} sequence is
+	 *        {@code null}
+	 */
+	public static TrackSegment of(
+		final List<WayPoint> points,
+		final Document extensions
+	) {
+		return new TrackSegment(
+			points,
+			XML.extensions(XML.clone(extensions))
+		);
+	}
+
+	/**
+	 * Create a new track-segment with the given points.
+	 *
 	 * @param points the points of the track-segment
 	 * @return a new track-segment with the given points
 	 * @throws NullPointerException if the given {@code points} sequence is
 	 *        {@code null}
 	 */
 	public static TrackSegment of(final List<WayPoint> points) {
-		return new TrackSegment(points);
+		return of(points, null);
 	}
 
 
@@ -329,10 +410,14 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 	void write(final DataOutput out) throws IOException {
 		IO.writes(_points, WayPoint::write, out);
+		IO.writeNullable(_extensions, IO::write, out);
 	}
 
 	static TrackSegment read(final DataInput in) throws IOException {
-		return new TrackSegment(IO.reads(WayPoint::read, in));
+		return new TrackSegment(
+			IO.reads(WayPoint::read, in),
+			IO.readNullable(IO::readDoc, in)
+		);
 	}
 
 
@@ -344,17 +429,20 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		return elem("trkseg",
 			XMLWriter
 				.elems(WayPoint.xmlWriter(version,"trkpt"))
-				.map(ts -> ts._points)
+				.map(ts -> ts._points),
+			XMLWriter.doc("extensions").map(gpx -> gpx._extensions)
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	static XMLReader<TrackSegment> xmlReader(final Version version) {
-		return XMLReader.elem(
-			a -> TrackSegment.of((List<WayPoint>)a[0]),
+		return XMLReader.elem(a -> new TrackSegment(
+				(List<WayPoint>)a[0],
+				XML.extensions((Document)a[1])
+			),
 			"trkseg",
 			XMLReader.elems(WayPoint.xmlReader(version,"trkpt")),
-			XMLReader.ignore("extensions")
+			XMLReader.doc("extensions")
 		);
 	}
 

@@ -1,0 +1,59 @@
+<gpx xmlns="http://www.topografix.com/GPX/1/1"
+	 xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0"
+	 creator="pytrainer http://sourceforge.net/projects/pytrainer" version="1.1">
+	<metadata>
+		<name>Run 2009-06-19</name>
+		<link href="http://sourceforge.net/projects/pytrainer"/>
+		<time>2009-06-19T10:13:04Z</time>
+	</metadata>
+	<trk>
+		<trkseg>
+			<trkpt lat="51.219983" lon="6.765224">
+				<ele>52.048584</ele>
+				<time>2009-06-19T10:13:04Z</time>
+				<extensions>
+					<gpxdata:hr>164</gpxdata:hr>
+					<gpxdata:cadence>99</gpxdata:cadence>
+				</extensions>
+			</trkpt>
+			<trkpt lat="51.220137" lon="6.765098">
+				<ele>52.529175</ele>
+				<time>2009-06-19T10:13:09Z</time>
+				<extensions>
+					<gpxdata:hr>161</gpxdata:hr>
+					<gpxdata:cadence>95</gpxdata:cadence>
+				</extensions>
+			</trkpt>
+			<trkpt lat="51.219983" lon="6.765224">
+				<ele>52.048584</ele>
+				<time>2009-06-19T10:13:15Z</time>
+				<extensions>
+					<gpxdata:hr>164</gpxdata:hr>
+					<gpxdata:cadence>99</gpxdata:cadence>
+				</extensions>
+			</trkpt>
+			<trkpt lat="51.220137" lon="6.765098">
+				<ele>52.529175</ele>
+				<time>2009-06-19T10:13:19Z</time>
+				<extensions>
+					<gpxdata:hr>161</gpxdata:hr>
+					<gpxdata:cadence>96</gpxdata:cadence>
+				</extensions>
+			</trkpt>
+		</trkseg>
+	</trk>
+<extensions>
+	<gpxdata:lap>
+		<gpxdata:index>1</gpxdata:index>
+		<gpxdata:startPoint lat="51.219983" lon="6.765224"/>
+		<gpxdata:endPoint lat="51.220137" lon="6.765098" />
+		<gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>
+		<gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>
+		<gpxdata:calories>1</gpxdata:calories>
+		<gpxdata:distance>0.5881348</gpxdata:distance>
+		<gpxdata:summary name="AverageHeartRateBpm" kind="avg">163</gpxdata:summary>
+		<gpxdata:trigger kind="manual" />
+		<gpxdata:intensity>active</gpxdata:intensity>
+	</gpxdata:lap>
+</extensions>
+</gpx>

@@ -9,7 +9,6 @@
 			</link>
 		</author>
 		<extensions>
-			asdf
 			<foo>asdf</foo>
 			<foo>asdf</foo>
 			<!--

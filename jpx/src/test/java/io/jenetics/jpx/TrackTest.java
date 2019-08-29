@@ -86,7 +86,7 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 	}
 
 	@Test
-	public void ignoreExtensions() throws IOException {
+	public void withExtensions() throws IOException {
 		final String resource = "/io/jenetics/jpx/extensions-track.gpx";
 
 		final GPX gpx;
@@ -103,6 +103,11 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 				.cmt("comment_69")
 				.build()
 		);
+
+		Assert.assertTrue(XML.equals(
+			gpx.getTracks().get(0).getExtensions().get(),
+			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
+		));
 	}
 
 	@Test
@@ -184,7 +189,9 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 
 	@Test
 	public void equalsVerifier() {
-		EqualsVerifier.forClass(Track.class).verify();
+		EqualsVerifier.forClass(Track.class)
+			.withIgnoredFields("_extensions")
+			.verify();
 	}
 
 	@Test(invocationCount = 10)

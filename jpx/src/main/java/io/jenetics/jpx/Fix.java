@@ -32,7 +32,7 @@ import java.util.Optional;
  * @version 1.2
  * @since 1.0
  */
-public enum Fix {
+public enum  Fix {
 
 	NONE("none"),
 	DIM_2("2d"),
@@ -78,11 +78,13 @@ public enum Fix {
 		return fix != null ? fix._value : null;
 	}
 
-	static Fix parse(final String string) {
-		return string != null
-			? Fix.ofName(string).orElseThrow(() ->
+	static Fix parse(final String value) {
+		final String fix = Strings.trim(value);
+
+		return fix != null
+			? Fix.ofName(fix).orElseThrow(() ->
 				new IllegalArgumentException(String.format(
-					"Invalid value for: '%s'.", string)))
+					"Invalid value for: '%s'.", fix)))
 			: null;
 	}
 }

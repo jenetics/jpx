@@ -1,5 +1,29 @@
 ## Release notes
 
+### [1.5.2](https://github.com/jenetics/jpx/releases/tag/v1.5.2)
+
+#### Bugs
+
+* [#86](https://github.com/jenetics/jpx/issues/86): Fix parsing of GPX `time` fields.
+
+### [1.5.1](https://github.com/jenetics/jpx/releases/tag/v1.5.1)
+
+#### Bugs
+
+* [#82](https://github.com/jenetics/jpx/issues/82): Fix parsing of GPX `extensions`.
+
+### [1.5.0](https://github.com/jenetics/jpx/releases/tag/v1.5.0)
+
+#### Enhancement
+
+* [#59](https://github.com/jenetics/jpx/issues/59): Add GPX `extensions`.
+
+#### Bugs
+
+* [#73](https://github.com/jenetics/jpx/issues/73): Fix alerts found by [LGTM](https://lgtm.com/projects/g/jenetics/jpx/alerts?mode=list).
+* [#77](https://github.com/jenetics/jpx/issues/77): Fix handling of XML comments.
+
+
 ### [1.4.0](https://github.com/jenetics/jpx/releases/tag/v1.4.0)
 
 #### Enhancement
@@ -38,7 +62,7 @@
 
 #### Bug fixes
 
-* [#38](https://github.com/jenetics/jpx/issues/38): Errornous marshalling of `author` metadata.
+* [#38](https://github.com/jenetics/jpx/issues/38): Erroneous marshalling of `author` metadata.
 
 ### [1.2.0](https://github.com/jenetics/jpx/releases/tag/v1.2.0)
 

@@ -26,7 +26,7 @@ import java.io.InputStream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.3
+ * @version 1.5
  * @since 1.3
  */
 final class NonCloseableInputStream extends InputStream {
@@ -69,12 +69,12 @@ final class NonCloseableInputStream extends InputStream {
 	}
 
 	@Override
-	public void mark(final int readlimit) {
+	public synchronized void mark(final int readlimit) {
 		_input.mark(readlimit);
 	}
 
 	@Override
-	public void reset() throws IOException {
+	public synchronized void reset() throws IOException {
 		_input.reset();
 	}
 

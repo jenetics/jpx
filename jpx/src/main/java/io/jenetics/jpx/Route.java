@@ -44,6 +44,8 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.w3c.dom.Document;
+
 import io.jenetics.jpx.GPX.Version;
 
 /**
@@ -62,7 +64,7 @@ import io.jenetics.jpx.GPX.Version;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.3
+ * @version 1.5
  * @since 1.0
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
@@ -76,6 +78,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	private final List<Link> _links;
 	private final UInt _number;
 	private final String _type;
+	private final Document _extensions;
 	private final List<WayPoint> _points;
 
 	/**
@@ -89,6 +92,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * @param links the links to external information about the route
 	 * @param number the GPS route number
 	 * @param type the type (classification) of the route
+	 * @param extensions the extensions document
 	 * @param points the sequence of route points
 	 */
 	private Route(
@@ -99,6 +103,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		final List<Link> links,
 		final UInt number,
 		final String type,
+		final Document extensions,
 		final List<WayPoint> points
 	) {
 		_name = name;
@@ -108,6 +113,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		_links = immutable(links);
 		_number = number;
 		_type = type;
+		_extensions = extensions;
 		_points = immutable(points);
 	}
 
@@ -193,6 +199,25 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		return _points.stream();
 	}
 
+	/**
+	 * Return the (cloned) extensions document. The root element of the returned
+	 * document has the name {@code extensions}.
+	 * <pre>{@code
+	 * <extensions>
+	 *     ...
+	 * </extensions>
+	 * }</pre>
+	 *
+	 * @since 1.5
+	 *
+	 * @return the extensions document
+	 * @throws org.w3c.dom.DOMException if the document could not be cloned,
+	 *         because of an erroneous XML configuration
+	 */
+	public Optional<Document> getExtensions() {
+		return Optional.ofNullable(_extensions).map(XML::clone);
+	}
+
 	@Override
 	public Iterator<WayPoint> iterator() {
 		return _points.iterator();
@@ -215,6 +240,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			.src(_source)
 			.links(_links)
 			.number(_number)
+			.extensions(_extensions)
 			.points(_points);
 	}
 
@@ -230,6 +256,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			_source == null &&
 			_links.isEmpty() &&
 			_number == null &&
+			_extensions == null &&
 			_points.isEmpty();
 	}
 
@@ -312,6 +339,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		private final List<Link> _links = new ArrayList<>();
 		private UInt _number;
 		private String _type;
+		private Document _extensions;
 		private final List<WayPoint> _points = new ArrayList<>();
 
 		private Builder() {
@@ -516,6 +544,38 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		}
 
 		/**
+		 * Sets the extensions object, which may be {@code null}. The root
+		 * element of the extensions document must be {@code extensions}.
+		 * <pre>{@code
+		 * <extensions>
+		 *     ...
+		 * </extensions>
+		 * }</pre>
+		 *
+		 * @since 1.5
+		 *
+		 * @param extensions the document
+		 * @return {@code this} {@code Builder} for method chaining
+		 * @throws IllegalArgumentException if the root element is not the
+		 *         an {@code extensions} node
+		 */
+		public Builder extensions(final Document extensions) {
+			_extensions = XML.checkExtensions(extensions);
+			return this;
+		}
+
+		/**
+		 * Return the current extensions
+		 *
+		 * @since 1.5
+		 *
+		 * @return the extensions document
+		 */
+		public Optional<Document> extensions() {
+			return Optional.ofNullable(_extensions);
+		}
+
+		/**
 		 * Sets the way-points of the route. The way-point list may be
 		 * {@code null}.
 		 *
@@ -621,7 +681,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		@Override
 		public Route build() {
-			return new Route(
+			return of(
 				_name,
 				_comment,
 				_description,
@@ -629,6 +689,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				_links,
 				_number,
 				_type,
+				_extensions,
 				_points
 			);
 		}
@@ -638,6 +699,47 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	/* *************************************************************************
 	 *  Static object creation methods
 	 * ************************************************************************/
+
+	/**
+	 * Create a new {@code Route} with the given parameters and way-points.
+	 *
+	 * @since 1.5
+	 *
+	 * @param name the GPS name of the route
+	 * @param comment the GPS comment of the route
+	 * @param description the Text description of route for user. Not sent to GPS.
+	 * @param source the source of data. Included to give user some idea of
+	 *        reliability and accuracy of data.
+	 * @param links the links to external information about the route
+	 * @param number the GPS route number
+	 * @param type the type (classification) of the route
+	 * @param extensions the extensions document
+	 * @param points the sequence of route points
+	 * @return a new route object with the given parameters
+	 */
+	public static Route of(
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final UInt number,
+		final String type,
+		final Document extensions,
+		final List<WayPoint> points
+	) {
+		return new Route(
+			name,
+			comment,
+			description,
+			source,
+			links,
+			number,
+			type,
+			XML.extensions(XML.clone(extensions)),
+			points
+		);
+	}
 
 	/**
 	 * Create a new {@code Route} with the given parameters and way-points.
@@ -663,7 +765,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		final String type,
 		final List<WayPoint> points
 	) {
-		return new Route(
+		return of(
 			name,
 			comment,
 			description,
@@ -671,6 +773,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			links,
 			number,
 			type,
+			null,
 			points
 		);
 	}
@@ -686,8 +789,9 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		final String name,
 		final List<WayPoint> points
 	) {
-		return new Route(
+		return of(
 			name,
+			null,
 			null,
 			null,
 			null,
@@ -704,10 +808,9 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * @param points the sequence of route points
 	 * @return a new route object with the given parameters
 	 */
-	public static Route of(
-		final List<WayPoint> points
-	) {
-		return new Route(
+	public static Route of(final List<WayPoint> points) {
+		return of(
+			null,
 			null,
 			null,
 			null,
@@ -742,6 +845,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		IO.writes(_links, Link::write, out);
 		IO.writeNullable(_number, UInt::write, out);
 		IO.writeNullableString(_type, out);
+		IO.writeNullable(_extensions, IO::write, out);
 		IO.writes(_points, WayPoint::write, out);
 	}
 
@@ -754,6 +858,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			IO.reads(Link::read, in),
 			IO.readNullable(UInt::read, in),
 			IO.readNullableString(in),
+			IO.readNullable(IO::readDoc, in),
 			IO.reads(WayPoint::read, in)
 		);
 	}
@@ -785,6 +890,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		.v10(XMLWriter.elem("urlname").map(Route::urlname))
 		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
 		.v00(XMLWriter.elem("type").map(r -> r._type))
+		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
 		.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10, "rtept")).map(r -> r._points))
 		.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11, "rtept")).map(r -> r._points));
 
@@ -800,9 +906,9 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		.v10(XMLReader.elem("urlname"))
 		.v00(XMLReader.elem("number").map(UInt::parse))
 		.v00(XMLReader.elem("type"))
+		.v00(XMLReader.doc("extensions"))
 		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept")))
-		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")))
-		.v00(XMLReader.ignore("extensions"));
+		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")));
 
 	static XMLWriter<Route> xmlWriter(final Version version) {
 		return XMLWriter.elem("rte", WRITERS.writers(version));
@@ -819,7 +925,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@SuppressWarnings("unchecked")
 	private static Route toRouteV11(final Object[] v) {
-		return Route.of(
+		return new Route(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -827,13 +933,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			(List<Link>)v[4],
 			(UInt)v[5],
 			(String)v[6],
-			(List<WayPoint>)v[7]
+			XML.extensions((Document)v[7]),
+			(List<WayPoint>)v[8]
 		);
 	}
 
 	@SuppressWarnings("unchecked")
 	private static Route toRouteV10(final Object[] v) {
-		return Route.of(
+		return new Route(
 			(String)v[0],
 			(String)v[1],
 			(String)v[2],
@@ -843,7 +950,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				: null,
 			(UInt)v[6],
 			(String)v[7],
-			(List<WayPoint>)v[8]
+			XML.extensions((Document)v[8]),
+			(List<WayPoint>)v[9]
 		);
 	}
 
