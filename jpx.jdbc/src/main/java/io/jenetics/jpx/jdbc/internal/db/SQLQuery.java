@@ -72,7 +72,7 @@ public final class SQLQuery extends AbstractQuery {
 	 * @throws NullPointerException if the parameter {@code name} is {@code null}
 	 */
 	public SQLQuery on(final String name, final Object value) {
-		return on(Param.value(name, value));
+		return on(Param.of(name, value));
 	}
 
 	/**

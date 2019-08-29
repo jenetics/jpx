@@ -19,58 +19,35 @@
  */
 package io.jenetics.jpx.jdbc.internal.anorm;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class Query {
+public class PreparedQuery {
 
-	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
+	private final Query _query;
+	private final List<Param> _params;
 
-	private final String _sql;
-	private final List<String> _names;
-
-	private Query(final String sql, final List<String> names) {
-		_sql = requireNonNull(sql);
-		_names = unmodifiableList(names);
+	private PreparedQuery(final Query query, final List<Param> params) {
+		_query = requireNonNull(query);
+		_params = unmodifiableList(params);
 	}
 
-	public String sql() {
-		return _sql;
+	public int execute(final Connection conn) throws SQLException {
+		return 1;
 	}
 
-	public List<String> names() {
-		return _names;
-	}
-
-	public PreparedQuery on(final Param... params) {
-		return null;
-	}
-
-
-	public static Query of(final String sql) {
-		final List<String> names = new ArrayList<>();
-		final StringBuffer parsedQuery = new StringBuffer();
-
-		final Matcher matcher = PARAM_PATTERN.matcher(sql);
-		while (matcher.find()) {
-			final String name = matcher.group(1);
-			names.add(name);
-
-			matcher.appendReplacement(parsedQuery, "?");
-		}
-		matcher.appendTail(parsedQuery);
-
-		return new Query(parsedQuery.toString(), names);
+	public static PreparedQuery of(final Query query, final Param... params) {
+		return new PreparedQuery(query, asList(params));
 	}
 
 }

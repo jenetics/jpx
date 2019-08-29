@@ -109,7 +109,7 @@ public final class LinkDAO
 		return values.isEmpty()
 			? Collections.emptyList()
 			: SQL(query)
-				.on(Param.values("values", values))
+				.on(Param.of("values", values))
 				.as(RowParser.list());
 	}
 
@@ -127,9 +127,9 @@ public final class LinkDAO
 			"VALUES({href}, {text}, {type});";
 
 		return Batch(query).insert(links, link -> asList(
-			Param.value("href", link.getHref()),
-			Param.value("text", link.getText()),
-			Param.value("type", link.getType())
+			Param.of("href", link.getHref()),
+			Param.of("text", link.getText()),
+			Param.of("type", link.getType())
 		));
 	}
 
@@ -147,9 +147,9 @@ public final class LinkDAO
 			"WHERE id = {id}";
 
 		Batch(query).update(links, link -> asList(
-			Param.value("id", link.id()),
-			Param.value("text", link.value().getText()),
-			Param.value("type", link.value().getType())
+			Param.of("id", link.id()),
+			Param.of("text", link.value().getText()),
+			Param.of("type", link.value().getType())
 		));
 
 		return new ArrayList<>(links);
@@ -194,7 +194,7 @@ public final class LinkDAO
 				"DELETE FROM link WHERE "+column.name()+" IN ({values})";
 
 			count = SQL(query)
-				.on(Param.values("values", values, column.mapper()))
+				.on(Param.of("values", values, column.mapper()))
 				.execute();
 
 		} else {

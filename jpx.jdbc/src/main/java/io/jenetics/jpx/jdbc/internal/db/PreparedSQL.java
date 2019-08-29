@@ -111,7 +111,7 @@ public final class PreparedSQL {
 			}
 
 			final List<Object> values = paramsMap.get(name).stream()
-				.flatMap(p -> p.values().stream())
+				.flatMap(p -> p.of().stream())
 				.map(PreparedSQL::toSQLValue)
 				.collect(Collectors.toList());
 
@@ -196,7 +196,7 @@ public final class PreparedSQL {
 			names.add(name);
 
 			final String placeHolder = paramsMap.get(name).stream()
-				.flatMap(p -> p.values().stream())
+				.flatMap(p -> p.of().stream())
 				.map(p -> "?")
 				.collect(Collectors.joining(","));
 

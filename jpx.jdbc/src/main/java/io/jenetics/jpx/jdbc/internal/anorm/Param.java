@@ -20,6 +20,7 @@
 package io.jenetics.jpx.jdbc.internal.anorm;
 
 import static java.lang.String.format;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
@@ -61,7 +62,7 @@ public final class Param {
 	 *
 	 * @return the parameter values
 	 */
-	public Collection<?> values() {
+	public Collection<?> of() {
 		return _values;
 	}
 
@@ -80,13 +81,13 @@ public final class Param {
 	 * {@code value}.
 	 *
 	 * @param name the parameter name
-	 * @param value the parameter value
+	 * @param values the parameter values
 	 * @return a new query parameter object
 	 * @throws NullPointerException if the given parameter {@code name} is
 	 *         {@code null}
 	 */
-	public static Param value(final String name, final Object value) {
-		return new Param(name, singletonList(value));
+	public static Param of(final String name, final Object... values) {
+		return new Param(name, asList(values));
 	}
 
 	/**
@@ -96,28 +97,28 @@ public final class Param {
 	 * @param values the parameter values
 	 * @return a new parameter object
 	 */
-	public static Param values(
+	public static Param of(
 		final String name,
 		final Collection<?> values
 	) {
 		return new Param(name, values);
 	}
 
-	/**
-	 * Return a new parameter object with the given name and long values.
-	 *
-	 * @param name the parameter name
-	 * @param values the parameter values
-	 * @return a new parameter object
-	 */
-	public static Param values(final String name, final long... values) {
-		return new Param(
-			name,
-			LongStream.of(values)
-				.boxed()
-				.collect(Collectors.toList())
-		);
-	}
+//	/**
+//	 * Return a new parameter object with the given name and long values.
+//	 *
+//	 * @param name the parameter name
+//	 * @param values the parameter values
+//	 * @return a new parameter object
+//	 */
+//	public static Param of(final String name, final long... values) {
+//		return new Param(
+//			name,
+//			LongStream.of(values)
+//				.boxed()
+//				.collect(Collectors.toList())
+//		);
+//	}
 
 	/**
 	 * Create a ne parameter object with the given name and values.
@@ -128,7 +129,7 @@ public final class Param {
 	 * @param <V> the raw-type
 	 * @return a new parameter object
 	 */
-	public static <V> Param values(
+	public static <V> Param of(
 		final String name,
 		final Collection<? extends V> values,
 		final Function<? super V, ?> mapper

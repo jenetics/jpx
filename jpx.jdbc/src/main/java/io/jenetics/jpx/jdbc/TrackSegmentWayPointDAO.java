@@ -111,8 +111,8 @@ public class TrackSegmentWayPointDAO extends DAO {
 			"VALUES({track_segment_id}, {way_point_id});";
 
 		Batch(query).execute(trackSegmentWayPoints, point -> asList(
-			Param.value("track_segment_id", point._1),
-			Param.value("way_point_id", point._2)
+			Param.of("track_segment_id", point._1),
+			Param.of("way_point_id", point._2)
 		));
 
 		return trackSegmentWayPoints;
