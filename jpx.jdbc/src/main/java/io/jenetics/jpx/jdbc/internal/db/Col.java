@@ -21,7 +21,7 @@ package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.util.Objects.requireNonNull;
 
-import io.jenetics.jpx.jdbc.internal.db.SQL.Function;
+import io.jenetics.jpx.jdbc.internal.anorm.SqlFunction;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -31,9 +31,9 @@ import io.jenetics.jpx.jdbc.internal.db.SQL.Function;
 public final class Col<T> {
 
 	private final String _name;
-	private final Function<?, T> _mapper;
+	private final SqlFunction<?, T> _mapper;
 
-	private Col(final String name, final Function<?, T> mapper) {
+	private Col(final String name, final SqlFunction<?, T> mapper) {
 		_name = requireNonNull(name);
 		_mapper = requireNonNull(mapper);
 	}

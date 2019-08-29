@@ -36,6 +36,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import io.jenetics.jpx.jdbc.internal.anorm.SqlFunction;
+
 /**
  * Abstract DAO class which implements the methods for doing easy SQL.
  *
@@ -107,7 +109,7 @@ public abstract class DAO {
 	protected static <V, K> List<Stored<V>> put(
 		final Collection<V> values,
 		final Function<V, K> key,
-		final SQL.Function<Collection<V>, List<Stored<V>>> select,
+		final SqlFunction<Collection<V>, List<Stored<V>>> select,
 		final Inserter<V> inserter,
 		final Updater<V> updater
 	)
@@ -172,7 +174,7 @@ public abstract class DAO {
 	protected static <A, B> Map<B, Long> write(
 		final Collection<A> values,
 		final ListMapper<A, B> mapper,
-		final SQL.Function<List<B>, List<Stored<B>>> writer
+		final SqlFunction<List<B>, List<Stored<B>>> writer
 	)
 		throws SQLException
 	{
@@ -201,7 +203,7 @@ public abstract class DAO {
 	protected static <A, B> Map<B, Long> write(
 		final Collection<A> values,
 		final OptionMapper<A, B> mapper,
-		final SQL.Function<List<B>, List<Stored<B>>> writer
+		final SqlFunction<List<B>, List<Stored<B>>> writer
 	)
 		throws SQLException
 	{
