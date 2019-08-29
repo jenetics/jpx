@@ -1487,7 +1487,7 @@ public final class Results implements ResultSet {
 		return _rs.isWrapperFor(iface);
 	}
 
-	static Results of(final ResultSet rs) {
+	public static Results of(final ResultSet rs) {
 		return new Results(rs);
 	}
 

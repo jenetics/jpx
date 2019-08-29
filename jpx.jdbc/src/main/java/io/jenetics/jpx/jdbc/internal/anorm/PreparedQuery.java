@@ -19,13 +19,23 @@
  */
 package io.jenetics.jpx.jdbc.internal.anorm;
 
+import static java.lang.String.format;
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import io.jenetics.jpx.jdbc.internal.db.PreparedSQL;
+import io.jenetics.jpx.jdbc.internal.db.Results;
+import io.jenetics.jpx.jdbc.internal.db.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -44,6 +54,55 @@ public class PreparedQuery {
 
 	public int execute(final Connection conn) throws SQLException {
 		return 1;
+	}
+
+	/**
+	 * Executes the select query.
+	 *
+	 * @param parser the row parser used for creating the result objects
+	 * @param <T> the result type
+	 * @return the query result
+	 * @throws SQLException if the query execution fails
+	 * @throws NullPointerException if the given row {@code parser} is
+	 *         {@code null}
+	 */
+	public <T> T as(final RowParser<T> parser, final Connection conn) throws SQLException {
+		requireNonNull(parser);
+
+		try (PreparedStatement ps = prepare(conn);
+			 ResultSet rs = ps.executeQuery())
+		{
+			return parser.parse(Results.of(rs));
+		}
+	}
+
+	private PreparedStatement prepare(final Connection conn) throws SQLException {
+		requireNonNull(conn);
+		return conn.prepareStatement(_query.sql(), RETURN_GENERATED_KEYS);
+	}
+
+	private void fill(final PreparedStatement stmt) throws SQLException {
+		requireNonNull(stmt);
+
+		final Map<String, List<Param>> paramsMap = _params.stream()
+			.collect(Collectors.groupingBy(Param::name));
+
+		int index = 1;
+		for (String name : _query.names()) {
+			if (!paramsMap.containsKey(name)) {
+				throw new IllegalArgumentException(format(
+					"Param '%s' not found.", name
+				));
+			}
+
+			final List<Object> values = paramsMap.get(name).stream()
+				.flatMap(p -> p.of().stream())
+				.collect(Collectors.toList());
+
+			for (Object value : values) {
+				stmt.setObject(index++, value);
+			}
+		}
 	}
 
 	public static PreparedQuery of(final Query query, final Param... params) {

@@ -38,7 +38,7 @@ public class QueryTest {
 			query.sql(),
 			"SELECT * FROM table WHERE id = ? AND name = ?"
 		);
-		Assert.assertEquals(query.names(), asList("id", "names"));
+		Assert.assertEquals(query.names(), asList("id", "name"));
 	}
 
 }

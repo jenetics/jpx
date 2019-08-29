@@ -24,6 +24,8 @@ import java.sql.SQLException;
 
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.jdbc.internal.db.RowParser;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
@@ -36,7 +38,7 @@ public class AnormTest {
 			.on(
 				Param.of("id", 2),
 				Param.of("name", "franz"))
-			.execute(conn);
+			.as(null, conn);
 	}
 
 }
