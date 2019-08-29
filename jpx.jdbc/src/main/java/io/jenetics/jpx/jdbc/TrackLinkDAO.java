@@ -42,80 +42,80 @@ import io.jenetics.jpx.jdbc.internal.util.Pair;
  * @version !__version__!
  * @since !__version__!
  */
-public class TrackLinkDAO extends DAO {
-
-	/**
-	 * Represents a row in the "track_link" table.
-	 */
-	private static final class Row {
-		final Long trackID;
-		final Long linkID;
-
-		Row(final Long trackID, final Long linkID) {
-			this.trackID = trackID;
-			this.linkID = linkID;
-		}
-
-		Long trackID() {
-			return trackID;
-		}
-
-		Long linkID() {
-			return linkID;
-		}
-	}
-
-	public TrackLinkDAO(final Connection conn) {
-		super(conn);
-	}
-
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Row> RowParser = rs -> new Row(
-		rs.getLong("track_id"),
-		rs.getLong("link_id")
-	);
-
-	/* *************************************************************************
-	 * SELECT queries
-	 **************************************************************************/
-
-	public Map<Long, List<Link>> selectLinksByTrackID(final List<Long> ids)
-		throws SQLException
-	{
-		final String query =
-			"SELECT track_id, link_id " +
-			"FROM track_link " +
-			"WHERE track_id IN ({ids})";
-
-		final List<Row> rows = SQL(query)
-			.on(Param.values("ids", ids))
-			.as(RowParser.list());
-
-		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByVals(Column.of("id", Row::linkID), rows).stream()
-			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
-
-		return rows.stream()
-			.map(row -> Pair.of(row.trackID, links.get(row.linkID)))
-			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
-	}
-
-	/* *************************************************************************
-	 * INSERT queries
-	 **************************************************************************/
-
-	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> trackLinks)
-		throws SQLException
-	{
-		final String query =
-			"INSERT INTO track_link(track_id, link_id) " +
-			"VALUES({track_id}, {link_id});";
-
-		Batch(query).execute(trackLinks, mdl -> asList(
-			Param.value("track_id", mdl._1),
-			Param.value("link_id", mdl._2)
-		));
-
-		return trackLinks;
-	}
-
-}
+//public class TrackLinkDAO extends DAO {
+//
+//	/**
+//	 * Represents a row in the "track_link" table.
+//	 */
+//	private static final class Row {
+//		final Long trackID;
+//		final Long linkID;
+//
+//		Row(final Long trackID, final Long linkID) {
+//			this.trackID = trackID;
+//			this.linkID = linkID;
+//		}
+//
+//		Long trackID() {
+//			return trackID;
+//		}
+//
+//		Long linkID() {
+//			return linkID;
+//		}
+//	}
+//
+//	public TrackLinkDAO(final Connection conn) {
+//		super(conn);
+//	}
+//
+//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Row> RowParser = rs -> new Row(
+//		rs.getLong("track_id"),
+//		rs.getLong("link_id")
+//	);
+//
+//	/* *************************************************************************
+//	 * SELECT queries
+//	 **************************************************************************/
+//
+//	public Map<Long, List<Link>> selectLinksByTrackID(final List<Long> ids)
+//		throws SQLException
+//	{
+//		final String query =
+//			"SELECT track_id, link_id " +
+//			"FROM track_link " +
+//			"WHERE track_id IN ({ids})";
+//
+//		final List<Row> rows = SQL(query)
+//			.on(Param.values("ids", ids))
+//			.as(RowParser.list());
+//
+//		final Map<Long, Link> links = with(LinkDAO::new)
+//			.selectByVals(Column.of("id", Row::linkID), rows).stream()
+//			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
+//
+//		return rows.stream()
+//			.map(row -> Pair.of(row.trackID, links.get(row.linkID)))
+//			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
+//	}
+//
+//	/* *************************************************************************
+//	 * INSERT queries
+//	 **************************************************************************/
+//
+//	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> trackLinks)
+//		throws SQLException
+//	{
+//		final String query =
+//			"INSERT INTO track_link(track_id, link_id) " +
+//			"VALUES({track_id}, {link_id});";
+//
+//		Batch(query).execute(trackLinks, mdl -> asList(
+//			Param.value("track_id", mdl._1),
+//			Param.value("link_id", mdl._2)
+//		));
+//
+//		return trackLinks;
+//	}
+//
+//}

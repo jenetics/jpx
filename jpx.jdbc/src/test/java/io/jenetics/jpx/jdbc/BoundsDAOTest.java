@@ -36,77 +36,77 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class BoundsDAOTest extends DAOTestBase<Bounds> {
-
-	@Override
-	public Bounds nextObject(final Random random) {
-		return BoundsTest.nextBounds(random);
-	}
-
-	private final List<Bounds> objects = nextObjects(new Random(123), 20);
-
-	@Test
-	public void insert() throws SQLException {
-		db.transaction(conn -> {
-			new BoundsDAO(conn).insert(objects);
-		});
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void select() throws SQLException {
-		final List<Stored<Bounds>> existing = db.transaction(conn -> {
-			return new BoundsDAO(conn).select();
-		});
-
-		Assert.assertEquals(map(existing, Stored::value), objects);
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void selectByMinlat() throws SQLException {
-		final List<Stored<Bounds>> selected = db.transaction(conn -> {
-			return new BoundsDAO(conn)
-				.selectBy("minlat", objects.get(0).getMinLatitude());
-		});
-
-		Assert.assertEquals(selected.get(0).value(), objects.get(0));
-	}
-
-	@Test(dependsOnMethods = "select")
-	public void update() throws SQLException {
-		final List<Stored<Bounds>> existing = db.transaction(conn -> {
-			return new BoundsDAO(conn).select();
-		});
-
-		db.transaction(conn -> {
-			final Stored<Bounds> updated = existing.get(0)
-				.map(b -> nextObject(new Random()));
-
-			Assert.assertEquals(
-				new BoundsDAO(conn).update(updated),
-				updated
-			);
-
-			Assert.assertEquals(new BoundsDAO(conn).select().get(0), updated);
-		});
-	}
-
-	@Test(dependsOnMethods = "update")
-	public void delete() throws SQLException {
-		db.transaction(conn -> {
-			final BoundsDAO dao = new BoundsDAO(conn);
-
-			final List<Stored<Bounds>> existing = dao.select();
-
-			final int count = dao
-				.deleteBy(Column.of("minlon", b -> b.value().getMinLongitude()), existing.get(0));
-
-			Assert.assertEquals(count, 1);
-
-			Assert.assertEquals(
-				map(dao.select(), Stored::value),
-				objects.subList(1, objects.size())
-			);
-		});
-	}
-
-}
+//public class BoundsDAOTest extends DAOTestBase<Bounds> {
+//
+//	@Override
+//	public Bounds nextObject(final Random random) {
+//		return BoundsTest.nextBounds(random);
+//	}
+//
+//	private final List<Bounds> objects = nextObjects(new Random(123), 20);
+//
+//	@Test
+//	public void insert() throws SQLException {
+//		db.transaction(conn -> {
+//			new BoundsDAO(conn).insert(objects);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void select() throws SQLException {
+//		final List<Stored<Bounds>> existing = db.transaction(conn -> {
+//			return new BoundsDAO(conn).select();
+//		});
+//
+//		Assert.assertEquals(map(existing, Stored::value), objects);
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void selectByMinlat() throws SQLException {
+//		final List<Stored<Bounds>> selected = db.transaction(conn -> {
+//			return new BoundsDAO(conn)
+//				.selectBy("minlat", objects.get(0).getMinLatitude());
+//		});
+//
+//		Assert.assertEquals(selected.get(0).value(), objects.get(0));
+//	}
+//
+//	@Test(dependsOnMethods = "select")
+//	public void update() throws SQLException {
+//		final List<Stored<Bounds>> existing = db.transaction(conn -> {
+//			return new BoundsDAO(conn).select();
+//		});
+//
+//		db.transaction(conn -> {
+//			final Stored<Bounds> updated = existing.get(0)
+//				.map(b -> nextObject(new Random()));
+//
+//			Assert.assertEquals(
+//				new BoundsDAO(conn).update(updated),
+//				updated
+//			);
+//
+//			Assert.assertEquals(new BoundsDAO(conn).select().get(0), updated);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "update")
+//	public void delete() throws SQLException {
+//		db.transaction(conn -> {
+//			final BoundsDAO dao = new BoundsDAO(conn);
+//
+//			final List<Stored<Bounds>> existing = dao.select();
+//
+//			final int count = dao
+//				.deleteBy(Column.of("minlon", b -> b.value().getMinLongitude()), existing.get(0));
+//
+//			Assert.assertEquals(count, 1);
+//
+//			Assert.assertEquals(
+//				map(dao.select(), Stored::value),
+//				objects.subList(1, objects.size())
+//			);
+//		});
+//	}
+//
+//}

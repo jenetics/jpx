@@ -38,82 +38,82 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
  * @version !__version__!
  * @since !__version__!
  */
-public class RouteDAOTest extends DAOTestBase<Route> {
-
-	@Override
-	public Route nextObject(final Random random) {
-		return RouteTest.nextRoute(random);
-	}
-
-	private final List<Route> objects = nextObjects(new Random(12), 1);
-
-	@Test
-	public void insert() throws SQLException {
-		db.transaction(conn -> {
-			new RouteDAO(conn).insert(objects);
-		});
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void select() throws SQLException {
-		final List<Stored<Route>> existing = db.transaction(conn -> {
-			return new RouteDAO(conn).select();
-		});
-
-		Assert.assertEquals(map(existing, Stored::value), objects);
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void selectByName() throws SQLException {
-		final List<Stored<Route>> selected = db.transaction(conn -> {
-			return new RouteDAO(conn)
-				.selectBy("name", objects.get(0).getName());
-		});
-
-		Assert.assertEquals(
-			selected.get(0).value(),
-			objects.get(0));
-	}
-
-	//@Test(dependsOnMethods = "select")
-	public void update() throws SQLException {
-		final List<Stored<Route>> existing = db.transaction(conn -> {
-			return new RouteDAO(conn).select();
-		});
-
-		db.transaction(conn -> {
-			final Stored<Route> updated = existing.get(0)
-				.map(l -> nextObject(new Random()));
-
-			Assert.assertEquals(
-				new RouteDAO(conn).update(updated),
-				updated
-			);
-
-			Assert.assertEquals(
-				new RouteDAO(conn).select().get(0).value(),
-				updated.value()
-			);
-		});
-	}
-
-	//@Test(dependsOnMethods = "update")
-	public void delete() throws SQLException {
-		db.transaction(conn -> {
-			final RouteDAO dao = new RouteDAO(conn);
-
-			final List<Stored<Route>> existing = dao.select();
-
-			final int count = dao
-				.deleteBy(Column.of("name", md -> md.value().getName()), existing.get(0));
-
-			Assert.assertEquals(count, 1);
-
-			Assert.assertEquals(
-				dao.select(),
-				existing.subList(1, existing.size())
-			);
-		});
-	}
-
-}
+//public class RouteDAOTest extends DAOTestBase<Route> {
+//
+//	@Override
+//	public Route nextObject(final Random random) {
+//		return RouteTest.nextRoute(random);
+//	}
+//
+//	private final List<Route> objects = nextObjects(new Random(12), 1);
+//
+//	@Test
+//	public void insert() throws SQLException {
+//		db.transaction(conn -> {
+//			new RouteDAO(conn).insert(objects);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void select() throws SQLException {
+//		final List<Stored<Route>> existing = db.transaction(conn -> {
+//			return new RouteDAO(conn).select();
+//		});
+//
+//		Assert.assertEquals(map(existing, Stored::value), objects);
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void selectByName() throws SQLException {
+//		final List<Stored<Route>> selected = db.transaction(conn -> {
+//			return new RouteDAO(conn)
+//				.selectBy("name", objects.get(0).getName());
+//		});
+//
+//		Assert.assertEquals(
+//			selected.get(0).value(),
+//			objects.get(0));
+//	}
+//
+//	//@Test(dependsOnMethods = "select")
+//	public void update() throws SQLException {
+//		final List<Stored<Route>> existing = db.transaction(conn -> {
+//			return new RouteDAO(conn).select();
+//		});
+//
+//		db.transaction(conn -> {
+//			final Stored<Route> updated = existing.get(0)
+//				.map(l -> nextObject(new Random()));
+//
+//			Assert.assertEquals(
+//				new RouteDAO(conn).update(updated),
+//				updated
+//			);
+//
+//			Assert.assertEquals(
+//				new RouteDAO(conn).select().get(0).value(),
+//				updated.value()
+//			);
+//		});
+//	}
+//
+//	//@Test(dependsOnMethods = "update")
+//	public void delete() throws SQLException {
+//		db.transaction(conn -> {
+//			final RouteDAO dao = new RouteDAO(conn);
+//
+//			final List<Stored<Route>> existing = dao.select();
+//
+//			final int count = dao
+//				.deleteBy(Column.of("name", md -> md.value().getName()), existing.get(0));
+//
+//			Assert.assertEquals(count, 1);
+//
+//			Assert.assertEquals(
+//				dao.select(),
+//				existing.subList(1, existing.size())
+//			);
+//		});
+//	}
+//
+//}

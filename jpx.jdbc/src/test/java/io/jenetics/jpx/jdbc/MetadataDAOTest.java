@@ -36,78 +36,78 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class MetadataDAOTest extends DAOTestBase<Metadata> {
-
-	@Override
-	public Metadata nextObject(final Random random) {
-		return MetadataTest.nextMetadata(random);
-	}
-
-	private final List<Metadata> objects = nextObjects(new Random(12), 2);
-
-
-	@Test
-	public void insert() throws SQLException {
-		db.transaction(conn -> {
-			new MetadataDAO(conn).insert(objects);
-		});
-	}
-
-	//@Test(dependsOnMethods = "insert")
-	public void select() throws SQLException {
-		final List<Stored<Metadata>> existing = db.transaction(conn -> {
-			return new MetadataDAO(conn).select();
-		});
-
-		Assert.assertEquals(map(existing, Stored::value), objects);
-	}
-
-	//@Test(dependsOnMethods = "insert")
-	public void selectByName() throws SQLException {
-		final List<Stored<Metadata>> selected = db.transaction(conn -> {
-			return new MetadataDAO(conn)
-				.selectBy("name", objects.get(0).getName());
-		});
-
-		Assert.assertEquals(selected.get(0).value(), objects.get(0));
-	}
-
-	//@Test(dependsOnMethods = "select")
-	public void update() throws SQLException {
-		final List<Stored<Metadata>> existing = db.transaction(conn -> {
-			return new MetadataDAO(conn).select();
-		});
-
-		db.transaction(conn -> {
-			final Stored<Metadata> updated = existing.get(0)
-				.map(l -> nextObject(new Random()));
-
-			Assert.assertEquals(
-				new MetadataDAO(conn).update(updated),
-				updated
-			);
-
-			Assert.assertEquals(new MetadataDAO(conn).select().get(0), updated);
-		});
-	}
-
-	//@Test(dependsOnMethods = "update")
-	public void delete() throws SQLException {
-		db.transaction(conn -> {
-			final MetadataDAO dao = new MetadataDAO(conn);
-
-			final List<Stored<Metadata>> existing = dao.select();
-
-			final int count = dao
-				.deleteBy(Column.of("name", md -> md.value().getName()), existing.get(0));
-
-			Assert.assertEquals(count, 1);
-
-			Assert.assertEquals(
-				dao.select(),
-				existing.subList(1, existing.size())
-			);
-		});
-	}
-
-}
+//public class MetadataDAOTest extends DAOTestBase<Metadata> {
+//
+//	@Override
+//	public Metadata nextObject(final Random random) {
+//		return MetadataTest.nextMetadata(random);
+//	}
+//
+//	private final List<Metadata> objects = nextObjects(new Random(12), 2);
+//
+//
+//	@Test
+//	public void insert() throws SQLException {
+//		db.transaction(conn -> {
+//			new MetadataDAO(conn).insert(objects);
+//		});
+//	}
+//
+//	//@Test(dependsOnMethods = "insert")
+//	public void select() throws SQLException {
+//		final List<Stored<Metadata>> existing = db.transaction(conn -> {
+//			return new MetadataDAO(conn).select();
+//		});
+//
+//		Assert.assertEquals(map(existing, Stored::value), objects);
+//	}
+//
+//	//@Test(dependsOnMethods = "insert")
+//	public void selectByName() throws SQLException {
+//		final List<Stored<Metadata>> selected = db.transaction(conn -> {
+//			return new MetadataDAO(conn)
+//				.selectBy("name", objects.get(0).getName());
+//		});
+//
+//		Assert.assertEquals(selected.get(0).value(), objects.get(0));
+//	}
+//
+//	//@Test(dependsOnMethods = "select")
+//	public void update() throws SQLException {
+//		final List<Stored<Metadata>> existing = db.transaction(conn -> {
+//			return new MetadataDAO(conn).select();
+//		});
+//
+//		db.transaction(conn -> {
+//			final Stored<Metadata> updated = existing.get(0)
+//				.map(l -> nextObject(new Random()));
+//
+//			Assert.assertEquals(
+//				new MetadataDAO(conn).update(updated),
+//				updated
+//			);
+//
+//			Assert.assertEquals(new MetadataDAO(conn).select().get(0), updated);
+//		});
+//	}
+//
+//	//@Test(dependsOnMethods = "update")
+//	public void delete() throws SQLException {
+//		db.transaction(conn -> {
+//			final MetadataDAO dao = new MetadataDAO(conn);
+//
+//			final List<Stored<Metadata>> existing = dao.select();
+//
+//			final int count = dao
+//				.deleteBy(Column.of("name", md -> md.value().getName()), existing.get(0));
+//
+//			Assert.assertEquals(count, 1);
+//
+//			Assert.assertEquals(
+//				dao.select(),
+//				existing.subList(1, existing.size())
+//			);
+//		});
+//	}
+//
+//}

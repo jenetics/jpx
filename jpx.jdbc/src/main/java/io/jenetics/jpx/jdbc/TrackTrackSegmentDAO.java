@@ -36,84 +36,84 @@ import io.jenetics.jpx.jdbc.internal.util.Pair;
  * @version !__version__!
  * @since !__version__!
  */
-public class TrackTrackSegmentDAO extends DAO {
-
-	/**
-	 * Represents a row in the "route_link" table.
-	 */
-	private static final class Row {
-		final Long trackID;
-		final Long trackSegmentID;
-
-		Row(final Long trackID, final Long trackSegmentID) {
-			this.trackID = trackID;
-			this.trackSegmentID = trackSegmentID;
-		}
-
-		Long trackID() {
-			return trackID;
-		}
-
-		Long trackSegmentID() {
-			return trackSegmentID;
-		}
-	}
-
-	public TrackTrackSegmentDAO(final Connection conn) {
-		super(conn);
-	}
-
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Row> RowParser = rs -> new Row(
-		rs.getLong("track_id"),
-		rs.getLong("track_segment_id")
-	);
-
-	/* *************************************************************************
-	 * SELECT queries
-	 **************************************************************************/
-
-	public Map<Long, List<TrackSegment>> selectLinksByRouteID(final List<Long> ids)
-		throws SQLException
-	{
-		final String query =
-			"SELECT track_id, track_segment_id " +
-			"FROM track_track_segment " +
-			"WHERE track_id IN ({ids})";
-
-		final List<Row> rows = SQL(query)
-			.on(Param.values("ids", ids))
-			.as(RowParser.list());
-
-		/*
-		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByID(map(rows, RouteLinkDAO.Row::linkID)).stream()
-			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
-
-		return rows.stream()
-			.map(row -> Pair.of(row.routeID, links.get(row.linkID)))
-			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
-		*/
-
-		return null;
-	}
-
-	/* *************************************************************************
-	 * INSERT queries
-	 **************************************************************************/
-
-	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> routeLinks)
-		throws SQLException
-	{
-		final String query =
-			"INSERT INTO route_link(route_id, link_id) " +
-				"VALUES({route_id}, {link_id});";
-
-		Batch(query).execute(routeLinks, mdl -> asList(
-			Param.value("route_id", mdl._1),
-			Param.value("link_id", mdl._2)
-		));
-
-		return routeLinks;
-	}
-
-}
+//public class TrackTrackSegmentDAO extends DAO {
+//
+//	/**
+//	 * Represents a row in the "route_link" table.
+//	 */
+//	private static final class Row {
+//		final Long trackID;
+//		final Long trackSegmentID;
+//
+//		Row(final Long trackID, final Long trackSegmentID) {
+//			this.trackID = trackID;
+//			this.trackSegmentID = trackSegmentID;
+//		}
+//
+//		Long trackID() {
+//			return trackID;
+//		}
+//
+//		Long trackSegmentID() {
+//			return trackSegmentID;
+//		}
+//	}
+//
+//	public TrackTrackSegmentDAO(final Connection conn) {
+//		super(conn);
+//	}
+//
+//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Row> RowParser = rs -> new Row(
+//		rs.getLong("track_id"),
+//		rs.getLong("track_segment_id")
+//	);
+//
+//	/* *************************************************************************
+//	 * SELECT queries
+//	 **************************************************************************/
+//
+//	public Map<Long, List<TrackSegment>> selectLinksByRouteID(final List<Long> ids)
+//		throws SQLException
+//	{
+//		final String query =
+//			"SELECT track_id, track_segment_id " +
+//			"FROM track_track_segment " +
+//			"WHERE track_id IN ({ids})";
+//
+//		final List<Row> rows = SQL(query)
+//			.on(Param.values("ids", ids))
+//			.as(RowParser.list());
+//
+//		/*
+//		final Map<Long, Link> links = with(LinkDAO::new)
+//			.selectByID(map(rows, RouteLinkDAO.Row::linkID)).stream()
+//			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
+//
+//		return rows.stream()
+//			.map(row -> Pair.of(row.routeID, links.get(row.linkID)))
+//			.collect(groupingBy(Pair::_1, mapping(Pair::_2, toList())));
+//		*/
+//
+//		return null;
+//	}
+//
+//	/* *************************************************************************
+//	 * INSERT queries
+//	 **************************************************************************/
+//
+//	public List<Pair<Long, Long>> insert(final List<Pair<Long, Long>> routeLinks)
+//		throws SQLException
+//	{
+//		final String query =
+//			"INSERT INTO route_link(route_id, link_id) " +
+//				"VALUES({route_id}, {link_id});";
+//
+//		Batch(query).execute(routeLinks, mdl -> asList(
+//			Param.value("route_id", mdl._1),
+//			Param.value("link_id", mdl._2)
+//		));
+//
+//		return routeLinks;
+//	}
+//
+//}

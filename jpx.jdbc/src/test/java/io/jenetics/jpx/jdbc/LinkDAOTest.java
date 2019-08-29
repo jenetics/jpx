@@ -36,85 +36,85 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class LinkDAOTest extends DAOTestBase<Link> {
-
-	@Override
-	public Link nextObject(final Random random) {
-		return LinkTest.nextLink(random);
-	}
-
-	private final List<Link> objects = nextObjects(new Random(1234), 10);
-
-	@Test
-	public void insert() throws SQLException {
-		db.transaction(conn -> {
-			new LinkDAO(conn).insert(objects);
-		});
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void select() throws SQLException {
-		final List<Stored<Link>> existing = db.transaction(conn -> {
-			return new LinkDAO(conn).select();
-		});
-
-		Assert.assertEquals(map(existing, Stored::value), objects);
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void selectByHref() throws SQLException {
-		final List<Stored<Link>> selected = db.transaction(conn -> {
-			return new LinkDAO(conn)
-				.selectBy("href", objects.get(0).getHref());
-		});
-
-		Assert.assertEquals(selected.get(0).value(), objects.get(0));
-	}
-
-	@Test(dependsOnMethods = "select")
-	public void update() throws SQLException {
-		final List<Stored<Link>> existing = db.transaction(conn -> {
-			return new LinkDAO(conn).select();
-		});
-
-		db.transaction(conn -> {
-			final Stored<Link> updated = existing.get(0)
-				.map(l -> Link.of(l.getHref(), "Other text", null));
-
-			Assert.assertEquals(
-				new LinkDAO(conn).update(updated),
-				updated
-			);
-
-			Assert.assertEquals(new LinkDAO(conn).select().get(0), updated);
-		});
-	}
-
-	@Test(dependsOnMethods = "update")
-	public void put() throws SQLException {
-		db.transaction(conn -> {
-			final LinkDAO dao = new LinkDAO(conn);
-
-			dao.put(objects);
-			Assert.assertEquals(map(dao.select(), Stored::value), objects);
-		});
-	}
-
-	@Test(dependsOnMethods = "put")
-	public void delete() throws SQLException {
-		db.transaction(conn -> {
-			final LinkDAO dao = new LinkDAO(conn);
-
-			final int count = dao
-				.deleteBy(Column.of("href", Link::getHref), objects.get(0));
-
-			Assert.assertEquals(count, 1);
-
-			Assert.assertEquals(
-				map(dao.select(), Stored::value),
-				objects.subList(1, objects.size())
-			);
-		});
-	}
-
-}
+//public class LinkDAOTest extends DAOTestBase<Link> {
+//
+//	@Override
+//	public Link nextObject(final Random random) {
+//		return LinkTest.nextLink(random);
+//	}
+//
+//	private final List<Link> objects = nextObjects(new Random(1234), 10);
+//
+//	@Test
+//	public void insert() throws SQLException {
+//		db.transaction(conn -> {
+//			new LinkDAO(conn).insert(objects);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void select() throws SQLException {
+//		final List<Stored<Link>> existing = db.transaction(conn -> {
+//			return new LinkDAO(conn).select();
+//		});
+//
+//		Assert.assertEquals(map(existing, Stored::value), objects);
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void selectByHref() throws SQLException {
+//		final List<Stored<Link>> selected = db.transaction(conn -> {
+//			return new LinkDAO(conn)
+//				.selectBy("href", objects.get(0).getHref());
+//		});
+//
+//		Assert.assertEquals(selected.get(0).value(), objects.get(0));
+//	}
+//
+//	@Test(dependsOnMethods = "select")
+//	public void update() throws SQLException {
+//		final List<Stored<Link>> existing = db.transaction(conn -> {
+//			return new LinkDAO(conn).select();
+//		});
+//
+//		db.transaction(conn -> {
+//			final Stored<Link> updated = existing.get(0)
+//				.map(l -> Link.of(l.getHref(), "Other text", null));
+//
+//			Assert.assertEquals(
+//				new LinkDAO(conn).update(updated),
+//				updated
+//			);
+//
+//			Assert.assertEquals(new LinkDAO(conn).select().get(0), updated);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "update")
+//	public void put() throws SQLException {
+//		db.transaction(conn -> {
+//			final LinkDAO dao = new LinkDAO(conn);
+//
+//			dao.put(objects);
+//			Assert.assertEquals(map(dao.select(), Stored::value), objects);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "put")
+//	public void delete() throws SQLException {
+//		db.transaction(conn -> {
+//			final LinkDAO dao = new LinkDAO(conn);
+//
+//			final int count = dao
+//				.deleteBy(Column.of("href", Link::getHref), objects.get(0));
+//
+//			Assert.assertEquals(count, 1);
+//
+//			Assert.assertEquals(
+//				map(dao.select(), Stored::value),
+//				objects.subList(1, objects.size())
+//			);
+//		});
+//	}
+//
+//}

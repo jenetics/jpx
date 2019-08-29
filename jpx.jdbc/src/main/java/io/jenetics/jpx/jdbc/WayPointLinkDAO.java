@@ -46,101 +46,101 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
  * @version !__version__!
  * @since !__version__!
  */
-public class WayPointLinkDAO
-	extends DAO
-	implements
-	Inserter<WayPointLink>,
-	Delete
-{
-
-	public WayPointLinkDAO(final Connection conn) {
-		super(conn);
-	}
-
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<WayPointLink>> RowParser = rs -> Stored.of(
-		rs.getLong("way_point_id"),
-		WayPointLink.of(
-			rs.getLong("way_point_id"),
-			rs.getLong("link_id")
-		)
-	);
-
-	/* *************************************************************************
-	 * SELECT queries
-	 **************************************************************************/
-
-	public <T> Map<Long, List<Link>> selectLinks(
-		final Collection<T> values,
-		final Function<T, Long> mapper
-	)
-		throws SQLException
-	{
-		final String query =
-			"SELECT way_point_id, link_id " +
-			"FROM way_point_link " +
-			"WHERE way_point_id IN ({ids}) " +
-			"ORDER BY link_id";
-
-		final List<Stored<WayPointLink>> rows = SQL(query)
-			.on(Param.values("ids", values, mapper))
-			.as(RowParser.list());
-
-		final Map<Long, Link> links = with(LinkDAO::new)
-			.selectByVals(Column.of("id", row -> row.value().getLinkID()), rows)
-			.stream()
-			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
-
-		return rows.stream()
-			.collect(groupingBy(
-				Stored::id,
-				mapping(row -> links.get(row.value().getLinkID()), toList())));
-	}
-
-	/* *************************************************************************
-	 * INSERT queries
-	 **************************************************************************/
-
-	@Override
-	public List<Stored<WayPointLink>> insert(final Collection<WayPointLink> rows)
-		throws SQLException
-	{
-		final String query =
-			"INSERT INTO way_point_link(way_point_id, link_id) " +
-			"VALUES({way_point_id}, {link_id});";
-
-		Batch(query).execute(rows, row -> asList(
-			Param.value("way_point_id", row.getWayPointID()),
-			Param.value("link_id", row.getLinkID())
-		));
-
-		return map(rows, row -> Stored.of(row.getWayPointID(), row));
-	}
-
-	/* *************************************************************************
-	 * DELETE queries
-	 **************************************************************************/
-
-	@Override
-	public <V, C> int deleteByVals(
-		final Column<V, C> column,
-		final Collection<V> values
-	)
-		throws SQLException
-	{
-		final int count;
-		if (!values.isEmpty()) {
-			final String query =
-				"DELETE FROM way_point_link WHERE "+column.name()+" IN ({values})";
-
-			count = SQL(query)
-				.on(Param.values("values", values, column.mapper()))
-				.execute();
-
-		} else {
-			count = 0;
-		}
-
-		return count;
-	}
-
-}
+//public class WayPointLinkDAO
+//	extends DAO
+//	implements
+//	Inserter<WayPointLink>,
+//	Delete
+//{
+//
+//	public WayPointLinkDAO(final Connection conn) {
+//		super(conn);
+//	}
+//
+//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<WayPointLink>> RowParser = rs -> Stored.of(
+//		rs.getLong("way_point_id"),
+//		WayPointLink.of(
+//			rs.getLong("way_point_id"),
+//			rs.getLong("link_id")
+//		)
+//	);
+//
+//	/* *************************************************************************
+//	 * SELECT queries
+//	 **************************************************************************/
+//
+//	public <T> Map<Long, List<Link>> selectLinks(
+//		final Collection<T> values,
+//		final Function<T, Long> mapper
+//	)
+//		throws SQLException
+//	{
+//		final String query =
+//			"SELECT way_point_id, link_id " +
+//			"FROM way_point_link " +
+//			"WHERE way_point_id IN ({ids}) " +
+//			"ORDER BY link_id";
+//
+//		final List<Stored<WayPointLink>> rows = SQL(query)
+//			.on(Param.values("ids", values, mapper))
+//			.as(RowParser.list());
+//
+//		final Map<Long, Link> links = with(LinkDAO::new)
+//			.selectByVals(Column.of("id", row -> row.value().getLinkID()), rows)
+//			.stream()
+//			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
+//
+//		return rows.stream()
+//			.collect(groupingBy(
+//				Stored::id,
+//				mapping(row -> links.get(row.value().getLinkID()), toList())));
+//	}
+//
+//	/* *************************************************************************
+//	 * INSERT queries
+//	 **************************************************************************/
+//
+//	@Override
+//	public List<Stored<WayPointLink>> insert(final Collection<WayPointLink> rows)
+//		throws SQLException
+//	{
+//		final String query =
+//			"INSERT INTO way_point_link(way_point_id, link_id) " +
+//			"VALUES({way_point_id}, {link_id});";
+//
+//		Batch(query).execute(rows, row -> asList(
+//			Param.value("way_point_id", row.getWayPointID()),
+//			Param.value("link_id", row.getLinkID())
+//		));
+//
+//		return map(rows, row -> Stored.of(row.getWayPointID(), row));
+//	}
+//
+//	/* *************************************************************************
+//	 * DELETE queries
+//	 **************************************************************************/
+//
+//	@Override
+//	public <V, C> int deleteByVals(
+//		final Column<V, C> column,
+//		final Collection<V> values
+//	)
+//		throws SQLException
+//	{
+//		final int count;
+//		if (!values.isEmpty()) {
+//			final String query =
+//				"DELETE FROM way_point_link WHERE "+column.name()+" IN ({values})";
+//
+//			count = SQL(query)
+//				.on(Param.values("values", values, column.mapper()))
+//				.execute();
+//
+//		} else {
+//			count = 0;
+//		}
+//
+//		return count;
+//	}
+//
+//}

@@ -37,87 +37,87 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class PersonDAOTest extends DAOTestBase<Person> {
-
-	@Override
-	public Person nextObject(final Random random) {
-		return nextPerson(random);
-	}
-
-	private final List<Person> objects = nextObjects(new Random(123), 2);
-
-	@Test
-	public void insert() throws SQLException {
-		db.transaction(conn -> {
-			new PersonDAO(conn).insert(objects);
-		});
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void select() throws SQLException {
-		final List<Stored<Person>> existing = db.transaction(conn -> {
-			return new PersonDAO(conn).select();
-		});
-
-		Assert.assertEquals(map(existing, Stored::value), objects);
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void selectByName() throws SQLException {
-		final List<Stored<Person>> selected = db.transaction(conn -> {
-			return new PersonDAO(conn)
-				.selectBy("name", objects.get(0).getName());
-		});
-
-		Assert.assertEquals(selected.get(0).value(), objects.get(0));
-	}
-
-	@Test(dependsOnMethods = "select")
-	public void update() throws SQLException {
-		final List<Stored<Person>> existing = db.transaction(conn -> {
-			return new PersonDAO(conn).select();
-		});
-
-		db.transaction(conn -> {
-			final Stored<Person> updated = existing.get(0)
-				.map(l -> Person.of(
-					l.getName().orElse(null),
-					Email.of("other", "mail")));
-
-			Assert.assertEquals(
-				new PersonDAO(conn).update(updated),
-				updated
-			);
-
-			Assert.assertEquals(new PersonDAO(conn).select().get(0), updated);
-		});
-	}
-
-	@Test(dependsOnMethods = "update")
-	public void put() throws SQLException {
-		db.transaction(conn -> {
-			final PersonDAO dao = new PersonDAO(conn);
-
-			dao.put(objects);
-			Assert.assertEquals(map(dao.select(), Stored::value), objects);
-		});
-	}
-
-	@Test(dependsOnMethods = "put")
-	public void delete() throws SQLException {
-		db.transaction(conn -> {
-			final PersonDAO dao = new PersonDAO(conn);
-
-			final int count = dao
-				.deleteBy(Column.of("name", Person::getName), objects.get(0));
-
-			Assert.assertEquals(count, 1);
-
-			Assert.assertEquals(
-				map(dao.select(), Stored::value),
-				objects.subList(1, objects.size())
-			);
-		});
-	}
-
-}
+//public class PersonDAOTest extends DAOTestBase<Person> {
+//
+//	@Override
+//	public Person nextObject(final Random random) {
+//		return nextPerson(random);
+//	}
+//
+//	private final List<Person> objects = nextObjects(new Random(123), 2);
+//
+//	@Test
+//	public void insert() throws SQLException {
+//		db.transaction(conn -> {
+//			new PersonDAO(conn).insert(objects);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void select() throws SQLException {
+//		final List<Stored<Person>> existing = db.transaction(conn -> {
+//			return new PersonDAO(conn).select();
+//		});
+//
+//		Assert.assertEquals(map(existing, Stored::value), objects);
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void selectByName() throws SQLException {
+//		final List<Stored<Person>> selected = db.transaction(conn -> {
+//			return new PersonDAO(conn)
+//				.selectBy("name", objects.get(0).getName());
+//		});
+//
+//		Assert.assertEquals(selected.get(0).value(), objects.get(0));
+//	}
+//
+//	@Test(dependsOnMethods = "select")
+//	public void update() throws SQLException {
+//		final List<Stored<Person>> existing = db.transaction(conn -> {
+//			return new PersonDAO(conn).select();
+//		});
+//
+//		db.transaction(conn -> {
+//			final Stored<Person> updated = existing.get(0)
+//				.map(l -> Person.of(
+//					l.getName().orElse(null),
+//					Email.of("other", "mail")));
+//
+//			Assert.assertEquals(
+//				new PersonDAO(conn).update(updated),
+//				updated
+//			);
+//
+//			Assert.assertEquals(new PersonDAO(conn).select().get(0), updated);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "update")
+//	public void put() throws SQLException {
+//		db.transaction(conn -> {
+//			final PersonDAO dao = new PersonDAO(conn);
+//
+//			dao.put(objects);
+//			Assert.assertEquals(map(dao.select(), Stored::value), objects);
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "put")
+//	public void delete() throws SQLException {
+//		db.transaction(conn -> {
+//			final PersonDAO dao = new PersonDAO(conn);
+//
+//			final int count = dao
+//				.deleteBy(Column.of("name", Person::getName), objects.get(0));
+//
+//			Assert.assertEquals(count, 1);
+//
+//			Assert.assertEquals(
+//				map(dao.select(), Stored::value),
+//				objects.subList(1, objects.size())
+//			);
+//		});
+//	}
+//
+//}

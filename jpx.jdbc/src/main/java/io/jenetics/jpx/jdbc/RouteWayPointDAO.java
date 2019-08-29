@@ -47,113 +47,113 @@ import io.jenetics.jpx.jdbc.internal.db.Stored;
  * @version !__version__!
  * @since !__version__!
  */
-public class RouteWayPointDAO
-	extends DAO
-	implements
-	SelectBy<RouteWayPoint>,
-	Inserter<RouteWayPoint>,
-	Delete
-{
-
-	public RouteWayPointDAO(final Connection conn) {
-		super(conn);
-	}
-
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<RouteWayPoint>> RowParser = rs -> Stored.of(
-		rs.getLong("route_id"),
-		RouteWayPoint.of(
-			rs.getLong("route_id"),
-			rs.getLong("way_point_id")
-		)
-	);
-
-	/* *************************************************************************
-	 * SELECT queries
-	 **************************************************************************/
-
-	@Override
-	public <V, C> List<Stored<RouteWayPoint>> selectByVals(
-		final Column<V, C> column,
-		final Collection<V> values
-	)
-		throws SQLException
-	{
-		final String query =
-			"SELECT route_id, way_point_id " +
-			"FROM route_way_point " +
-			"WHERE "+column.name()+" IN ({values}) " +
-			"ORDER BY way_point_id";
-
-		return SQL(query)
-			.on(Param.values("values", values, column.mapper()))
-			.as(RowParser.list());
-	}
-
-	public <T> Map<Long, List<WayPoint>> selectWayPoints(
-		final Collection<T> values,
-		final Function<T, Long> mapper
-	)
-		throws SQLException
-	{
-		final List<Stored<RouteWayPoint>> rows =
-			selectByVals(Column.of("route_id", mapper), values);
-
-		final Map<Long, WayPoint> links = with(WayPointDAO::new)
-			.selectByVals(Column.of("id", row -> row.value().getWayPointUD()), rows)
-			.stream()
-			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
-
-		return rows.stream()
-			.collect(groupingBy(
-				Stored::id,
-				mapping(row -> links.get(row.value().getWayPointUD()), toList())));
-	}
-
-	/* *************************************************************************
-	 * INSERT queries
-	 **************************************************************************/
-
-	@Override
-	public List<Stored<RouteWayPoint>> insert(final Collection<RouteWayPoint> rows)
-		throws SQLException
-	{
-		final String query =
-			"INSERT INTO route_way_point(route_id, way_point_id) " +
-			"VALUES({route_id}, {way_point_id});";
-
-		Batch(query).execute(rows, row -> asList(
-			Param.value("route_id", row.getRouteID()),
-			Param.value("way_point_id", row.getWayPointUD())
-		));
-
-		return map(rows, row -> Stored.of(row.getRouteID(), row));
-	}
-
-	/* *************************************************************************
-	 * DELETE queries
-	 **************************************************************************/
-
-	@Override
-	public <V, C> int deleteByVals(
-		final Column<V, C> column,
-		final Collection<V> values
-	)
-		throws SQLException
-	{
-		final int count;
-		if (!values.isEmpty()) {
-			final String query =
-				"DELETE FROM route_way_point WHERE "+column.name()+" IN ({values})";
-
-			count = SQL(query)
-				.on(Param.values("values", values, column.mapper()))
-				.execute();
-
-		} else {
-			count = 0;
-		}
-
-		return count;
-	}
-
-}
+//public class RouteWayPointDAO
+//	extends DAO
+//	implements
+//	SelectBy<RouteWayPoint>,
+//	Inserter<RouteWayPoint>,
+//	Delete
+//{
+//
+//	public RouteWayPointDAO(final Connection conn) {
+//		super(conn);
+//	}
+//
+//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<RouteWayPoint>> RowParser = rs -> Stored.of(
+//		rs.getLong("route_id"),
+//		RouteWayPoint.of(
+//			rs.getLong("route_id"),
+//			rs.getLong("way_point_id")
+//		)
+//	);
+//
+//	/* *************************************************************************
+//	 * SELECT queries
+//	 **************************************************************************/
+//
+//	@Override
+//	public <V, C> List<Stored<RouteWayPoint>> selectByVals(
+//		final Column<V, C> column,
+//		final Collection<V> values
+//	)
+//		throws SQLException
+//	{
+//		final String query =
+//			"SELECT route_id, way_point_id " +
+//			"FROM route_way_point " +
+//			"WHERE "+column.name()+" IN ({values}) " +
+//			"ORDER BY way_point_id";
+//
+//		return SQL(query)
+//			.on(Param.values("values", values, column.mapper()))
+//			.as(RowParser.list());
+//	}
+//
+//	public <T> Map<Long, List<WayPoint>> selectWayPoints(
+//		final Collection<T> values,
+//		final Function<T, Long> mapper
+//	)
+//		throws SQLException
+//	{
+//		final List<Stored<RouteWayPoint>> rows =
+//			selectByVals(Column.of("route_id", mapper), values);
+//
+//		final Map<Long, WayPoint> links = with(WayPointDAO::new)
+//			.selectByVals(Column.of("id", row -> row.value().getWayPointUD()), rows)
+//			.stream()
+//			.collect(toMap(Stored::id, Stored::value, (a, b) -> b));
+//
+//		return rows.stream()
+//			.collect(groupingBy(
+//				Stored::id,
+//				mapping(row -> links.get(row.value().getWayPointUD()), toList())));
+//	}
+//
+//	/* *************************************************************************
+//	 * INSERT queries
+//	 **************************************************************************/
+//
+//	@Override
+//	public List<Stored<RouteWayPoint>> insert(final Collection<RouteWayPoint> rows)
+//		throws SQLException
+//	{
+//		final String query =
+//			"INSERT INTO route_way_point(route_id, way_point_id) " +
+//			"VALUES({route_id}, {way_point_id});";
+//
+//		Batch(query).execute(rows, row -> asList(
+//			Param.value("route_id", row.getRouteID()),
+//			Param.value("way_point_id", row.getWayPointUD())
+//		));
+//
+//		return map(rows, row -> Stored.of(row.getRouteID(), row));
+//	}
+//
+//	/* *************************************************************************
+//	 * DELETE queries
+//	 **************************************************************************/
+//
+//	@Override
+//	public <V, C> int deleteByVals(
+//		final Column<V, C> column,
+//		final Collection<V> values
+//	)
+//		throws SQLException
+//	{
+//		final int count;
+//		if (!values.isEmpty()) {
+//			final String query =
+//				"DELETE FROM route_way_point WHERE "+column.name()+" IN ({values})";
+//
+//			count = SQL(query)
+//				.on(Param.values("values", values, column.mapper()))
+//				.execute();
+//
+//		} else {
+//			count = 0;
+//		}
+//
+//		return count;
+//	}
+//
+//}
