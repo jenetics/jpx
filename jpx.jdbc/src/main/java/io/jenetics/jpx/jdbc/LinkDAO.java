@@ -28,14 +28,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
 
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.db.Column;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
 import io.jenetics.jpx.jdbc.internal.db.Delete;
 import io.jenetics.jpx.jdbc.internal.db.Inserter;
-import io.jenetics.jpx.jdbc.internal.db.Param;
+import io.jenetics.jpx.jdbc.internal.anorm.Param;
 import io.jenetics.jpx.jdbc.internal.db.RowParser;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
 import io.jenetics.jpx.jdbc.internal.db.Stored;

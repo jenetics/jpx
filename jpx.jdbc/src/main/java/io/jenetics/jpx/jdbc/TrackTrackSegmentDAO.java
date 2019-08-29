@@ -18,19 +18,6 @@
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.jdbc;
-
-import static java.util.Arrays.asList;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Map;
-
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.jdbc.internal.db.DAO;
-import io.jenetics.jpx.jdbc.internal.db.Param;
-import io.jenetics.jpx.jdbc.internal.util.Pair;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

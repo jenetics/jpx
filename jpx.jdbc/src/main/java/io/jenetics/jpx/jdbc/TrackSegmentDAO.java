@@ -19,27 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.internal.util.Lists.map;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
-
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.WayPoint;
-import io.jenetics.jpx.jdbc.internal.db.DAO;
-import io.jenetics.jpx.jdbc.internal.db.Param;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
-import io.jenetics.jpx.jdbc.internal.util.Pair;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

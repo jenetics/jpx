@@ -18,30 +18,6 @@
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.jdbc;
-
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
-import io.jenetics.jpx.Email;
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.Person;
-import io.jenetics.jpx.jdbc.internal.db.Column;
-import io.jenetics.jpx.jdbc.internal.db.DAO;
-import io.jenetics.jpx.jdbc.internal.db.Delete;
-import io.jenetics.jpx.jdbc.internal.db.Inserter;
-import io.jenetics.jpx.jdbc.internal.db.Param;
-import io.jenetics.jpx.jdbc.internal.db.SelectBy;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
-import io.jenetics.jpx.jdbc.internal.db.Updater;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

@@ -19,36 +19,7 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import io.jenetics.jpx.Bounds;
-import io.jenetics.jpx.Copyright;
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.Metadata;
-import io.jenetics.jpx.Person;
-import io.jenetics.jpx.jdbc.internal.db.Column;
-import io.jenetics.jpx.jdbc.internal.db.DAO;
-import io.jenetics.jpx.jdbc.internal.db.Delete;
-import io.jenetics.jpx.jdbc.internal.db.Inserter;
-import io.jenetics.jpx.jdbc.internal.db.ListMapper;
-import io.jenetics.jpx.jdbc.internal.db.OptionMapper;
-import io.jenetics.jpx.jdbc.internal.db.Param;
-import io.jenetics.jpx.jdbc.internal.db.SelectBy;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
-import io.jenetics.jpx.jdbc.internal.db.Updater;
-import io.jenetics.jpx.jdbc.internal.util.Pair;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

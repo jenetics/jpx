@@ -19,28 +19,7 @@
  */
 package io.jenetics.jpx.jdbc.dao;
 
-import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toMap;
-import static io.jenetics.jpx.jdbc.internal.util.Lists.map;
-
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.jdbc.internal.db.Column;
-import io.jenetics.jpx.jdbc.internal.db.DAO;
-import io.jenetics.jpx.jdbc.internal.db.Param;
-import io.jenetics.jpx.jdbc.internal.db.RowParser;
-import io.jenetics.jpx.jdbc.internal.db.Selector;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
-import io.jenetics.jpx.jdbc.model.LinkRow;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

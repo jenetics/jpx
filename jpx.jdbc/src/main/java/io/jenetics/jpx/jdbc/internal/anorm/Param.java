@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.db;
+package io.jenetics.jpx.jdbc.internal.anorm;
 
 import static java.lang.String.format;
 import static java.util.Collections.singletonList;
