@@ -70,6 +70,11 @@ public final class Param {
 		return format("%s -> %s", _name, _values);
 	}
 
+
+	/* *************************************************************************
+	 * Static factory methods.
+	 * ************************************************************************/
+
 	/**
 	 * Create a new query parameter object from the given {@code name} and
 	 * {@code value}.
