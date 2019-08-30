@@ -123,12 +123,14 @@ public class Query {
 	public Optional<Long> executeInsert(final Connection conn)
 		throws SQLException
 	{
-		try (PreparedStatement stmt =
-				 conn.prepareStatement(_sql, RETURN_GENERATED_KEYS))
-		{
+		try (PreparedStatement stmt = prepare(conn)) {
 			stmt.executeUpdate();
 			return readID(stmt);
 		}
+	}
+
+	private PreparedStatement prepare(final Connection conn) throws SQLException {
+		return conn.prepareStatement(_sql, RETURN_GENERATED_KEYS);
 	}
 
 	private static Optional<Long> readID(final Statement stmt) throws SQLException {
@@ -144,7 +146,11 @@ public class Query {
 	public <T> T as(final RowParser<T> parser, final Connection conn)
 		throws SQLException
 	{
-		throw new UnsupportedOperationException();
+		try (PreparedStatement ps = prepare(conn);
+			 ResultSet rs = ps.executeQuery())
+		{
+			return parser.parse(Results.of(rs));
+		}
 	}
 
 	/* *************************************************************************

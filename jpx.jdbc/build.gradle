@@ -44,15 +44,15 @@ repositories {
 }
 
 dependencies {
+	compileOnly 'org.projectlombok:lombok:1.18.8'
+	annotationProcessor 'org.projectlombok:lombok:1.18.8'
+
 	api project(':jpx')
 
 	testImplementation project(':jpx').sourceSets.test.output
 	testImplementation 'org.testng:testng:6.9.10'
 	testImplementation 'com.h2database:h2:1.4.193'
 	testImplementation 'mysql:mysql-connector-java:6.0.5'
-
-	compileOnly 'org.projectlombok:lombok:1.18.8'
-	annotationProcessor 'org.projectlombok:lombok:1.18.8'
 }
 
 lombok {

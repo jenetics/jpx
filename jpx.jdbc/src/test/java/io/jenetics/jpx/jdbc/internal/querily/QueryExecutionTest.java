@@ -19,10 +19,10 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
-import lombok.Value;
-import lombok.experimental.Accessors;
+import lombok.ToString;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 import org.testng.annotations.AfterClass;
@@ -37,17 +37,22 @@ import io.jenetics.jpx.jdbc.H2DB;
  */
 public class QueryExecutionTest {
 
-	@Value(staticConstructor = "of")
-	@Accessors(fluent = true)
-	static final class LinkRow {
-		private final String href;
-		private final String text;
-		private final String type;
+	@ToString
+	public static final class LinkRow {
+		final String href;
+		final String text;
+		final String type;
+
+		LinkRow(final String href, final String text, final String type) {
+			this.href = href;
+			this.text = text;
+			this.type = type;
+		}
 
 		private static final RowParser<Stored<LinkRow>> ROW_PARSER =
 			rs -> Stored.of(
 				rs.getLong("id"),
-				LinkRow.of(
+				new LinkRow(
 					rs.getString("href"),
 					rs.getString("text"),
 					rs.getString("type")
@@ -90,4 +95,15 @@ public class QueryExecutionTest {
 		});
 	}
 
+	@Test(dependsOnMethods = "insert")
+	public void select() throws SQLException {
+		final Query query = Query.of("SELECT * FROM link;");
+
+		db.transaction(conn -> {
+			final List<Stored<LinkRow>> rows = query
+				.as(LinkRow.ROW_PARSER.list(), conn);
+
+			System.out.println(rows);
+		});
+	}
 }
