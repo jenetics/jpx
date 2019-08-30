@@ -68,7 +68,7 @@ public class PreparedQuery {
 		try (PreparedStatement ps = prepare(conn);
 			 ResultSet rs = ps.executeQuery())
 		{
-			return parser.parse(Results.of(rs));
+			return parser.parse(null/*Results.of(rs)*/);
 		}
 	}
 

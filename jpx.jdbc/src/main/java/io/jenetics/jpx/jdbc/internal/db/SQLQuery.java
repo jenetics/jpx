@@ -105,7 +105,7 @@ public final class SQLQuery extends AbstractQuery {
 		try (PreparedStatement ps = PreparedSQL.prepare(_sql, _params, _conn);
 			ResultSet rs = ps.executeQuery())
 		{
-			return parser.parse(Results.of(rs));
+			return parser.parse(null/*Results.of(rs)*/);
 		}
 	}
 

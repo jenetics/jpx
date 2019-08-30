@@ -143,7 +143,7 @@ public class Query {
 		}
 	}
 
-	public <T> T as(final RowParser<T> parser, final Connection conn)
+	public <T> T as(final ResultSetParser<T> parser, final Connection conn)
 		throws SQLException
 	{
 		try (PreparedStatement ps = prepare(conn);

@@ -42,21 +42,21 @@ public interface RowParser<T> {
 	/**
 	 * Converts the row on the current cursor position into a data object.
 	 *
-	 * @param rs the data source
+	 * @param row the data source
 	 * @return the stored data object
 	 * @throws SQLException if reading of the current row fails
 	 */
-	public T parse(final Results rs) throws SQLException;
+	public T parse(final Row row) throws SQLException;
 
 	/**
 	 * Return a new parser which expects at least one result.
 	 *
 	 * @return a new parser which expects at least one result
 	 */
-	public default RowParser<T> single() {
+	public default ResultSetParser<T> single() {
 		return rs -> {
 			if (rs.next()) {
-				return parse(rs);
+				return parse(new ResultSetRow(rs));
 			}
 			throw new NoSuchElementException();
 		};
@@ -67,9 +67,9 @@ public interface RowParser<T> {
 	 *
 	 * @return a new parser which parses a single selection result
 	 */
-	public default RowParser<Optional<T>> singleOpt() {
+	public default ResultSetParser<Optional<T>> singleOpt() {
 		return rs -> rs.next()
-			? Optional.ofNullable(parse(rs))
+			? Optional.ofNullable(parse(new ResultSetRow(rs)))
 			: Optional.empty();
 	}
 
@@ -78,11 +78,12 @@ public interface RowParser<T> {
 	 *
 	 * @return a new parser witch parses a the whole selection result
 	 */
-	public default RowParser<List<T>> list() {
+	public default ResultSetParser<List<T>> list() {
 		return rs -> {
+			final Row row = new ResultSetRow(rs);
 			final List<T> result = new ArrayList<>();
 			while (rs.next()) {
-				result.add(parse(rs));
+				result.add(parse(row));
 			}
 
 			return result;

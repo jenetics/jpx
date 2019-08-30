@@ -82,7 +82,7 @@ public final class BatchQuery extends AbstractQuery {
 						preparedSQL.fill(ps, params);
 
 						try (ResultSet rs = ps.executeQuery()) {
-							final List<B> rows = parser.parse(Results.of(rs));
+							final List<B> rows = parser.parse(null/*Results.of(rs)*/);
 							results.addAll(rows);
 						}
 					}
