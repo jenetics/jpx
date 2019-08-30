@@ -30,11 +30,12 @@ public class AnormTest {
 	Connection conn = null;
 
 	public void api() throws SQLException  {
-		Query.of("SELECT * FROM table WHERE id = {id} AND name = {name}")
-			.on(
-				Param.of("id", 2),
-				Param.of("name", "franz"))
-			.as(null, conn);
+		final String field =
+			Query.of("SELECT field FROM table WHERE id = {id} AND name = {name}")
+				.on(
+					Param.of("id", 2),
+					Param.of("name", "franz"))
+				.as(RowParser.string("field"), conn);
 	}
 
 }

@@ -89,4 +89,17 @@ public interface RowParser<T> {
 		};
 	}
 
+
+	/* *************************************************************************
+	 * Static factory methods.
+	 * ************************************************************************/
+
+	public static RowParser<String> string(final String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	public static RowParser<String> string(final int index) {
+		throw new UnsupportedOperationException();
+	}
+
 }
