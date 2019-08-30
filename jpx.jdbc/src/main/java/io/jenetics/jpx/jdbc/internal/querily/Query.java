@@ -19,11 +19,13 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -121,7 +123,22 @@ public class Query {
 	public Optional<Long> executeInsert(final Connection conn)
 		throws SQLException
 	{
-		throw new UnsupportedOperationException();
+		try (PreparedStatement stmt =
+				 conn.prepareStatement(_sql, RETURN_GENERATED_KEYS))
+		{
+			stmt.executeUpdate();
+			return readID(stmt);
+		}
+	}
+
+	private static Optional<Long> readID(final Statement stmt) throws SQLException {
+		try (ResultSet keys = stmt.getGeneratedKeys()) {
+			if (keys.next()) {
+				return Optional.of(keys.getLong(1));
+			} else {
+				return Optional.empty();
+			}
+		}
 	}
 
 	public <T> T as(final RowParser<T> parser, final Connection conn)
