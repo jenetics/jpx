@@ -22,10 +22,16 @@ package io.jenetics.jpx.jdbc.internal.querily;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import io.jenetics.jpx.jdbc.internal.db.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -56,6 +62,76 @@ public class Query {
 		return null;
 	}
 
+
+	/* *************************************************************************
+	 * Execution methods
+	 * ************************************************************************/
+
+	/**
+	 * Executes the SQL statement defined by {@code this} query object, which
+	 * may be any kind of SQL statement.
+	 *
+	 * @see PreparedStatement#execute()
+	 *
+	 * @param conn the DB connection where {@code this} query is executed on
+	 * @return {@code true} if the first result is a {@link java.sql.ResultSet}
+	 *         object; {@code false} if the first result is an update count or
+	 *         there is no result
+	 * @throws SQLException if a database access error occurs
+	 * @throws java.sql.SQLTimeoutException when the driver has determined that
+	 *         the timeout value has been exceeded
+	 * @throws NullPointerException if the given connection is {@code null}
+	 */
+	public boolean execute(final Connection conn) throws SQLException  {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Executes the SQL statement defined by {@code this} query object, which
+	 * must be an SQL Data Manipulation Language (DML) statement, such as
+	 * {@code INSERT}, {@code UPDATE} or {@code DELETE}; or an SQL statement
+	 * that returns nothing, such as a DDL statement.
+	 *
+	 * @see PreparedStatement#executeUpdate()
+	 *
+	 * @param conn the DB connection where {@code this} query is executed on
+	 * @return either (1) the row count for SQL Data Manipulation Language (DML)
+	 *         statements or (2) 0 for SQL statements that return nothing
+	 * @throws SQLException if a database access error occurs
+	 * @throws java.sql.SQLTimeoutException when the driver has determined that
+	 *         the timeout value has been exceeded
+	 * @throws NullPointerException if the given connection is {@code null}
+	 */
+	public int executeUpdate(final Connection conn) throws SQLException {
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Executes the SQL statement defined by {@code this} query object, which
+	 * must be an {@code INSERT} statement.
+	 *
+	 * @param conn the DB connection where {@code this} query is executed on
+	 * @return the key generated during the insertion
+	 * @throws SQLException if a database access error occurs
+	 * @throws java.sql.SQLTimeoutException when the driver has determined that
+	 *         the timeout value has been exceeded
+	 * @throws NullPointerException if the given connection is {@code null}
+	 */
+	public Optional<Long> executeInsert(final Connection conn)
+		throws SQLException
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	public <T> T as(final RowParser<T> parser, final Connection conn)
+		throws SQLException
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	/* *************************************************************************
+	 * Static factory methods.
+	 * ************************************************************************/
 
 	public static Query of(final String sql) {
 		final List<String> names = new ArrayList<>();
