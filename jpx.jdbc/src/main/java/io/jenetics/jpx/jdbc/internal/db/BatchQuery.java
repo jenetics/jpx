@@ -33,6 +33,8 @@ import java.util.Set;
 import java.util.function.Function;
 
 import io.jenetics.jpx.jdbc.internal.querily.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Results;
+import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 
 /**
  * Represents batch insert query.

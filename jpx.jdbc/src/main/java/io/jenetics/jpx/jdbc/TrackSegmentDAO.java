@@ -29,7 +29,7 @@ import static java.util.stream.Collectors.toMap;
 //
 //
 //
-//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Integer>> RowParser = rs -> Stored.of(
+//	private static final io.jenetics.jpx.jdbc.internal.querily.RowParser<Stored<Integer>> RowParser = rs -> Stored.of(
 //		rs.getLong("id"),
 //		rs.getInt("number")
 //	);

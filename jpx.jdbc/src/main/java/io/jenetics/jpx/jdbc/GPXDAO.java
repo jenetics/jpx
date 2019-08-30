@@ -55,7 +55,7 @@ public final class GPXDAO extends DAO {
 	/**
 	 * Parses one row of the "gpx" table.
 	 */
-	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Row>>
+	private static final io.jenetics.jpx.jdbc.internal.querily.RowParser<Stored<Row>>
 		RowParser = rs -> Stored.of(
 			rs.getLong("id"),
 			new Row(

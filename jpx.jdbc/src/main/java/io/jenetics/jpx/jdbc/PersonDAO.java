@@ -36,7 +36,7 @@ package io.jenetics.jpx.jdbc;
 //		super(conn);
 //	}
 //
-//	private final static io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<Person>> RowParser = rs -> Stored.of(
+//	private final static io.jenetics.jpx.jdbc.internal.querily.RowParser<Stored<Person>> RowParser = rs -> Stored.of(
 //		rs.getLong("id"),
 //		Person.of(
 //			rs.getString("name"),

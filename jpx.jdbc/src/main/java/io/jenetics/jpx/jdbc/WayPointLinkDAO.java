@@ -37,7 +37,7 @@ import static java.util.stream.Collectors.toMap;
 //		super(conn);
 //	}
 //
-//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<WayPointLink>> RowParser = rs -> Stored.of(
+//	private static final io.jenetics.jpx.jdbc.internal.querily.RowParser<Stored<WayPointLink>> RowParser = rs -> Stored.of(
 //		rs.getLong("way_point_id"),
 //		WayPointLink.of(
 //			rs.getLong("way_point_id"),

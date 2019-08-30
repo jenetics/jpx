@@ -36,7 +36,7 @@ import static java.util.stream.Collectors.toMap;
 //		super(conn);
 //	}
 //
-//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Stored<MetadataLink>> RowParser = rs -> Stored.of(
+//	private static final io.jenetics.jpx.jdbc.internal.querily.RowParser<Stored<MetadataLink>> RowParser = rs -> Stored.of(
 //		rs.getLong("metadata_id"),
 //		MetadataLink.of(
 //			rs.getLong("metadata_id"),

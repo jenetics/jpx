@@ -53,7 +53,7 @@ import static java.util.stream.Collectors.toMap;
 //		super(conn);
 //	}
 //
-//	private static final io.jenetics.jpx.jdbc.internal.db.RowParser<Row> RowParser = rs -> new Row(
+//	private static final io.jenetics.jpx.jdbc.internal.querily.RowParser<Row> RowParser = rs -> new Row(
 //		rs.getLong("track_id"),
 //		rs.getLong("link_id")
 //	);
