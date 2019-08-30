@@ -17,14 +17,10 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.anorm;
+package io.jenetics.jpx.jdbc.internal.querily;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
-import org.testng.annotations.Test;
-
-import io.jenetics.jpx.jdbc.internal.db.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

@@ -28,7 +28,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.jenetics.jpx.jdbc.internal.anorm.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Param;
 
 /**
  * Represents a select SQL query.

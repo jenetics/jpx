@@ -48,7 +48,7 @@ import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.Speed;
 import io.jenetics.jpx.UInt;
-import io.jenetics.jpx.jdbc.internal.anorm.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Param;
 
 /**
  * Represents a SQL query for usage with a {@link PreparedStatement}.

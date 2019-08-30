@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.anorm;
+package io.jenetics.jpx.jdbc.internal.querily;
 
 import static java.lang.String.format;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import io.jenetics.jpx.jdbc.internal.db.PreparedSQL;
 import io.jenetics.jpx.jdbc.internal.db.Results;
 import io.jenetics.jpx.jdbc.internal.db.RowParser;
 

@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,23 +17,28 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.anorm;
+package io.jenetics.jpx.jdbc.internal.querily;
 
-import io.jenetics.jpx.jdbc.internal.db.SQLQuery;
+import static java.util.Arrays.asList;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
- * Main entry point for the SQL building library.
- *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
  */
-public final class Anorm {
-	private Anorm() {
-	}
+public class QueryTest {
 
-	public static SQLQuery sql(final String sql) {
-		return null;
+	@Test
+	public void create() {
+		final Query query = Query
+			.of("SELECT * FROM table WHERE id = {id} AND name = {name}");
+
+		Assert.assertEquals(
+			query.sql(),
+			"SELECT * FROM table WHERE id = ? AND name = ?"
+		);
+		Assert.assertEquals(query.names(), asList("id", "name"));
 	}
 
 }

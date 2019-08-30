@@ -21,7 +21,7 @@ package io.jenetics.jpx.jdbc.internal.db;
 
 import static java.util.Objects.requireNonNull;
 
-import io.jenetics.jpx.jdbc.internal.anorm.SqlFunction;
+import io.jenetics.jpx.jdbc.internal.querily.SqlFunction;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

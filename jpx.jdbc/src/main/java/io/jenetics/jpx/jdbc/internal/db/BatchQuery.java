@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
-import io.jenetics.jpx.jdbc.internal.anorm.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Param;
 
 /**
  * Represents batch insert query.

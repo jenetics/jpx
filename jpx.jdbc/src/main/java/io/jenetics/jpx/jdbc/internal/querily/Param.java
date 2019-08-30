@@ -17,18 +17,16 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.anorm;
+package io.jenetics.jpx.jdbc.internal.querily;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.LongStream;
 
 /**
  * Represents a query parameter with <em>name</em> and <em>value</em>. The
