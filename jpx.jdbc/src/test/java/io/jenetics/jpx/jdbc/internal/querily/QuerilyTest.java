@@ -19,23 +19,46 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
-import java.sql.Connection;
 import java.sql.SQLException;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.Test;
+
+import io.jenetics.jpx.jdbc.DB;
+import io.jenetics.jpx.jdbc.H2DB;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class AnormTest {
+public class QuerilyTest {
 
-	Connection conn = null;
+	public final DB db = H2DB.newTestInstance();
 
-	public void api() throws SQLException  {
-		final String field =
-			Query.of("SELECT field FROM table WHERE id = {id} AND name = {name}")
-				.on(
-					Param.of("id", 2),
-					Param.of("name", "franz"))
-				.as(RowParser.string("field"), conn);
+	@AfterClass
+	public void shutdown() throws SQLException {
+		db.close();
+	}
+
+	@Test
+	public void setup() throws SQLException {
+		db.transaction(conn -> {
+			final Query query = Query.of(
+				"CREATE TABLE link(\n" +
+				"    id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,\n" +
+				"    href VARCHAR(255) NOT NULL,\n" +
+				"    text VARCHAR(255),\n" +
+				"    type VARCHAR(255),\n" +
+				"    CONSTRAINT c_link_href UNIQUE (href)\n" +
+				");"
+			);
+
+			query.execute(conn);
+		});
+	}
+
+	@Test
+	public void insert() throws SQLException {
+
 	}
 
 }

@@ -25,6 +25,7 @@ import static java.util.Objects.requireNonNull;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -81,7 +82,9 @@ public class Query {
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
 	public boolean execute(final Connection conn) throws SQLException  {
-		throw new UnsupportedOperationException();
+		try (Statement stmt = conn.createStatement()) {
+			return stmt.execute(_sql);
+		}
 	}
 
 	/**
