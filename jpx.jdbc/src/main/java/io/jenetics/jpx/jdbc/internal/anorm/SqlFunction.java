@@ -45,6 +45,6 @@ public interface SqlFunction<T, R> {
 	 * @param t the function argument
 	 * @return the function result
 	 */
-	public R apply(final T value) throws SQLException;
+	public R apply(final T t) throws SQLException;
 
 }
