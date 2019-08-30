@@ -31,7 +31,6 @@ import org.testng.annotations.Test;
 import io.jenetics.jpx.jdbc.DB;
 import io.jenetics.jpx.jdbc.DB.Callable;
 import io.jenetics.jpx.jdbc.H2DB;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

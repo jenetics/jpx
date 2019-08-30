@@ -26,6 +26,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!

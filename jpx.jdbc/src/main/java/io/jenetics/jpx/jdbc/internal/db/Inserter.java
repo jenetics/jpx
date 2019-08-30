@@ -27,6 +27,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
 
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
+
 /**
  * This interface defines insertion methods for a given row type.
  *

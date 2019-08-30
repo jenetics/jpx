@@ -27,7 +27,7 @@ import java.util.List;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.jdbc.internal.db.DAO;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

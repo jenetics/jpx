@@ -37,6 +37,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.jdbc.internal.querily.SqlFunction;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
 
 /**
  * Abstract DAO class which implements the methods for doing easy SQL.

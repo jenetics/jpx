@@ -36,7 +36,7 @@ import io.jenetics.jpx.jdbc.internal.db.BatchQuery;
 import io.jenetics.jpx.jdbc.internal.querily.Param;
 import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 import io.jenetics.jpx.jdbc.internal.db.SQLQuery;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

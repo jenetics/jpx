@@ -25,7 +25,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
 
-import io.jenetics.jpx.jdbc.internal.db.Stored;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
 
 /**
  * Interface for common update functions.

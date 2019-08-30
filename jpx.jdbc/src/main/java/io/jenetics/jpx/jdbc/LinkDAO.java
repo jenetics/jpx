@@ -37,7 +37,7 @@ import io.jenetics.jpx.jdbc.internal.db.Inserter;
 import io.jenetics.jpx.jdbc.internal.querily.Param;
 import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 import io.jenetics.jpx.jdbc.internal.db.SelectBy;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
 import io.jenetics.jpx.jdbc.internal.db.Updater;
 
 /**

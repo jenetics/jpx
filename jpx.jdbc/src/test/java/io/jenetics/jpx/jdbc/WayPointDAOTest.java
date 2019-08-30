@@ -18,21 +18,6 @@
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.jdbc;
-
-import static io.jenetics.jpx.jdbc.internal.util.Lists.map;
-
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Random;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
-import io.jenetics.jpx.WayPoint;
-import io.jenetics.jpx.WayPointTest;
-import io.jenetics.jpx.jdbc.internal.db.Column;
-import io.jenetics.jpx.jdbc.internal.db.Stored;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
