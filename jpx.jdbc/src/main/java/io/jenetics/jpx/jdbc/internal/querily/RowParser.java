@@ -56,7 +56,7 @@ public interface RowParser<T> {
 	public default ResultSetParser<T> single() {
 		return rs -> {
 			if (rs.next()) {
-				return parse(new ResultSetRow(rs));
+				return parse(Row.of(rs));
 			}
 			throw new NoSuchElementException();
 		};
@@ -69,7 +69,7 @@ public interface RowParser<T> {
 	 */
 	public default ResultSetParser<Optional<T>> singleOpt() {
 		return rs -> rs.next()
-			? Optional.ofNullable(parse(new ResultSetRow(rs)))
+			? Optional.ofNullable(parse(Row.of(rs)))
 			: Optional.empty();
 	}
 
@@ -80,7 +80,7 @@ public interface RowParser<T> {
 	 */
 	public default ResultSetParser<List<T>> list() {
 		return rs -> {
-			final Row row = new ResultSetRow(rs);
+			final Row row = Row.of(rs);
 			final List<T> result = new ArrayList<>();
 			while (rs.next()) {
 				result.add(parse(row));

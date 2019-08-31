@@ -51,11 +51,11 @@ public class QueryExecutionTest {
 
 		private static final RowParser<Stored<LinkRow>> ROW_PARSER =
 			row -> Stored.of(
-				row.get("id"),
+				row.getLong("id"),
 				new LinkRow(
-					row.get("href"),
-					row.get("text"),
-					row.get("type")
+					row.getString("href"),
+					row.getString("text"),
+					row.getString("type")
 				)
 			);
 	}
