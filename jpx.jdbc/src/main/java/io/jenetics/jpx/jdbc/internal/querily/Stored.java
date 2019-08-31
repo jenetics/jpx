@@ -22,7 +22,6 @@ package io.jenetics.jpx.jdbc.internal.querily;
 import static java.lang.String.format;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 
 /**
@@ -67,15 +66,6 @@ public final class Stored<T> {
 	 */
 	public long id() {
 		return _id;
-	}
-
-	/**
-	 * Return the DB value as {@link Optional}.
-	 *
-	 * @return the DB value as {@link Optional}
-	 */
-	public Optional<T> optional() {
-		return Optional.ofNullable(_value);
 	}
 
 	/**
