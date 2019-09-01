@@ -42,10 +42,10 @@ import java.util.stream.Collectors;
  */
 public class PreparedQuery {
 
-	private final Query _query;
+	private final SimpleQuery _query;
 	private final List<Param> _params;
 
-	private PreparedQuery(final Query query, final List<Param> params) {
+	private PreparedQuery(final SimpleQuery query, final List<Param> params) {
 		_query = requireNonNull(query);
 		_params = unmodifiableList(params);
 	}
@@ -145,7 +145,7 @@ public class PreparedQuery {
 	 * Static factory methods.
 	 * ************************************************************************/
 
-	public static PreparedQuery of(final Query query, final Param... params) {
+	public static PreparedQuery of(final SimpleQuery query, final Param... params) {
 		return new PreparedQuery(query, asList(params));
 	}
 

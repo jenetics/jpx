@@ -35,7 +35,7 @@ import io.jenetics.jpx.jdbc.H2DB;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class QueryExecutionTest {
+public class SimpleQueryExecutionTest {
 
 	@ToString
 	public static final class LinkRow {
@@ -69,7 +69,7 @@ public class QueryExecutionTest {
 
 	@Test
 	public void setup() throws SQLException {
-		final Query query = Query.of(
+		final SimpleQuery query = SimpleQuery.of(
 			"CREATE TABLE link(\n" +
 				"    id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,\n" +
 				"    href VARCHAR(255) NOT NULL,\n" +
@@ -84,7 +84,7 @@ public class QueryExecutionTest {
 
 	@Test(dependsOnMethods = "setup")
 	public void insert() throws SQLException {
-		final Query query = Query.of(
+		final SimpleQuery query = SimpleQuery.of(
 			"INSERT INTO link(href, text, type) " +
 				"VALUES('http://link.com', 'some text', 'some type');"
 		);
@@ -97,7 +97,7 @@ public class QueryExecutionTest {
 
 	@Test(dependsOnMethods = "insert")
 	public void select() throws SQLException {
-		final Query query = Query.of("SELECT * FROM link;");
+		final SimpleQuery query = SimpleQuery.of("SELECT * FROM link;");
 
 		db.transaction(conn -> {
 			final List<Stored<LinkRow>> rows = query

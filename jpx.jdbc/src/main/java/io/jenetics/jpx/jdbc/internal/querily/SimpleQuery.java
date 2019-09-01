@@ -39,14 +39,14 @@ import java.util.regex.Pattern;
  * @version !__version__!
  * @since !__version__!
  */
-public class Query {
+public class SimpleQuery {
 
 	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
 
 	private final String _sql;
 	private final List<String> _names;
 
-	private Query(final String sql, final List<String> names) {
+	private SimpleQuery(final String sql, final List<String> names) {
 		_sql = requireNonNull(sql);
 		_names = unmodifiableList(names);
 	}
@@ -179,7 +179,7 @@ public class Query {
 	 * Static factory methods.
 	 * ************************************************************************/
 
-	public static Query of(final String sql) {
+	public static SimpleQuery of(final String sql) {
 		final List<String> names = new ArrayList<>();
 		final StringBuffer parsedQuery = new StringBuffer();
 
@@ -192,7 +192,7 @@ public class Query {
 		}
 		matcher.appendTail(parsedQuery);
 
-		return new Query(parsedQuery.toString(), names);
+		return new SimpleQuery(parsedQuery.toString(), names);
 	}
 
 }

@@ -27,11 +27,11 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class QueryTest {
+public class SimpleQueryTest {
 
 	@Test
 	public void create() {
-		final Query query = Query
+		final SimpleQuery query = SimpleQuery
 			.of("SELECT * FROM table WHERE id = {id} AND name = {name}");
 
 		Assert.assertEquals(
