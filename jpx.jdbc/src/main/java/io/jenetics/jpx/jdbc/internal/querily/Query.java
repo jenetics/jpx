@@ -51,6 +51,11 @@ public class Query {
 		_names = unmodifiableList(names);
 	}
 
+	/**
+	 * Return the SQL string of {@code this} query class.
+	 *
+	 * @return the SQL string of {@code this} query class
+	 */
 	public String sql() {
 		return _sql;
 	}
@@ -106,7 +111,9 @@ public class Query {
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
 	public int executeUpdate(final Connection conn) throws SQLException {
-		throw new UnsupportedOperationException();
+		try (Statement stmt = conn.createStatement()) {
+			return stmt.executeUpdate(_sql);
+		}
 	}
 
 	/**
@@ -143,6 +150,21 @@ public class Query {
 		}
 	}
 
+	/**
+	 * Executes {@code this} query and parses the result with the given
+	 * result-set parser.
+	 *
+	 * @param parser the parser which converts the query result to the desired
+	 *        type
+	 * @param conn the DB connection where {@code this} query is executed on
+	 * @param <T> the result type
+	 * @return the query result, parsed to the desired type
+	 * @throws SQLException if a database access error occurs
+	 * @throws java.sql.SQLTimeoutException when the driver has determined that
+	 *         the timeout value has been exceeded
+	 * @throws NullPointerException if the given result parser or connection is
+	 *         {@code null}
+	 */
 	public <T> T as(final ResultSetParser<T> parser, final Connection conn)
 		throws SQLException
 	{
