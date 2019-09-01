@@ -125,7 +125,7 @@ public class SimpleQuery implements Query {
 
 	public <T> void insert(
 		final Collection<T> values,
-		final Deconstructor<T> deconstructor,
+		final Dctor<T> dctor,
 		final Connection conn
 	)
 		throws SQLException

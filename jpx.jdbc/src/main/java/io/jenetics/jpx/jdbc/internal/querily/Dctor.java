@@ -26,18 +26,17 @@ import java.util.function.Function;
  * @version !__version__!
  * @since !__version__!
  */
-public final class Deconstructor<T> {
+public final class Dctor<T> {
 
 	public static final class Field<T> {
-
-
-		public static <T> Field<T> of(final String name, final Function<T, ?> accessor) {
+		public static <T> Field<T>
+		of(final String name, final Function<T, ?> value) {
 			return null;
 		}
 	}
 
 	@SafeVarargs
-	public static <T> Deconstructor<T> of(final Field<T>... fields) {
+	public static <T> Dctor<T> of(final Field<T>... fields) {
 		return null;
 	}
 

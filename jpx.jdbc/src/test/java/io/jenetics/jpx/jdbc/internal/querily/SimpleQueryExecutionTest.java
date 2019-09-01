@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 import io.jenetics.jpx.jdbc.DB;
 import io.jenetics.jpx.jdbc.DB.Callable;
 import io.jenetics.jpx.jdbc.H2DB;
-import io.jenetics.jpx.jdbc.internal.querily.Deconstructor.Field;
+import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -142,7 +142,7 @@ public class SimpleQueryExecutionTest {
 
 			query.insert(
 				links,
-				Deconstructor.of(
+				Dctor.of(
 					Field.of("href", LinkRow::href),
 					Field.of("text", LinkRow::text),
 					Field.of("type", LinkRow::type)
