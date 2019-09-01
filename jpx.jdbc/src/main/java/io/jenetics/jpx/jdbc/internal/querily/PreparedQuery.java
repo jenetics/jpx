@@ -29,8 +29,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -48,33 +50,25 @@ public class PreparedQuery {
 		_params = unmodifiableList(params);
 	}
 
-	public int execute(final Connection conn) throws SQLException {
-		return 1;
-	}
 
-	/**
-	 * Executes the select query.
-	 *
-	 * @param parser the row parser used for creating the result objects
-	 * @param <T> the result type
-	 * @return the query result
-	 * @throws SQLException if the query execution fails
-	 * @throws NullPointerException if the given row {@code parser} is
-	 *         {@code null}
-	 */
-	public <T> T as(final RowParser<T> parser, final Connection conn) throws SQLException {
-		requireNonNull(parser);
+	/* *************************************************************************
+	 * Execution methods
+	 * ************************************************************************/
 
-		try (PreparedStatement ps = prepare(conn);
-			 ResultSet rs = ps.executeQuery())
-		{
-			return parser.parse(null/*Results.of(rs)*/);
+	public boolean execute(final Connection conn) throws SQLException  {
+		try (Statement stmt = prepare(conn)) {
+			return stmt.execute(_query.sql());
 		}
 	}
 
 	private PreparedStatement prepare(final Connection conn) throws SQLException {
 		requireNonNull(conn);
-		return conn.prepareStatement(_query.sql(), RETURN_GENERATED_KEYS);
+		final PreparedStatement stmt =  conn.prepareStatement(
+			_query.sql(),
+			RETURN_GENERATED_KEYS
+		);
+		fill(stmt);
+		return stmt;
 	}
 
 	private void fill(final PreparedStatement stmt) throws SQLException {
@@ -100,6 +94,56 @@ public class PreparedQuery {
 			}
 		}
 	}
+
+	public int executeUpdate(final Connection conn) throws SQLException {
+		try (Statement stmt = prepare(conn)) {
+			return stmt.executeUpdate(_query.sql());
+		}
+	}
+
+	public Optional<Long> executeInsert(final Connection conn)
+		throws SQLException
+	{
+		try (PreparedStatement stmt = prepare(conn)) {
+			stmt.executeUpdate();
+			return readID(stmt);
+		}
+	}
+
+	private static Optional<Long> readID(final Statement stmt) throws SQLException {
+		try (ResultSet keys = stmt.getGeneratedKeys()) {
+			if (keys.next()) {
+				return Optional.of(keys.getLong(1));
+			} else {
+				return Optional.empty();
+			}
+		}
+	}
+
+	/**
+	 * Executes the select query.
+	 *
+	 * @param parser the row parser used for creating the result objects
+	 * @param <T> the result type
+	 * @return the query result
+	 * @throws SQLException if the query execution fails
+	 * @throws NullPointerException if the given row {@code parser} is
+	 *         {@code null}
+	 */
+	public <T> T as(final RowParser<T> parser, final Connection conn) throws SQLException {
+		requireNonNull(parser);
+
+		try (PreparedStatement ps = prepare(conn);
+			 ResultSet rs = ps.executeQuery())
+		{
+			return parser.parse(null/*Results.of(rs)*/);
+		}
+	}
+
+
+	/* *************************************************************************
+	 * Static factory methods.
+	 * ************************************************************************/
 
 	public static PreparedQuery of(final Query query, final Param... params) {
 		return new PreparedQuery(query, asList(params));
