@@ -19,9 +19,10 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
-import lombok.ToString;
+import static java.util.Arrays.asList;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,13 +32,13 @@ import org.testng.annotations.Test;
 import io.jenetics.jpx.jdbc.DB;
 import io.jenetics.jpx.jdbc.DB.Callable;
 import io.jenetics.jpx.jdbc.H2DB;
+import io.jenetics.jpx.jdbc.internal.querily.Deconstructor.Field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class SimpleQueryExecutionTest {
 
-	@ToString
 	public static final class LinkRow {
 		final String href;
 		final String text;
@@ -49,6 +50,18 @@ public class SimpleQueryExecutionTest {
 			this.type = type;
 		}
 
+		public String href() {
+			return href;
+		}
+
+		public String text() {
+			return text;
+		}
+
+		public String type() {
+			return type;
+		}
+
 		private static final RowParser<Stored<LinkRow>> ROW_PARSER =
 			row -> Stored.of(
 				row.getLong("id"),
@@ -58,6 +71,12 @@ public class SimpleQueryExecutionTest {
 					row.getString("type")
 				)
 			);
+
+		private static final List<Value<LinkRow>> UNAPPLY = asList(
+			Value.of("href", LinkRow::href),
+			Value.of("text", LinkRow::text),
+			Value.of("type", LinkRow::type)
+		);
 	}
 
 	public final DB db = H2DB.newTestInstance();
@@ -105,5 +124,32 @@ public class SimpleQueryExecutionTest {
 
 			System.out.println(rows);
 		});
+	}
+
+	public void batchInsert() throws SQLException {
+		final SimpleQuery query = SimpleQuery.of("INSERT INTO link(href) VALUES({href})");
+
+		final List<LinkRow> links = new ArrayList<>();
+
+		db.transaction(conn -> {
+			/*
+			query.insert(links, link -> asList(
+				Param.of("href", link.href()),
+				Param.of("text", link.text()),
+				Param.of("type", link.type())
+			));
+			 */
+
+			query.insert(
+				links,
+				Deconstructor.of(
+					Field.of("href", LinkRow::href),
+					Field.of("text", LinkRow::text),
+					Field.of("type", LinkRow::type)
+				),
+				conn
+			);
+		});
+
 	}
 }

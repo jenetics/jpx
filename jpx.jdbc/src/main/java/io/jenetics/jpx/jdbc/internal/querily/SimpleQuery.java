@@ -29,6 +29,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -120,6 +121,16 @@ public class SimpleQuery implements Query {
 		{
 			return parser.parse(rs);
 		}
+	}
+
+	public <T> void insert(
+		final Collection<T> values,
+		final Deconstructor<T> deconstructor,
+		final Connection conn
+	)
+		throws SQLException
+	{
+
 	}
 
 	/* *************************************************************************
