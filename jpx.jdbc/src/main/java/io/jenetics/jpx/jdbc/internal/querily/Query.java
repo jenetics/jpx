@@ -31,7 +31,7 @@ import java.util.Optional;
  * @version !__version__!
  * @since !__version__!
  */
-public interface Query {
+public abstract class Query {
 
 	/**
 	 * Executes the SQL statement defined by {@code this} query object, which
@@ -48,7 +48,7 @@ public interface Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public boolean execute(final Connection conn) throws SQLException;
+	public abstract boolean execute(final Connection conn) throws SQLException;
 
 	/**
 	 * Executes the SQL statement defined by {@code this} query object, which
@@ -66,7 +66,7 @@ public interface Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public int executeUpdate(final Connection conn) throws SQLException;
+	public abstract int executeUpdate(final Connection conn) throws SQLException;
 
 	/**
 	 * Executes the SQL statement defined by {@code this} query object, which
@@ -79,7 +79,7 @@ public interface Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public Optional<Long> executeInsert(final Connection conn)
+	public abstract Optional<Long> executeInsert(final Connection conn)
 		throws SQLException;
 
 	/**
@@ -97,7 +97,7 @@ public interface Query {
 	 * @throws NullPointerException if the given result parser or connection is
 	 *         {@code null}
 	 */
-	public <T> T as(final ResultSetParser<T> parser, final Connection conn)
+	public abstract  <T> T as(final ResultSetParser<T> parser, final Connection conn)
 		throws SQLException;
 
 }

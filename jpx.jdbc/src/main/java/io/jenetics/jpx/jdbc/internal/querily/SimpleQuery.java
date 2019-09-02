@@ -31,7 +31,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +42,7 @@ import java.util.regex.Pattern;
  * @version !__version__!
  * @since !__version__!
  */
-public class SimpleQuery implements Query {
+public class SimpleQuery extends Query {
 
 	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
 
@@ -61,10 +63,21 @@ public class SimpleQuery implements Query {
 		return _sql;
 	}
 
+	/**
+	 * Return the parameter names of this query. The returned list may be empty.
+	 *
+	 * @return the parameter names of this query
+	 */
 	public List<String> names() {
 		return _names;
 	}
 
+	/**
+	 * Return a new query object with the given query parameter values.
+	 *
+	 * @param params the query parameters
+	 * @return a new parameter query
+	 */
 	public PreparedQuery on(final Param... params) {
 		return null;
 	}
@@ -112,6 +125,36 @@ public class SimpleQuery implements Query {
 		}
 	}
 
+	public <T> List<Long> executeInsert(
+		final Collection<T> values,
+		final Dctor<T> dctor,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		return null;
+	}
+
+	public <T> List<Long> executeInsert(
+		final Collection<T> values,
+		final Function<String, Function<String, ?>> dctor,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		return null;
+	}
+
+	public <T> List<Long> executeInsert(
+		final Collection<T> values,
+		final Map<String, Function<String, ?>> dctor,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		return null;
+	}
+
 	@Override
 	public <T> T as(final ResultSetParser<T> parser, final Connection conn)
 		throws SQLException
@@ -123,15 +166,6 @@ public class SimpleQuery implements Query {
 		}
 	}
 
-	public <T> void insert(
-		final Collection<T> values,
-		final Dctor<T> dctor,
-		final Connection conn
-	)
-		throws SQLException
-	{
-
-	}
 
 	/* *************************************************************************
 	 * Static factory methods.

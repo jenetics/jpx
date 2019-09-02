@@ -24,6 +24,7 @@ import static java.util.Arrays.asList;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.testng.annotations.AfterClass;
@@ -139,8 +140,28 @@ public class SimpleQueryExecutionTest {
 				Param.of("type", link.type())
 			));
 			 */
+			/*
+			query.update(links, link -> asList(
+				Param.value("id", link.id),
+				Param.value("href", link.href),
+				Param.value("text", link.text),
+				Param.value("type", link.type)
+			));
+			 */
 
-			query.insert(
+			List<Map<String, String>> rows = new ArrayList<>();
+			query.executeInsert(
+				rows,
+				Dctor.of(
+					Field.of("id", row -> row.get("id")),
+					Field.of("href", row -> row.get("href")),
+					Field.of("text", row -> row.get("text")),
+					Field.of("type", row -> row.get("type"))
+				),
+				conn
+			);
+
+			query.executeInsert(
 				links,
 				Dctor.of(
 					Field.of("href", LinkRow::href),
@@ -149,6 +170,8 @@ public class SimpleQueryExecutionTest {
 				),
 				conn
 			);
+
+
 		});
 
 	}
