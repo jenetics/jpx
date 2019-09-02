@@ -157,7 +157,9 @@ public abstract class Query {
 	abstract PreparedStatement prepare(final Connection conn) throws SQLException;
 
 
-	static Optional<Long> readID(final Statement stmt) throws SQLException {
+	private static Optional<Long> readID(final Statement stmt)
+		throws SQLException
+	{
 		try (ResultSet keys = stmt.getGeneratedKeys()) {
 			if (keys.next()) {
 				return Optional.of(keys.getLong(1));

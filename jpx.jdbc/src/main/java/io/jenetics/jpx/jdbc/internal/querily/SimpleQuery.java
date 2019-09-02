@@ -52,13 +52,8 @@ public class SimpleQuery extends Query {
 	 * @return a new parameter query
 	 */
 	public PreparedQuery on(final Param... params) {
-		return null;
+		return PreparedQuery.of(this, params);
 	}
-
-
-	/* *************************************************************************
-	 * Execution methods
-	 * ************************************************************************/
 
 	@Override
 	PreparedStatement prepare(final Connection conn) throws SQLException {

@@ -27,12 +27,9 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -40,31 +37,24 @@ import java.util.stream.Collectors;
  * @version !__version__!
  * @since !__version__!
  */
-public class PreparedQuery {
+public class PreparedQuery extends Query {
 
-	private final SimpleQuery _query;
 	private final List<Param> _params;
 
-	private PreparedQuery(final SimpleQuery query, final List<Param> params) {
-		_query = requireNonNull(query);
+	private PreparedQuery(
+		final String sql,
+		final List<String> names,
+		final List<Param> params
+	) {
+		super(sql, names);
 		_params = unmodifiableList(params);
 	}
 
-
-	/* *************************************************************************
-	 * Execution methods
-	 * ************************************************************************/
-
-	public boolean execute(final Connection conn) throws SQLException  {
-		try (Statement stmt = prepare(conn)) {
-			return stmt.execute(_query.sql());
-		}
-	}
-
-	private PreparedStatement prepare(final Connection conn) throws SQLException {
+	@Override
+	PreparedStatement prepare(final Connection conn) throws SQLException {
 		requireNonNull(conn);
 		final PreparedStatement stmt =  conn.prepareStatement(
-			_query.sql(),
+			sql(),
 			RETURN_GENERATED_KEYS
 		);
 		fill(stmt);
@@ -78,7 +68,7 @@ public class PreparedQuery {
 			.collect(Collectors.groupingBy(Param::name));
 
 		int index = 1;
-		for (String name : _query.names()) {
+		for (String name : names()) {
 			if (!paramsMap.containsKey(name)) {
 				throw new IllegalArgumentException(format(
 					"Param '%s' not found.", name
@@ -95,58 +85,13 @@ public class PreparedQuery {
 		}
 	}
 
-	public int executeUpdate(final Connection conn) throws SQLException {
-		try (Statement stmt = prepare(conn)) {
-			return stmt.executeUpdate(_query.sql());
-		}
-	}
-
-	public Optional<Long> executeInsert(final Connection conn)
-		throws SQLException
-	{
-		try (PreparedStatement stmt = prepare(conn)) {
-			stmt.executeUpdate();
-			return readID(stmt);
-		}
-	}
-
-	private static Optional<Long> readID(final Statement stmt) throws SQLException {
-		try (ResultSet keys = stmt.getGeneratedKeys()) {
-			if (keys.next()) {
-				return Optional.of(keys.getLong(1));
-			} else {
-				return Optional.empty();
-			}
-		}
-	}
-
-	/**
-	 * Executes the select query.
-	 *
-	 * @param parser the row parser used for creating the result objects
-	 * @param <T> the result type
-	 * @return the query result
-	 * @throws SQLException if the query execution fails
-	 * @throws NullPointerException if the given row {@code parser} is
-	 *         {@code null}
-	 */
-	public <T> T as(final RowParser<T> parser, final Connection conn) throws SQLException {
-		requireNonNull(parser);
-
-		try (PreparedStatement ps = prepare(conn);
-			 ResultSet rs = ps.executeQuery())
-		{
-			return parser.parse(null/*Results.of(rs)*/);
-		}
-	}
-
 
 	/* *************************************************************************
 	 * Static factory methods.
 	 * ************************************************************************/
 
-	public static PreparedQuery of(final SimpleQuery query, final Param... params) {
-		return new PreparedQuery(query, asList(params));
+	static PreparedQuery of(final Query query, final Param... params) {
+		return new PreparedQuery(query.sql(), query.names(), asList(params));
 	}
 
 }
