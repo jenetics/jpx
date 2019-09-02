@@ -19,9 +19,15 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -32,6 +38,32 @@ import java.util.Optional;
  * @since !__version__!
  */
 public abstract class Query {
+
+	private final String _sql;
+	private final List<String> _names;
+
+	Query(final String sql, final List<String> names) {
+		_sql = requireNonNull(sql);
+		_names = unmodifiableList(names);
+	}
+
+	/**
+	 * Return the SQL string of {@code this} query class.
+	 *
+	 * @return the SQL string of {@code this} query class
+	 */
+	public String sql() {
+		return _sql;
+	}
+
+	/**
+	 * Return the parameter names of this query. The returned list may be empty.
+	 *
+	 * @return the parameter names of this query
+	 */
+	public List<String> names() {
+		return _names;
+	}
 
 	/**
 	 * Executes the SQL statement defined by {@code this} query object, which
@@ -48,7 +80,11 @@ public abstract class Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public abstract boolean execute(final Connection conn) throws SQLException;
+	public boolean execute(final Connection conn) throws SQLException  {
+		try (PreparedStatement stmt = prepare(conn)) {
+			return stmt.execute();
+		}
+	}
 
 	/**
 	 * Executes the SQL statement defined by {@code this} query object, which
@@ -66,7 +102,11 @@ public abstract class Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public abstract int executeUpdate(final Connection conn) throws SQLException;
+	public int executeUpdate(final Connection conn) throws SQLException {
+		try (PreparedStatement stmt = prepare(conn)) {
+			return stmt.executeUpdate();
+		}
+	}
 
 	/**
 	 * Executes the SQL statement defined by {@code this} query object, which
@@ -79,8 +119,14 @@ public abstract class Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public abstract Optional<Long> executeInsert(final Connection conn)
-		throws SQLException;
+	public Optional<Long> executeInsert(final Connection conn)
+		throws SQLException
+	{
+		try (PreparedStatement stmt = prepare(conn)) {
+			stmt.executeUpdate();
+			return readID(stmt);
+		}
+	}
 
 	/**
 	 * Executes {@code this} query and parses the result with the given
@@ -97,7 +143,28 @@ public abstract class Query {
 	 * @throws NullPointerException if the given result parser or connection is
 	 *         {@code null}
 	 */
-	public abstract  <T> T as(final ResultSetParser<T> parser, final Connection conn)
-		throws SQLException;
+	public <T> T as(final ResultSetParser<T> parser, final Connection conn)
+		throws SQLException
+	{
+		try (PreparedStatement ps = prepare(conn);
+			 ResultSet rs = ps.executeQuery())
+		{
+			return parser.parse(rs);
+		}
+	}
+
+
+	abstract PreparedStatement prepare(final Connection conn) throws SQLException;
+
+
+	static Optional<Long> readID(final Statement stmt) throws SQLException {
+		try (ResultSet keys = stmt.getGeneratedKeys()) {
+			if (keys.next()) {
+				return Optional.of(keys.getLong(1));
+			} else {
+				return Optional.empty();
+			}
+		}
+	}
 
 }

@@ -20,19 +20,14 @@
 package io.jenetics.jpx.jdbc.internal.querily;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,30 +41,8 @@ public class SimpleQuery extends Query {
 
 	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
 
-	private final String _sql;
-	private final List<String> _names;
-
 	private SimpleQuery(final String sql, final List<String> names) {
-		_sql = requireNonNull(sql);
-		_names = unmodifiableList(names);
-	}
-
-	/**
-	 * Return the SQL string of {@code this} query class.
-	 *
-	 * @return the SQL string of {@code this} query class
-	 */
-	public String sql() {
-		return _sql;
-	}
-
-	/**
-	 * Return the parameter names of this query. The returned list may be empty.
-	 *
-	 * @return the parameter names of this query
-	 */
-	public List<String> names() {
-		return _names;
+		super(sql, names);
 	}
 
 	/**
@@ -88,41 +61,8 @@ public class SimpleQuery extends Query {
 	 * ************************************************************************/
 
 	@Override
-	public boolean execute(final Connection conn) throws SQLException  {
-		try (Statement stmt = conn.createStatement()) {
-			return stmt.execute(_sql);
-		}
-	}
-
-	@Override
-	public int executeUpdate(final Connection conn) throws SQLException {
-		try (Statement stmt = conn.createStatement()) {
-			return stmt.executeUpdate(_sql);
-		}
-	}
-
-	@Override
-	public Optional<Long> executeInsert(final Connection conn)
-		throws SQLException
-	{
-		try (PreparedStatement stmt = prepare(conn)) {
-			stmt.executeUpdate();
-			return readID(stmt);
-		}
-	}
-
-	private PreparedStatement prepare(final Connection conn) throws SQLException {
-		return conn.prepareStatement(_sql, RETURN_GENERATED_KEYS);
-	}
-
-	private static Optional<Long> readID(final Statement stmt) throws SQLException {
-		try (ResultSet keys = stmt.getGeneratedKeys()) {
-			if (keys.next()) {
-				return Optional.of(keys.getLong(1));
-			} else {
-				return Optional.empty();
-			}
-		}
+	PreparedStatement prepare(final Connection conn) throws SQLException {
+		return conn.prepareStatement(sql(), RETURN_GENERATED_KEYS);
 	}
 
 	public <T> List<Long> executeInsert(
@@ -154,18 +94,6 @@ public class SimpleQuery extends Query {
 	{
 		return null;
 	}
-
-	@Override
-	public <T> T as(final ResultSetParser<T> parser, final Connection conn)
-		throws SQLException
-	{
-		try (PreparedStatement ps = prepare(conn);
-			 ResultSet rs = ps.executeQuery())
-		{
-			return parser.parse(rs);
-		}
-	}
-
 
 	/* *************************************************************************
 	 * Static factory methods.
