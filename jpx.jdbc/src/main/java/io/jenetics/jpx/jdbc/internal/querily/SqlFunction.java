@@ -22,7 +22,6 @@ package io.jenetics.jpx.jdbc.internal.querily;
 import java.sql.SQLException;
 
 /**
- /**
  * Represents a function that accepts one argument and produces a result. In
  * contrast to the Java {@link java.util.function.Function} interface, a
  * SQL-function is allowed to throw a {@link SQLException}.

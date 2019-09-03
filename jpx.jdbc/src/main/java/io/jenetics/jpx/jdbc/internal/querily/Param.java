@@ -77,7 +77,7 @@ public final class Param {
 	 *
 	 * @return the parameter values
 	 */
-	public Object value() {
+	public Value value() {
 		return _value;
 	}
 

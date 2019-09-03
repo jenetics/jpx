@@ -48,7 +48,7 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 	 *
 	 * @param <T> the record type this field belongs to
 	 */
-	public static final class Field<T, R> {
+	public static final class Field<T, R> implements Function<T, R> {
 		private final String _name;
 		private final Function<? super T, ? extends R> _accessor;
 
@@ -84,7 +84,8 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 		 * @param record the record from where to fetch the field value
 		 * @return the record field value
 		 */
-		public R value(final T record) {
+		@Override
+		public R apply(final T record) {
 			return _accessor.apply(record);
 		}
 
@@ -119,7 +120,7 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 	public Map<String, Object> deconstruct(final T record) {
 		final Map<String, Object> fields = new HashMap<>();
 		for (Field<T, ?> field : _fields) {
-			fields.put(field.name(), field.value(record));
+			fields.put(field.name(), field.apply(record));
 		}
 		return fields;
 	}
@@ -129,7 +130,7 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 		return _fields.stream()
 			.filter(f -> Objects.equals(f.name(), name))
 			.findFirst()
-			.map(f -> Value.of(f.value(record)))
+			.map(f -> Value.of(f.apply(record)))
 			.orElse(null);
 	}
 

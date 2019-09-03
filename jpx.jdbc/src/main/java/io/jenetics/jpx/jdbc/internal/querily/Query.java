@@ -80,8 +80,10 @@ public class Query {
 	 * @param params the query parameters
 	 * @return a new parameter query
 	 */
-	public PreparedQuery on(final Param... params) {
-		return PreparedQuery.of(this, params);
+	public Query on(final Param... params) {
+		return params.length == 0
+			? this
+			: PreparedQuery.of(this, params);
 	}
 
 	/**
