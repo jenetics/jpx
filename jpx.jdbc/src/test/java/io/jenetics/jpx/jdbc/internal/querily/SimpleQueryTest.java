@@ -31,7 +31,7 @@ public class SimpleQueryTest {
 
 	@Test
 	public void create() {
-		final SimpleQuery query = SimpleQuery
+		final Query query = Query
 			.of("SELECT * FROM table WHERE id = {id} AND name = {name}");
 
 		Assert.assertEquals(

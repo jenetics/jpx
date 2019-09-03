@@ -34,6 +34,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiFunction;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * A {@code Query} represents an executable piece of SQL text.
@@ -42,7 +44,7 @@ import java.util.function.BiFunction;
  * @version !__version__!
  * @since !__version__!
  */
-public abstract class Query {
+public class Query {
 
 	private final String _sql;
 	private final List<String> _names;
@@ -213,11 +215,9 @@ public abstract class Query {
 		}
 	}
 
-
 	PreparedStatement prepare(final Connection conn) throws SQLException {
 		return conn.prepareStatement(sql(), RETURN_GENERATED_KEYS);
 	}
-
 
 	static Optional<Long> readID(final Statement stmt)
 		throws SQLException
@@ -231,4 +231,26 @@ public abstract class Query {
 		}
 	}
 
+
+	/* *************************************************************************
+	 * Static factory methods.
+	 * ************************************************************************/
+
+	private static final Pattern PARAM_PATTERN = Pattern.compile("\\{(\\w+?)\\}");
+
+	public static Query of(final String sql) {
+		final List<String> names = new ArrayList<>();
+		final StringBuffer parsedQuery = new StringBuffer();
+
+		final Matcher matcher = PARAM_PATTERN.matcher(sql);
+		while (matcher.find()) {
+			final String name = matcher.group(1);
+			names.add(name);
+
+			matcher.appendReplacement(parsedQuery, "?");
+		}
+		matcher.appendTail(parsedQuery);
+
+		return new Query(parsedQuery.toString(), names);
+	}
 }

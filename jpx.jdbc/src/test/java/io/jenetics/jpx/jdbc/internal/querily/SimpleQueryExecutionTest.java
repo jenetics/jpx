@@ -81,7 +81,7 @@ public class SimpleQueryExecutionTest {
 
 	@Test
 	public void setup() throws SQLException {
-		final SimpleQuery query = SimpleQuery.of(
+		final Query query = Query.of(
 			"CREATE TABLE link(\n" +
 				"    id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,\n" +
 				"    href VARCHAR(255) NOT NULL,\n" +
@@ -96,7 +96,7 @@ public class SimpleQueryExecutionTest {
 
 	@Test(dependsOnMethods = "setup")
 	public void insert() throws SQLException {
-		final SimpleQuery query = SimpleQuery.of(
+		final Query query = Query.of(
 			"INSERT INTO link(href, text, type) " +
 				"VALUES('http://link.com', 'some text', 'some type');"
 		);
@@ -109,7 +109,7 @@ public class SimpleQueryExecutionTest {
 
 	@Test(dependsOnMethods = "insert")
 	public void select() throws SQLException {
-		final SimpleQuery query = SimpleQuery.of("SELECT * FROM link;");
+		final Query query = Query.of("SELECT * FROM link;");
 
 		db.transaction(conn -> {
 			final List<Stored<LinkRow>> rows = query
@@ -120,7 +120,7 @@ public class SimpleQueryExecutionTest {
 	}
 
 	public void batchInsert() throws SQLException {
-		final SimpleQuery query = SimpleQuery.of("INSERT INTO link(href) VALUES({href})");
+		final Query query = Query.of("INSERT INTO link(href) VALUES({href})");
 
 		final List<LinkRow> links = new ArrayList<>();
 

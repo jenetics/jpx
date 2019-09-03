@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  * @version !__version__!
  * @since !__version__!
  */
-public final class PreparedQuery extends Query {
+final class PreparedQuery extends Query {
 
 	private final Map<String, Param> _params;
 
