@@ -37,6 +37,8 @@ import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
+
 /**
  * A {@code Query} represents an executable piece of SQL text.
  *

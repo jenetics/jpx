@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.jenetics.jpx.jdbc.internal.querily.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 
 /**
@@ -73,7 +74,7 @@ public final class SQLQuery extends AbstractQuery {
 	 * @throws NullPointerException if the parameter {@code name} is {@code null}
 	 */
 	public SQLQuery on(final String name, final Object value) {
-		return on(Param.of(name, value));
+		return on(Param.of(name, Value.of(value)));
 	}
 
 	/**

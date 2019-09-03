@@ -32,12 +32,35 @@ import static java.util.Objects.requireNonNull;
  */
 public final class Param {
 
-	private final String _name;
-	private final Object _value;
+	/**
+	 * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+	 * @version !__version__!
+	 * @since !__version__!
+	 */
+	public static final class Value {
 
-	private Param(final String name, final Object value) {
+		private final Object _value;
+
+		private Value(final Object value) {
+			_value = value;
+		}
+
+		public Object value() {
+			return _value;
+		}
+
+		public static Value of(final Object value) {
+			return new Value(value);
+		}
+
+	}
+
+	private final String _name;
+	private final Value _value;
+
+	private Param(final String name, final Value value) {
 		_name = requireNonNull(name);
-		_value = value;
+		_value = requireNonNull(value);
 	}
 
 	/**
@@ -78,7 +101,7 @@ public final class Param {
 	 * @throws NullPointerException if the given parameter {@code name} is
 	 *         {@code null}
 	 */
-	public static Param of(final String name, final Object value) {
+	public static Param of(final String name, final Value value) {
 		return new Param(name, value);
 	}
 

@@ -31,6 +31,8 @@ import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
+
 /**
  * This class represents a <em>deconstructor</em> for a given (record) class. It
  * allows to extract the fields, inclusively names, from a given record.

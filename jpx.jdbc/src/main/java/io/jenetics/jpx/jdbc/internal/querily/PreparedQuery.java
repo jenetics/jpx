@@ -20,7 +20,6 @@
 package io.jenetics.jpx.jdbc.internal.querily;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
-import static java.util.Arrays.asList;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -35,6 +34,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
