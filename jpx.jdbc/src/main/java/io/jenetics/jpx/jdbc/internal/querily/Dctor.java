@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -39,7 +39,7 @@ import java.util.function.Function;
  * @version !__version__!
  * @since !__version__!
  */
-public final class Dctor<T> {
+public final class Dctor<T> implements BiFunction<T, String, Value> {
 
 	/**
 	 * Deconstructed field from a record class of type {@code T}.
@@ -122,12 +122,13 @@ public final class Dctor<T> {
 		return fields;
 	}
 
-	public Object deconstruct(final String name, final T record) {
+	@Override
+	public Value apply(final T record, final String name) {
 		return _fields.stream()
 			.filter(f -> Objects.equals(f.name(), name))
 			.findFirst()
-			.map(f -> f.value(record))
-			.orElseThrow(NoSuchElementException::new);
+			.map(f -> Value.of(f.value(record)))
+			.orElse(null);
 	}
 
 	@SafeVarargs

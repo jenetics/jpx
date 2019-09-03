@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
@@ -27,8 +28,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.BiFunction;
 
 /**
  * A {@code Query} represents an executable piece of SQL text.
@@ -63,6 +68,16 @@ public abstract class Query {
 	 */
 	public List<String> names() {
 		return _names;
+	}
+
+	/**
+	 * Return a new query object with the given query parameter values.
+	 *
+	 * @param params the query parameters
+	 * @return a new parameter query
+	 */
+	public PreparedQuery on(final Param... params) {
+		return PreparedQuery.of(this, params);
 	}
 
 	/**
@@ -129,6 +144,51 @@ public abstract class Query {
 	}
 
 	/**
+	 * Inserts the given rows in one transaction and with the same prepared
+	 * statement.
+	 *
+	 * @param rows the rows to insert
+	 * @param dctor the deconstruction function, which splits a given row into
+	 *        its components. This components can than be used setting the
+	 *        parameter values of the query.
+	 * @param conn the DB connection where {@code this} query is executed on
+	 * @param <T> the row type
+	 * @return the list of generated keys, might be empty
+	 * @throws SQLException if a database access error occurs
+	 * @throws java.sql.SQLTimeoutException when the driver has determined that
+	 *         the timeout value has been exceeded
+	 * @throws NullPointerException if one of the parameters is {@code null}
+	 */
+	public <T> List<Long> executeInsert(
+		final Collection<T> rows,
+		final BiFunction<? super T, String, Value> dctor,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		final List<Long> ids = new ArrayList<>();
+
+		try (PreparedStatement stmt = prepare(conn)) {
+			for (T row : rows) {
+				int index = 0;
+				for (String name : names()) {
+					final Value value = dctor.apply(row, name);
+					if (value != null) {
+						stmt.setObject(++index, value.value());
+					} else {
+						throw new NoSuchElementException();
+					}
+				}
+
+				stmt.executeUpdate();
+				readID(stmt).ifPresent(ids::add);
+			}
+		}
+
+		return ids;
+	}
+
+	/**
 	 * Executes {@code this} query and parses the result with the given
 	 * result-set parser.
 	 *
@@ -154,10 +214,12 @@ public abstract class Query {
 	}
 
 
-	abstract PreparedStatement prepare(final Connection conn) throws SQLException;
+	PreparedStatement prepare(final Connection conn) throws SQLException {
+		return conn.prepareStatement(sql(), RETURN_GENERATED_KEYS);
+	}
 
 
-	private static Optional<Long> readID(final Statement stmt)
+	static Optional<Long> readID(final Statement stmt)
 		throws SQLException
 	{
 		try (ResultSet keys = stmt.getGeneratedKeys()) {

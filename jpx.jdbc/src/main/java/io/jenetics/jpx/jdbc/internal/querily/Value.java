@@ -19,24 +19,25 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
-import java.util.Map;
-import java.util.function.Function;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class Value<T> {
+public final class Value {
 
-	private final Map<String, Function<T, ?>> _values;
+	private final Object _value;
 
-	private Value(final Map<String, Function<T, ?>> values) {
-		_values = values;
+	private Value(final Object value) {
+		_value = value;
 	}
 
-	public static <T> Value<T> of(final String name, final Function<T, ?> field) {
-		return null;
+	public Object value() {
+		return _value;
+	}
+
+	public static Value of(final Object value) {
+		return new Value(value);
 	}
 
 }

@@ -102,23 +102,23 @@ public final class PreparedSQL {
 		final Map<String, List<Param>> paramsMap = params.stream()
 			.collect(Collectors.groupingBy(Param::name));
 
-		int index = 1;
-		for (String name : _names) {
-			if (!paramsMap.containsKey(name)) {
-				throw new IllegalArgumentException(format(
-					"Param '%s' not found.", name
-				));
-			}
-
-			final List<Object> values = paramsMap.get(name).stream()
-				.flatMap(p -> p.of().stream())
-				.map(PreparedSQL::toSQLValue)
-				.collect(Collectors.toList());
-
-			for (Object value : values) {
-				stmt.setObject(index++, value);
-			}
-		}
+//		int index = 1;
+//		for (String name : _names) {
+//			if (!paramsMap.containsKey(name)) {
+//				throw new IllegalArgumentException(format(
+//					"Param '%s' not found.", name
+//				));
+//			}
+//
+//			final List<Object> values = paramsMap.get(name).stream()
+//				.flatMap(p -> p.value().stream())
+//				.map(PreparedSQL::toSQLValue)
+//				.collect(Collectors.toList());
+//
+//			for (Object value : values) {
+//				stmt.setObject(index++, value);
+//			}
+//		}
 	}
 
 	private static Object toSQLValue(final Object value) {
@@ -195,12 +195,12 @@ public final class PreparedSQL {
 
 			names.add(name);
 
-			final String placeHolder = paramsMap.get(name).stream()
-				.flatMap(p -> p.of().stream())
-				.map(p -> "?")
-				.collect(Collectors.joining(","));
-
-			matcher.appendReplacement(parsedQuery, placeHolder);
+//			final String placeHolder = paramsMap.get(name).stream()
+//				.flatMap(p -> p.of().stream())
+//				.map(p -> "?")
+//				.collect(Collectors.joining(","));
+//
+//			matcher.appendReplacement(parsedQuery, placeHolder);
 		}
 		matcher.appendTail(parsedQuery);
 

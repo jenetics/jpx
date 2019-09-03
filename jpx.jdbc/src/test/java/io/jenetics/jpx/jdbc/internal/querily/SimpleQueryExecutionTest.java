@@ -19,8 +19,6 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
-import static java.util.Arrays.asList;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,12 +70,6 @@ public class SimpleQueryExecutionTest {
 					row.getString("type")
 				)
 			);
-
-		private static final List<Value<LinkRow>> UNAPPLY = asList(
-			Value.of("href", LinkRow::href),
-			Value.of("text", LinkRow::text),
-			Value.of("type", LinkRow::type)
-		);
 	}
 
 	public final DB db = H2DB.newTestInstance();

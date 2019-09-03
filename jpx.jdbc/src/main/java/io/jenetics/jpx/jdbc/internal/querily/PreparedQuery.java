@@ -19,17 +19,19 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
-import static java.lang.String.format;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Arrays.asList;
-import static java.util.Collections.unmodifiableList;
-import static java.util.Objects.requireNonNull;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -37,9 +39,9 @@ import java.util.stream.Collectors;
  * @version !__version__!
  * @since !__version__!
  */
-public class PreparedQuery extends Query {
+public final class PreparedQuery extends Query {
 
-	private final List<Param> _params;
+	private final Map<String, Param> _params;
 
 	private PreparedQuery(
 		final String sql,
@@ -47,12 +49,16 @@ public class PreparedQuery extends Query {
 		final List<Param> params
 	) {
 		super(sql, names);
-		_params = unmodifiableList(params);
+
+		_params = params.stream()
+			.collect(Collectors.toMap(
+				Param::name,
+				Function.identity(),
+				(a, b) -> b));
 	}
 
 	@Override
 	PreparedStatement prepare(final Connection conn) throws SQLException {
-		requireNonNull(conn);
 		final PreparedStatement stmt =  conn.prepareStatement(
 			sql(),
 			RETURN_GENERATED_KEYS
@@ -62,27 +68,46 @@ public class PreparedQuery extends Query {
 	}
 
 	private void fill(final PreparedStatement stmt) throws SQLException {
-		requireNonNull(stmt);
-
-		final Map<String, List<Param>> paramsMap = _params.stream()
-			.collect(Collectors.groupingBy(Param::name));
-
 		int index = 1;
 		for (String name : names()) {
-			if (!paramsMap.containsKey(name)) {
-				throw new IllegalArgumentException(format(
-					"Param '%s' not found.", name
-				));
+			if (_params.containsKey(name)) {
+				stmt.setObject(index, _params.get(name).value());
 			}
 
-			final List<Object> values = paramsMap.get(name).stream()
-				.flatMap(p -> p.of().stream())
-				.collect(Collectors.toList());
+			++index;
+		}
+	}
 
-			for (Object value : values) {
-				stmt.setObject(index++, value);
+	@Override
+	public <T> List<Long> executeInsert(
+		final Collection<T> rows,
+		final BiFunction<? super T, String, Value> dctor,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		final List<Long> ids = new ArrayList<>();
+
+		try (PreparedStatement stmt = prepare(conn)) {
+			for (T row : rows) {
+				int index = 0;
+				for (String name : names()) {
+					final Value value = dctor.apply(row, name);
+					if (value != null) {
+						stmt.setObject(++index, value.value());
+					} else if (_params.containsKey(name)) {
+						stmt.setObject(++index, _params.get(name).value());
+					} else {
+						throw new NoSuchElementException();
+					}
+				}
+
+				stmt.executeUpdate();
+				readID(stmt).ifPresent(ids::add);
 			}
 		}
+
+		return ids;
 	}
 
 
