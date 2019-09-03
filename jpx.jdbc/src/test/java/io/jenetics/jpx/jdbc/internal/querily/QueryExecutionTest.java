@@ -36,7 +36,7 @@ import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class SimpleQueryExecutionTest {
+public class QueryExecutionTest {
 
 	public static final class LinkRow {
 		final String href;

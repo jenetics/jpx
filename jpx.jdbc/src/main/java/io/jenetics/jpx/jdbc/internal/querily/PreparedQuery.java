@@ -27,12 +27,14 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -46,15 +48,20 @@ final class PreparedQuery extends Query {
 	private PreparedQuery(
 		final String sql,
 		final List<String> names,
-		final List<Param> params
+		final Map<String, Param> params
 	) {
 		super(sql, names);
+		_params = params;
+	}
 
-		_params = params.stream()
-			.collect(Collectors.toMap(
-				Param::name,
-				Function.identity(),
-				(a, b) -> b));
+	@Override
+	public PreparedQuery on(final Param... params) {
+		final Map<String, Param> map = new HashMap<>(_params);
+		for (Param param : params) {
+			map.put(param.name(), param);
+		}
+
+		return new PreparedQuery(sql(), names(), map);
 	}
 
 	@Override
@@ -116,7 +123,13 @@ final class PreparedQuery extends Query {
 	 * ************************************************************************/
 
 	static PreparedQuery of(final Query query, final Param... params) {
-		return new PreparedQuery(query.sql(), query.names(), asList(params));
+		final Map<String, Param> map = Stream.of(params)
+			.collect(Collectors.toMap(
+				Param::name,
+				Function.identity(),
+				(a, b) -> b));
+
+		return new PreparedQuery(query.sql(), query.names(), map);
 	}
 
 }
