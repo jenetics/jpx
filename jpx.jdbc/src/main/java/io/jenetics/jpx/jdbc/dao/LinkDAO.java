@@ -19,125 +19,68 @@
  */
 package io.jenetics.jpx.jdbc.dao;
 
-import static java.util.stream.Collectors.toMap;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import io.jenetics.jpx.Link;
+import io.jenetics.jpx.jdbc.internal.querily.Dctor;
+import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
+import io.jenetics.jpx.jdbc.internal.querily.Query;
+import io.jenetics.jpx.jdbc.internal.querily.RowParser;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-//public final class LinkDAO
-//	extends DAO
-//	implements Selector<Link>
-//{
-//
-//	public LinkDAO(Connection conn) {
-//		super(conn);
-//	}
-//
-//	private static final RowParser<LinkRow> RowParser = rs -> LinkRow.of(
-//		rs.getLong("id"),
-//		rs.getString("href"),
-//		rs.getString("text"),
-//		rs.getString("type")
-//	);
-//
-//
-//	/* *************************************************************************
-//	 * SELECT queries
-//	 **************************************************************************/
-//
-//	/**
-//	 * Select all available links.
-//	 *
-//	 * @return all stored links
-//	 * @throws SQLException if the operation fails
-//	 * @throws NullPointerException if one of the arguments is {@code null}
-//	 */
-//	public List<LinkRow> select() throws SQLException {
-//		final String query =
-//			"SELECT id, href, text, type FROM link ORDER BY id";
-//
-//		return SQL(query).as(RowParser.list());
-//	}
-//
-//	@Override
-//	public <V, C> List<LinkRow> select(
-//		final Column<V, C> column,
-//		final Collection<V> values
-//	)
-//		throws SQLException
-//	{
-//		final String query =
-//			"SELECT id, href, text, type " +
-//			"FROM link WHERE "+column.name()+" IN ({values}) " +
-//			"ORDER BY id";
-//
-//		return values.isEmpty()
-//			? Collections.emptyList()
-//			: SQL(query)
-//				.on(Param.values("values", values, column.mapper()))
-//				.as(RowParser.list());
-//	}
-//
-//	public <T> void fill(
-//		final Collection<T> rows,
-//		final Function<T, LinkRow> mapper
-//	)
-//		throws SQLException
-//	{
-//		final Column<T, Long> col = Column.of("id", row -> mapper.apply(row).id);
-//
-//		final Map<Long, LinkRow> links = select(col, rows).stream()
-//			.collect(toMap(l -> l.id, l -> l, (a, b) -> b));
-//
-//		rows.stream()
-//			.map(mapper)
-//			.forEach(row -> row.fill(links.get(row.id)));
-//	}
-//
-//	public void fill(final Collection<LinkRow> rows) throws SQLException {
-//		fill(rows, Function.identity());
-//	}
-//
-//	/* *************************************************************************
-//	 * INSERT queries
-//	 **************************************************************************/
-//
-//	public List<LinkRow> insert(final Collection<Link> links)
-//		throws SQLException
-//	{
-//		final String query =
-//			"INSERT INTO link(href, text, type) " +
-//			"VALUES({href}, {text}, {type});";
-//
-//		final List<Stored<Link>> rows = Batch(query).insert(links, link -> asList(
-//			Param.value("href", link.getHref()),
-//			Param.value("text", link.getText()),
-//			Param.value("type", link.getType())
-//		));
-//
-//		return map(rows, LinkRow::of);
-//	}
-//
-//	/* *************************************************************************
-//	 * UPDATE queries
-//	 **************************************************************************/
-//
-//	public List<LinkRow> update(final Collection<LinkRow> links)
-//		throws SQLException
-//	{
-//		final String query =
-//			"UPDATE link SET href = {href}, text = {text}, type = {type} " +
-//			"WHERE id = {id}";
-//
-//		Batch(query).update(links, link -> asList(
-//			Param.value("id", link.id),
-//			Param.value("href", link.href),
-//			Param.value("text", link.text),
-//			Param.value("type", link.type)
-//		));
-//
-//		return new ArrayList<>(links);
-//	}
-//
-//}
+public final class LinkDAO {
+
+	private LinkDAO() {
+	}
+
+	private static final RowParser<Stored<Link>> ROW_PARSER = row -> Stored.of(
+		row.getLong("id"),
+		Link.of(
+			row.getString("href"),
+			row.getString("text"),
+			row.getString("type")
+		)
+	);
+
+	private static final Dctor<Link> DCTOR = Dctor.of(
+		Field.of("href", l -> l.getHref().toString()),
+		Field.of("text", l -> l.getText().orElse(null)),
+		Field.of("type", l -> l.getType().orElse(null))
+	);
+
+	public static List<Long> insert(final List<Link> links, final Connection conn)
+		throws SQLException
+	{
+		final String sql =
+			"INSERT INTO link(href, text, type) " +
+				"VALUES({href}, {text}, {type});";
+
+		return Query.of(sql).executeInsert(links, DCTOR, conn);
+	}
+
+	/**
+	 * Select all available links.
+	 *
+	 * @return all stored links
+	 * @throws SQLException if the operation fails
+	 * @throws NullPointerException if one of the arguments is {@code null}
+	 */
+	public static List<Stored<Link>> selectAll(final Connection conn)
+		throws SQLException
+	{
+		final String sql =
+			"SELECT id, href, text, type FROM link ORDER BY id ASC";
+
+		return Query.of(sql).as(ROW_PARSER.list(), conn);
+	}
+
+
+
+}

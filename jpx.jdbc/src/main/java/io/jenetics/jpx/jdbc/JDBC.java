@@ -1,5 +1,5 @@
 /*
- * Java GPX Library (@__identifier__@).
+ * Java Genetic Algorithm Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,38 +19,37 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.jdbc.internal.querily.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version !__version__!
+ * @since !__version__!
  */
-public abstract class DAOTestBase {
-
-	public final DB db = H2DB.newTestInstance();
-
-	@BeforeClass
-	public void setup() throws IOException, SQLException {
-		final String[] queries = IO.
-			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
-			.split(";");
-
-		db.transaction(conn -> {
-			for (String query : queries) {
-				try (Statement stmt = conn.createStatement()) {
-					stmt.execute(query);
-				}
-			}
-		});
+public final class JDBC {
+	private JDBC() {
 	}
 
-	@AfterClass
-	public void shutdown() throws SQLException {
-		db.close();
+	private static final Query INSERT_GPX = Query.of(
+		"INSERT INTO gpx(version, creator"
+	);
+	/*
+CREATE TABLE gpx(
+	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	version VARCHAR(5) NOT NULL DEFAULT '1.1',
+	creator VARCHAR(255) NOT NULL,
+	metadata_id BIGINT REFERENCES metadata(id)
+);
+	 */
+
+	public static void insert(final GPX gpx, final Connection conn)
+		throws SQLException
+	{
+
 	}
 
 }
