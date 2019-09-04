@@ -19,30 +19,93 @@
  */
 package io.jenetics.jpx.jdbc.dao;
 
-import static java.util.stream.Collectors.toMap;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import io.jenetics.jpx.Email;
+import io.jenetics.jpx.Link;
+import io.jenetics.jpx.Person;
+import io.jenetics.jpx.jdbc.internal.querily.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
+import io.jenetics.jpx.jdbc.internal.querily.Query;
+import io.jenetics.jpx.jdbc.internal.querily.RowParser;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-//public class PersonDAO extends DAO implements Selector<PersonRow> {
-//
-//	public PersonDAO(final Connection conn) {
-//		super(conn);
-//	}
-//
-//	private final static RowParser<PersonRow> RowParser = rs -> new PersonRow(
-//		rs.getLong("id"),
-//		rs.getString("name"),
-//		rs.getString("email"),
-//		rs.get(Long.class, LinkRow::new, "link_id")
-//	);
-//
-//
-//	/* *************************************************************************
-//	 * SELECT queries
-//	 **************************************************************************/
-//
+public final class PersonDAO {
+
+	private PersonDAO() {
+	}
+
+	private final static RowParser<Stored<Person>> ROW_PARSER = rs -> Stored.of(
+		rs.getLong("id"),
+		Person.of(
+			rs.getString("name"),
+			Email.of(rs.getString("email")),
+			rs.getString("link_href") != null
+				? Link.of(
+					rs.getString("link_href"),
+					rs.getString("link_text"),
+					rs.getString("link_type"))
+				: null
+		)
+	);
+
+	public static List<Long> insert(
+		final List<Person> persons,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		final String sql =
+			"INSERT INTO person(name, email, link_id) " +
+				"VALUES({name}, {email}, {link_id});";
+
+		final Query query = Query.of(sql);
+
+		final List<Long> ids = new ArrayList<>();
+		for (Person person : persons) {
+			if (!person.isEmpty()) {
+				final Link link = person.getLink().orElse(null);
+				final Long lid = link != null
+					? LinkDAO.insert(link, conn)
+					: null;
+
+				final Long id = query.on(
+					Param.of("name", Value.of(person.getName().orElse(null))),
+					Param.of("email", Value.of(person.getEmail().orElse(null))),
+					Param.of("link_id", Value.of(lid)))
+					.executeInsert(conn).orElse(null);
+
+				ids.add(id);
+			} else {
+				ids.add(null);
+			}
+
+		}
+
+		return ids;
+	}
+	/*
+	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	name VARCHAR(255) NOT NULL,
+	email VARCHAR(255),
+	link_id BIGINT REFERENCES link(id),
+	 */
+
+
+	/* *************************************************************************
+	 * SELECT queries
+	 **************************************************************************/
+
 //	/**
 //	 * Select all available persons.
 //	 *
@@ -104,5 +167,5 @@ import static java.util.stream.Collectors.toMap;
 //			.on(Param.values("values", values, column.mapper()))
 //			.as(RowParser.list());
 //	}
-//
-//}
+
+}

@@ -21,11 +21,15 @@ package io.jenetics.jpx.jdbc.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
+import io.jenetics.jpx.jdbc.internal.querily.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
 import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 import io.jenetics.jpx.jdbc.internal.querily.Stored;
@@ -63,6 +67,12 @@ public final class LinkDAO {
 				"VALUES({href}, {text}, {type});";
 
 		return Query.of(sql).executeInsert(links, DCTOR, conn);
+	}
+
+	public static long insert(final Link link, final Connection conn)
+		throws SQLException
+	{
+		return insert(Collections.singletonList(link), conn).get(0);
 	}
 
 	/**
