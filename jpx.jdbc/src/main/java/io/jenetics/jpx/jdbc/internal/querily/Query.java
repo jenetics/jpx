@@ -23,6 +23,8 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
+import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -33,7 +35,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -149,6 +150,45 @@ public class Query {
 		}
 	}
 
+	public <T> Long executeInsert(
+		final T row,
+		final SqlFunction2<? super T, String, Value> dctor,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		try (PreparedStatement stmt = prepare(conn)) {
+			int index = 0;
+			for (String name : names()) {
+				final Value value = dctor.apply(row, name);
+				if (value != null) {
+					stmt.setObject(++index, toSQLValue(value.value()));
+				} else {
+					throw new NoSuchElementException();
+				}
+			}
+
+			stmt.executeUpdate();
+			return readID(stmt).orElse(null);
+		}
+	}
+
+	private static Object toSQLValue(final Object value) {
+		Object result = value;
+
+		while (result instanceof Optional) {
+			result = ((Optional<?>)result).orElse(null);
+		}
+
+		if (result instanceof URI) {
+			result = result.toString();
+		} else if (result instanceof URL) {
+			result = result.toString();
+		}
+
+		return result;
+	}
+
 	/**
 	 * Inserts the given rows in one transaction and with the same prepared
 	 * statement.
@@ -167,7 +207,7 @@ public class Query {
 	 */
 	public <T> List<Long> executeInsert(
 		final Collection<T> rows,
-		final BiFunction<? super T, String, Value> dctor,
+		final SqlFunction2<? super T, String, Value> dctor,
 		final Connection conn
 	)
 		throws SQLException
@@ -180,7 +220,7 @@ public class Query {
 				for (String name : names()) {
 					final Value value = dctor.apply(row, name);
 					if (value != null) {
-						stmt.setObject(++index, value.value());
+						stmt.setObject(++index, toSQLValue(value.value()));
 					} else {
 						throw new NoSuchElementException();
 					}

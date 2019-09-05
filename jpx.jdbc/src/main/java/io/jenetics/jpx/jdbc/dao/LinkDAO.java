@@ -21,15 +21,11 @@ package io.jenetics.jpx.jdbc.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
-import io.jenetics.jpx.jdbc.internal.querily.Param;
-import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
 import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 import io.jenetics.jpx.jdbc.internal.querily.Stored;
@@ -54,25 +50,23 @@ public final class LinkDAO {
 	);
 
 	private static final Dctor<Link> DCTOR = Dctor.of(
-		Field.of("href", l -> l.getHref().toString()),
-		Field.of("text", l -> l.getText().orElse(null)),
-		Field.of("type", l -> l.getType().orElse(null))
+		Field.of("href", Link::getHref),
+		Field.of("text", Link::getText),
+		Field.of("type", Link::getType)
 	);
 
-	public static List<Long> insert(final List<Link> links, final Connection conn)
+	public static Long insert(final Link link, final Connection conn)
 		throws SQLException
 	{
+		if (link == null) {
+			return null;
+		}
+
 		final String sql =
 			"INSERT INTO link(href, text, type) " +
 				"VALUES({href}, {text}, {type});";
 
-		return Query.of(sql).executeInsert(links, DCTOR, conn);
-	}
-
-	public static long insert(final Link link, final Connection conn)
-		throws SQLException
-	{
-		return insert(Collections.singletonList(link), conn).get(0);
+		return Query.of(sql).executeInsert(link, DCTOR, conn);
 	}
 
 	/**

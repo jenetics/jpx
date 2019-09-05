@@ -23,13 +23,12 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 
@@ -41,20 +40,20 @@ import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
  * @version !__version__!
  * @since !__version__!
  */
-public final class Dctor<T> implements BiFunction<T, String, Value> {
+public final class Dctor<T> implements SqlFunction2<T, String, Value> {
 
 	/**
 	 * Deconstructed field from a record class of type {@code T}.
 	 *
 	 * @param <T> the record type this field belongs to
 	 */
-	public static final class Field<T, R> implements Function<T, R> {
+	public static final class Field<T, R> implements SqlFunction<T, R> {
 		private final String _name;
-		private final Function<? super T, ? extends R> _accessor;
+		private final SqlFunction<? super T, ? extends R> _accessor;
 
 		private Field(
 			final String name,
-			final Function<? super T, ? extends R> accessor
+			final SqlFunction<? super T, ? extends R> accessor
 		) {
 			_name = requireNonNull(name);
 			_accessor = requireNonNull(accessor);
@@ -74,7 +73,7 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 		 *
 		 * @return the record field accessor
 		 */
-		public Function<? super T, ? extends R> accessor() {
+		public SqlFunction<? super T, ? extends R> accessor() {
 			return _accessor;
 		}
 
@@ -85,7 +84,7 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 		 * @return the record field value
 		 */
 		@Override
-		public R apply(final T record) {
+		public R apply(final T record) throws SQLException {
 			return _accessor.apply(record);
 		}
 
@@ -101,7 +100,7 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 		 */
 		public static <T, R> Field<T, R> of(
 			final String name,
-			final Function<? super T, ? extends R> accessor
+			final SqlFunction<? super T, ? extends R> accessor
 		) {
 			return new Field<>(name, accessor);
 		}
@@ -117,7 +116,7 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 		return _fields;
 	}
 
-	public Map<String, Object> deconstruct(final T record) {
+	public Map<String, Object> deconstruct(final T record) throws SQLException {
 		final Map<String, Object> fields = new HashMap<>();
 		for (Field<T, ?> field : _fields) {
 			fields.put(field.name(), field.apply(record));
@@ -126,12 +125,14 @@ public final class Dctor<T> implements BiFunction<T, String, Value> {
 	}
 
 	@Override
-	public Value apply(final T record, final String name) {
-		return _fields.stream()
-			.filter(f -> Objects.equals(f.name(), name))
-			.findFirst()
-			.map(f -> Value.of(f.apply(record)))
-			.orElse(null);
+	public Value apply(final T record, final String name) throws SQLException {
+		for (Field<T, ?> field : _fields) {
+			if (Objects.equals(name, field.name())) {
+				return Value.of(field.apply(record));
+			}
+		}
+
+		return null;
 	}
 
 	@SafeVarargs
