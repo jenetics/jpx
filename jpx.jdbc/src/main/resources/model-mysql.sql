@@ -5,15 +5,13 @@
 -- -----------------------------------------------------------------------------
 
 -- -----------------------------------------------------------------------------
--- Create the `link` table. A link is meant to be shared.
+-- Create the `link` table.
 -- -----------------------------------------------------------------------------
 CREATE TABLE link(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	href VARCHAR(255) NOT NULL,
 	text VARCHAR(255),
-	type VARCHAR(255),
-
-	CONSTRAINT c_link_href UNIQUE (href)
+	type VARCHAR(255)
 );
 CREATE INDEX i_link_text ON link(text);
 
@@ -181,7 +179,7 @@ CREATE TABLE track_track_segment(
 	track_segment_id BIGINT NOT NULL REFERENCES track_segment(id),
 
 	CONSTRAINT c_track_track_segment_track_id_track_segment_id
-		UNIQUE (track_segment_id, track_segment_id)
+		UNIQUE (track_segment_id, track_id)
 );
 
 CREATE TABLE track_link(
