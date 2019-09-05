@@ -141,27 +141,27 @@ public class QueryExecutionTest {
 			));
 			 */
 
-			List<Map<String, String>> rows = new ArrayList<>();
-			query.executeInsert(
-				rows,
-				Dctor.of(
-					Field.of("id", row -> row.get("id")),
-					Field.of("href", row -> row.get("href")),
-					Field.of("text", row -> row.get("text")),
-					Field.of("type", row -> row.get("type"))
-				),
-				conn
-			);
-
-			query.executeInsert(
-				links,
-				Dctor.of(
-					Field.of("href", LinkRow::href),
-					Field.of("text", LinkRow::text),
-					Field.of("type", LinkRow::type)
-				),
-				conn
-			);
+//			List<Map<String, String>> rows = new ArrayList<>();
+//			query.executeInsert(
+//				rows,
+//				Dctor.of(
+//					Field.of("id", row -> row.get("id")),
+//					Field.of("href", row -> row.get("href")),
+//					Field.of("text", row -> row.get("text")),
+//					Field.of("type", row -> row.get("type"))
+//				),
+//				conn
+//			);
+//
+//			query.executeInsert(
+//				links,
+//				Dctor.of(
+//					Field.of("href", LinkRow::href),
+//					Field.of("text", LinkRow::text),
+//					Field.of("type", LinkRow::type)
+//				),
+//				conn
+//			);
 
 
 		});

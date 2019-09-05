@@ -205,7 +205,7 @@ public class Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if one of the parameters is {@code null}
 	 */
-	public <T> List<Long> executeInsert(
+	public <T> List<Long> executeInserts(
 		final Collection<T> rows,
 		final SqlFunction2<? super T, String, Value> dctor,
 		final Connection conn

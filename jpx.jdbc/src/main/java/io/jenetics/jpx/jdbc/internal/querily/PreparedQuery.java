@@ -87,9 +87,9 @@ final class PreparedQuery extends Query {
 	}
 
 	@Override
-	public <T> List<Long> executeInsert(
+	public <T> List<Long> executeInserts(
 		final Collection<T> rows,
-		final BiFunction<? super T, String, Value> dctor,
+		final SqlFunction2<? super T, String, Value> dctor,
 		final Connection conn
 	)
 		throws SQLException

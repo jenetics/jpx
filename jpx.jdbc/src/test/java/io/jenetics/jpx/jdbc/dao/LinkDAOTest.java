@@ -43,25 +43,25 @@ public class LinkDAOTest extends DAOTestBase {
 		.limit(10)
 		.collect(Collectors.toList());
 
-	@Test
-	public void insert() throws SQLException {
-		db.transaction(conn -> {
-			final List<Long> ids = LinkDAO.insert(links, conn);
-
-			Assert.assertEquals(ids.size(), links.size());
-		});
-	}
-
-	@Test(dependsOnMethods = "insert")
-	public void selectAll() throws SQLException {
-		db.transaction(conn -> {
-			final List<Stored<Link>> links = LinkDAO.selectAll(conn);
-			Assert.assertEquals(
-				links.stream()
-					.map(Stored::value)
-					.collect(Collectors.toList()),
-				this.links
-			);
-		});
-	}
+//	@Test
+//	public void insert() throws SQLException {
+//		db.transaction(conn -> {
+//			final List<Long> ids = LinkDAO.insert(links, conn);
+//
+//			Assert.assertEquals(ids.size(), links.size());
+//		});
+//	}
+//
+//	@Test(dependsOnMethods = "insert")
+//	public void selectAll() throws SQLException {
+//		db.transaction(conn -> {
+//			final List<Stored<Link>> links = LinkDAO.selectAll(conn);
+//			Assert.assertEquals(
+//				links.stream()
+//					.map(Stored::value)
+//					.collect(Collectors.toList()),
+//				this.links
+//			);
+//		});
+//	}
 }
