@@ -18,202 +18,64 @@
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.jdbc.dao;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.time.Year;
+
+import io.jenetics.jpx.Copyright;
+import io.jenetics.jpx.jdbc.internal.querily.Dctor;
+import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
+import io.jenetics.jpx.jdbc.internal.querily.Query;
+import io.jenetics.jpx.jdbc.internal.querily.RowParser;
+import io.jenetics.jpx.jdbc.internal.querily.Stored;
+
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-//final class CopyrightDAO
-//	extends DAO
-//	implements
-//	SelectBy<Copyright>,
-//	Inserter<Copyright>,
-//	Updater<Copyright>,
-//	Delete
-//{
-//
-//	public CopyrightDAO(final Connection connection) {
-//		super(connection);
-//	}
-//
-//	/**
-//	 * The link row parser which creates a {@link Copyright} object from a given
-//	 * DB row.
-//	 */
-//	private static final io.jenetics.jpx.jdbc.internal.querily.RowParser<Stored<Copyright>> RowParser = rs -> Stored.of(
-//		rs.getLong("id"),
-//		Copyright.of(
-//			rs.getString("author"),
-//			rs.getYear("year"),
-//			rs.getURI("license")
-//		)
-//	);
-//
-//	/* *************************************************************************
-//	 * SELECT queries
-//	 **************************************************************************/
-//
-//	/**
-//	 * Select all available copyrights.
-//	 *
-//	 * @return all stored copyrights
-//	 * @throws SQLException if the select fails
-//	 */
-//	public List<Stored<Copyright>> select() throws SQLException {
-//		final String query =
-//			"SELECT id, author, year, license " +
-//			"FROM copyright " +
-//			"ORDER BY id";
-//
-//		return SQL(query).as(RowParser.list());
-//	}
-//
-//	@Override
-//	public <V, C> List<Stored<Copyright>> selectByVals(
-//		final Column<V, C> column,
-//		final Collection<V> values
-//	)
-//		throws SQLException
-//	{
-//		final String query =
-//			"SELECT id, author, year, license " +
-//			"FROM copyright " +
-//			"WHERE "+column.name()+" IN ({values}) " +
-//			"ORDER BY id";
-//
-//		return values.isEmpty()
-//			? Collections.emptyList()
-//			: SQL(query)
-//				.on(Param.values("values", values, column.mapper()))
-//				.as(RowParser.list());
-//	}
-//
-//	public List<Stored<Copyright>> select(final Collection<Copyright> copyrights)
-//		throws SQLException
-//	{
-//		final String query =
-//			"SELECT id, author, year, license " +
-//			"FROM copyright " +
-//			"WHERE author = {author} AND " +
-//				"year = {year} AND " +
-//				"license = {license} " +
-//			"ORDER BY id";
-//
-//		return Batch(query).select(copyrights, copyright -> asList(
-//				Param.value("author", copyright.getAuthor()),
-//				Param.value("year", copyright.getYear()),
-//				Param.value("license", copyright.getLicense())
-//			))
-//			.as(RowParser.list());
-//	}
-//
-//
-//	/* *************************************************************************
-//	 * INSERT queries
-//	 **************************************************************************/
-//
-//	/**
-//	 * Insert the given copyright list into the DB.
-//	 *
-//	 * @param copyrights the links to insert
-//	 * @return return the stored copyrights
-//	 * @throws SQLException if inserting fails
-//	 */
-//	@Override
-//	public List<Stored<Copyright>> insert(final Collection<Copyright> copyrights)
-//		throws SQLException
-//	{
-//		final String query =
-//			"INSERT INTO copyright(author, year, license) " +
-//			"VALUES({author}, {year}, {license})";
-//
-//		return Batch(query).insert(copyrights, copyright -> asList(
-//			Param.value("author", copyright.getAuthor()),
-//			Param.value("year", copyright.getYear()),
-//			Param.value("license", copyright.getLicense())
-//		));
-//	}
-//
-//
-//	/* *************************************************************************
-//	 * UPDATE queries
-//	 **************************************************************************/
-//
-//	/**
-//	 * Updates the given list of already inserted copyright objects.
-//	 *
-//	 * @param copyrights the copyrights to update
-//	 * @return the updated copyrights
-//	 * @throws SQLException if the update fails
-//	 */
-//	@Override
-//	public List<Stored<Copyright>> update(
-//		final Collection<Stored<Copyright>> copyrights
-//	)
-//		throws SQLException
-//	{
-//		final String query =
-//			"UPDATE copyright " +
-//			"SET author = {author}, " +
-//				"year = {year}, " +
-//				"license = {license} " +
-//			"WHERE id = {id}";
-//
-//		Batch(query).update(copyrights, copyright -> asList(
-//			Param.value("id", copyright.id()),
-//			Param.value("author", copyright.value().getAuthor()),
-//			Param.value("year", copyright.value().getYear()),
-//			Param.value("license", copyright.value().getLicense())
-//		));
-//
-//		return new ArrayList<>(copyrights);
-//	}
-//
-//	/**
-//	 * Inserts the given copyrights into the DB.
-//	 *
-//	 * @param copyrights the links to insert or update
-//	 * @return the inserted or updated links
-//	 * @throws SQLException if the insert/update fails
-//	 */
-//	public List<Stored<Copyright>> put(final Collection<Copyright> copyrights)
-//		throws SQLException
-//	{
-//		return DAO.put(
-//				copyrights,
-//				copyright -> copyright,
-//				this::select,
-//				this::insert,
-//				this::update
-//			);
-//
-//	}
-//
-//	/* *************************************************************************
-//	 * DELETE queries
-//	 **************************************************************************/
-//
-//	@Override
-//	public <V, C> int deleteByVals(
-//		final Column<V, C> column,
-//		final Collection<V> values
-//	)
-//		throws SQLException
-//	{
-//		final int count;
-//		if (!values.isEmpty()) {
-//			final String query =
-//				"DELETE FROM copyright WHERE "+column.name()+" IN ({values})";
-//
-//			count = SQL(query)
-//				.on(Param.values("values", values, column.mapper()))
-//				.execute();
-//
-//		} else {
-//			count = 0;
-//		}
-//
-//		return count;
-//	}
-//
-//}
+final class CopyrightDAO {
+
+	private CopyrightDAO() {
+	}
+
+	/**
+	 * The link row parser which creates a {@link Copyright} object from a given
+	 * DB row.
+	 */
+	private static final RowParser<Stored<Copyright>> ROW_PARSER = rs -> Stored.of(
+		rs.getLong("id"),
+		Copyright.of(
+			rs.getString("author"),
+			rs.getInt("year"),
+			rs.getString("license")
+		)
+	);
+
+	/**
+	 * Insert the given copyright list into the DB.
+	 *
+	 * @param copyright the links to insert
+	 * @return return the stored copyrights
+	 * @throws SQLException if inserting fails
+	 */
+	public Long insert(final Copyright copyright, final Connection conn)
+		throws SQLException
+	{
+		final String sql =
+			"INSERT INTO copyright(author, year, license) " +
+			"VALUES({author}, {year}, {license})";
+
+		return Query.of(sql).executeInsert(
+			copyright,
+			Dctor.of(
+				Field.of("author", Copyright::getAuthor),
+				Field.of("year", c -> c.getYear().map(Year::getValue).orElse(null)),
+				Field.of("license", Copyright::getLicense)
+			),
+			conn
+		);
+	}
+
+}
