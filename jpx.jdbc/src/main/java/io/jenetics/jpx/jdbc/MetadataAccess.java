@@ -65,7 +65,7 @@ public final class MetadataAccess {
 		Field.of("keywords", Metadata::getKeywords),
 		Field.of(
 			"person_id",
-			(m, c) -> PersonAccess.insert(m.getAuthor().orElse(null), c)
+			(m, c) -> PersonAccess.insertOrUpdate(m.getAuthor().orElse(null), c)
 		),
 		Field.of(
 			"copyright_id",

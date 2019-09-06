@@ -21,11 +21,17 @@ package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Optional;
 
+import io.jenetics.jpx.Email;
 import io.jenetics.jpx.Person;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
+import io.jenetics.jpx.jdbc.internal.querily.Param;
+import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
+import io.jenetics.jpx.jdbc.internal.querily.ResultSetParser;
+import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -42,7 +48,7 @@ public final class PersonAccess {
 
 	private static final Dctor<Person> DCTOR = Dctor.of(
 		Field.of("name", Person::getName),
-		Field.of("email", Person::getEmail),
+		Field.of("email", p -> p.getEmail().map(Email::getAddress)),
 		Field.of("link_id", (p, c) -> LinkAccess.insert(p.getLink().orElse(null), c))
 	);
 
@@ -52,6 +58,24 @@ public final class PersonAccess {
 		return person != null && !person.isEmpty()
 			? INSERT_QUERY.insert(person, DCTOR, conn)
 			: null;
+	}
+
+	public static Long insertOrUpdate(final Person person, final Connection conn)
+		throws SQLException
+	{
+		if (person == null || person.isEmpty()) {
+			return null;
+		}
+
+		final String name = person.getName().orElse(null);
+		final Long id = Query.of("SELECT id FROM person WHERE name = {name};")
+			.on(Param.of("name", Value.of(name)))
+			.as(RowParser.int64("id").singleOpt(), conn)
+			.orElse(null);
+
+		return id == null
+			? INSERT_QUERY.insert(person, DCTOR, conn)
+			: id;
 	}
 
 }

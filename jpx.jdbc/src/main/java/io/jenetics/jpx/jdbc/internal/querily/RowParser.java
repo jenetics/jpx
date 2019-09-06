@@ -95,6 +95,10 @@ public interface RowParser<T> {
 	 * Static factory methods.
 	 * ************************************************************************/
 
+	public static RowParser<Long> int64(final String name) {
+		return row -> row.getLong(name);
+	}
+
 	public static RowParser<String> string(final String name) {
 		throw new UnsupportedOperationException();
 	}
