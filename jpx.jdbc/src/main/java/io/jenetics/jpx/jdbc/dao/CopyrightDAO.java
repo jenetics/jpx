@@ -67,7 +67,7 @@ final class CopyrightDAO {
 			"INSERT INTO copyright(author, year, license) " +
 			"VALUES({author}, {year}, {license})";
 
-		return Query.of(sql).executeInsert(
+		return Query.of(sql).insert(
 			copyright,
 			Dctor.of(
 				Field.of("author", Copyright::getAuthor),

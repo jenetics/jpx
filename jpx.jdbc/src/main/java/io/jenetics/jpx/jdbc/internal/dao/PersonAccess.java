@@ -1,5 +1,5 @@
 /*
- * Java GPX Library (@__identifier__@).
+ * Java Genetic Algorithm Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,70 +17,41 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.dao;
+package io.jenetics.jpx.jdbc.internal.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import io.jenetics.jpx.Email;
-import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Person;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
-import io.jenetics.jpx.jdbc.internal.querily.RowParser;
-import io.jenetics.jpx.jdbc.internal.querily.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class PersonDAO {
+public final class PersonAccess {
+	private PersonAccess() {}
 
-	private PersonDAO() {
-	}
+	private static final Query INSERT_QUERY = Query.of(
+		"INSERT INTO person(name, email, link_id) " +
+		"VALUES({name}, {email}, {link_id});"
+	);
 
-	private final static RowParser<Stored<Person>> ROW_PARSER = rs -> Stored.of(
-		rs.getLong("id"),
-		Person.of(
-			rs.getString("name"),
-			Email.of(rs.getString("email")),
-			rs.getString("link_href") != null
-				? Link.of(
-					rs.getString("link_href"),
-					rs.getString("link_text"),
-					rs.getString("link_type"))
-				: null
-		)
+	private static final Dctor<Person> DCTOR = Dctor.of(
+		Field.of("name", Person::getName),
+		Field.of("email", Person::getEmail),
+		Field.of("link_id", (p, c) -> LinkAccess.insert(p.getLink().orElse(null), c))
 	);
 
 	public static Long insert(final Person person, final Connection conn)
 		throws SQLException
 	{
-		if (person == null || person.isEmpty()) {
-			return null;
-		}
-
-		final String sql =
-			"INSERT INTO person(name, email, link_id) " +
-				"VALUES({name}, {email}, {link_id});";
-
-		return Query.of(sql).insert(
-			person,
-			Dctor.of(
-				Field.of("name", Person::getName),
-				Field.of("email", Person::getEmail),
-				Field.of("link_id", p -> linkId(p, conn))
-			),
-			conn
-		);
-	}
-
-	private static Long linkId(final Person person, final Connection conn)
-		throws SQLException
-	{
-		return LinkDAO.insert(person.getLink().orElse(null), conn);
+		return person != null && !person.isEmpty()
+			? INSERT_QUERY.insert(person, DCTOR, conn)
+			: null;
 	}
 
 }

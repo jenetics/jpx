@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 
@@ -101,6 +102,14 @@ public final class Dctor<T>
 			final SqlFunction2<? super T, Connection, ? extends R> value
 		) {
 			return new Field<>(name, value);
+		}
+
+		public static <A, T, R> Field<A, R> of(
+			final String name,
+			final Function<? super A, ? extends T> mapper,
+			final SqlFunction2<? super T, Connection, ? extends R> value
+		) {
+			return new Field<>(name, (r, c) -> value.apply(mapper.apply(r), c));
 		}
 
 		public static <T, R> Field<T, R> of(

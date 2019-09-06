@@ -150,7 +150,7 @@ public class Query {
 		}
 	}
 
-	public <T> Long executeInsert(
+	public <T> Long insert(
 		final T row,
 		final SqlFunction3<? super T, String, Connection, Value> dctor,
 		final Connection conn
@@ -171,6 +171,11 @@ public class Query {
 			stmt.executeUpdate();
 			return readID(stmt).orElse(null);
 		}
+	}
+
+	public <T> SqlFunction2<T, Connection, Long>
+	insert(final SqlFunction3<? super T, String, Connection, Value> dctor) {
+		return null;
 	}
 
 	private static Object toSQLValue(final Object value) {

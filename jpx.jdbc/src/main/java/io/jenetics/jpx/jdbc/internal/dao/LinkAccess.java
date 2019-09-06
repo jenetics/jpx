@@ -1,5 +1,5 @@
 /*
- * Java GPX Library (@__identifier__@).
+ * Java Genetic Algorithm Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,36 +17,28 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.dao;
+package io.jenetics.jpx.jdbc.internal.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.Optional;
 
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
-import io.jenetics.jpx.jdbc.internal.querily.RowParser;
-import io.jenetics.jpx.jdbc.internal.querily.Stored;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public final class LinkDAO {
+public final class LinkAccess {
+	private LinkAccess() {}
 
-	private LinkDAO() {
-	}
-
-	private static final RowParser<Stored<Link>> ROW_PARSER = row -> Stored.of(
-		row.getLong("id"),
-		Link.of(
-			row.getString("href"),
-			row.getString("text"),
-			row.getString("type")
-		)
+	private static final Query INSERT_QUERY = Query.of(
+		"INSERT INTO link(href, text, type) " +
+		"VALUES({href}, {text}, {type});"
 	);
 
 	private static final Dctor<Link> DCTOR = Dctor.of(
@@ -58,33 +50,15 @@ public final class LinkDAO {
 	public static Long insert(final Link link, final Connection conn)
 		throws SQLException
 	{
-		if (link == null) {
-			return null;
-		}
-
-		final String sql =
-			"INSERT INTO link(href, text, type) " +
-				"VALUES({href}, {text}, {type});";
-
-		return Query.of(sql).insert(link, DCTOR, conn);
+		return link != null
+			? INSERT_QUERY.insert(link, DCTOR, conn)
+			: null;
 	}
 
-	/**
-	 * Select all available links.
-	 *
-	 * @return all stored links
-	 * @throws SQLException if the operation fails
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public static List<Stored<Link>> selectAll(final Connection conn)
+	public static Long insertOpt(final Optional<Link> link, final Connection conn)
 		throws SQLException
 	{
-		final String sql =
-			"SELECT id, href, text, type FROM link ORDER BY id ASC";
-
-		return Query.of(sql).as(ROW_PARSER.list(), conn);
+		return insert(link.orElse(null), conn);
 	}
-
-
 
 }
