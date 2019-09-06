@@ -49,6 +49,8 @@ public final class TrackSegmentAccess {
 	)
 		throws SQLException
 	{
+		if (segment == null || segment.isEmpty()) return null;
+
 		final Long id = INSERT_QUERY.insert(
 			segment,
 			Dctor.of(Field.ofValue("number", number)),
