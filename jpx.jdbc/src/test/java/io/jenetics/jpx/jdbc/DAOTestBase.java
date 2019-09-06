@@ -31,7 +31,7 @@ import org.testng.annotations.BeforeClass;
  */
 public abstract class DAOTestBase {
 
-	public final DB db = H2DB.newTestInstance();
+	public DB db = H2DB.newTestInstance();
 
 	@BeforeClass
 	public void setup() throws IOException, SQLException {

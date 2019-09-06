@@ -42,16 +42,16 @@ public final class TrackAccess {
 	private TrackAccess() {}
 
 	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO track(name, cmt, desc, src, number, type) " +
-		"VALUES({name}, {cmt}, {desc}, {src}, {number}, {type})"
+		"INSERT INTO track(name, cmt, dscr, src, number, type) \n" +
+		"VALUES({name}, {cmt}, {dscr}, {src}, {number}, {type});"
 	);
 
 	private static final Dctor<Track> DCTOR = Dctor.of(
 		Field.of("name", Track::getName),
 		Field.of("cmt", Track::getComment),
-		Field.of("desc", Track::getDescription),
+		Field.of("dscr", Track::getDescription),
 		Field.of("src", Track::getSource),
-		Field.of("number", t -> t.getNumber().map(UInt::intValue)),
+		Field.of("number", t -> t.getNumber().map(UInt::intValue).orElse(null)),
 		Field.of("type", Track::getType)
 	);
 

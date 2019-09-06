@@ -43,7 +43,7 @@ public final class RouteAccess {
 		"INSERT INTO route(" +
 			"name, " +
 			"cmt, " +
-			"desc, " +
+			"dscr, " +
 			"src, " +
 			"number, " +
 			"type" +
@@ -51,7 +51,7 @@ public final class RouteAccess {
 		"VALUES(" +
 			"{name}, " +
 			"{cmt}, " +
-			"{desc}, " +
+			"{dscr}, " +
 			"{src}, " +
 			"{number}, " +
 			"{type}" +
@@ -61,7 +61,7 @@ public final class RouteAccess {
 	private static final Dctor<Route> DCTOR = Dctor.of(
 		Field.of("name", Route::getName),
 		Field.of("cmt", Route::getComment),
-		Field.of("desc", Route::getDescription),
+		Field.of("dscr", Route::getDescription),
 		Field.of("src", Route::getSource),
 		Field.of("number", r -> r.getNumber().map(UInt::intValue)),
 		Field.of("type", Route::getType)

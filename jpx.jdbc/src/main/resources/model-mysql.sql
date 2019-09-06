@@ -58,7 +58,7 @@ CREATE TABLE bounds(
 CREATE TABLE metadata(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
-	`desc` TEXT,
+	dscr TEXT,
 	person_id BIGINT REFERENCES person(id),
 	copyright_id BIGINT REFERENCES copyright(id),
 	time TIMESTAMP,
@@ -90,7 +90,7 @@ CREATE TABLE way_point(
 	geoidheight DOUBLE PRECISION,
 	name VARCHAR(255),
 	cmt VARCHAR(255),
-	`desc` TEXT,
+	dscr TEXT,
 	src VARCHAR(255),
 	sym VARCHAR(255),
 	type VARCHAR(255),
@@ -123,7 +123,7 @@ CREATE TABLE route(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
 	cmt VARCHAR(255),
-	`desc` TEXT,
+	dscr TEXT,
 	src VARCHAR(255),
 	number INT,
 	type VARCHAR(255)
@@ -167,7 +167,7 @@ CREATE TABLE track(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
 	cmt VARCHAR(255),
-	`desc` TEXT,
+	dscr TEXT,
 	src VARCHAR(255),
 	number INT,
 	type VARCHAR(255)

@@ -19,28 +19,49 @@
  */
 package io.jenetics.jpx.jdbc.internal.dao;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Random;
 
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.GPXTest;
-import io.jenetics.jpx.jdbc.DAOTestBase;
+import io.jenetics.jpx.jdbc.IO;
+import io.jenetics.jpx.jdbc.MariaDB;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class GPXAccessTest extends DAOTestBase {
+public class GPXAccessTest {
 
 	private final Random random = new Random(1231321);
 	private final GPX gpx = GPXTest.nextGPX(random);
 
+	//@BeforeClass
+	public void setup() throws IOException, SQLException {
+		final String[] queries = IO.
+			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
+			.split(";");
+
+		MariaDB.INSTANCE.transaction(conn -> {
+			for (String query : queries) {
+				if (!query.trim().isEmpty()) {
+					try (Statement stmt = conn.createStatement()) {
+						stmt.execute(query);
+					}
+				}
+			}
+		});
+	}
+
 	@Test
 	public void insert() throws SQLException {
-		db.transaction(conn -> {
+		MariaDB.INSTANCE.transaction(conn -> {
 			final Long id = GPXAccess.insert(gpx, conn);
 			System.out.println(id);
 		});

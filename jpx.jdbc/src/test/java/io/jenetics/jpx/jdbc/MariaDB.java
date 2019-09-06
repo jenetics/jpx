@@ -19,40 +19,23 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version !__version__!
  * @since !__version__!
  */
-public class MySQL extends DB {
+public class MariaDB extends DB {
 
-	public final static DB INSTANCE = new MySQL();
+	public final static DB INSTANCE = new MariaDB();
 
-	private static final String TEST_DB;
+	private static final String TEST_DB =
+		"jdbc:mariadb://playstation:3307/gpx_test?user=gpx_test&password=gpx_test";
 
-	static {
-		try {
-			final Properties pwd = new Properties();
-			try (final FileInputStream in = new FileInputStream("/home/fwilhelm/pwd.properties")) {
-				pwd.load(in);
-			}
-
-			TEST_DB =
-				"jdbc:mysql://playstation:3306/gpx_test?user=gpx_test&" +
-					"password=" + pwd.getProperty("GPX_TEST_DB_PASSWORD");
-
-			Class.forName("com.mysql.cj.jdbc.Driver");
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
+	@Override
 	public Connection getConnection() throws SQLException {
 		return DriverManager.getConnection(TEST_DB);
 	}

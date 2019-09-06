@@ -56,7 +56,7 @@ public final class WayPointAccess {
 			"geoidheight, " +
 			"name, " +
 			"cmt, " +
-			"desc, " +
+			"dscr, " +
 			"src," +
 			"sym, " +
 			"type, " +
@@ -79,7 +79,7 @@ public final class WayPointAccess {
 			"{geoidheight}, " +
 			"{name}, " +
 			"{cmt}, " +
-			"{desc}, " +
+			"{dscr}, " +
 			"{src}," +
 			"{sym}, " +
 			"{type}, " +
@@ -104,7 +104,7 @@ public final class WayPointAccess {
 		Field.of("geoidheight", wp -> wp.getGeoidHeight().map(Length::doubleValue)),
 		Field.of("name", WayPoint::getName),
 		Field.of("cmt", WayPoint::getComment),
-		Field.of("desc", WayPoint::getDescription),
+		Field.of("dscr", WayPoint::getDescription),
 		Field.of("src", WayPoint::getSource),
 		Field.of("sym", WayPoint::getSymbol),
 		Field.of("type", WayPoint::getType),

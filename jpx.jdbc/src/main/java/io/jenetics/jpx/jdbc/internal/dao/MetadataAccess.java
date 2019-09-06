@@ -40,7 +40,7 @@ public final class MetadataAccess {
 	private static final Query INSERT_QUERY = Query.of(
 		"INSERT INTO metadata(" +
 			"name, " +
-			"desc, " +
+			"dscr, " +
 			"time, " +
 			"keywords, " +
 			"person_id, " +
@@ -49,7 +49,7 @@ public final class MetadataAccess {
 		") " +
 		"VALUES(" +
 			"{name}, " +
-			"{desc}, " +
+			"{dscr}, " +
 			"{time}, " +
 			"{keywords}, " +
 			"{person_id}, " +
@@ -60,7 +60,7 @@ public final class MetadataAccess {
 
 	private static final Dctor<Metadata> DCTOR = Dctor.of(
 		Field.of("name", Metadata::getName),
-		Field.of("desc", Metadata::getDescription),
+		Field.of("dscr", Metadata::getDescription),
 		Field.of("time", Metadata::getTime),
 		Field.of(
 			"person_id",
