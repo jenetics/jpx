@@ -62,6 +62,7 @@ public final class MetadataAccess {
 		Field.of("name", Metadata::getName),
 		Field.of("dscr", Metadata::getDescription),
 		Field.of("time", Metadata::getTime),
+		Field.of("keywords", Metadata::getKeywords),
 		Field.of(
 			"person_id",
 			(m, c) -> PersonAccess.insert(m.getAuthor().orElse(null), c)
