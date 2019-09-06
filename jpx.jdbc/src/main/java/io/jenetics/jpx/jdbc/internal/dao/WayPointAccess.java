@@ -96,25 +96,25 @@ public final class WayPointAccess {
 	private static final Dctor<WayPoint> DCTOR = Dctor.of(
 		Field.of("lat", wp -> wp.getLatitude().doubleValue()),
 		Field.of("lon", wp -> wp.getLongitude().doubleValue()),
-		Field.of("ele", wp -> wp.getElevation().map(Length::doubleValue).orElse(null)),
-		Field.of("speed", wp -> wp.getSpeed().map(Speed::doubleValue).orElse(null)),
+		Field.of("ele", wp -> wp.getElevation().map(Length::doubleValue)),
+		Field.of("speed", wp -> wp.getSpeed().map(Speed::doubleValue)),
 		Field.of("time", WayPoint::getTime),
-		Field.of("magvar", wp -> wp.getMagneticVariation().map(Degrees::doubleValue).orElse(null)),
-		Field.of("geoidheight", wp -> wp.getGeoidHeight().map(Length::doubleValue).orElse(null)),
+		Field.of("magvar", wp -> wp.getMagneticVariation().map(Degrees::doubleValue)),
+		Field.of("geoidheight", wp -> wp.getGeoidHeight().map(Length::doubleValue)),
 		Field.of("name", WayPoint::getName),
 		Field.of("cmt", WayPoint::getComment),
 		Field.of("desc", WayPoint::getDescription),
 		Field.of("src", WayPoint::getSource),
 		Field.of("sym", WayPoint::getSymbol),
 		Field.of("type", WayPoint::getType),
-		Field.of("fix", wp -> wp.getFix().map(Fix::getValue).orElse(null)),
-		Field.of("sat", wp -> wp.getSat().map(UInt::getValue).orElse(null)),
+		Field.of("fix", wp -> wp.getFix().map(Fix::getValue)),
+		Field.of("sat", wp -> wp.getSat().map(UInt::getValue)),
 		Field.of("hdop", WayPoint::getHdop),
 		Field.of("vdop", WayPoint::getVdop),
 		Field.of("pdop", WayPoint::getPdop),
-		Field.of("ageofdgpsdata", wp -> wp.getAgeOfGPSData().map(Duration::getSeconds).orElse(null)),
-		Field.of("dgpsid", wp -> wp.getDGPSID().map(DGPSStation::intValue).orElse(null)),
-		Field.of("course", wp -> wp.getCourse().map(Degrees::doubleValue).orElse(null))
+		Field.of("ageofdgpsdata", wp -> wp.getAgeOfGPSData().map(Duration::getSeconds)),
+		Field.of("dgpsid", wp -> wp.getDGPSID().map(DGPSStation::intValue)),
+		Field.of("course", wp -> wp.getCourse().map(Degrees::doubleValue))
 	);
 
 	public static Long insert(final WayPoint wp, final Connection conn)

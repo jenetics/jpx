@@ -43,7 +43,7 @@ public final class CopyrightAccess {
 
 	private static final Dctor<Copyright> DCTOR = Dctor.of(
 		Field.of("author", Copyright::getAuthor),
-		Field.of("year", c -> c.getYear().map(Year::getValue).orElse(null)),
+		Field.of("year", c -> c.getYear().map(Year::getValue)),
 		Field.of("license", Copyright::getLicense)
 	);
 
