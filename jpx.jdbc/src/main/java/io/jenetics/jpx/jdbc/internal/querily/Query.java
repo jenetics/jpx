@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.jdbc.internal.querily;
 
+import static java.lang.String.format;
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
@@ -164,7 +165,9 @@ public class Query {
 				if (value != null) {
 					stmt.setObject(++index, toSQLValue(value.value()));
 				} else {
-					throw new NoSuchElementException();
+					throw new NoSuchElementException(format(
+						"Value for column '%s' not found.", name
+					));
 				}
 			}
 
@@ -216,19 +219,23 @@ public class Query {
 	)
 		throws SQLException
 	{
-		try (PreparedStatement stmt = prepare(conn)) {
-			for (T row : rows) {
-				int index = 0;
-				for (String name : names()) {
-					final Value value = dctor.apply(row, name, conn);
-					if (value != null) {
-						stmt.setObject(++index, toSQLValue(value.value()));
-					} else {
-						throw new NoSuchElementException();
+		if (!rows.isEmpty()) {
+			try (PreparedStatement stmt = prepare(conn)) {
+				for (T row : rows) {
+					int index = 0;
+					for (String name : names()) {
+						final Value value = dctor.apply(row, name, conn);
+						if (value != null) {
+							stmt.setObject(++index, toSQLValue(value.value()));
+						} else {
+							throw new NoSuchElementException(format(
+								"Value for column '%s' not found.", name
+							));
+						}
 					}
-				}
 
-				stmt.executeUpdate();
+					stmt.executeUpdate();
+				}
 			}
 		}
 	}
