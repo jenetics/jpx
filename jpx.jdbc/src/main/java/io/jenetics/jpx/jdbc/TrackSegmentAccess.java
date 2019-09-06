@@ -73,7 +73,7 @@ public final class TrackSegmentAccess {
 	)
 		throws SQLException
 	{
-		WAY_POINT_INSERT_QUERY.executeInserts(
+		WAY_POINT_INSERT_QUERY.inserts(
 			points,
 			Dctor.of(
 				Field.ofValue("track_segment_id", id),

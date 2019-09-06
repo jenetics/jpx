@@ -175,7 +175,7 @@ public class Query {
 
 	public <T> SqlFunction2<T, Connection, Long>
 	insert(final SqlFunction3<? super T, String, Connection, Value> dctor) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	private static Object toSQLValue(final Object value) {
@@ -204,21 +204,18 @@ public class Query {
 	 *        parameter values of the query.
 	 * @param conn the DB connection where {@code this} query is executed on
 	 * @param <T> the row type
-	 * @return the list of generated keys, might be empty
 	 * @throws SQLException if a database access error occurs
 	 * @throws java.sql.SQLTimeoutException when the driver has determined that
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if one of the parameters is {@code null}
 	 */
-	public <T> List<Long> executeInserts(
+	public <T> void inserts(
 		final Collection<T> rows,
 		final SqlFunction3<? super T, String, Connection, Value> dctor,
 		final Connection conn
 	)
 		throws SQLException
 	{
-		final List<Long> ids = new ArrayList<>();
-
 		try (PreparedStatement stmt = prepare(conn)) {
 			for (T row : rows) {
 				int index = 0;
@@ -232,11 +229,8 @@ public class Query {
 				}
 
 				stmt.executeUpdate();
-				readID(stmt).ifPresent(ids::add);
 			}
 		}
-
-		return ids;
 	}
 
 	/**

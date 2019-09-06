@@ -78,7 +78,7 @@ public final class TrackAccess {
 	)
 		throws SQLException
 	{
-		LINK_INSERT_QUERY.executeInserts(
+		LINK_INSERT_QUERY.inserts(
 			links,
 			Dctor.of(
 				Field.ofValue("track_id", id),

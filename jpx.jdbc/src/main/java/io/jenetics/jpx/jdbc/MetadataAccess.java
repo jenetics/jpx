@@ -98,7 +98,7 @@ public final class MetadataAccess {
 	)
 		throws SQLException
 	{
-		LINK_INSERT_QUERY.executeInserts(
+		LINK_INSERT_QUERY.inserts(
 			links,
 			Dctor.of(
 				Field.ofValue("metadata_id", id),

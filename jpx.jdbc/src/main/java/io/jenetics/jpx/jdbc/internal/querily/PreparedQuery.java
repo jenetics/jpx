@@ -87,7 +87,7 @@ final class PreparedQuery extends Query {
 	}
 
 	@Override
-	public <T> List<Long> executeInserts(
+	public <T> List<Long> inserts(
 		final Collection<T> rows,
 		final SqlFunction3<? super T, String, Connection, Value> dctor,
 		final Connection conn

@@ -78,7 +78,7 @@ public final class GPXAccess {
 	)
 		throws SQLException
 	{
-		WAY_POINT_INSERT_QUERY.executeInserts(
+		WAY_POINT_INSERT_QUERY.inserts(
 			points,
 			Dctor.of(
 				Field.ofValue("gpx_id", id),
@@ -100,7 +100,7 @@ public final class GPXAccess {
 	)
 		throws SQLException
 	{
-		ROUTE_INSERT_QUERY.executeInserts(
+		ROUTE_INSERT_QUERY.inserts(
 			routes,
 			Dctor.of(
 				Field.ofValue("gpx_id", id),
@@ -122,7 +122,7 @@ public final class GPXAccess {
 	)
 		throws SQLException
 	{
-		TRACK_INSERT_QUERY.executeInserts(
+		TRACK_INSERT_QUERY.inserts(
 			tracks,
 			Dctor.of(
 				Field.ofValue("gpx_id", id),

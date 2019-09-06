@@ -90,7 +90,7 @@ public final class RouteAccess {
 	)
 		throws SQLException
 	{
-		LINK_INSERT_QUERY.executeInserts(
+		LINK_INSERT_QUERY.inserts(
 			links,
 			Dctor.of(
 				Field.ofValue("route_id", id),
@@ -112,7 +112,7 @@ public final class RouteAccess {
 	)
 		throws SQLException
 	{
-		WAY_POINT_INSERT_QUERY.executeInserts(
+		WAY_POINT_INSERT_QUERY.inserts(
 			points,
 			Dctor.of(
 				Field.ofValue("route_id", id),
