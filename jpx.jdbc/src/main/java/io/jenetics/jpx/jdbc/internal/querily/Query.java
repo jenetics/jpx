@@ -159,20 +159,30 @@ public class Query {
 		throws SQLException
 	{
 		try (PreparedStatement stmt = prepare(conn)) {
-			int index = 0;
-			for (String name : names()) {
-				final Value value = dctor.apply(row, name, conn);
-				if (value != null) {
-					stmt.setObject(++index, toSQLValue(value.value()));
-				} else {
-					throw new NoSuchElementException(format(
-						"Value for column '%s' not found.", name
-					));
-				}
-			}
-
+			fill(row, dctor, stmt, conn);
 			stmt.executeUpdate();
 			return readID(stmt).orElse(null);
+		}
+	}
+
+	private <T> void fill(
+		final T row,
+		final SqlFunction3<? super T, String, Connection, Value> dctor,
+		final PreparedStatement stmt,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		int index = 0;
+		for (String name : names()) {
+			final Value value = dctor.apply(row, name, conn);
+			if (value != null) {
+				stmt.setObject(++index, toSQLValue(value.value()));
+			} else {
+				throw new NoSuchElementException(format(
+					"Value for column '%s' not found.", name
+				));
+			}
 		}
 	}
 
@@ -222,18 +232,7 @@ public class Query {
 		if (!rows.isEmpty()) {
 			try (PreparedStatement stmt = prepare(conn)) {
 				for (T row : rows) {
-					int index = 0;
-					for (String name : names()) {
-						final Value value = dctor.apply(row, name, conn);
-						if (value != null) {
-							stmt.setObject(++index, toSQLValue(value.value()));
-						} else {
-							throw new NoSuchElementException(format(
-								"Value for column '%s' not found.", name
-							));
-						}
-					}
-
+					fill(row, dctor, stmt, conn);
 					stmt.executeUpdate();
 				}
 			}
