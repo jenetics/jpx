@@ -21,7 +21,9 @@ package io.jenetics.jpx.jdbc.internal.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
+import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Metadata;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
@@ -77,9 +79,34 @@ public final class MetadataAccess {
 	public static Long insert(final Metadata metadata, final Connection conn)
 		throws SQLException
 	{
-		return metadata != null && !metadata.isEmpty()
-			? INSERT_QUERY.insert(metadata, DCTOR, conn)
-			: null;
+		if (metadata == null || metadata.isEmpty()) return null;
+
+		final Long id = INSERT_QUERY.insert(metadata, DCTOR, conn);
+		insertLinks(id, metadata.getLinks(), conn);
+		return id;
 	}
+
+	private static final Query LINK_INSERT_QUERY = Query.of(
+		"INSERT INTO metadata_link(metadata_id, link_id " +
+		"VALUES({metadata_id}, {link_id});"
+	);
+
+	private static void insertLinks(
+		final Long id,
+		final List<Link> links,
+		final Connection conn
+	)
+		throws SQLException
+	{
+		LINK_INSERT_QUERY.executeInserts(
+			links,
+			Dctor.of(
+				Field.ofValue("metadata_id", id),
+				Field.of("link_id", LinkAccess::insert)
+			),
+			conn
+		);
+	}
+
 
 }
