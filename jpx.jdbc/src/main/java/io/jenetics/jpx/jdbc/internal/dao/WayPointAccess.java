@@ -21,6 +21,7 @@ package io.jenetics.jpx.jdbc.internal.dao;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.List;
 
@@ -65,9 +66,9 @@ public final class WayPointAccess {
 			"vdop, " +
 			"pdop, " +
 			"ageofdgpsdata, " +
-			"dgpsid " +
+			"dgpsid, " +
 			"course " +
-		")" +
+		") " +
 		"VALUES(" +
 			"{lat}, " +
 			"{lon}, " +
@@ -88,7 +89,7 @@ public final class WayPointAccess {
 			"{vdop}, " +
 			"{pdop}, " +
 			"{ageofdgpsdata}, " +
-			"{dgpsid}" +
+			"{dgpsid}, " +
 			"{course}" +
 		");"
 	);
@@ -98,7 +99,7 @@ public final class WayPointAccess {
 		Field.of("lon", wp -> wp.getLongitude().doubleValue()),
 		Field.of("ele", wp -> wp.getElevation().map(Length::doubleValue)),
 		Field.of("speed", wp -> wp.getSpeed().map(Speed::doubleValue)),
-		Field.of("time", WayPoint::getTime),
+		Field.of("time", wp -> wp.getTime().map(t -> Timestamp.valueOf(t.toLocalDateTime()))),
 		Field.of("magvar", wp -> wp.getMagneticVariation().map(Degrees::doubleValue)),
 		Field.of("geoidheight", wp -> wp.getGeoidHeight().map(Length::doubleValue)),
 		Field.of("name", WayPoint::getName),
@@ -128,7 +129,7 @@ public final class WayPointAccess {
 	}
 
 	private static final Query LINK_INSERT_QUERY = Query.of(
-		"INSERT INTO way_point_link(way_point_id, link_id " +
+		"INSERT INTO way_point_link(way_point_id, link_id) " +
 		"VALUES({way_point_id}, {link_id});"
 	);
 

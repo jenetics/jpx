@@ -62,7 +62,7 @@ public final class TrackSegmentAccess {
 	}
 
 	private static final Query WAY_POINT_INSERT_QUERY = Query.of(
-		"INSERT INTO track_segment_way_point(track_segment_id, way_point_id " +
+		"INSERT INTO track_segment_way_point(track_segment_id, way_point_id) " +
 		"VALUES({track_segment_id}, {way_point_id});"
 	);
 

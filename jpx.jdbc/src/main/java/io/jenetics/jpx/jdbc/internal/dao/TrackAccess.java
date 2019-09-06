@@ -67,7 +67,7 @@ public final class TrackAccess {
 	}
 
 	private static final Query LINK_INSERT_QUERY = Query.of(
-		"INSERT INTO track_link(track_id, link_id " +
+		"INSERT INTO track_link(track_id, link_id) " +
 		"VALUES({track_id}, {link_id});"
 	);
 
@@ -89,7 +89,7 @@ public final class TrackAccess {
 	}
 
 	private static final Query SEGMENT_INSERT_QUERY = Query.of(
-		"INSERT INTO track_track_segment(track_id, track_segment_id " +
+		"INSERT INTO track_track_segment(track_id, track_segment_id) " +
 		"VALUES({track_id}, {track_segment_id});"
 	);
 
@@ -104,10 +104,12 @@ public final class TrackAccess {
 			final TrackSegment segment = segments.get(i);
 			final Long sid = TrackSegmentAccess.insert(segment, i, conn);
 
-			SEGMENT_INSERT_QUERY.on(
-				Param.of("track_id", Value.of(id)),
-				Param.of("track_segment_id", Value.of(sid))
-			).executeInsert(conn);
+			if (sid != null) {
+				SEGMENT_INSERT_QUERY.on(
+					Param.of("track_id", Value.of(id)),
+					Param.of("track_segment_id", Value.of(sid))
+				).executeInsert(conn);
+			}
 		}
 	}
 

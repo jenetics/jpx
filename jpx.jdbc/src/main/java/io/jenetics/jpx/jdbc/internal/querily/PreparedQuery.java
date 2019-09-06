@@ -79,7 +79,7 @@ final class PreparedQuery extends Query {
 		int index = 1;
 		for (String name : names()) {
 			if (_params.containsKey(name)) {
-				stmt.setObject(index, _params.get(name).value());
+				stmt.setObject(index, _params.get(name).value().value());
 			}
 
 			++index;
@@ -104,7 +104,7 @@ final class PreparedQuery extends Query {
 					if (value != null) {
 						stmt.setObject(++index, value.value());
 					} else if (_params.containsKey(name)) {
-						stmt.setObject(++index, _params.get(name).value());
+						stmt.setObject(++index, _params.get(name).value().value());
 					} else {
 						throw new NoSuchElementException();
 					}

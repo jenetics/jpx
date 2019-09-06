@@ -67,7 +67,7 @@ public final class GPXAccess {
 	}
 
 	private static final Query WAY_POINT_INSERT_QUERY = Query.of(
-		"INSERT INTO gpx_way_point(gpx_id, way_point_id " +
+		"INSERT INTO gpx_way_point(gpx_id, way_point_id) " +
 		"VALUES({gpx_id}, {way_point_id});"
 	);
 
@@ -89,7 +89,7 @@ public final class GPXAccess {
 	}
 
 	private static final Query ROUTE_INSERT_QUERY = Query.of(
-		"INSERT INTO gpx_route(gpx_id, route_id " +
+		"INSERT INTO gpx_route(gpx_id, route_id) " +
 		"VALUES({gpx_id}, {route_id});"
 	);
 
@@ -111,7 +111,7 @@ public final class GPXAccess {
 	}
 
 	private static final Query TRACK_INSERT_QUERY = Query.of(
-		"INSERT INTO gpx_track(gpx_id, track_id " +
+		"INSERT INTO gpx_track(gpx_id, track_id) " +
 		"VALUES({gpx_id}, {track_id});"
 	);
 
