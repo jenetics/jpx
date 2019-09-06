@@ -59,7 +59,7 @@ public class GPXAccessTest {
 		});
 	}
 
-	@Test
+	//@Test
 	public void insert() throws SQLException {
 		MariaDB.INSTANCE.transaction(conn -> {
 			final Long id = GPXAccess.insert(gpx, conn);
