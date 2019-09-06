@@ -24,13 +24,11 @@ import static java.sql.Statement.RETURN_GENERATED_KEYS;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -87,15 +85,13 @@ final class PreparedQuery extends Query {
 	}
 
 	@Override
-	public <T> List<Long> inserts(
+	public <T> void inserts(
 		final Collection<T> rows,
 		final SqlFunction3<? super T, String, Connection, Value> dctor,
 		final Connection conn
 	)
 		throws SQLException
 	{
-		final List<Long> ids = new ArrayList<>();
-
 		try (PreparedStatement stmt = prepare(conn)) {
 			for (T row : rows) {
 				int index = 0;
@@ -111,11 +107,8 @@ final class PreparedQuery extends Query {
 				}
 
 				stmt.executeUpdate();
-				readID(stmt).ifPresent(ids::add);
 			}
 		}
-
-		return ids;
 	}
 
 
