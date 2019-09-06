@@ -42,8 +42,8 @@ public final class TrackAccess {
 	private TrackAccess() {}
 
 	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO track(name, cmt, dscr, src, number, type) \n" +
-		"VALUES({name}, {cmt}, {dscr}, {src}, {number}, {type});"
+		"INSERT INTO track(name, cmt, dscr, src, number, type) " +
+		"VALUES({name}, {cmt}, {dscr}, {src}, {number}, {type})"
 	);
 
 	private static final Dctor<Track> DCTOR = Dctor.of(
@@ -51,7 +51,7 @@ public final class TrackAccess {
 		Field.of("cmt", Track::getComment),
 		Field.of("dscr", Track::getDescription),
 		Field.of("src", Track::getSource),
-		Field.of("number", t -> t.getNumber().map(UInt::intValue).orElse(null)),
+		Field.of("number", t -> t.getNumber().map(UInt::intValue)),
 		Field.of("type", Track::getType)
 	);
 
@@ -108,7 +108,7 @@ public final class TrackAccess {
 				SEGMENT_INSERT_QUERY.on(
 					Param.of("track_id", Value.of(id)),
 					Param.of("track_segment_id", Value.of(sid))
-				).executeInsert(conn);
+				).insert(conn);
 			}
 		}
 	}

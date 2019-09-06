@@ -124,7 +124,7 @@ public class Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public int executeUpdate(final Connection conn) throws SQLException {
+	public int update(final Connection conn) throws SQLException {
 		try (PreparedStatement stmt = prepare(conn)) {
 			return stmt.executeUpdate();
 		}
@@ -141,7 +141,7 @@ public class Query {
 	 *         the timeout value has been exceeded
 	 * @throws NullPointerException if the given connection is {@code null}
 	 */
-	public Optional<Long> executeInsert(final Connection conn)
+	public Optional<Long> insert(final Connection conn)
 		throws SQLException
 	{
 		try (PreparedStatement stmt = prepare(conn)) {

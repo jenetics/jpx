@@ -100,7 +100,7 @@ public class QueryExecutionTest {
 		);
 
 		db.transaction(conn -> {
-			final Optional<Long> id = query.executeInsert(conn);
+			final Optional<Long> id = query.insert(conn);
 			System.out.println(id);
 		});
 	}
