@@ -44,7 +44,7 @@ public final class BoundsAccess {
 		Field.of("minlat", b -> b.getMinLatitude().doubleValue()),
 		Field.of("minlon", b -> b.getMinLongitude().doubleValue()),
 		Field.of("maxlat", b -> b.getMaxLatitude().doubleValue()),
-		Field.of("maxlon", b -> b.getMinLongitude().doubleValue())
+		Field.of("maxlon", b -> b.getMaxLongitude().doubleValue())
 	);
 
 	public static Long insert(final Bounds bounds, final Connection conn)
