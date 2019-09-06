@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.dao;
+package io.jenetics.jpx.jdbc;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -26,9 +26,6 @@ import java.util.Random;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.GPXTest;
-import io.jenetics.jpx.jdbc.GPXAccess;
-import io.jenetics.jpx.jdbc.IO;
-import io.jenetics.jpx.jdbc.MariaDB;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
