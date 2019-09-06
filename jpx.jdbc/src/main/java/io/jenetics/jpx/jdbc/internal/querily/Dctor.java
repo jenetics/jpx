@@ -23,6 +23,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,23 +41,27 @@ import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
  * @version !__version__!
  * @since !__version__!
  */
-public final class Dctor<T> implements SqlFunction2<T, String, Value> {
+public final class Dctor<T>
+	implements SqlFunction3<T, String, Connection, Value>
+{
 
 	/**
 	 * Deconstructed field from a record class of type {@code T}.
 	 *
 	 * @param <T> the record type this field belongs to
 	 */
-	public static final class Field<T, R> implements SqlFunction<T, R> {
+	public static final class Field<T, R>
+		implements SqlFunction2<T, Connection, R>
+	{
 		private final String _name;
-		private final SqlFunction<? super T, ? extends R> _accessor;
+		private final SqlFunction2<? super T, Connection, ? extends R> _value;
 
 		private Field(
 			final String name,
-			final SqlFunction<? super T, ? extends R> accessor
+			final SqlFunction2<? super T, Connection, ? extends R> value
 		) {
 			_name = requireNonNull(name);
-			_accessor = requireNonNull(accessor);
+			_value = requireNonNull(value);
 		}
 
 		/**
@@ -69,23 +74,16 @@ public final class Dctor<T> implements SqlFunction2<T, String, Value> {
 		}
 
 		/**
-		 * The field accessor for the record type {@code T}.
-		 *
-		 * @return the record field accessor
-		 */
-		public SqlFunction<? super T, ? extends R> accessor() {
-			return _accessor;
-		}
-
-		/**
 		 * Return the field value from the given {@code record} instance.
 		 *
 		 * @param record the record from where to fetch the field value
 		 * @return the record field value
 		 */
 		@Override
-		public R apply(final T record) throws SQLException {
-			return _accessor.apply(record);
+		public R apply(final T record, final Connection conn)
+			throws SQLException
+		{
+			return _value.apply(record, conn);
 		}
 
 		/**
@@ -93,16 +91,30 @@ public final class Dctor<T> implements SqlFunction2<T, String, Value> {
 		 * {@code accessor}.
 		 *
 		 * @param name the field name
-		 * @param accessor the field accessor
+		 * @param value the field accessor
 		 * @param <T> the record type
 		 * @param <R> the field type
 		 * @return a new record field
 		 */
 		public static <T, R> Field<T, R> of(
 			final String name,
-			final SqlFunction<? super T, ? extends R> accessor
+			final SqlFunction2<? super T, Connection, ? extends R> value
 		) {
-			return new Field<>(name, accessor);
+			return new Field<>(name, value);
+		}
+
+		public static <T, R> Field<T, R> of(
+			final String name,
+			final SqlFunction<? super T, ? extends R> value
+		) {
+			return new Field<>(name, (record, conn) -> value.apply(record));
+		}
+
+		public static <T, R> Field<T, R> ofValue(
+			final String name,
+			final R value
+		) {
+			return new Field<>(name, (record, conn) -> value);
 		}
 	}
 
@@ -116,19 +128,13 @@ public final class Dctor<T> implements SqlFunction2<T, String, Value> {
 		return _fields;
 	}
 
-	public Map<String, Object> deconstruct(final T record) throws SQLException {
-		final Map<String, Object> fields = new HashMap<>();
-		for (Field<T, ?> field : _fields) {
-			fields.put(field.name(), field.apply(record));
-		}
-		return fields;
-	}
-
 	@Override
-	public Value apply(final T record, final String name) throws SQLException {
+	public Value apply(final T record, final String name, final Connection conn)
+		throws SQLException
+	{
 		for (Field<T, ?> field : _fields) {
 			if (Objects.equals(name, field.name())) {
-				return Value.of(field.apply(record));
+				return Value.of(field.apply(record, conn));
 			}
 		}
 

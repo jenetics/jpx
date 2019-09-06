@@ -89,7 +89,7 @@ final class PreparedQuery extends Query {
 	@Override
 	public <T> List<Long> executeInserts(
 		final Collection<T> rows,
-		final SqlFunction2<? super T, String, Value> dctor,
+		final SqlFunction3<? super T, String, Connection, Value> dctor,
 		final Connection conn
 	)
 		throws SQLException
@@ -100,7 +100,7 @@ final class PreparedQuery extends Query {
 			for (T row : rows) {
 				int index = 0;
 				for (String name : names()) {
-					final Value value = dctor.apply(row, name);
+					final Value value = dctor.apply(row, name, conn);
 					if (value != null) {
 						stmt.setObject(++index, value.value());
 					} else if (_params.containsKey(name)) {

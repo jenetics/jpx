@@ -83,8 +83,8 @@ public final class GpxDao {
 		).executeInserts(
 			md.getLinks(),
 			Dctor.of(
-				Field.of("metadata_id", l -> id),
-				Field.of("link_id", l -> insert(l, conn))
+				Field.ofValue("metadata_id", id),
+				Field.of("link_id", GpxDao::insert)
 			),
 			conn
 		);

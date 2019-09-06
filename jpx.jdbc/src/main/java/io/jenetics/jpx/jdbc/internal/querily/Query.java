@@ -152,7 +152,7 @@ public class Query {
 
 	public <T> Long executeInsert(
 		final T row,
-		final SqlFunction2<? super T, String, Value> dctor,
+		final SqlFunction3<? super T, String, Connection, Value> dctor,
 		final Connection conn
 	)
 		throws SQLException
@@ -160,7 +160,7 @@ public class Query {
 		try (PreparedStatement stmt = prepare(conn)) {
 			int index = 0;
 			for (String name : names()) {
-				final Value value = dctor.apply(row, name);
+				final Value value = dctor.apply(row, name, conn);
 				if (value != null) {
 					stmt.setObject(++index, toSQLValue(value.value()));
 				} else {
@@ -207,7 +207,7 @@ public class Query {
 	 */
 	public <T> List<Long> executeInserts(
 		final Collection<T> rows,
-		final SqlFunction2<? super T, String, Value> dctor,
+		final SqlFunction3<? super T, String, Connection, Value> dctor,
 		final Connection conn
 	)
 		throws SQLException
@@ -218,7 +218,7 @@ public class Query {
 			for (T row : rows) {
 				int index = 0;
 				for (String name : names()) {
-					final Value value = dctor.apply(row, name);
+					final Value value = dctor.apply(row, name, conn);
 					if (value != null) {
 						stmt.setObject(++index, toSQLValue(value.value()));
 					} else {
