@@ -24,11 +24,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Random;
 
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.GPXTest;
+import io.jenetics.jpx.jdbc.GPXAccess;
 import io.jenetics.jpx.jdbc.IO;
 import io.jenetics.jpx.jdbc.MariaDB;
 

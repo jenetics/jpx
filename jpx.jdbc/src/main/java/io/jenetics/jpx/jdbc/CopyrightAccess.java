@@ -17,12 +17,13 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.dao;
+package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.time.Year;
 
-import io.jenetics.jpx.Bounds;
+import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
@@ -32,26 +33,25 @@ import io.jenetics.jpx.jdbc.internal.querily.Query;
  * @version !__version__!
  * @since !__version__!
  */
-public final class BoundsAccess {
-	private BoundsAccess() {}
+public final class CopyrightAccess {
+	private CopyrightAccess() {}
 
 	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO bounds(minlat, minlon, maxlat, maxlon) " +
-		"VALUES({minlat}, {minlon}, {maxlat}, {maxlon})"
+		"INSERT INTO copyright(author, year, license) " +
+		"VALUES({author}, {year}, {license})"
 	);
 
-	private static final Dctor<Bounds> DCTOR = Dctor.of(
-		Field.of("minlat", b -> b.getMinLatitude().doubleValue()),
-		Field.of("minlon", b -> b.getMinLongitude().doubleValue()),
-		Field.of("maxlat", b -> b.getMaxLatitude().doubleValue()),
-		Field.of("maxlon", b -> b.getMinLongitude().doubleValue())
+	private static final Dctor<Copyright> DCTOR = Dctor.of(
+		Field.of("author", Copyright::getAuthor),
+		Field.of("year", c -> c.getYear().map(Year::getValue)),
+		Field.of("license", Copyright::getLicense)
 	);
 
-	public static Long insert(final Bounds bounds, final Connection conn)
+	public static Long insert(final Copyright copyright, final Connection conn)
 		throws SQLException
 	{
-		return bounds != null
-			? INSERT_QUERY.insert(bounds, DCTOR, conn)
+		return copyright != null
+			? INSERT_QUERY.insert(copyright, DCTOR, conn)
 			: null;
 	}
 

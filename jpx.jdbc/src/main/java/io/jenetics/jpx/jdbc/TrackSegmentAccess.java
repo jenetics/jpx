@@ -17,13 +17,14 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.dao;
+package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Optional;
+import java.util.List;
 
-import io.jenetics.jpx.Link;
+import io.jenetics.jpx.TrackSegment;
+import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
@@ -33,32 +34,53 @@ import io.jenetics.jpx.jdbc.internal.querily.Query;
  * @version !__version__!
  * @since !__version__!
  */
-public final class LinkAccess {
-	private LinkAccess() {}
+public final class TrackSegmentAccess {
+	private TrackSegmentAccess() {}
 
 	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO link(href, text, type) " +
-		"VALUES({href}, {text}, {type});"
+		"INSERT INTO track_segment(number) VALUES({number})"
 	);
 
-	private static final Dctor<Link> DCTOR = Dctor.of(
-		Field.of("href", Link::getHref),
-		Field.of("text", Link::getText),
-		Field.of("type", Link::getType)
-	);
 
-	public static Long insert(final Link link, final Connection conn)
+	public static Long insert(
+		final TrackSegment segment,
+		final int number,
+		final Connection conn
+	)
 		throws SQLException
 	{
-		return link != null
-			? INSERT_QUERY.insert(link, DCTOR, conn)
-			: null;
+		if (segment == null || segment.isEmpty()) return null;
+
+		final Long id = INSERT_QUERY.insert(
+			segment,
+			Dctor.of(Field.ofValue("number", number)),
+			conn
+		);
+		insertWayPoints(id, segment.getPoints(), conn);
+
+		return id;
 	}
 
-	public static Long insertOpt(final Optional<Link> link, final Connection conn)
+	private static final Query WAY_POINT_INSERT_QUERY = Query.of(
+		"INSERT INTO track_segment_way_point(track_segment_id, way_point_id) " +
+		"VALUES({track_segment_id}, {way_point_id});"
+	);
+
+	private static void insertWayPoints(
+		final Long id,
+		final List<WayPoint> points,
+		final Connection conn
+	)
 		throws SQLException
 	{
-		return insert(link.orElse(null), conn);
+		WAY_POINT_INSERT_QUERY.executeInserts(
+			points,
+			Dctor.of(
+				Field.ofValue("track_segment_id", id),
+				Field.of("way_point_id", WayPointAccess::insert)
+			),
+			conn
+		);
 	}
 
 }

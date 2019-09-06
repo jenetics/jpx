@@ -17,7 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.jdbc.internal.dao;
+package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
 import java.util.Optional;
