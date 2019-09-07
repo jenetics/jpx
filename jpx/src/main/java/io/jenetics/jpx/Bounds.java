@@ -37,7 +37,7 @@ import java.util.stream.Collector;
  * Two lat/lon pairs defining the extent of an element.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 1.6
  * @since 1.0
  */
 public final class Bounds implements Serializable {
@@ -152,7 +152,7 @@ public final class Bounds implements Serializable {
 	 * If the collecting way-point stream is empty, the collected {@code Bounds}
 	 * object is {@code null}.
 	 *
-	 * @since !__version__!
+	 * @since 1.6
 	 *
 	 * @return a new bounds collector
 	 */
