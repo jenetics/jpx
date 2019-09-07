@@ -59,10 +59,10 @@ CREATE TABLE metadata(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255),
 	dscr TEXT,
-	person_id BIGINT REFERENCES person(id),
-	copyright_id BIGINT REFERENCES copyright(id),
 	time TIMESTAMP,
 	keywords VARCHAR(255),
+	person_id BIGINT REFERENCES person(id),
+	copyright_id BIGINT REFERENCES copyright(id),
 	bounds_id BIGINT REFERENCES bounds(id)
 );
 CREATE INDEX i_metadata_name ON metadata(name);

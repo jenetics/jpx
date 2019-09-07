@@ -49,7 +49,7 @@ public final class Param {
 			return _value;
 		}
 
-		public static Value of(final Object value) {
+		static Value of(final Object value) {
 			return new Value(value);
 		}
 
@@ -101,8 +101,8 @@ public final class Param {
 	 * @throws NullPointerException if the given parameter {@code name} is
 	 *         {@code null}
 	 */
-	public static Param of(final String name, final Value value) {
-		return new Param(name, value);
+	public static Param of(final String name, final Object value) {
+		return new Param(name, Value.of(value));
 	}
 
 }

@@ -30,7 +30,6 @@ import io.jenetics.jpx.UInt;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 import io.jenetics.jpx.jdbc.internal.querily.Param;
-import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
 
 /**
@@ -106,8 +105,8 @@ public final class TrackAccess {
 
 			if (sid != null) {
 				SEGMENT_INSERT_QUERY.on(
-					Param.of("track_id", Value.of(id)),
-					Param.of("track_segment_id", Value.of(sid))
+					Param.of("track_id", id),
+					Param.of("track_segment_id", sid)
 				).insert(conn);
 			}
 		}

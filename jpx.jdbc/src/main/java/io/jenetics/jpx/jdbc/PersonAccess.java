@@ -21,16 +21,13 @@ package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Optional;
 
 import io.jenetics.jpx.Email;
 import io.jenetics.jpx.Person;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor;
 import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
 import io.jenetics.jpx.jdbc.internal.querily.Param;
-import io.jenetics.jpx.jdbc.internal.querily.Param.Value;
 import io.jenetics.jpx.jdbc.internal.querily.Query;
-import io.jenetics.jpx.jdbc.internal.querily.ResultSetParser;
 import io.jenetics.jpx.jdbc.internal.querily.RowParser;
 
 /**
@@ -69,7 +66,7 @@ public final class PersonAccess {
 
 		final String name = person.getName().orElse(null);
 		final Long id = Query.of("SELECT id FROM person WHERE name = {name};")
-			.on(Param.of("name", Value.of(name)))
+			.on(Param.of("name", name))
 			.as(RowParser.int64("id").singleOpt(), conn)
 			.orElse(null);
 
