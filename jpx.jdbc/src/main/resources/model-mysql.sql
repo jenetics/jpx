@@ -13,20 +13,21 @@ CREATE TABLE link(
 	text VARCHAR(255),
 	type VARCHAR(255)
 );
+CREATE INDEX i_link_href ON link(href);
 CREATE INDEX i_link_text ON link(text);
 
 -- -----------------------------------------------------------------------------
--- Create the `person` table. A person is meant to be shared.
+-- Create the `person` table.
 -- -----------------------------------------------------------------------------
 CREATE TABLE person(
 	id BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	name VARCHAR(255) NOT NULL,
 	email VARCHAR(255),
-	link_id BIGINT REFERENCES link(id),
-
-	CONSTRAINT c_person_name UNIQUE (name)
+	link_id BIGINT REFERENCES link(id)
 );
+CREATE INDEX i_person_name ON person(name);
 CREATE INDEX i_person_email ON person(email);
+CREATE INDEX i_person_link_id ON person(link_id);
 
 -- -----------------------------------------------------------------------------
 -- Create the `copyright` table. Is bound to one metadata object.
@@ -68,6 +69,9 @@ CREATE TABLE metadata(
 CREATE INDEX i_metadata_name ON metadata(name);
 CREATE INDEX i_metadata_time ON metadata(time);
 CREATE INDEX i_metadata_keywords ON metadata(keywords);
+CREATE INDEX i_metadata_person_id ON metadata(person_id);
+CREATE INDEX i_metadata_copyright_id ON metadata(copyright_id);
+CREATE INDEX i_metadata_bounds_id ON metadata(bounds_id);
 
 CREATE TABLE metadata_link(
 	metadata_id BIGINT NOT NULL REFERENCES metadata(id) ON DELETE CASCADE,
@@ -128,6 +132,7 @@ CREATE TABLE route(
 	number INT,
 	type VARCHAR(255)
 );
+CREATE INDEX i_route_name ON route(name);
 
 CREATE TABLE route_link(
 	route_id BIGINT NOT NULL REFERENCES route(id) ON DELETE CASCADE,
@@ -199,6 +204,7 @@ CREATE TABLE gpx(
 	metadata_id BIGINT REFERENCES metadata(id)
 );
 CREATE INDEX i_gpx_creator ON gpx(creator);
+CREATE INDEX i_gpx_metadata_id ON gpx(metadata_id);
 
 CREATE TABLE gpx_way_point(
 	gpx_id BIGINT NOT NULL REFERENCES gpx(id),

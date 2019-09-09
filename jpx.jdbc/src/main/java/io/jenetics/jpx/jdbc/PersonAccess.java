@@ -57,22 +57,4 @@ public final class PersonAccess {
 			: null;
 	}
 
-	public static Long insertOrUpdate(final Person person, final Connection conn)
-		throws SQLException
-	{
-		if (person == null || person.isEmpty()) {
-			return null;
-		}
-
-		final String name = person.getName().orElse(null);
-		final Long id = Query.of("SELECT id FROM person WHERE name = {name};")
-			.on(Param.of("name", name))
-			.as(RowParser.int64("id").singleOpt(), conn)
-			.orElse(null);
-
-		return id == null
-			? INSERT_QUERY.insert(person, DCTOR, conn)
-			: id;
-	}
-
 }
