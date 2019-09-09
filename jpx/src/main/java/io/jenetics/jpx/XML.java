@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -277,27 +277,35 @@ final class XML {
 	}
 
 	static Document checkExtensions(final Document extensions) {
-		if (extensions != null &&
-			!"extensions".equals(extensions.getDocumentElement().getNodeName()))
-		{
-			throw new IllegalArgumentException(format(
-				"Expected 'extensions' root element, but got '%s'.",
-				extensions.getDocumentElement().getNodeName()
-			));
-		}
-		if (extensions != null &&
-			extensions.getDocumentElement().getNamespaceURI() != null)
-		{
-			final String ns = extensions.getDocumentElement().getNamespaceURI();
-			if (!ns.isEmpty() &&
-				!ns.startsWith("http://www.topografix.com/GPX/1/1") &&
-				!ns.startsWith("http://www.topografix.com/GPX/1/0"))
-			{
+		if (extensions != null) {
+			final Element root = extensions.getDocumentElement();
+
+			if (root == null) {
+				throw new IllegalArgumentException(
+					"'extensions' has no document element."
+				);
+			}
+
+			if (!"extensions".equals(root.getNodeName())) {
 				throw new IllegalArgumentException(format(
-					"Invalid document namespace: '%s'.", ns
+					"Expected 'extensions' root element, but got '%s'.",
+					root.getNodeName()
 				));
 			}
+
+			if (root.getNamespaceURI() != null) {
+				final String ns = root.getNamespaceURI();
+				if (!ns.isEmpty() &&
+					!ns.startsWith("http://www.topografix.com/GPX/1/1") &&
+					!ns.startsWith("http://www.topografix.com/GPX/1/0"))
+				{
+					throw new IllegalArgumentException(format(
+						"Invalid document namespace: '%s'.", ns
+					));
+				}
+			}
 		}
+
 		return extensions;
 	}
 

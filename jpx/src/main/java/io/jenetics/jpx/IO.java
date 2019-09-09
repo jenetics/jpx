@@ -399,7 +399,7 @@ final class IO {
 					b = in.readByte() & 0xFF;
 					n ^= (b & 0x7F) << 21;
 					if (b > 0x7F) {
-						l = innerLongDecode((long)n, in);
+						l = innerLongDecode(n, in);
 					} else {
 						l = n;
 					}

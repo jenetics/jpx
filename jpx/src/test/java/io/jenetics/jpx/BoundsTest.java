@@ -23,7 +23,9 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
+import org.testng.Assert;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.GPX.Version;
@@ -60,6 +62,51 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 	@Test
 	public void equalsVerifier() {
 		EqualsVerifier.forClass(Bounds.class).verify();
+	}
+
+	@Test
+	public void toBounds() {
+		final Stream<WayPoint> points = Stream.of(
+			WayPoint.of(50, 100),
+			WayPoint.of(51, 101),
+			WayPoint.of(52, 102),
+			WayPoint.of(53, 103),
+			WayPoint.of(54, 104),
+			WayPoint.of(55, 105)
+		);
+
+		final Bounds bounds = points.collect(Bounds.toBounds());
+		Assert.assertEquals(
+			bounds,
+			Bounds.of(
+				Latitude.ofDegrees(50), Longitude.ofDegrees(100),
+				Latitude.ofDegrees(55), Longitude.ofDegrees(105)
+			)
+		);
+	}
+
+	@Test
+	public void toBoundsForOnePoints() {
+		final Stream<WayPoint> points = Stream.of(
+			WayPoint.of(50, 100)
+		);
+
+		final Bounds bounds = points.collect(Bounds.toBounds());
+		System.out.println(bounds);
+		Assert.assertEquals(
+			bounds,
+			Bounds.of(
+				Latitude.ofDegrees(50), Longitude.ofDegrees(100),
+				Latitude.ofDegrees(50), Longitude.ofDegrees(100)
+			)
+		);
+	}
+
+	@Test
+	public void toBoundsForZeroPoints() {
+		final Stream<WayPoint> points = Stream.empty();
+		final Bounds bounds = points.collect(Bounds.toBounds());
+		Assert.assertNull(bounds);
 	}
 
 }

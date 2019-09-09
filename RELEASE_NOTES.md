@@ -1,5 +1,11 @@
 ## Release notes
 
+### [1.5.3](https://github.com/jenetics/jpx/releases/tag/v1.5.3)
+
+#### Bugs
+
+* [#94](https://github.com/jenetics/jpx/issues/94): NPE for empty 'extensions' XML-document.
+
 ### [1.5.2](https://github.com/jenetics/jpx/releases/tag/v1.5.2)
 
 #### Bugs
