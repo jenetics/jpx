@@ -35,3 +35,6 @@ gradle-app.setting
 .idea
 build
 classes
+
+*/srv/var/dbdata
+*/srv/var/lib-pgadmin
