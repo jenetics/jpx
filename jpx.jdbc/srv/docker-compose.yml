@@ -1,11 +1,11 @@
-version: '3.7'
+version: '3.3'
 
 services:
   gpx-db:
     image: postgres:${POSTGRES_VERSION}-alpine
     container_name: gpx-db
-	ports:
-		- '5432:5432'
+    ports:
+      - "5432:5432"
     restart: unless-stopped
     volumes:
       - ${PWD}/var/dbdata:/var/lib/postgresql/data
@@ -18,7 +18,7 @@ services:
     image: dpage/pgadmin4
     container_name: jpx-pgadmin
     ports:
-      - '1337:1337'
+      - "1337:1337"
     restart: unless-stopped
     command: exec python setup.py --load-servers server.json ${PGADMIN_DEFAULT_EMAIL}
     volumes:
@@ -30,5 +30,5 @@ services:
       - jpx-network
 
 networks:
-  postgres-network:
-    name: jpx-network
+  jpx-network:
+
