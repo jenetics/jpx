@@ -31,6 +31,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -202,6 +203,8 @@ public class Query {
 			result = result.toString();
 		} else if (result instanceof URL) {
 			result = result.toString();
+		} else if (result instanceof ZonedDateTime) {
+			result = ((ZonedDateTime)result).toOffsetDateTime();
 		}
 
 		return result;

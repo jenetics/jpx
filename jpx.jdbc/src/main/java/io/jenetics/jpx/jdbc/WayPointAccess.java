@@ -21,7 +21,6 @@ package io.jenetics.jpx.jdbc;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.List;
 
@@ -99,7 +98,7 @@ public final class WayPointAccess {
 		Field.of("lon", wp -> wp.getLongitude().doubleValue()),
 		Field.of("ele", wp -> wp.getElevation().map(Length::doubleValue)),
 		Field.of("speed", wp -> wp.getSpeed().map(Speed::doubleValue)),
-		Field.of("time", wp -> wp.getTime().map(t -> Timestamp.valueOf(t.toLocalDateTime()))),
+		Field.of("time", WayPoint::getTime),
 		Field.of("magvar", wp -> wp.getMagneticVariation().map(Degrees::doubleValue)),
 		Field.of("geoidheight", wp -> wp.getGeoidHeight().map(Length::doubleValue)),
 		Field.of("name", WayPoint::getName),
