@@ -66,13 +66,13 @@ public class GPXAccessTest {
 	private final Random random = new Random(1231321);
 	private final GPX gpx = GPXTest.nextGPX(random);
 
-	//@BeforeClass
+	@BeforeClass
 	public void setup() throws IOException, SQLException {
 		final String[] queries = IO.
 			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
 			.split(";");
 
-		MariaDB.INSTANCE.transaction(conn -> {
+		PSQLDB.INSTANCE.transaction(conn -> {
 			for (String query : queries) {
 				if (!query.trim().isEmpty()) {
 					try (Statement stmt = conn.createStatement()) {
@@ -103,7 +103,7 @@ public class GPXAccessTest {
 		});
 	}
 
-	//@Test
+	@Test
 	public void insert() throws SQLException, IOException {
 		final String dir = "/home/fwilhelm/Workspace/Documents/GPS";
 
@@ -121,25 +121,25 @@ public class GPXAccessTest {
 				{
 					final GPX gpx = fix(GPX.reader(Version.V10, Mode.LENIENT).read(file));
 
-					final Path export = Paths.get(
-						"/home/fwilhelm/Downloads/gpx/",
-						gpx.getMetadata().flatMap(Metadata::getName).orElse("null") + ".gpx"
-					);
-
-					GPX.writer("    ").write(gpx, export);
+//					final Path export = Paths.get(
+//						"/home/fwilhelm/Downloads/gpx/",
+//						gpx.getMetadata().flatMap(Metadata::getName).orElse("null") + ".gpx"
+//					);
+//
+//					GPX.writer("    ").write(gpx, export);
 
 					System.out.println("Inserting: " + file);
 
-//					long start = System.currentTimeMillis();
-//					try {
-//						MariaDB.INSTANCE.transaction(conn -> {
-//							final Long id = GPXAccess.insert(gpx, conn);
-//						});
-//					} catch (SQLException e) {
-//						throw new IOException(e);
-//					}
-//					long stop = System.currentTimeMillis();
-//					System.out.println(format("%s: %s s", file, (stop - start)/1000.0));
+					long start = System.currentTimeMillis();
+					try {
+						PSQLDB.INSTANCE.transaction(conn -> {
+							final Long id = GPXAccess.insert(gpx, conn);
+						});
+					} catch (SQLException e) {
+						throw new IOException(e);
+					}
+					long stop = System.currentTimeMillis();
+					System.out.println(format("%s: %s s", file, (stop - start)/1000.0));
 				}
 				return FileVisitResult.CONTINUE;
 			}
