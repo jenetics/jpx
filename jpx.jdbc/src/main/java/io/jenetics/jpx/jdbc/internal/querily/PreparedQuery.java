@@ -67,12 +67,10 @@ final class PreparedQuery extends Query {
 
 	@Override
 	PreparedStatement prepare(final Connection conn) throws SQLException {
-		final PreparedStatement stmt =  conn.prepareStatement(
+		return  conn.prepareStatement(
 			sql(),
 			RETURN_GENERATED_KEYS
 		);
-		fill(stmt);
-		return stmt;
 	}
 
 	private void fill(final PreparedStatement stmt) throws SQLException {
@@ -96,6 +94,8 @@ final class PreparedQuery extends Query {
 		throws SQLException
 	{
 		try (PreparedStatement stmt = prepare(conn)) {
+			fill(stmt);
+
 			for (T row : rows) {
 				int index = 0;
 				for (String name : names()) {
