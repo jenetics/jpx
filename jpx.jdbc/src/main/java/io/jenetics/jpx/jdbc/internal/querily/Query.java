@@ -192,7 +192,7 @@ public class Query {
 		throw new UnsupportedOperationException();
 	}
 
-	private static Object toSQLValue(final Object value) {
+	static Object toSQLValue(final Object value) {
 		Object result = value;
 
 		while (result instanceof Optional) {

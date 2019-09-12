@@ -55,6 +55,8 @@ final class PreparedQuery extends Query {
 
 	@Override
 	public PreparedQuery on(final Param... params) {
+		if (params.length == 0) return this;
+
 		final Map<String, Param> map = new HashMap<>(_params);
 		for (Param param : params) {
 			map.put(param.name(), param);
@@ -77,7 +79,8 @@ final class PreparedQuery extends Query {
 		int index = 1;
 		for (String name : names()) {
 			if (_params.containsKey(name)) {
-				stmt.setObject(index, _params.get(name).value().value());
+				final Object value = toSQLValue(_params.get(name).value().value());
+				stmt.setObject(index, value);
 			}
 
 			++index;
