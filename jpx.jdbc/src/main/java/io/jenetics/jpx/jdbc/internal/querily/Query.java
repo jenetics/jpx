@@ -271,7 +271,7 @@ public class Query {
 		return conn.prepareStatement(sql(), RETURN_GENERATED_KEYS);
 	}
 
-	static Optional<Long> readID(final Statement stmt)
+	private static Optional<Long> readID(final Statement stmt)
 		throws SQLException
 	{
 		try (ResultSet keys = stmt.getGeneratedKeys()) {
