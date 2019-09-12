@@ -50,7 +50,7 @@ public final class TrackAccess {
 		Field.of("cmt", Track::getComment),
 		Field.of("dscr", Track::getDescription),
 		Field.of("src", Track::getSource),
-		Field.of("number", t -> t.getNumber().map(UInt::intValue)),
+		Field.of("number", t -> t.getNumber().map(UInt::getValue)),
 		Field.of("type", Track::getType)
 	);
 
@@ -104,10 +104,11 @@ public final class TrackAccess {
 			final Long sid = TrackSegmentAccess.insert(segment, i, conn);
 
 			if (sid != null) {
-				SEGMENT_INSERT_QUERY.on(
-					Param.of("track_id", id),
-					Param.of("track_segment_id", sid)
-				).insert(conn);
+				SEGMENT_INSERT_QUERY
+					.on(
+						Param.of("track_id", id),
+						Param.of("track_segment_id", sid))
+					.insert(conn);
 			}
 		}
 	}

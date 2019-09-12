@@ -63,7 +63,7 @@ public final class RouteAccess {
 		Field.of("cmt", Route::getComment),
 		Field.of("dscr", Route::getDescription),
 		Field.of("src", Route::getSource),
-		Field.of("number", r -> r.getNumber().map(UInt::intValue)),
+		Field.of("number", r -> r.getNumber().map(UInt::getValue)),
 		Field.of("type", Route::getType)
 	);
 
