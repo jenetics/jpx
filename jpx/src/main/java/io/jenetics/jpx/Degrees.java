@@ -30,7 +30,7 @@ import java.io.Serializable;
 
 /**
  * Used for bearing, heading, course. Base unit is decimal degree. Only values
- * in the range of {@code [0..360]} are valid.
+ * in the range of {@code [0..360)} are valid.
  *
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
@@ -55,7 +55,7 @@ public final class Degrees
 	 *
 	 * @param value the decimal degree value
 	 * @throws IllegalArgumentException if the give value is not within the
-	 *         range of {@code [0..360]}
+	 *         range of {@code [0..360)}
 	 */
 	private Degrees(final double value) {
 		if (value < 0 || value >= 360) {
