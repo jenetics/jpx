@@ -1786,30 +1786,6 @@ public final class GPX implements Serializable {
 		return reader(Version.V11, Mode.STRICT);
 	}
 
-	/**
-	 * Read an GPX object from the given {@code input} stream.
-	 *
-	 * @since 1.1
-	 *
-	 * @param input the input stream from where the GPX date is read
-	 * @param lenient if {@code true}, out-of-range and syntactical errors are
-	 *        ignored. E.g. a {@code WayPoint} with {@code lat} values not in
-	 *        the valid range of [-90..90] are ignored/skipped.
-	 * @return the GPX object read from the input stream
-	 * @throws IOException if the GPX object can't be read
-	 * @throws NullPointerException if the given {@code input} stream is
-	 *         {@code null}
-	 *
-	 * @see #reader(GPX.Version, GPX.Reader.Mode)
-	 * @deprecated Use {@code GPX.reader(Mode.LENIENT).read(input)} instead
-	 */
-	@Deprecated
-	public static GPX read(final InputStream input, final boolean lenient)
-		throws IOException
-	{
-		return reader(Version.V11, lenient ? Mode.LENIENT : Mode.STRICT)
-			.read(input);
-	}
 
 	/**
 	 * Read an GPX object from the given {@code input} stream. This method is a
