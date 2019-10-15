@@ -1016,20 +1016,6 @@ public final class GPX implements Serializable {
 		return new Builder(version, creator);
 	}
 
-	/**
-	 * Create a new GPX builder with the given GPX version and creator string.
-	 *
-	 * @param version the GPX version string
-	 * @param creator the GPX creator
-	 * @return new GPX builder
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 *
-	 * @deprecated Use {@link #builder(Version, String)} instead.
-	 */
-	@Deprecated
-	public static Builder builder(final String version, final String creator) {
-		return new Builder(Version.of(version), creator);
-	}
 
 	/**
 	 * Create a new GPX builder with the given GPX creator string.
