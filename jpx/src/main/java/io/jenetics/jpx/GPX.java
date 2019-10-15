@@ -234,14 +234,6 @@ public final class GPX implements Serializable {
 		}
 	}
 
-	/**
-	 * The default version number: 1.1.
-	 *
-	 * @deprecated Use {@link GPX.Version} instead
-	 */
-	@Deprecated
-	public static final String VERSION = Version.V11._value;
-
 	private static final String _CREATOR = "JPX - https://github.com/jenetics/jpx";
 
 	private final String _creator;
