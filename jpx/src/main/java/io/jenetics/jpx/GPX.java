@@ -1459,47 +1459,6 @@ public final class GPX implements Serializable {
 
 
 
-	/**
-	 * Create a new {@code GPX} object with the given data.
-	 *
-	 * @param creator the name or URL of the software that created your GPX
-	 *        document. This allows others to inform the creator of a GPX
-	 *        instance document that fails to validate.
-	 * @param  version the GPX version
-	 * @param metadata the metadata about the GPS file
-	 * @param wayPoints the way-points
-	 * @param routes the routes
-	 * @param tracks the tracks
-	 * @return a new {@code GPX} object with the given data
-	 * @throws NullPointerException if the {@code creator}, {code wayPoints},
-	 *         {@code routes} or {@code tracks} is {@code null}
-	 * @throws IllegalArgumentException if the given GPX {@code version} string
-	 *         is neither "1.0" nor "1.1"
-	 *
-	 * @deprecated Use {@link #of(Version, String, Metadata, List, List, List)}
-	 *             instead
-	 */
-	@Deprecated
-	public static GPX of(
-		final String version,
-		final String creator,
-		final Metadata metadata,
-		final List<WayPoint> wayPoints,
-		final List<Route> routes,
-		final List<Track> tracks
-	) {
-		return of(
-			Version.of(version),
-			creator,
-			metadata,
-			wayPoints,
-			routes,
-			tracks,
-			null
-		);
-	}
-
-
 	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/
