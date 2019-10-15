@@ -244,14 +244,6 @@ public final class GPX implements Serializable {
 
 	private static final String _CREATOR = "JPX - https://github.com/jenetics/jpx";
 
-	/**
-	 * The default creator string.
-	 *
-	 * @deprecated Will be removed without replacement
-	 */
-	@Deprecated
-	public static final String CREATOR = _CREATOR;
-
 	private final String _creator;
 	private final Version _version;
 	private final Metadata _metadata;
