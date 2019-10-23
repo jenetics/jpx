@@ -1206,6 +1206,11 @@ public final class GPX implements Serializable {
 			final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 			try {
 				return read(in);
+			} catch (InvalidObjectException e) {
+				if (e.getCause() instanceof IllegalArgumentException) {
+					throw (IllegalArgumentException)e.getCause();
+				}
+				throw new IllegalArgumentException(e);
 			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
