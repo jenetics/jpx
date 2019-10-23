@@ -1142,6 +1142,9 @@ public final class GPX implements Serializable {
 				}
 			} catch (XMLStreamException e) {
 				throw new InvalidObjectException("Invalid 'gpx' input.");
+			} catch (IllegalArgumentException e) {
+				throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
+						.initCause(e);
 			}
 		}
 
