@@ -1125,9 +1125,10 @@ public final class GPX implements Serializable {
 		 * @throws IOException if the GPX object can't be read
 		 * @throws NullPointerException if the given {@code input} stream is
 		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
 		 */
 		public GPX read(final InputStream input)
-			throws IOException
+			throws IOException, InvalidObjectException
 		{
 			final XMLInputFactory factory = XMLInputFactory.newInstance();
 			try  (XMLStreamReaderAdapter reader = new XMLStreamReaderAdapter(
@@ -1137,10 +1138,13 @@ public final class GPX implements Serializable {
 					reader.next();
 					return _reader.read(reader, _mode == Mode.LENIENT);
 				} else {
-					throw new IOException("No 'gpx' element found.");
+					throw new InvalidObjectException("No 'gpx' element found.");
 				}
 			} catch (XMLStreamException e) {
-				throw new IOException(e);
+				throw new InvalidObjectException("Invalid 'gpx' input.");
+			} catch (IllegalArgumentException e) {
+				throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
+						.initCause(e);
 			}
 		}
 
@@ -1202,6 +1206,11 @@ public final class GPX implements Serializable {
 			final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 			try {
 				return read(in);
+			} catch (InvalidObjectException e) {
+				if (e.getCause() instanceof IllegalArgumentException) {
+					throw (IllegalArgumentException)e.getCause();
+				}
+				throw new IllegalArgumentException(e);
 			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
@@ -1969,6 +1978,7 @@ public final class GPX implements Serializable {
 	 * @throws IOException if the GPX object can't be read
 	 * @throws NullPointerException if the given {@code input} stream is
 	 *         {@code null}
+	 * @throws InvalidObjectException if the gpx input is invalid.
 	 */
 	public static GPX read(final InputStream input) throws IOException {
 		return reader(Version.V11, Mode.STRICT).read(input);
