@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static io.jenetics.jpx.Lists.immutable;
 
 import java.io.ByteArrayInputStream;
@@ -151,7 +152,7 @@ final class IO {
 	static void writeString(final String value, final DataOutput out)
 		throws IOException
 	{
-		final byte[] bytes = value.getBytes("UTF-8");
+		final byte[] bytes = value.getBytes(UTF_8);
 		writeInt(bytes.length, out);
 		out.write(bytes);
 	}
@@ -167,7 +168,7 @@ final class IO {
 	static String readString(final DataInput in) throws IOException {
 		final byte[] bytes = new byte[readInt(in)];
 		in.readFully(bytes);
-		return new String(bytes, "UTF-8");
+		return new String(bytes, UTF_8);
 	}
 
 	/**
@@ -399,7 +400,7 @@ final class IO {
 					b = in.readByte() & 0xFF;
 					n ^= (b & 0x7F) << 21;
 					if (b > 0x7F) {
-						l = innerLongDecode((long)n, in);
+						l = innerLongDecode(n, in);
 					} else {
 						l = n;
 					}
