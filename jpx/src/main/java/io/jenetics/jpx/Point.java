@@ -77,7 +77,7 @@ public interface Point {
 	 * the {@link #getTime()}. Otherwise you have to re-implement this method as
 	 * well.
 	 *
-	 * @since !__version__!
+	 * @since 1.6
 	 *
 	 * @see #getTime()
 	 *
