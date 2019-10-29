@@ -117,7 +117,7 @@ final class XML {
 		}
 	}
 
-	static String toString(final Node source) {
+	private static String toString(final Node source) {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			copy(source, out);
@@ -208,16 +208,12 @@ final class XML {
 		return true;
 	}
 
-	static int hashCode(final Node node) {
-		return node != null ? toString(node).hashCode() : 0;
-	}
-
-	static boolean isEmpty(final Document doc) {
+	private static boolean isEmpty(final Document doc) {
 		return doc == null ||
 			doc.getDocumentElement().getChildNodes().getLength() == 0;
 	}
 
-	static <T extends Node> T clean(final T node) {
+	private static <T extends Node> T clean(final T node) {
 		if (node == null) return null;
 
 		node.normalize();

@@ -1,5 +1,14 @@
 ## Release notes
 
+### [1.6.0](https://github.com/jenetics/jpx/releases/tag/v1.6.0)
+
+#### Improvements
+
+* [#87](https://github.com/jenetics/jpx/issues/87): Consistent exception handling. Invalid GPX files, read from file or input stream throwing now an `InvalidObjectException`. (Implemented by [Segelzwerg](https://github.com/Segelzwerg).)
+* [#97](https://github.com/jenetics/jpx/issues/97): Implement `Bounds.toBounds()` collector. This collector finds the bounds of a given `Point` stream.
+* [#102](https://github.com/jenetics/jpx/issues/102): Add `Point.getInstant` method.
+
+
 ### [1.5.3](https://github.com/jenetics/jpx/releases/tag/v1.5.3)
 
 #### Bugs

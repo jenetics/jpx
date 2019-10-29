@@ -25,16 +25,7 @@ import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
@@ -232,8 +223,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 	}
 
-	@Test(expectedExceptions = {IOException.class})
-	public void strictRead() throws IOException {
+	@Test(expectedExceptions = {InvalidObjectException.class})
+	public void strictRead() throws IOException, InvalidObjectException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
 			GPX.read(in);
@@ -726,8 +717,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			GPX.read(in);
 			Assert.assertFalse(true, "GXP.read must throw.");
 		} catch (IOException e) {
-			Assert.assertEquals(e.getCause().getClass(), XMLStreamException.class);
-			Assert.assertTrue(e.getMessage().contains("Unexpected element"));
+			Assert.assertEquals(e.getClass(), InvalidObjectException.class);
+			Assert.assertTrue(e.getMessage().toLowerCase().contains("invalid"));
 		}
 	}
 

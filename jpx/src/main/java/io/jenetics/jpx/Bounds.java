@@ -154,9 +154,10 @@ public final class Bounds implements Serializable {
 	 *
 	 * @since 1.6
 	 *
+	 * @param <P> The actual point type
 	 * @return a new bounds collector
 	 */
-	public static Collector<WayPoint, ?, Bounds> toBounds() {
+	public static <P extends Point> Collector<P, ?, Bounds> toBounds() {
 		return Collector.of(
 			() -> {
 				final double[] a = new double[4];
