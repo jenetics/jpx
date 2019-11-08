@@ -24,8 +24,16 @@
  * @version !__version__!
  */
 
+rootProject.name = 'jpx'
+
 // The JPX projects.
 include 'jpx'
 include 'jpx.jdbc'
 
-rootProject.name = 'jpx'
+if (file('../FacileJDBC').exists()) {
+	includeBuild('../FacileJDBC') {
+		dependencySubstitution {
+			substitute module('io.jenetics:facilejdbc') with project(':facilejdbc')
+		}
+	}
+}
