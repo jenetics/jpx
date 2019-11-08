@@ -38,7 +38,7 @@ public final class BoundsAccess {
 
 	private static final Query INSERT_QUERY = Query.of(
 		"INSERT INTO bounds(minlat, minlon, maxlat, maxlon) " +
-		"VALUES(:minlat:, :minlon, :maxlat, :maxlon)"
+		"VALUES(:minlat, :minlon, :maxlat, :maxlon)"
 	);
 
 	private static final Dctor<Bounds> DCTOR = Dctor.of(

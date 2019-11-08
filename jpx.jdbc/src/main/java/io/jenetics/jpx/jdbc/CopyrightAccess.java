@@ -39,7 +39,7 @@ public final class CopyrightAccess {
 
 	private static final Query INSERT_QUERY = Query.of(
 		"INSERT INTO copyright(author, year, license) " +
-		"VALUES(:author:, :year, :license)"
+		"VALUES(:author, :year, :license)"
 	);
 
 	private static final Dctor<Copyright> DCTOR = Dctor.of(
