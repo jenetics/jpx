@@ -30,7 +30,7 @@ import io.jenetics.facilejdbc.spi.SqlTypeMapper;
  * @version !__version__!
  * @since !__version__!
  */
-public class GpxTypeConverter extends SqlTypeMapper {
+public class GpxTypeMapper extends SqlTypeMapper {
 	@Override
 	public Object convert(final Object value) {
 		Object result = value;
