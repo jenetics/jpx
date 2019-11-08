@@ -21,7 +21,17 @@ package io.jenetics.jpx.jdbc;
 
 import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
 import java.time.ZonedDateTime;
+
+import io.jenetics.jpx.DGPSStation;
+import io.jenetics.jpx.Degrees;
+import io.jenetics.jpx.Fix;
+import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
+import io.jenetics.jpx.Speed;
+import io.jenetics.jpx.UInt;
 
 import io.jenetics.facilejdbc.spi.SqlTypeMapper;
 
@@ -33,15 +43,18 @@ import io.jenetics.facilejdbc.spi.SqlTypeMapper;
 public class GpxTypeMapper extends SqlTypeMapper {
 	@Override
 	public Object convert(final Object value) {
-		Object result = value;
-		if (result instanceof URI) {
-			result = result.toString();
-		} else if (result instanceof URL) {
-			result = result.toString();
-		} else if (result instanceof ZonedDateTime) {
-			result = ((ZonedDateTime)result).toOffsetDateTime();
-		}
-
-		return result;
+		if (value instanceof Latitude) return ((Latitude)value).doubleValue();
+		if (value instanceof Longitude) return ((Longitude)value).doubleValue();
+		if (value instanceof Length) return ((Length)value).doubleValue();
+		if (value instanceof Speed) return ((Speed)value).doubleValue();
+		if (value instanceof Degrees) return ((Degrees)value).doubleValue();
+		if (value instanceof Fix) return ((Fix)value).getValue();
+		if (value instanceof UInt) return ((UInt)value).getValue();
+		if (value instanceof DGPSStation) return ((DGPSStation)value).intValue();
+		if (value instanceof ZonedDateTime) return ((ZonedDateTime)value).toOffsetDateTime();
+		if (value instanceof Duration) return ((Duration)value).getSeconds();
+		if (value instanceof URI) return value.toString();
+		if (value instanceof  URL) return value.toString();
+		return value;
 	}
 }

@@ -19,24 +19,18 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import io.jenetics.facilejdbc.Batch;
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
-import io.jenetics.jpx.DGPSStation;
-import io.jenetics.jpx.Degrees;
-import io.jenetics.jpx.Fix;
-import io.jenetics.jpx.Length;
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.Speed;
-import io.jenetics.jpx.UInt;
-import io.jenetics.jpx.WayPoint;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.time.Duration;
 import java.util.List;
 
-import static io.jenetics.facilejdbc.Dctor.field;
+import io.jenetics.jpx.Link;
+import io.jenetics.jpx.WayPoint;
+
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -96,27 +90,27 @@ public final class WayPointAccess {
 	);
 
 	private static final Dctor<WayPoint> DCTOR = Dctor.of(
-		field("lat", wp -> wp.getLatitude().doubleValue()),
-		field("lon", wp -> wp.getLongitude().doubleValue()),
-		field("ele", wp -> wp.getElevation().map(Length::doubleValue)),
-		field("speed", wp -> wp.getSpeed().map(Speed::doubleValue)),
+		field("lat", WayPoint::getLatitude),
+		field("lon", WayPoint::getLongitude),
+		field("ele", WayPoint::getElevation),
+		field("speed", WayPoint::getSpeed),
 		field("time", WayPoint::getTime),
-		field("magvar", wp -> wp.getMagneticVariation().map(Degrees::doubleValue)),
-		field("geoidheight", wp -> wp.getGeoidHeight().map(Length::doubleValue)),
+		field("magvar", WayPoint::getMagneticVariation),
+		field("geoidheight", WayPoint::getGeoidHeight),
 		field("name", WayPoint::getName),
 		field("cmt", WayPoint::getComment),
 		field("dscr", WayPoint::getDescription),
 		field("src", WayPoint::getSource),
 		field("sym", WayPoint::getSymbol),
 		field("type", WayPoint::getType),
-		field("fix", wp -> wp.getFix().map(Fix::getValue)),
-		field("sat", wp -> wp.getSat().map(UInt::getValue)),
+		field("fix", WayPoint::getFix),
+		field("sat", WayPoint::getSat),
 		field("hdop", WayPoint::getHdop),
 		field("vdop", WayPoint::getVdop),
 		field("pdop", WayPoint::getPdop),
-		field("ageofdgpsdata", wp -> wp.getAgeOfGPSData().map(Duration::getSeconds)),
-		field("dgpsid", wp -> wp.getDGPSID().map(DGPSStation::intValue)),
-		field("course", wp -> wp.getCourse().map(Degrees::doubleValue))
+		field("ageofdgpsdata", WayPoint::getAgeOfGPSData),
+		field("dgpsid", WayPoint::getDGPSID),
+		field("course", WayPoint::getCourse)
 	);
 
 	public static Long insert(final WayPoint wp, final Connection conn)
@@ -135,7 +129,7 @@ public final class WayPointAccess {
 
 	private static final Query LINK_INSERT_QUERY = Query.of(
 		"INSERT INTO way_point_link(way_point_id, link_id) " +
-		"VALUES({way_point_id}, {link_id});"
+		"VALUES(:way_point_id, :link_id);"
 	);
 
 	private static void insertLinks(

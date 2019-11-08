@@ -19,15 +19,16 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
-import io.jenetics.jpx.Email;
-import io.jenetics.jpx.Person;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static io.jenetics.facilejdbc.Dctor.field;
+import io.jenetics.jpx.Email;
+import io.jenetics.jpx.Person;
+
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

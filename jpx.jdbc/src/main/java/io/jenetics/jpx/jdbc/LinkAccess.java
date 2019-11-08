@@ -19,15 +19,15 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
-import io.jenetics.jpx.Link;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Optional;
 
-import static io.jenetics.facilejdbc.Dctor.field;
+import io.jenetics.jpx.Link;
+
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -57,12 +57,6 @@ public final class LinkAccess {
 				.executeInsert(conn)
 				.orElseThrow()
 			: null;
-	}
-
-	public static Long insertOpt(final Optional<Link> link, final Connection conn)
-		throws SQLException
-	{
-		return insert(link.orElse(null), conn);
 	}
 
 }

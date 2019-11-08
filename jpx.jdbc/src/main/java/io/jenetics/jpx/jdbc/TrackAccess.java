@@ -19,20 +19,21 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import io.jenetics.facilejdbc.Batch;
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.Track;
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.UInt;
+import static io.jenetics.facilejdbc.Dctor.field;
+import static io.jenetics.facilejdbc.Param.value;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static io.jenetics.facilejdbc.Dctor.field;
-import static io.jenetics.facilejdbc.Param.value;
+import io.jenetics.jpx.Link;
+import io.jenetics.jpx.Track;
+import io.jenetics.jpx.TrackSegment;
+import io.jenetics.jpx.UInt;
+
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

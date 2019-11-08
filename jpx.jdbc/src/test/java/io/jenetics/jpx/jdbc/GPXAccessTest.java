@@ -35,7 +35,6 @@ import java.util.Comparator;
 import java.util.Random;
 import java.util.stream.Stream;
 
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Bounds;

@@ -19,17 +19,18 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import io.jenetics.facilejdbc.Batch;
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.WayPoint;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static io.jenetics.facilejdbc.Dctor.field;
+import io.jenetics.jpx.TrackSegment;
+import io.jenetics.jpx.WayPoint;
+
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

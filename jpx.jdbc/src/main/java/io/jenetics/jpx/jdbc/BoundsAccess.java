@@ -19,14 +19,15 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
-import io.jenetics.jpx.Bounds;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import static io.jenetics.facilejdbc.Dctor.field;
+import io.jenetics.jpx.Bounds;
+
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -42,10 +43,10 @@ public final class BoundsAccess {
 	);
 
 	private static final Dctor<Bounds> DCTOR = Dctor.of(
-		field("minlat", b -> b.getMinLatitude().doubleValue()),
-		field("minlon", b -> b.getMinLongitude().doubleValue()),
-		field("maxlat", b -> b.getMaxLatitude().doubleValue()),
-		field("maxlon", b -> b.getMaxLongitude().doubleValue())
+		field("minlat", Bounds::getMinLatitude),
+		field("minlon", Bounds::getMinLongitude),
+		field("maxlat", Bounds::getMaxLatitude),
+		field("maxlon", Bounds::getMaxLongitude)
 	);
 
 	public static Long insert(final Bounds bounds, final Connection conn)
