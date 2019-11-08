@@ -19,15 +19,17 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
+import io.jenetics.jpx.TrackSegment;
+import io.jenetics.jpx.WayPoint;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import io.jenetics.jpx.TrackSegment;
-import io.jenetics.jpx.WayPoint;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
-import io.jenetics.jpx.jdbc.internal.querily.Query;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -38,7 +40,7 @@ public final class TrackSegmentAccess {
 	private TrackSegmentAccess() {}
 
 	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO track_segment(number) VALUES({number})"
+		"INSERT INTO track_segment(number) VALUES(:number)"
 	);
 
 
@@ -51,19 +53,18 @@ public final class TrackSegmentAccess {
 	{
 		if (segment == null || segment.isEmpty()) return null;
 
-		final Long id = INSERT_QUERY.insert(
-			segment,
-			Dctor.of(Field.ofValue("number", number)),
-			conn
-		);
-		insertWayPoints(id, segment.getPoints(), conn);
+		final Long id = INSERT_QUERY
+			.on(segment, Dctor.of(field("number", r -> number)))
+			.executeInsert(conn)
+			.orElseThrow();
 
+		insertWayPoints(id, segment.getPoints(), conn);
 		return id;
 	}
 
 	private static final Query WAY_POINT_INSERT_QUERY = Query.of(
 		"INSERT INTO track_segment_way_point(track_segment_id, way_point_id) " +
-		"VALUES({track_segment_id}, {way_point_id});"
+		"VALUES(:track_segment_id, :way_point_id);"
 	);
 
 	private static void insertWayPoints(
@@ -73,14 +74,15 @@ public final class TrackSegmentAccess {
 	)
 		throws SQLException
 	{
-		WAY_POINT_INSERT_QUERY.inserts(
+		final Batch batch = Batch.of(
 			points,
 			Dctor.of(
-				Field.ofValue("track_segment_id", id),
-				Field.of("way_point_id", WayPointAccess::insert)
-			),
-			conn
+				field("track_segment_id", r -> id),
+				field("way_point_id", WayPointAccess::insert)
+			)
 		);
+
+		WAY_POINT_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
 }

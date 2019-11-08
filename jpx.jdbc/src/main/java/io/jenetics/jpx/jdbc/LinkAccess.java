@@ -19,14 +19,15 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
+import io.jenetics.jpx.Link;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Optional;
 
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
-import io.jenetics.jpx.jdbc.internal.querily.Query;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -38,20 +39,23 @@ public final class LinkAccess {
 
 	private static final Query INSERT_QUERY = Query.of(
 		"INSERT INTO link(href, text, type) " +
-		"VALUES({href}, {text}, {type});"
+		"VALUES(:href, :text, :type);"
 	);
 
 	private static final Dctor<Link> DCTOR = Dctor.of(
-		Field.of("href", Link::getHref),
-		Field.of("text", Link::getText),
-		Field.of("type", Link::getType)
+		field("href", Link::getHref),
+		field("text", Link::getText),
+		field("type", Link::getType)
 	);
 
 	public static Long insert(final Link link, final Connection conn)
 		throws SQLException
 	{
 		return link != null
-			? INSERT_QUERY.insert(link, DCTOR, conn)
+			? INSERT_QUERY
+				.on(link, DCTOR)
+				.executeInsert(conn)
+				.orElseThrow()
 			: null;
 	}
 

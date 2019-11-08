@@ -19,15 +19,17 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
+import io.jenetics.jpx.Link;
+import io.jenetics.jpx.Metadata;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.Metadata;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
-import io.jenetics.jpx.jdbc.internal.querily.Query;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -48,30 +50,30 @@ public final class MetadataAccess {
 			"bounds_id" +
 		") " +
 		"VALUES(" +
-			"{name}, " +
-			"{dscr}, " +
-			"{time}, " +
-			"{keywords}, " +
-			"{person_id}, " +
-			"{copyright_id}, " +
-			"{bounds_id}" +
+			":name, " +
+			":dscr, " +
+			":time, " +
+			":keywords, " +
+			":person_id, " +
+			":copyright_id, " +
+			":bounds_id" +
 		")"
 	);
 
 	private static final Dctor<Metadata> DCTOR = Dctor.of(
-		Field.of("name", Metadata::getName),
-		Field.of("dscr", Metadata::getDescription),
-		Field.of("time", Metadata::getTime),
-		Field.of("keywords", Metadata::getKeywords),
-		Field.of(
+		field("name", Metadata::getName),
+		field("dscr", Metadata::getDescription),
+		field("time", Metadata::getTime),
+		field("keywords", Metadata::getKeywords),
+		field(
 			"person_id",
 			(m, c) -> PersonAccess.insert(m.getAuthor().orElse(null), c)
 		),
-		Field.of(
+		field(
 			"copyright_id",
 			(m, c) -> CopyrightAccess.insert(m.getCopyright().orElse(null), c)
 		),
-		Field.of(
+		field(
 			"bounds_id",
 			(m, c) -> BoundsAccess.insert(m.getBounds().orElse(null), c)
 		)
@@ -82,14 +84,18 @@ public final class MetadataAccess {
 	{
 		if (metadata == null || metadata.isEmpty()) return null;
 
-		final Long id = INSERT_QUERY.insert(metadata, DCTOR, conn);
+		final Long id = INSERT_QUERY
+			.on(metadata, DCTOR)
+			.executeInsert(conn)
+			.orElseThrow();
+
 		insertLinks(id, metadata.getLinks(), conn);
 		return id;
 	}
 
 	private static final Query LINK_INSERT_QUERY = Query.of(
 		"INSERT INTO metadata_link(metadata_id, link_id " +
-		"VALUES({metadata_id}, {link_id});"
+		"VALUES(:metadata_id, :link_id);"
 	);
 
 	private static void insertLinks(
@@ -99,14 +105,15 @@ public final class MetadataAccess {
 	)
 		throws SQLException
 	{
-		LINK_INSERT_QUERY.inserts(
+		final Batch batch = Batch.of(
 			links,
 			Dctor.of(
-				Field.ofValue("metadata_id", id),
-				Field.of("link_id", LinkAccess::insert)
-			),
-			conn
+				field("metadata_id", r -> id),
+				field("link_id", LinkAccess::insert)
+			)
 		);
+
+		LINK_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
 

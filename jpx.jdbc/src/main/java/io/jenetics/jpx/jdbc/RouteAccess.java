@@ -19,17 +19,19 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Route;
 import io.jenetics.jpx.UInt;
 import io.jenetics.jpx.WayPoint;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
-import io.jenetics.jpx.jdbc.internal.querily.Query;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import static io.jenetics.facilejdbc.Dctor.field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -49,22 +51,22 @@ public final class RouteAccess {
 			"type" +
 		") " +
 		"VALUES(" +
-			"{name}, " +
-			"{cmt}, " +
-			"{dscr}, " +
-			"{src}, " +
-			"{number}, " +
-			"{type}" +
+			":name, " +
+			":cmt, " +
+			":dscr, " +
+			":src, " +
+			":number, " +
+			":type" +
 		")"
 	);
 
 	private static final Dctor<Route> DCTOR = Dctor.of(
-		Field.of("name", Route::getName),
-		Field.of("cmt", Route::getComment),
-		Field.of("dscr", Route::getDescription),
-		Field.of("src", Route::getSource),
-		Field.of("number", r -> r.getNumber().map(UInt::getValue)),
-		Field.of("type", Route::getType)
+		field("name", Route::getName),
+		field("cmt", Route::getComment),
+		field("dscr", Route::getDescription),
+		field("src", Route::getSource),
+		field("number", r -> r.getNumber().map(UInt::getValue)),
+		field("type", Route::getType)
 	);
 
 	public static Long insert(final Route route, final Connection conn)
@@ -72,7 +74,11 @@ public final class RouteAccess {
 	{
 		if (route == null || route.isEmpty()) return null;
 
-		final Long id = INSERT_QUERY.insert(route, DCTOR, conn);
+		final Long id = INSERT_QUERY
+			.on(route, DCTOR)
+			.executeInsert(conn)
+			.orElseThrow();
+
 		insertLinks(id, route.getLinks(), conn);
 		insertWayPoints(id, route.getPoints(), conn);
 		return id;
@@ -80,7 +86,7 @@ public final class RouteAccess {
 
 	private static final Query LINK_INSERT_QUERY = Query.of(
 		"INSERT INTO route_link(route_id, link_id " +
-		"VALUES({route_id}, {link_id});"
+		"VALUES(:route_id, :link_id);"
 	);
 
 	private static void insertLinks(
@@ -90,14 +96,15 @@ public final class RouteAccess {
 	)
 		throws SQLException
 	{
-		LINK_INSERT_QUERY.inserts(
+		final Batch batch = Batch.of(
 			links,
 			Dctor.of(
-				Field.ofValue("route_id", id),
-				Field.of("link_id", LinkAccess::insert)
-			),
-			conn
+				field("route_id", r -> id),
+				field("link_id", LinkAccess::insert)
+			)
 		);
+
+		LINK_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
 	private static final Query WAY_POINT_INSERT_QUERY = Query.of(
@@ -112,14 +119,15 @@ public final class RouteAccess {
 	)
 		throws SQLException
 	{
-		WAY_POINT_INSERT_QUERY.inserts(
+		final Batch batch = Batch.of(
 			points,
 			Dctor.of(
-				Field.ofValue("route_id", id),
-				Field.of("way_point_id", WayPointAccess::insert)
-			),
-			conn
+				field("route_id", r -> id),
+				field("way_point_id", WayPointAccess::insert)
+			)
 		);
+
+		WAY_POINT_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
 }

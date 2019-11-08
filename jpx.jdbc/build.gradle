@@ -27,7 +27,7 @@
 import io.franzbecker.gradle.lombok.task.DelombokTask
 
 plugins {
-	id 'io.franzbecker.gradle-lombok' version '1.10'
+	id "io.franzbecker.gradle-lombok" version "3.2.0"
 }
 
 apply plugin: 'java-library'
@@ -44,10 +44,8 @@ repositories {
 }
 
 dependencies {
-	compileOnly 'org.projectlombok:lombok:1.18.8'
-	annotationProcessor 'org.projectlombok:lombok:1.18.8'
-
 	api project(':jpx')
+	implementation 'io.jenetics:facilejdbc:0.1.0'
 
 	testImplementation project(':jpx').sourceSets.test.output
 	testImplementation 'org.testng:testng:6.9.10'
@@ -55,11 +53,6 @@ dependencies {
 	testImplementation 'mysql:mysql-connector-java:6.0.5'
 	testImplementation 'org.mariadb.jdbc:mariadb-java-client:2.4.3'
 	testImplementation 'org.postgresql:postgresql:42.2.7'
-}
-
-lombok {
-	version = '1.18.2'
-	sha256 = ""
 }
 
 task delombok(type: DelombokTask, dependsOn: compileJava) {

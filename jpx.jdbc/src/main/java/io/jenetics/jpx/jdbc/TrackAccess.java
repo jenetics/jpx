@@ -19,18 +19,20 @@
  */
 package io.jenetics.jpx.jdbc;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
-
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.UInt;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
-import io.jenetics.jpx.jdbc.internal.querily.Param;
-import io.jenetics.jpx.jdbc.internal.querily.Query;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.List;
+
+import static io.jenetics.facilejdbc.Dctor.field;
+import static io.jenetics.facilejdbc.Param.value;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -42,16 +44,16 @@ public final class TrackAccess {
 
 	private static final Query INSERT_QUERY = Query.of(
 		"INSERT INTO track(name, cmt, dscr, src, number, type) " +
-		"VALUES({name}, {cmt}, {dscr}, {src}, {number}, {type})"
+		"VALUES(:name, :cmt, :dscr, :src, :number, :type)"
 	);
 
 	private static final Dctor<Track> DCTOR = Dctor.of(
-		Field.of("name", Track::getName),
-		Field.of("cmt", Track::getComment),
-		Field.of("dscr", Track::getDescription),
-		Field.of("src", Track::getSource),
-		Field.of("number", t -> t.getNumber().map(UInt::getValue)),
-		Field.of("type", Track::getType)
+		field("name", Track::getName),
+		field("cmt", Track::getComment),
+		field("dscr", Track::getDescription),
+		field("src", Track::getSource),
+		field("number", t -> t.getNumber().map(UInt::getValue)),
+		field("type", Track::getType)
 	);
 
 	public static Long insert(final Track track, final Connection conn)
@@ -59,7 +61,11 @@ public final class TrackAccess {
 	{
 		if (track == null || track.isEmpty()) return null;
 
-		final Long id = INSERT_QUERY.insert(track, DCTOR, conn);
+		final Long id = INSERT_QUERY
+			.on(track, DCTOR)
+			.executeInsert(conn)
+			.orElseThrow();
+
 		insertLinks(id, track.getLinks(), conn);
 		insertSegments(id, track.getSegments(), conn);
 		return id;
@@ -67,7 +73,7 @@ public final class TrackAccess {
 
 	private static final Query LINK_INSERT_QUERY = Query.of(
 		"INSERT INTO track_link(track_id, link_id) " +
-		"VALUES({track_id}, {link_id});"
+		"VALUES(:track_id, :link_id);"
 	);
 
 	private static void insertLinks(
@@ -77,19 +83,20 @@ public final class TrackAccess {
 	)
 		throws SQLException
 	{
-		LINK_INSERT_QUERY.inserts(
+		final Batch batch = Batch.of(
 			links,
 			Dctor.of(
-				Field.ofValue("track_id", id),
-				Field.of("link_id", LinkAccess::insert)
-			),
-			conn
+				field("track_id", r -> id),
+				field("link_id", LinkAccess::insert)
+			)
 		);
+
+		LINK_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
 	private static final Query SEGMENT_INSERT_QUERY = Query.of(
 		"INSERT INTO track_track_segment(track_id, track_segment_id) " +
-		"VALUES({track_id}, {track_segment_id});"
+		"VALUES(:track_id, :track_segment_id);"
 	);
 
 	private static void insertSegments(
@@ -106,9 +113,9 @@ public final class TrackAccess {
 			if (sid != null) {
 				SEGMENT_INSERT_QUERY
 					.on(
-						Param.of("track_id", id),
-						Param.of("track_segment_id", sid))
-					.insert(conn);
+						value("track_id", id),
+						value("track_segment_id", sid))
+					.executeUpdate(conn);
 			}
 		}
 	}

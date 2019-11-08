@@ -19,14 +19,15 @@
  */
 package io.jenetics.jpx.jdbc;
 
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
+import io.jenetics.jpx.Copyright;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Year;
 
-import io.jenetics.jpx.Copyright;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor;
-import io.jenetics.jpx.jdbc.internal.querily.Dctor.Field;
-import io.jenetics.jpx.jdbc.internal.querily.Query;
+import static io.jenetics.facilejdbc.Dctor.field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -38,20 +39,23 @@ public final class CopyrightAccess {
 
 	private static final Query INSERT_QUERY = Query.of(
 		"INSERT INTO copyright(author, year, license) " +
-		"VALUES({author}, {year}, {license})"
+		"VALUES(:author:, :year, :license)"
 	);
 
 	private static final Dctor<Copyright> DCTOR = Dctor.of(
-		Field.of("author", Copyright::getAuthor),
-		Field.of("year", c -> c.getYear().map(Year::getValue)),
-		Field.of("license", Copyright::getLicense)
+		field("author", Copyright::getAuthor),
+		field("year", c -> c.getYear().map(Year::getValue)),
+		field("license", Copyright::getLicense)
 	);
 
 	public static Long insert(final Copyright copyright, final Connection conn)
 		throws SQLException
 	{
 		return copyright != null
-			? INSERT_QUERY.insert(copyright, DCTOR, conn)
+			? INSERT_QUERY
+				.on(copyright, DCTOR)
+				.executeInsert(conn)
+				.orElseThrow()
 			: null;
 	}
 
