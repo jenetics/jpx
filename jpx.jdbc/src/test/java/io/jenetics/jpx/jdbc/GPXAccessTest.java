@@ -96,7 +96,7 @@ public class GPXAccessTest {
 		});
 	}
 
-	//@Test
+	@Test
 	public void insert() throws SQLException, IOException {
 		final String dir = "/home/fwilhelm/Workspace/Documents/GPS";
 
