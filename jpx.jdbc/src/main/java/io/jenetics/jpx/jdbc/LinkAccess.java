@@ -20,7 +20,9 @@
 package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
+import static io.jenetics.facilejdbc.Param.value;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -28,6 +30,7 @@ import io.jenetics.jpx.Link;
 
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
+import io.jenetics.facilejdbc.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -37,9 +40,21 @@ import io.jenetics.facilejdbc.Query;
 public final class LinkAccess {
 	private LinkAccess() {}
 
-	private static final Query INSERT_QUERY = Query.of(
+	private static final Query SELECT = Query.of(
+		"SELECT href, text, type " +
+		"FROM link " +
+		"WHERE id = :id;"
+	);
+
+	private static final Query INSERT = Query.of(
 		"INSERT INTO link(href, text, type) " +
 		"VALUES(:href, :text, :type);"
+	);
+
+	private static final RowParser<Link> PARSER = row -> Link.of(
+		URI.create(row.getString("href")),
+		row.getString("text"),
+		row.getString("type")
 	);
 
 	private static final Dctor<Link> DCTOR = Dctor.of(
@@ -48,11 +63,22 @@ public final class LinkAccess {
 		field("type", Link::getType)
 	);
 
+	public static Link selectById(final Long id, final Connection conn)
+		throws SQLException
+	{
+		return id != null
+			? SELECT
+				.on(value("id", id))
+				.as(PARSER.singleOpt(), conn)
+				.orElse(null)
+			: null;
+	}
+
 	public static Long insert(final Link link, final Connection conn)
 		throws SQLException
 	{
 		return link != null
-			? INSERT_QUERY
+			? INSERT
 				.on(link, DCTOR)
 				.executeInsert(conn)
 				.orElseThrow()
