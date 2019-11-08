@@ -20,15 +20,19 @@
 package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
+import static io.jenetics.facilejdbc.Param.value;
 
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Year;
 
 import io.jenetics.jpx.Copyright;
+import io.jenetics.jpx.Person;
 
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
+import io.jenetics.facilejdbc.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -38,9 +42,21 @@ import io.jenetics.facilejdbc.Query;
 public final class CopyrightAccess {
 	private CopyrightAccess() {}
 
-	private static final Query INSERT_QUERY = Query.of(
+	private static final Query SELECT = Query.of(
+		"SELECT id, author, year, license " +
+		"FROM copyright " +
+		"WHERE id = :id"
+	);
+
+	private static final Query INSERT = Query.of(
 		"INSERT INTO copyright(author, year, license) " +
 		"VALUES(:author, :year, :license)"
+	);
+
+	private static final RowParser<Copyright> PARSER = row -> Copyright.of(
+		row.getString("author"),
+		Year.of(row.getInt("year")),
+		URI.create(row.getString("license"))
 	);
 
 	private static final Dctor<Copyright> DCTOR = Dctor.of(
@@ -49,11 +65,21 @@ public final class CopyrightAccess {
 		field("license", Copyright::getLicense)
 	);
 
+	public static Copyright selectById(final Long id, final Connection conn)
+		throws SQLException
+	{
+		return id != null
+			? SELECT
+				.on(value("id", id))
+				.as(PARSER.singleNullable(), conn)
+			: null;
+	}
+
 	public static Long insert(final Copyright copyright, final Connection conn)
 		throws SQLException
 	{
 		return copyright != null
-			? INSERT_QUERY
+			? INSERT
 				.on(copyright, DCTOR)
 				.executeInsert(conn)
 				.orElseThrow()

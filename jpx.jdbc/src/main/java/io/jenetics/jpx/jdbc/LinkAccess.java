@@ -41,7 +41,7 @@ public final class LinkAccess {
 	private LinkAccess() {}
 
 	private static final Query SELECT = Query.of(
-		"SELECT href, text, type " +
+		"SELECT id, href, text, type " +
 		"FROM link " +
 		"WHERE id = :id;"
 	);
@@ -69,8 +69,7 @@ public final class LinkAccess {
 		return id != null
 			? SELECT
 				.on(value("id", id))
-				.as(PARSER.singleOpt(), conn)
-				.orElse(null)
+				.as(PARSER.singleNullable(), conn)
 			: null;
 	}
 

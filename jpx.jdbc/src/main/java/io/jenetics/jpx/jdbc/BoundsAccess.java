@@ -20,6 +20,7 @@
 package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
+import static io.jenetics.facilejdbc.Param.value;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -28,6 +29,7 @@ import io.jenetics.jpx.Bounds;
 
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
+import io.jenetics.facilejdbc.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -37,9 +39,22 @@ import io.jenetics.facilejdbc.Query;
 public final class BoundsAccess {
 	private BoundsAccess() {}
 
-	private static final Query INSERT_QUERY = Query.of(
+	private static final Query SELECT = Query.of(
+		"SELECT minlat, minlon, maxlat, maxlon " +
+		"FROM bounds " +
+		"WHERE id = :id"
+	);
+
+	private static final Query INSERT = Query.of(
 		"INSERT INTO bounds(minlat, minlon, maxlat, maxlon) " +
 		"VALUES(:minlat, :minlon, :maxlat, :maxlon)"
+	);
+
+	private static final RowParser<Bounds> PARSER = row -> Bounds.of(
+		row.getDouble("minlat"),
+		row.getDouble("minlon"),
+		row.getDouble("maxlat"),
+		row.getDouble("maxlon")
 	);
 
 	private static final Dctor<Bounds> DCTOR = Dctor.of(
@@ -49,11 +64,21 @@ public final class BoundsAccess {
 		field("maxlon", Bounds::getMaxLongitude)
 	);
 
+	public static Bounds selectById(final Long id, final Connection conn)
+		throws SQLException
+	{
+		return id != null
+			? SELECT
+				.on(value("id", id))
+				.as(PARSER.singleNullable(), conn)
+			: null;
+	}
+
 	public static Long insert(final Bounds bounds, final Connection conn)
 		throws SQLException
 	{
 		return bounds != null
-			? INSERT_QUERY
+			? INSERT
 				.on(bounds, DCTOR)
 				.executeInsert(conn)
 				.orElseThrow()

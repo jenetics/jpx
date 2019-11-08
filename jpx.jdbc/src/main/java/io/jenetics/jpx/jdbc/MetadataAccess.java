@@ -20,17 +20,30 @@
 package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
+import static io.jenetics.facilejdbc.Param.value;
+
+import lombok.Builder;
+import lombok.Value;
+import lombok.experimental.Accessors;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 
+import io.jenetics.jpx.Bounds;
+import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Metadata;
+import io.jenetics.jpx.Person;
 
 import io.jenetics.facilejdbc.Batch;
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
+import io.jenetics.facilejdbc.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -40,7 +53,26 @@ import io.jenetics.facilejdbc.Query;
 public final class MetadataAccess {
 	private MetadataAccess() {}
 
-	private static final Query INSERT_QUERY = Query.of(
+	@Value
+	@Builder(builderClassName = "Builder", toBuilder = true)
+	@Accessors(fluent = true)
+	private static final class MetadataRow {
+		private final String name;
+		private final String desc;
+		private final Timestamp time;
+		private final String keyword;
+		private final Long personId;
+		private final Long copyrightId;
+		private final Long boundsId;
+	}
+
+	private static final Query SELECT = Query.of(
+		"SELECT name, dscr, time, keywords, person_id, copyright_id, bounds_id " +
+		"FROM metadata " +
+		"WHERE id = :id"
+	);
+
+	private static final Query INSERT = Query.of(
 		"INSERT INTO metadata(" +
 			"name, " +
 			"dscr, " +
@@ -61,6 +93,17 @@ public final class MetadataAccess {
 		")"
 	);
 
+	private static final RowParser<MetadataRow> ROW_PARSER = row ->
+		MetadataRow.builder()
+			.name(row.getString("name"))
+			.desc(row.getString("dscr"))
+			.time(row.getTimestamp("time"))
+			.keyword(row.getString("keywords"))
+			.personId(row.getObject("person_id", Long.class))
+			.copyrightId(row.getObject("copyright_id", Long.class))
+			.boundsId(row.getObject("bounds_id", Long.class))
+			.build();
+
 	private static final Dctor<Metadata> DCTOR = Dctor.of(
 		field("name", Metadata::getName),
 		field("dscr", Metadata::getDescription),
@@ -80,12 +123,38 @@ public final class MetadataAccess {
 		)
 	);
 
+	public static Metadata selectById(final Long id, final Connection conn)
+		throws SQLException
+	{
+		if (id == null) return null;
+
+		final MetadataRow row = SELECT
+			.on(value("id", id))
+			.as(ROW_PARSER.singleNullable(), conn);
+
+		if (row == null) return null;
+
+		final Person author = PersonAccess.selectById(row.personId(), conn);
+		final Copyright copyright = CopyrightAccess.selectById(row.copyrightId(), conn);
+		final Bounds bounds = BoundsAccess.selectById(row.boundsId(), conn);
+
+		return Metadata.builder()
+			.name(row.name())
+			.desc(row.desc())
+			.time(ZonedDateTime.ofInstant(row.time().toInstant(), ZoneId.systemDefault()))
+			.keywords(row.keyword())
+			.author(author)
+			.copyright(copyright)
+			.bounds(bounds)
+			.build();
+	}
+
 	public static Long insert(final Metadata metadata, final Connection conn)
 		throws SQLException
 	{
 		if (metadata == null || metadata.isEmpty()) return null;
 
-		final Long id = INSERT_QUERY
+		final Long id = INSERT
 			.on(metadata, DCTOR)
 			.executeInsert(conn)
 			.orElseThrow();

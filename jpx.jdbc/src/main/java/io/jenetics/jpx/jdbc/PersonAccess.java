@@ -42,7 +42,7 @@ public final class PersonAccess {
 	private PersonAccess() {}
 
 	private static final Query SELECT = Query.of(
-		"SELECT name, email, link_href, link_text, link_type " +
+		"SELECT person.id, name, email, link_href, link_text, link_type " +
 		"FROM person " +
 		"INNER JOIN link on person.link_id = link.id " +
 		"WHERE person.id = :id"
@@ -75,8 +75,7 @@ public final class PersonAccess {
 		return id != null
 			? SELECT
 				.on(value("id", id))
-				.as(PARSER.singleOpt(), conn)
-				.orElse(null)
+				.as(PARSER.singleNullable(), conn)
 			: null;
 	}
 
