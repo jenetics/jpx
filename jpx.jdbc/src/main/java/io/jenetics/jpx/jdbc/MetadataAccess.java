@@ -93,7 +93,7 @@ public final class MetadataAccess {
 		")"
 	);
 
-	private static final RowParser<MetadataRow> ROW_PARSER = row ->
+	private static final RowParser<MetadataRow> ROW_PARSER = (row, conn) ->
 		MetadataRow.builder()
 			.name(row.getString("name"))
 			.desc(row.getString("dscr"))

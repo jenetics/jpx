@@ -53,7 +53,7 @@ public final class CopyrightAccess {
 		"VALUES(:author, :year, :license)"
 	);
 
-	private static final RowParser<Copyright> PARSER = row -> Copyright.of(
+	private static final RowParser<Copyright> PARSER = (row, conn) -> Copyright.of(
 		row.getString("author"),
 		Year.of(row.getInt("year")),
 		URI.create(row.getString("license"))

@@ -53,7 +53,7 @@ public final class PersonAccess {
 		"VALUES(:name, :email, :link_id);"
 	);
 
-	private static final RowParser<Person> PARSER = row -> Person.of(
+	private static final RowParser<Person> PARSER = (row, conn) -> Person.of(
 		row.getString("name"),
 		Email.of(row.getString("email")),
 		Link.of(

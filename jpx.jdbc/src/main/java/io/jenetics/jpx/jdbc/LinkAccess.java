@@ -51,7 +51,7 @@ public final class LinkAccess {
 		"VALUES(:href, :text, :type);"
 	);
 
-	private static final RowParser<Link> PARSER = row -> Link.of(
+	private static final RowParser<Link> PARSER = (row, conn) -> Link.of(
 		URI.create(row.getString("href")),
 		row.getString("text"),
 		row.getString("type")

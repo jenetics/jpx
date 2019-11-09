@@ -50,7 +50,7 @@ public final class BoundsAccess {
 		"VALUES(:minlat, :minlon, :maxlat, :maxlon)"
 	);
 
-	private static final RowParser<Bounds> PARSER = row -> Bounds.of(
+	private static final RowParser<Bounds> PARSER = (row, conn) -> Bounds.of(
 		row.getDouble("minlat"),
 		row.getDouble("minlon"),
 		row.getDouble("maxlat"),
