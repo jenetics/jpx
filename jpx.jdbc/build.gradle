@@ -45,7 +45,7 @@ repositories {
 
 dependencies {
 	api project(':jpx')
-	implementation 'io.jenetics:facilejdbc:0.1.0'
+	implementation 'io.jenetics:facilejdbc:0.3.0'
 
 	testImplementation project(':jpx').sourceSets.test.output
 	testImplementation 'org.testng:testng:6.9.10'
