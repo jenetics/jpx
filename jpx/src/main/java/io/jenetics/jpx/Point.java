@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
@@ -59,10 +60,31 @@ public interface Point {
 	/**
 	 * Creation/modification timestamp for the point.
 	 *
+	 * @see #getInstant()
+	 *
 	 * @return creation/modification timestamp for the point
 	 */
 	public default Optional<ZonedDateTime> getTime() {
 		return Optional.empty();
+	}
+
+	/**
+	 * Creation/modification instant of the given point.
+	 *
+	 * @implNote
+	 * The default implementation of this method forwards the call to the
+	 * {@link #getTime()} method. If you want to override this method, do it via
+	 * the {@link #getTime()}. Otherwise you have to re-implement this method as
+	 * well.
+	 *
+	 * @since 1.6
+	 *
+	 * @see #getTime()
+	 *
+	 * @return creation/modification instant for the point
+	 */
+	public default Optional<Instant> getInstant() {
+		return getTime().map(t -> t.toOffsetDateTime().toInstant());
 	}
 
 	/**
