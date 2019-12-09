@@ -510,7 +510,10 @@ public final class LocationFormatter {
 		 * @throws NullPointerException if one of the arguments is {@code null}
 		 */
 		public Builder append(final Location.Field field, final String pattern) {
-			return append(field, () -> new DecimalFormat(pattern));
+			return append(field, () -> {
+				DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.US);
+				return new DecimalFormat(pattern, symbols);
+			});
 		}
 
 		/**
