@@ -206,5 +206,16 @@ public class LocationFormatterTest {
 		Assert.assertEquals(locationFormatter.format(location), "23.99");
 	}
 
-
+	@Test
+	public void testParsePattern() {
+		Locale.setDefault(Locale.GERMANY);
+		DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
+		Location location = Location.of(Latitude.ofDegrees(23.987635));
+		LocationFormatter locationFormatter = LocationFormatter.builder()
+			.appendPattern("DD.DD")
+			.build();
+		Assert.assertEquals(instance.getDecimalSeparator(), ',');
+		Assert.assertEquals(locationFormatter.toPattern(), "DD.DD");
+		Assert.assertEquals(locationFormatter.format(location), "23.99");
+	}
 }
