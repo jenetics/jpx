@@ -75,7 +75,7 @@ public final class PersonAccess {
 		return id != null
 			? SELECT
 				.on(value("id", id))
-				.as(PARSER.singleNullable(), conn)
+				.as(PARSER.singleNull(), conn)
 			: null;
 	}
 

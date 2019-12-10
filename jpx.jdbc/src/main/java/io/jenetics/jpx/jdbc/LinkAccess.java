@@ -69,7 +69,7 @@ public final class LinkAccess {
 		return id != null
 			? SELECT
 				.on(value("id", id))
-				.as(PARSER.singleNullable(), conn)
+				.as(PARSER.singleNull(), conn)
 			: null;
 	}
 

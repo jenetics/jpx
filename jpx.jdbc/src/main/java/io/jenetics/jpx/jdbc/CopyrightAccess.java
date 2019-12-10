@@ -28,7 +28,6 @@ import java.sql.SQLException;
 import java.time.Year;
 
 import io.jenetics.jpx.Copyright;
-import io.jenetics.jpx.Person;
 
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
@@ -71,7 +70,7 @@ public final class CopyrightAccess {
 		return id != null
 			? SELECT
 				.on(value("id", id))
-				.as(PARSER.singleNullable(), conn)
+				.as(PARSER.singleNull(), conn)
 			: null;
 	}
 

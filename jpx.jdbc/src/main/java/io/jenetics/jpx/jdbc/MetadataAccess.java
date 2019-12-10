@@ -29,7 +29,6 @@ import lombok.experimental.Accessors;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -130,7 +129,7 @@ public final class MetadataAccess {
 
 		final MetadataRow row = SELECT
 			.on(value("id", id))
-			.as(ROW_PARSER.singleNullable(), conn);
+			.as(ROW_PARSER.singleNull(), conn);
 
 		if (row == null) return null;
 
