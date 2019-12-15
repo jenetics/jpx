@@ -22,7 +22,9 @@ package io.jenetics.jpx.format;
 import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -58,7 +60,10 @@ final class LocationFieldFormat implements Format<Location> {
 	static LocationFieldFormat of(final Field field, final String pattern) {
 		// Fast fail. Will throw an IAE if the pattern is invalid.
 		new DecimalFormat(pattern);
-		return new LocationFieldFormat(field, () -> new DecimalFormat(pattern));
+		return new LocationFieldFormat(field, () -> new DecimalFormat(
+			pattern,
+			DecimalFormatSymbols.getInstance(Locale.US)
+		));
 	}
 
 	@Override
