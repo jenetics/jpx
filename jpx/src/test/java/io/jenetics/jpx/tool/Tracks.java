@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -18,7 +19,7 @@ final class Tracks {
 	private Tracks() {
 	}
 
-	public static Collector<WayPoint, ?, Track>
+	public static Collector<WayPoint, ?, Optional<Track>>
 	toTrack(final Duration gap, final int minSegmentSize) {
 		return Collectors.collectingAndThen(
 			Collectors.toList(),
@@ -26,22 +27,13 @@ final class Tracks {
 		);
 	}
 
-	private static Track toTrack(
+	private static Optional<Track> toTrack(
 		final List<WayPoint> points,
 		final Duration gap,
 		final int minSegmentSize
 	) {
-		if (points.size() == 0) {
-			return Track.builder().build();
-		}
-		if (points.size() == 1) {
-			final WayPoint point = points.get(0);
-
-			return Track.builder()
-					.number(1)
-					.cmt(trackCmt(points))
-					.addSegment(s -> s.addPoint(point))
-				.build();
+		if (points.size() < minSegmentSize) {
+			return Optional.empty();
 		}
 
 		final Track.Builder track = Track.builder()
@@ -51,7 +43,7 @@ final class Tracks {
 		ZonedDateTime last = zonedDateTime(points.get(0));
 		TrackSegment.Builder segment = TrackSegment.builder();
 
-		for (int i = 1; i < points.size(); ++i) {
+		for (int i = 0; i < points.size(); ++i) {
 			final WayPoint point = points.get(i);
 			final ZonedDateTime zdt = zonedDateTime(point);
 
@@ -67,7 +59,13 @@ final class Tracks {
 			last = zdt;
 		}
 
-		return track.build();
+		if (segment.points().size() >= minSegmentSize) {
+			track.addSegment(segment.build());
+		}
+
+		return track.segments().isEmpty()
+			? Optional.empty()
+			: Optional.of(track.build());
 	}
 
 	private static ZonedDateTime zonedDateTime(final WayPoint wp) {

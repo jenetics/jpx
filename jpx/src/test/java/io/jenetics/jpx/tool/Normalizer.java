@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -55,30 +56,19 @@ public class Normalizer {
 			.read(file);
 
 		final Map<LocalDate, List<WayPoint>> split = split(gpx);
+
 		final List<GPX> normalized = split.values().stream()
 			.flatMap(Normalizer::errorFilter)
-			.map(Normalizer::toGPX)
+			.flatMap(points -> toGPX(points).stream())
 			.collect(Collectors.toList());
 
 		write(file.getParent(), normalized);
-
-		/*
-		final GPX normalized = normalize(gpx);
-		final Path f = Paths.get(
-			file.getParent().toString(),
-			fileName(normalized) + ".gpx"
-		);
-
-		GPX.writer("    ").write(normalized, f);
-		 */
 	}
 
 	private static void write(final Path dir, final List<GPX> gpxs)
 		throws IOException
 	{
 		for (GPX gpx : gpxs) {
-			if (gpx.getTracks().get(0).getSegments().isEmpty()) return;
-
 			final Path file = Paths.get(
 				dir.toString(),
 				fileName(gpx) + ".gpx"
@@ -106,29 +96,15 @@ public class Normalizer {
 			: Stream.empty();
 	}
 
-	private static GPX toGPX(final List<WayPoint> points) {
-		final Track track = points.stream()
+	private static Optional<GPX> toGPX(final List<WayPoint> points) {
+		final Optional<Track> track = points.stream()
 			.collect(Tracks.toTrack(Duration.ofMinutes(5), 10));
 
-		return normalizeMetadata(
+		return track.map(t -> normalizeMetadata(
 			GPX.builder()
-				.tracks(singletonList(track))
+				.tracks(singletonList(t))
 				.build()
-		);
-	}
-
-	private static GPX normalize(final GPX gpx) {
-		final Track track = gpx.tracks()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points)
-			.filter(PointFilter.FAULTY_POINTS)
-			.collect(Tracks.toTrack(Duration.ofMinutes(5), 10));
-
-		return normalizeMetadata(
-			gpx.toBuilder()
-				.tracks(singletonList(track))
-				.build()
-		);
+		));
 	}
 
 	private static GPX normalizeMetadata(final GPX gpx) {
