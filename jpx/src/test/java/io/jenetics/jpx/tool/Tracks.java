@@ -4,6 +4,7 @@ import static java.lang.String.format;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -63,6 +64,14 @@ final class Tracks {
 			track.addSegment(segment.build());
 		}
 
+		track.desc(format(
+			"%d segments; %d track points",
+			track.segments().size(),
+			track.segments().stream()
+				.flatMap(TrackSegment::points)
+				.count()
+		));
+
 		return track.segments().isEmpty()
 			? Optional.empty()
 			: Optional.of(track.build());
@@ -75,15 +84,18 @@ final class Tracks {
 	}
 
 	private static String trackCmt(final List<WayPoint> points) {
-		final String start = points.get(0).getTime()
-			.map(zdt -> zdt.toOffsetDateTime().toString())
-			.orElse("");
+		final OffsetDateTime start = points.get(0).getTime()
+			.map(ZonedDateTime::toOffsetDateTime)
+			.orElse(OffsetDateTime.now());
 
-		final String end = points.get(points.size() - 1).getTime()
-			.map(zdt -> zdt.toOffsetDateTime().toString())
-			.orElse("");
+		final OffsetDateTime end = points.get(points.size() - 1).getTime()
+			.map(ZonedDateTime::toOffsetDateTime)
+			.orElse(OffsetDateTime.now());
 
-		return format("Track[start=%s, end=%s]", start, end);
+		return format(
+			"Track[start=%s, end=%s, duration=%s]",
+			start, end, Duration.between(start, end)
+		);
 	}
 
 }
