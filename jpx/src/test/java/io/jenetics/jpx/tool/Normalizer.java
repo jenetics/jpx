@@ -1,6 +1,5 @@
 package io.jenetics.jpx.tool;
 
-import static java.lang.String.format;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
 import static io.jenetics.jpx.Bounds.toBounds;
@@ -11,7 +10,6 @@ import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +46,8 @@ public class Normalizer {
 		}
 
 		//final Path file = Paths.get(args[0]).toAbsolutePath();
-		final Path file = Paths.get("/home/fwilhelm/Downloads/raw-2018-05-02T130655.gpx");
+		final Path file = Paths.get("/home/fwilhelm/Downloads/2019-01-20_144714_Vienna.nmea.gpx");
+		//final Path file = Paths.get("/home/fwilhelm/Downloads/raw-2018-05-02T130655.gpx");
 		System.out.println("Splitting " + file);
 
 		final GPX gpx = GPX
@@ -71,7 +70,7 @@ public class Normalizer {
 		for (GPX gpx : gpxs) {
 			final Path file = Paths.get(
 				dir.toString(),
-				fileName(gpx) + ".gpx"
+				fileName(gpx)
 			);
 			System.out.println("Writing " + file);
 
@@ -98,7 +97,7 @@ public class Normalizer {
 
 	private static Optional<GPX> toGPX(final List<WayPoint> points) {
 		final Optional<Track> track = points.stream()
-			.collect(Tracks.toTrack(Duration.ofMinutes(5), 10));
+			.collect(Tracks.toTrack(Duration.ofMinutes(10), 10));
 
 		return track.map(t -> normalizeMetadata(
 			GPX.builder()
@@ -121,16 +120,17 @@ public class Normalizer {
 		final ZonedDateTime time = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.flatMap(wp -> wp.getTime().map(Stream::of).orElse(Stream.empty()))
+			.flatMap(wp -> wp.getTime().stream())
 			.min(Comparator.naturalOrder())
 			.orElse(null);
 
+		final String name =
+			(time != null ? time.toLocalDate().toString() : null) + ".gpx";
 
 		return gpx.toBuilder()
 			.version(GPX.Version.V11)
-			.creator("JPX - Java GPX library")
 			.metadata(md -> md
-				.name(format("track-%s", time != null ? time.toLocalDate() : null))
+				.name(name)
 				.author(author)
 				.copyright(copyright)
 				.bounds(bounds)
@@ -143,7 +143,7 @@ public class Normalizer {
 			.flatMap(Metadata::getTime)
 			.map(ZonedDateTime::toLocalDate)
 			.map(Objects::toString)
-			.orElse("" + System.currentTimeMillis());
+			.orElse("" + System.currentTimeMillis()) + ".gpx";
 	}
 
 }

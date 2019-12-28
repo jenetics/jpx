@@ -83,7 +83,7 @@ final class Tracks {
 			.map(zdt -> zdt.toOffsetDateTime().toString())
 			.orElse("");
 
-		return format("Track[%s to %s]", start, end);
+		return format("Track[start=%s, end=%s]", start, end);
 	}
 
 }
