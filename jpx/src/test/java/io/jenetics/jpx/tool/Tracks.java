@@ -43,8 +43,7 @@ final class Tracks {
 		ZonedDateTime last = zonedDateTime(points.get(0));
 		TrackSegment.Builder segment = TrackSegment.builder();
 
-		for (int i = 0; i < points.size(); ++i) {
-			final WayPoint point = points.get(i);
+		for (final WayPoint point : points) {
 			final ZonedDateTime zdt = zonedDateTime(point);
 
 			if (last.plusNanos(gap.toNanos()).isAfter(zdt)) {
