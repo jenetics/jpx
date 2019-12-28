@@ -5,10 +5,16 @@ import static java.util.stream.Collectors.groupingBy;
 import static io.jenetics.jpx.Bounds.toBounds;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.FileTime;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
@@ -46,9 +52,21 @@ public class Normalizer {
 		}
 
 		//final Path file = Paths.get(args[0]).toAbsolutePath();
-		final Path file = Paths.get("/home/fwilhelm/Downloads/2019-01-20_144714_Vienna.nmea.gpx");
+		//final Path file = Paths.get("/home/fwilhelm/Downloads/2019-01-20_144714_Vienna.nmea.gpx");
 		//final Path file = Paths.get("/home/fwilhelm/Downloads/raw-2018-05-02T130655.gpx");
-		System.out.println("Splitting " + file);
+
+		final List<Path> files = Files
+			.list(Paths.get("/home/fwilhelm/Downloads/GPX_raw/"))
+			.filter(path -> path.toString().endsWith(".gpx"))
+			.collect(Collectors.toList());
+
+		for (Path file : files) {
+			normalize(file, Paths.get("/home/fwilhelm/Downloads/GPX_normalized/"));
+		}
+	}
+
+	private static void normalize(final Path file, final Path dir) throws IOException {
+		System.out.println("Normalizing: " + file);
 
 		final GPX gpx = GPX
 			.reader(GPX.Version.V11, GPX.Reader.Mode.LENIENT)
@@ -61,21 +79,44 @@ public class Normalizer {
 			.flatMap(points -> toGPX(points).stream())
 			.collect(Collectors.toList());
 
-		write(file.getParent(), normalized);
+		write(dir, normalized);
 	}
 
 	private static void write(final Path dir, final List<GPX> gpxs)
 		throws IOException
 	{
 		for (GPX gpx : gpxs) {
+			final ZonedDateTime time = gpx.getMetadata()
+				.flatMap(Metadata::getTime)
+				.orElse(ZonedDateTime.of(LocalDateTime.MAX, ZoneId.systemDefault()));
+
 			final Path file = Paths.get(
 				dir.toString(),
+				String.valueOf(time.getYear()),
 				fileName(gpx)
 			);
+			if (!Files.exists(file.getParent())) {
+				Files.createDirectories(file.getParent() );
+			}
+
 			System.out.println("Writing " + file);
 
 			GPX.writer("    ").write(gpx, file);
+			setFileTime(file, time.toLocalDateTime());
 		}
+	}
+
+	private static void setFileTime(final Path path, final LocalDateTime time)
+		throws IOException
+	{
+		final BasicFileAttributeView attr = Files.getFileAttributeView(
+			path,
+			BasicFileAttributeView.class
+		);
+		final FileTime ft = FileTime.fromMillis(
+			time.toInstant(ZoneOffset.UTC).toEpochMilli()
+		);
+		attr.setTimes(ft, ft, ft);
 	}
 
 	private static Map<LocalDate, List<WayPoint>> split(final GPX gpx) {
