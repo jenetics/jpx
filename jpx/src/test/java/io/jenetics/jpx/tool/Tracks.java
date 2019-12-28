@@ -38,6 +38,7 @@ final class Tracks {
 
 		final Track.Builder track = Track.builder()
 			.number(1)
+			.name("Track 1")
 			.cmt(trackCmt(points));
 
 		ZonedDateTime last = zonedDateTime(points.get(0));

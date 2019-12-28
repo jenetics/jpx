@@ -138,7 +138,7 @@ public class Normalizer {
 
 	private static Optional<GPX> toGPX(final List<WayPoint> points) {
 		final Optional<Track> track = points.stream()
-			.collect(Tracks.toTrack(Duration.ofMinutes(10), 10));
+			.collect(Tracks.toTrack(Duration.ofMinutes(5), 10));
 
 		return track.map(t -> normalizeMetadata(
 			GPX.builder()
@@ -148,25 +148,29 @@ public class Normalizer {
 	}
 
 	private static GPX normalizeMetadata(final GPX gpx) {
-		final Person author = Person.of(
-			"Franz Wilhelmstötter",
-			Email.of("franz.wilhelmstoetter@gmail.com")
-		);
-		final Copyright copyright = Copyright.of("Franz Wilhelmstötter");
-		final Bounds bounds = gpx.tracks()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points)
-			.collect(toBounds());
-
 		final ZonedDateTime time = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.flatMap(wp -> wp.getTime().stream())
 			.min(Comparator.naturalOrder())
-			.orElse(null);
+			.orElse(ZonedDateTime.now());
 
-		final String name =
-			(time != null ? time.toLocalDate().toString() : null) + ".gpx";
+		final Person author = Person.of(
+			"Franz Wilhelmstötter",
+			Email.of("franz.wilhelmstoetter@gmail.com")
+		);
+
+		final Copyright copyright = Copyright.of(
+			"Franz Wilhelmstötter",
+			time.getYear()
+		);
+
+		final Bounds bounds = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points)
+			.collect(toBounds());
+
+		final String name = time.toLocalDate() + ".gpx";
 
 		return gpx.toBuilder()
 			.version(GPX.Version.V11)
