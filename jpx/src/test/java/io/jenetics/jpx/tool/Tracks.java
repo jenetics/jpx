@@ -37,6 +37,19 @@ public final class Tracks {
 	 */
 	public static Collector<WayPoint, ?, Optional<Track>>
 	toTrack(final Duration maxGap, final int minSegmentSize) {
+		if (maxGap.isNegative()) {
+			throw new IllegalArgumentException(format(
+				"The maximal allowed point gap must not be negative: %s",
+				maxGap
+			));
+		}
+		if (minSegmentSize < 1) {
+			throw new IllegalArgumentException(format(
+				"The minimal track segment size must be greater 0, but was %d.",
+				minSegmentSize
+			));
+		}
+
 		return Collectors.collectingAndThen(
 			TrackSegments.toTrackSegments(maxGap, minSegmentSize),
 			Tracks::toTrack
