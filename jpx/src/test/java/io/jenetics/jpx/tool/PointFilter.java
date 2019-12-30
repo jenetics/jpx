@@ -5,6 +5,8 @@ import static java.util.Objects.requireNonNull;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import io.jenetics.jpx.Length;
@@ -13,12 +15,51 @@ import io.jenetics.jpx.WayPoint;
 
 final class PointFilter implements Predicate<WayPoint> {
 
-	static final PointFilter FAULTY_POINTS = new PointFilter(
+	public static Predicate<WayPoint>
+	time(final ZonedDateTime min, final ZonedDateTime max) {
+		return predicate(min, max, WayPoint::getTime);
+	}
+
+	public static Predicate<WayPoint>
+	elevation(final Length min, final Length max) {
+		return predicate(min, max, WayPoint::getElevation);
+	}
+
+	public static Predicate<WayPoint> speed(final Speed min, final Speed max) {
+		return predicate(min, max, WayPoint::getSpeed);
+	}
+
+	private static <C extends Comparable<? super C>> Predicate<WayPoint>
+	predicate(final C min, final C max, final Function<WayPoint, Optional<C>> f) {
+		return wp -> {
+			final Optional<C> value = f.apply(wp);
+			return value
+				.map(v -> min.compareTo(v) <= 0 && max.compareTo(v) >= 0)
+				.orElse(true);
+		};
+	}
+
+	static final Predicate<WayPoint> FAULTY_POINTS =
+	time(
+		ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()),
+		ZonedDateTime.of(2100, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()))
+	.and(
+		speed(
+			Speed.of(0, Speed.Unit.KILOMETERS_PER_HOUR),
+			Speed.of(300, Speed.Unit.KILOMETERS_PER_HOUR)))
+	.and(
+		elevation(
+			Length.of(0, Length.Unit.METER),
+			Length.of(10000, Length.Unit.METER)));
+
+	/*
+	static final Predicate<WayPoint> FAULTY_POINTS = new PointFilter(
 		ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()),
 		ZonedDateTime.of(2100, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()),
 			6000,
 			300
 		);
+	 */
 
 	private final ZonedDateTime _minTime;
 	private final ZonedDateTime _maxTime;
