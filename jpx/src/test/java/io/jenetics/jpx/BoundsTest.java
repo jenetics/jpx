@@ -85,6 +85,28 @@ public class BoundsTest extends XMLStreamTestBase<Bounds> {
 		);
 	}
 
+	// https://github.com/jenetics/jpx/issues/110
+	@Test
+	public void toBoundsNegativeValues() {
+		final Stream<WayPoint> points = Stream.of(
+			WayPoint.of(-50, -100),
+			WayPoint.of(-51, -101),
+			WayPoint.of(-52, -102),
+			WayPoint.of(-53, -103),
+			WayPoint.of(-54, -104),
+			WayPoint.of(-55, -105)
+		);
+
+		final Bounds bounds = points.collect(Bounds.toBounds());
+		Assert.assertEquals(
+			bounds,
+			Bounds.of(
+				Latitude.ofDegrees(-55), Longitude.ofDegrees(-105),
+				Latitude.ofDegrees(-50), Longitude.ofDegrees(-100)
+			)
+		);
+	}
+
 	@Test
 	public void toBoundsForOnePoints() {
 		final Stream<WayPoint> points = Stream.of(
