@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
-import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.DataInput;
@@ -435,7 +434,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			Lists.copyTo(links, _links);
 			return this;
 		}
 
@@ -573,7 +572,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder segments(final List<TrackSegment> segments) {
-			copy(segments, _segments);
+			Lists.copyTo(segments, _segments);
 			return this;
 		}
 

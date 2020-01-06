@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
-import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.DataInput;
@@ -443,7 +442,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			Lists.copyTo(links, _links);
 			return this;
 		}
 
@@ -583,7 +582,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @throws NullPointerException if one of the way-points is {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			copy(points, _points);
+			Lists.copyTo(points, _points);
 			return this;
 		}
 

@@ -42,13 +42,7 @@ final class Lists {
 			: List.copyOf(list);
 	}
 
-	static <T> List<T> copy(final List<T> list) {
-		return list != null
-			? List.copyOf(list)
-			: List.of();
-	}
-
-	static <T> void copy(final List<T> source, final List<T> target) {
+	static <T> void copyTo(final List<T> source, final List<T> target) {
 		requireNonNull(target);
 		if (source != null) {
 			source.forEach(Objects::requireNonNull);

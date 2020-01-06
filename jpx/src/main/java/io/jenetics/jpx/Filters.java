@@ -28,7 +28,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -67,7 +66,7 @@ public final class Filters {
 	) {
 		final List<WayPoint> points = segments.stream()
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.collect(toList());
 
 		return List.of(TrackSegment.of(points));
 	}
@@ -91,7 +90,7 @@ public final class Filters {
 	public static List<Track> mergeTracks(final List<Track> tracks) {
 		final List<TrackSegment> segments = tracks.stream()
 			.flatMap(Track::segments)
-			.collect(Collectors.toList());
+			.collect(toList());
 
 		return tracks.isEmpty()
 			? List.of()
@@ -123,7 +122,7 @@ public final class Filters {
 		final List<WayPoint> points = tracks.stream()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.collect(toList());
 
 		return tracks.isEmpty()
 			? List.of()
@@ -225,15 +224,15 @@ public final class Filters {
 				.orElse(LocalDate.MIN)));
 
 		return parts.entrySet().stream()
-			.sorted(Comparator.comparing(Entry::getKey))
+			.sorted(Entry.comparingByKey())
 			.map(Entry::getValue)
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 	static List<TrackSegment> splitByDay(final TrackSegment segment) {
 		return splitWayPointsByDay(segment.points()).stream()
 			.map(TrackSegment::of)
-			.collect(Collectors.toList());
+			.collect(toList());
 	}
 
 }

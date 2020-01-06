@@ -35,7 +35,7 @@ final class CompositeFormat<T> implements Format<T> {
 	private final List<Format<T>> _formats;
 
 	private CompositeFormat(final List<Format<T>> formats) {
-		_formats = new ArrayList<>(formats);
+		_formats = List.copyOf(formats);
 	}
 
 	@Override

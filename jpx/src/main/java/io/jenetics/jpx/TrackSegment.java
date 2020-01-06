@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.XMLWriter.elem;
 
@@ -202,7 +201,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			copy(points, _points);
+			Lists.copyTo(points, _points);
 			return this;
 		}
 

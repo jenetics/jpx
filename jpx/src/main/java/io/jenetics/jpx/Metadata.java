@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
-import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
@@ -318,7 +317,7 @@ public final class Metadata implements Serializable {
 			_description = metadata._description;
 			_author = metadata._author;
 			_copyright = metadata._copyright;
-			copy(metadata._links, _links);
+			Lists.copyTo(metadata._links, _links);
 			_time = metadata._time;
 			_keywords = metadata._keywords;
 			_bounds = metadata._bounds;
@@ -432,7 +431,7 @@ public final class Metadata implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			Lists.copyTo(links, _links);
 			return this;
 		}
 

@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.BufferedInputStream;
@@ -559,7 +558,7 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
-			copy(wayPoints, _wayPoints);
+			Lists.copyTo(wayPoints, _wayPoints);
 			return this;
 		}
 
@@ -616,7 +615,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the routes is {@code null}
 		 */
 		public Builder routes(final List<Route> routes) {
-			copy(routes, _routes);
+			Lists.copyTo(routes, _routes);
 			return this;
 		}
 
@@ -673,7 +672,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the tracks is {@code null}
 		 */
 		public Builder tracks(final List<Track> tracks) {
-			copy(tracks, _tracks);
+			Lists.copyTo(tracks, _tracks);
 			return this;
 		}
 
@@ -787,8 +786,7 @@ public final class GPX implements Serializable {
 		 * @return a new {@link WayPoint} filter
 		 */
 		public Filter<WayPoint, Builder> wayPointFilter() {
-			return new Filter<WayPoint, Builder>() {
-
+			return new Filter<>() {
 				@Override
 				public Filter<WayPoint, Builder> filter(
 					final Predicate<? super WayPoint> predicate
@@ -864,7 +862,7 @@ public final class GPX implements Serializable {
 		 * @return a new {@link Route} filter
 		 */
 		public Filter<Route, Builder> routeFilter() {
-			return new Filter<Route, Builder>() {
+			return new Filter<>() {
 				@Override
 				public Filter<Route, Builder> filter(
 					final Predicate<? super Route> predicate
@@ -941,7 +939,7 @@ public final class GPX implements Serializable {
 		 * @return a new {@link Track} filter
 		 */
 		public Filter<Track, Builder> trackFilter() {
-			return new Filter<Track, Builder>() {
+			return new Filter<>() {
 				@Override
 				public Filter<Track, Builder> filter(
 					final Predicate<? super Track> predicate

@@ -25,7 +25,6 @@ import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Length.Unit.METER;
-import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.Speed.Unit.METERS_PER_SECOND;
 
@@ -965,7 +964,7 @@ public final class WayPoint implements Point, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			Lists.copyTo(links, _links);
 			return this;
 		}
 
