@@ -22,12 +22,14 @@ package io.jenetics.jpx.format;
 import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -516,7 +518,10 @@ public final class LocationFormatter {
 		 * @throws NullPointerException if one of the arguments is {@code null}
 		 */
 		public Builder append(final Location.Field field, final String pattern) {
-			return append(field, () -> new DecimalFormat(pattern));
+			return append(field, () -> {
+				DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.US);
+				return new DecimalFormat(pattern, symbols);
+			});
 		}
 
 		/**
@@ -710,8 +715,11 @@ public final class LocationFormatter {
 								}
 								fmt.add(LocationFieldFormat.of(
 									field.get(),
-									() -> new DecimalFormat(
-										field.get().toDecimalPattern(token))
+									() -> {
+										DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.US);
+										return new DecimalFormat(
+										field.get().toDecimalPattern(token), symbols);
+									}
 								));
 							} else {
 								fmt.add(ConstFormat.of(token));

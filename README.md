@@ -286,12 +286,12 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 ## Release notes
 
 
-### [1.6.0](https://github.com/jenetics/jpx/releases/tag/v1.6.0)
+### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
 
-#### Improvements
+#### Bugs
 
-* [#87](https://github.com/jenetics/jpx/issues/87): Consistent exception handling. Invalid GPX files, read from file or input stream throwing now an `InvalidObjectException`. (Implemented by [Segelzwerg](https://github.com/Segelzwerg).)
-* [#97](https://github.com/jenetics/jpx/issues/97): Implement `Bounds.toBounds()` collector. This collector finds the bounds of a given `Point` stream.
-* [#102](https://github.com/jenetics/jpx/issues/102): Add `Point.getInstant` method.
+* [#105](https://github.com/jenetics/jpx/issues/105): Location dependent formatting in `LocationFormatter`. (Fixed by [Segelzwerg](https://github.com/Segelzwerg).)
+* [#108](https://github.com/jenetics/jpx/issues/108): Make library compileable with Java 13.
+* [#110](https://github.com/jenetics/jpx/issues/110): Fix `Bounds.toBounds` collector. Wrong results for only _negative_ points.
 
 

@@ -38,9 +38,12 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 
+import java.text.DecimalFormatSymbols;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
+import io.jenetics.jpx.format.Location.Field;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -190,4 +193,29 @@ public class LocationFormatterTest {
 			.toArray(Object[][]::new);
 	}
 
+	@Test
+	public void testAppend() {
+		Locale.setDefault(Locale.GERMANY);
+		DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
+		Location location = Location.of(Latitude.ofDegrees(23.987635));
+		LocationFormatter locationFormatter = LocationFormatter.builder()
+			.append(Field.DEGREE_OF_LATITUDE, "00.00")
+			.build();
+		Assert.assertEquals(instance.getDecimalSeparator(), ',');
+		Assert.assertEquals(locationFormatter.toPattern(), "DD.DD");
+		Assert.assertEquals(locationFormatter.format(location), "23.99");
+	}
+
+	@Test
+	public void testParsePattern() {
+		Locale.setDefault(Locale.GERMANY);
+		DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
+		Location location = Location.of(Latitude.ofDegrees(23.987635));
+		LocationFormatter locationFormatter = LocationFormatter.builder()
+			.appendPattern("DD.DD")
+			.build();
+		Assert.assertEquals(instance.getDecimalSeparator(), ',');
+		Assert.assertEquals(locationFormatter.toPattern(), "DD.DD");
+		Assert.assertEquals(locationFormatter.format(location), "23.99");
+	}
 }

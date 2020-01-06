@@ -163,8 +163,8 @@ public final class Bounds implements Serializable {
 				final double[] a = new double[4];
 				a[0] = Double.MAX_VALUE;
 				a[1] = Double.MAX_VALUE;
-				a[2] = Double.MIN_VALUE;
-				a[3] = Double.MIN_VALUE;
+				a[2] = -Double.MAX_VALUE;
+				a[3] = -Double.MAX_VALUE;
 				return a;
 			},
 			(a, b) -> {
