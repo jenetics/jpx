@@ -1,5 +1,13 @@
 ## Release notes
 
+### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
+
+#### Bugs
+
+* [#105](https://github.com/jenetics/jpx/issues/105): Location dependent formatting in `LocationFormatter`. (Fixed by [Segelzwerg](https://github.com/Segelzwerg).)
+* [#108](https://github.com/jenetics/jpx/issues/108): Make library compileable with Java 13.
+* [#110](https://github.com/jenetics/jpx/issues/110): Fix `Bounds.toBounds` collector. Wrong results for only _negative_ points.
+
 ### [1.6.0](https://github.com/jenetics/jpx/releases/tag/v1.6.0)
 
 #### Improvements
