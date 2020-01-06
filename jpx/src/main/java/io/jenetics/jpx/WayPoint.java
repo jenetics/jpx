@@ -1619,7 +1619,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param longitudeDegree the longitude of the point
 	 * @param timeEpochMilli the timestamp of the way-point
 	 * @return a new {@code WayPoint}
-	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IllegalArgumentException if one of the given arguments is invalid
 	 */
 	public static WayPoint of(
 		final double latitudeDegree,
@@ -1687,7 +1687,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param elevationMeter the elevation of the point
 	 * @param timeEpochMilli the timestamp of the way-point
 	 * @return a new {@code WayPoint}
-	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IllegalArgumentException if one of the given arguments is invalid
 	 */
 	public static WayPoint of(
 		final double latitudeDegree,
