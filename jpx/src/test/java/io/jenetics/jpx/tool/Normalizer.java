@@ -4,11 +4,16 @@ import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
 import static io.jenetics.jpx.Bounds.toBounds;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributeView;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -46,23 +51,23 @@ public class Normalizer {
 	);
 
 	public static void main(final String[] args) throws Exception {
-		if (args.length < 1) {
-			System.out.println("GPX <file>");
-		//	System.exit(1);
-		}
+		final Path gpxDir = Paths.get("/home/fwilhelm/Workspace/Documents/GPS/gpx/");
+		final Path outputDir = Paths.get("/home/fwilhelm/Downloads/GPX_normalized/");
 
-		//final Path file = Paths.get(args[0]).toAbsolutePath();
-		//final Path file = Paths.get("/home/fwilhelm/Downloads/2019-01-20_144714_Vienna.nmea.gpx");
-		//final Path file = Paths.get("/home/fwilhelm/Downloads/raw-2018-05-02T130655.gpx");
-
-		final List<Path> files = Files
-			.list(Paths.get("/home/fwilhelm/Downloads/GPX_raw/"))
-			.filter(path -> path.toString().endsWith(".gpx"))
-			.collect(Collectors.toList());
-
-		for (Path file : files) {
-			normalize(file, Paths.get("/home/fwilhelm/Downloads/GPX_normalized/"));
-		}
+		Files.walkFileTree(gpxDir, new SimpleFileVisitor<>() {
+			@Override
+			public FileVisitResult visitFile(
+				final Path file,
+				final BasicFileAttributes attrs
+			)
+				throws IOException
+			{
+				if (!Files.isDirectory(file) && file.toString().endsWith(".gpx")) {
+					normalize(file, outputDir);
+				}
+				return FileVisitResult.CONTINUE;
+			}
+		});
 	}
 
 	private static void normalize(final Path file, final Path dir) throws IOException {
@@ -103,6 +108,17 @@ public class Normalizer {
 
 			GPX.writer("    ").write(gpx, file);
 			setFileTime(file, time.toLocalDateTime());
+			//writeNative(file, gpx);
+		}
+	}
+
+	private static void writeNative(final Path file, final Object gpx) throws IOException {
+		final Path f = Paths.get(file.toString() + ".bin");
+
+		try (FileOutputStream bout = new FileOutputStream(f.toFile());
+			 ObjectOutputStream oout = new ObjectOutputStream(bout))
+		{
+			oout.writeObject(gpx);
 		}
 	}
 

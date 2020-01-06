@@ -41,15 +41,15 @@ final class PointFilter implements Predicate<WayPoint> {
 
 	static final Predicate<WayPoint> FAULTY_POINTS =
 	time(
-		ZonedDateTime.of(1970, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()),
-		ZonedDateTime.of(2100, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()))
+		ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()),
+		ZonedDateTime.now())
 	.and(
 		speed(
-			Speed.of(0, Speed.Unit.KILOMETERS_PER_HOUR),
-			Speed.of(300, Speed.Unit.KILOMETERS_PER_HOUR)))
+			Speed.of(0, Speed.Unit.METERS_PER_SECOND),
+			Speed.of(300, Speed.Unit.METERS_PER_SECOND)))
 	.and(
 		elevation(
-			Length.of(0, Length.Unit.METER),
+			Length.of(0.1, Length.Unit.METER),
 			Length.of(10000, Length.Unit.METER)));
 
 	/*
