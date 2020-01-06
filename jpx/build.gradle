@@ -50,7 +50,7 @@ javadoc {
 		charSet = 'UTF-8'
 		linkSource = true
 		links = [
-			'https://docs.oracle.com/javase/8/docs/api'
+			'https://docs.oracle.com/en/java/javase/11/docs/api'
 		]
 		windowTitle = "JPX ${project.version}"
 		docTitle = "<h1>JPX ${project.version}</h1>"
