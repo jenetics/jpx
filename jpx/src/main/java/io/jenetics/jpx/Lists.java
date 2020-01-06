@@ -23,7 +23,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,45 +30,18 @@ import java.util.Objects;
  * Helper methods for handling lists. All method handles null values correctly.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 final class Lists {
 
-	private static final Class<?> IMMUTABLE = Collections
-		.unmodifiableList(new LinkedList<>())
-		.getClass();
-
-	private static final Class<?> IMMUTABLE_RANDOM_ACCESS = Collections
-		.unmodifiableList(new ArrayList<>())
-		.getClass();
-
 	private Lists() {
 	}
 
-	static <T> List<T> immutable(final List<T> list) {
-		List<T> result = list;
-		if (result == null) {
-			result = Collections.emptyList();
-		} else if (list.isEmpty()) {
-			result = Collections.emptyList();
-		} else if (isMutable(list)) {
-			result = Collections.unmodifiableList(new ArrayList<>(list));
-		}
-
-		return result;
-	}
-
-	static boolean isImmutable(final List<?> list) {
-		return
-			list == null ||
-			list.getClass() == IMMUTABLE ||
-			list.getClass() == IMMUTABLE_RANDOM_ACCESS ||
-			list.isEmpty();
-	}
-
-	private static boolean isMutable(final List<?> list) {
-		return !isImmutable(list);
+	static <T> List<T> copyOf(final List<T> list) {
+		return list == null
+			? List.of()
+			: List.copyOf(list);
 	}
 
 	static <T> List<T> copy(final List<T> list) {

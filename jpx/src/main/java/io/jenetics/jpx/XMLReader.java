@@ -29,7 +29,7 @@ import static javax.xml.stream.XMLStreamConstants.COMMENT;
 import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -811,7 +811,7 @@ final class ListResult implements ReaderResult {
 
 	@Override
 	public List<Object> value() {
-		return immutable(_value);
+		return copyOf(_value);
 	}
 
 }

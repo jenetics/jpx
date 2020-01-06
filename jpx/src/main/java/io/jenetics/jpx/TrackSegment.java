@@ -22,7 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
@@ -69,7 +69,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * @param points the points of the track-segment
 	 */
 	private TrackSegment(final List<WayPoint> points, final Document extensions) {
-		_points = immutable(points);
+		_points = copyOf(points);
 		_extensions = extensions;
 	}
 

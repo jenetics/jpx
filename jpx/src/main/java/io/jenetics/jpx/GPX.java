@@ -22,7 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -271,9 +271,9 @@ public final class GPX implements Serializable {
 		_version = requireNonNull(version);
 		_creator = requireNonNull(creator);
 		_metadata = metadata;
-		_wayPoints = immutable(wayPoints);
-		_routes = immutable(routes);
-		_tracks = immutable(tracks);
+		_wayPoints = copyOf(wayPoints);
+		_routes = copyOf(routes);
+		_tracks = copyOf(tracks);
 		_extensions = extensions;
 	}
 

@@ -20,7 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -242,7 +242,7 @@ final class IO {
 		for (int i = 0; i < length; ++i) {
 			elements.add(reader.read(in));
 		}
-		return immutable(elements);
+		return copyOf(elements);
 	}
 
 	/**

@@ -24,7 +24,7 @@ import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -117,11 +117,11 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = immutable(links);
+		_links = copyOf(links);
 		_number = number;
 		_type = type;
 		_extensions = extensions;
-		_segments = immutable(segments);
+		_segments = copyOf(segments);
 	}
 
 	/**

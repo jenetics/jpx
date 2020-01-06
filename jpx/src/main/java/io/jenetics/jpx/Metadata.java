@@ -21,7 +21,7 @@ package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
 import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
 import java.io.DataInput;
@@ -102,7 +102,7 @@ public final class Metadata implements Serializable {
 		_description = description;
 		_author = author;
 		_copyright = copyright;
-		_links = immutable(links);
+		_links = copyOf(links);
 		_time = time;
 		_keywords = keywords;
 		_bounds = bounds;
