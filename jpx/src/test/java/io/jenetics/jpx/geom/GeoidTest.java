@@ -19,14 +19,14 @@
  */
 package io.jenetics.jpx.geom;
 
-import org.testng.Assert;
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
-
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.testng.Assert;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import io.jenetics.jpx.Point;
 import io.jenetics.jpx.WayPoint;

@@ -25,9 +25,6 @@ import static io.jenetics.jpx.GPXTest.nextGPX;
 import static io.jenetics.jpx.TrackTest.nextTrack;
 import static io.jenetics.jpx.WayPointTest.nextWayPoint;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -35,6 +32,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmx.at">Franz Wilhelmstötter</a>

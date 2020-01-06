@@ -21,9 +21,6 @@ package io.jenetics.jpx;
 
 import static java.util.stream.Collectors.toList;
 
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -34,6 +31,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

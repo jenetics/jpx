@@ -19,10 +19,11 @@
  */
 package io.jenetics.jpx;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import java.util.Deque;
 import java.util.LinkedList;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
 
 /**
  * {@link XMLStreamWriter} proxy for writing XML indentations.

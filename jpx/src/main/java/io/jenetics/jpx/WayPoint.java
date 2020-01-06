@@ -29,8 +29,6 @@ import static io.jenetics.jpx.Lists.copy;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.Speed.Unit.METERS_PER_SECOND;
 
-import org.w3c.dom.Document;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -46,6 +44,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import org.w3c.dom.Document;
 
 import io.jenetics.jpx.GPX.Version;
 
