@@ -21,8 +21,6 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,10 +44,8 @@ final class Lists {
 
 	static <T> List<T> copy(final List<T> list) {
 		return list != null
-			? list.isEmpty()
-				? Collections.emptyList()
-				: new ArrayList<T>(list)
-			: Collections.emptyList();
+			? List.copyOf(list)
+			: List.of();
 	}
 
 	static <T> void copy(final List<T> source, final List<T> target) {

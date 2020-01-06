@@ -19,14 +19,11 @@
  */
 package io.jenetics.jpx;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +69,7 @@ public final class Filters {
 			.flatMap(TrackSegment::points)
 			.collect(Collectors.toList());
 
-		return Collections.singletonList(TrackSegment.of(points));
+		return List.of(TrackSegment.of(points));
 	}
 
 	/**
@@ -97,8 +94,8 @@ public final class Filters {
 			.collect(Collectors.toList());
 
 		return tracks.isEmpty()
-			? emptyList()
-			: singletonList(
+			? List.of()
+			: List.of(
 				tracks.get(0).toBuilder()
 					.segments(segments)
 					.build()
@@ -129,10 +126,10 @@ public final class Filters {
 			.collect(Collectors.toList());
 
 		return tracks.isEmpty()
-			? emptyList()
-			: singletonList(
+			? List.of()
+			: List.of(
 					tracks.get(0).toBuilder()
-						.segments(singletonList(TrackSegment.of(points)))
+						.segments(List.of(TrackSegment.of(points)))
 						.build()
 				);
 	}

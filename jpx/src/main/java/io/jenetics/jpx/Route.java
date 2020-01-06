@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copy;
@@ -946,7 +945,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			(String)v[2],
 			(String)v[3],
 			v[4] != null
-				? singletonList(Link.of((URI)v[4], (String)v[5], null))
+				? List.of(Link.of((URI)v[4], (String)v[5], null))
 				: null,
 			(UInt)v[6],
 			(String)v[7],

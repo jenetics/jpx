@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
-import static java.util.Collections.singletonList;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
@@ -2117,7 +2116,7 @@ public final class WayPoint implements Point, Serializable {
 			(String)v[9],
 			(String)v[10],
 			v[11] != null
-				? singletonList(Link.of((URI)v[11], (String)v[12], null))
+				? List.of(Link.of((URI)v[11], (String)v[12], null))
 				: null,
 			(String)v[13],
 			(String)v[14],
