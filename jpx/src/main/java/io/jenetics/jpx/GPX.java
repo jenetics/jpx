@@ -65,7 +65,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * GPX documents contain a metadata header, followed by way-points, routes, and
  * tracks. You can add your own elements to the extensions section of the GPX
  * document.
- * <h3>Examples</h3>
+ * <em><b>Examples</b></em>
  * <b>Creating a GPX object with one track-segment and 3 track-points</b>
  * <pre>{@code
  * final GPX gpx = GPX.builder()
@@ -77,12 +77,12 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *     .build();
  * }</pre>
  *
- * <h4>Reading a GPX file</h4>
+ * <b>Reading a GPX file</b>
  * <pre>{@code
  * final GPX gpx = GPX.read("track.xml");
  * }</pre>
  *
- * <h4>Reading erroneous GPX files</h4>
+ * <b>Reading erroneous GPX files</b>
  * <pre>{@code
  * final boolean lenient = true;
  * final GPX gpx = GPX.read("track.xml", lenient);
