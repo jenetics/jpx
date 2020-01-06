@@ -19,13 +19,13 @@
  */
 package io.jenetics.jpx;
 
-import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.NoSuchElementException;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.NoSuchElementException;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

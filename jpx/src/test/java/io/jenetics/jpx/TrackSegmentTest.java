@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +34,6 @@ import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import io.jenetics.jpx.GPX.Version;
 

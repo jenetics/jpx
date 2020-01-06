@@ -20,11 +20,10 @@
 package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.testng.annotations.Test;
 
 import java.util.Random;
 import java.util.function.Supplier;
-
-import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

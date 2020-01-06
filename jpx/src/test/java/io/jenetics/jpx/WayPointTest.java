@@ -23,8 +23,9 @@ import static java.lang.String.format;
 import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
@@ -32,9 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import io.jenetics.jpx.GPX.Version;
 import io.jenetics.jpx.Length.Unit;

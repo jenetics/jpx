@@ -23,13 +23,12 @@ import static java.lang.String.format;
 import static io.jenetics.jpx.Format.parseURI;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.testng.annotations.Test;
 
 import java.net.URI;
 import java.time.Year;
 import java.util.Random;
 import java.util.function.Supplier;
-
-import org.testng.annotations.Test;
 
 import io.jenetics.jpx.GPX.Version;
 

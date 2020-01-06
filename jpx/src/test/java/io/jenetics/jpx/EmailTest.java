@@ -22,12 +22,11 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 import java.util.Random;
 import java.util.function.Supplier;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 import io.jenetics.jpx.GPX.Version;
 

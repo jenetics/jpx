@@ -20,13 +20,12 @@
 package io.jenetics.jpx;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
-
-import java.util.Random;
-import java.util.function.Supplier;
-
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+
+import java.util.Random;
+import java.util.function.Supplier;
 
 import io.jenetics.jpx.Length.Unit;
 

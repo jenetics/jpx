@@ -21,14 +21,13 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
-import java.util.function.Function;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * Helper class for simplifying XML stream writing.
