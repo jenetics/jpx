@@ -19,7 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.Lists.copyTo;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
@@ -28,6 +27,7 @@ import static io.jenetics.jpx.Format.durationString;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Length.Unit.METER;
 import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 import static io.jenetics.jpx.Speed.Unit.METERS_PER_SECOND;
 
 import java.io.DataInput;

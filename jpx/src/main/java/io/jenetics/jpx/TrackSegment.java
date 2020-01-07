@@ -19,8 +19,11 @@
  */
 package io.jenetics.jpx;
 
-import io.jenetics.jpx.GPX.Version;
-import org.w3c.dom.Document;
+import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
+import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -39,11 +42,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.jenetics.jpx.Lists.copyOf;
-import static io.jenetics.jpx.Lists.copyTo;
-import static io.jenetics.jpx.XMLWriter.elem;
-import static java.lang.String.format;
-import static java.util.Objects.requireNonNull;
+import org.w3c.dom.Document;
+
+import io.jenetics.jpx.GPX.Version;
 
 /**
  * A Track Segment holds a list of Track Points which are logically connected in

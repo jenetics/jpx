@@ -19,11 +19,11 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.Lists.copyTo;
 import static java.lang.String.format;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import static java.util.Objects.hash;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -27,8 +29,6 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-
-import static java.util.Objects.hash;
 
 /**
  * A person or organization.

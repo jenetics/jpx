@@ -24,11 +24,11 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import io.jenetics.jpx.Length;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Point;
 import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.WayPointTest;

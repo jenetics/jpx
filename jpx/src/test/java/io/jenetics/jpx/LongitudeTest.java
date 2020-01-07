@@ -19,6 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.Double.doubleToLongBits;
+import static java.lang.Double.longBitsToDouble;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.util.Random;
@@ -26,9 +29,6 @@ import java.util.function.Supplier;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import static java.lang.Double.doubleToLongBits;
-import static java.lang.Double.longBitsToDouble;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
