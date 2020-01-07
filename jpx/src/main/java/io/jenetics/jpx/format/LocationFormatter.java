@@ -43,7 +43,9 @@ import io.jenetics.jpx.format.Location.Field;
 
 /**
  * Formatter for printing and parsing geographic location objects.
+ * <p>
  * <b>Patterns for Formatting and Parsing</b>
+ * <p>
  * Patterns are based on a simple sequence of letters and symbols. A pattern is
  * used to create a Formatter using the {@code #ofPattern(String)} and
  * {@code #ofPattern(String, Locale)} methods.
