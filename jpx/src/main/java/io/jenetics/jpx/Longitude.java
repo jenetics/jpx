@@ -60,7 +60,8 @@ public final class Longitude extends Number implements Serializable {
 
 	/**
 	 * A constant holding the maximum value a {@code Latitude} value can have,
-	 * 180 exclusively (179.99999999999997 inclusively).
+	 * 179.99999999999997. This is the greatest {@code double} value smaller
+	 * than 180.0.
 	 *
 	 * @since 2.0
 	 */
@@ -69,7 +70,8 @@ public final class Longitude extends Number implements Serializable {
 
 	/**
 	 * A constant holding the maximum value a {@code Latitude} value can have,
-	 * 180 exclusively (179.99999999999997 inclusively).
+	 * 179.99999999999997. This is the greatest {@code double} value smaller
+	 * than 180.0.
 	 *
 	 * @since 2.0
 	 */
