@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
@@ -29,10 +28,9 @@ import static javax.xml.stream.XMLStreamConstants.COMMENT;
 import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -445,9 +443,7 @@ final class ListReader<T> extends XMLReader<List<T>> {
 	{
 		xml.require(START_ELEMENT, null, name());
 		final T element = _adoptee.read(xml, lenient);
-		return element != null
-			? Collections.singletonList(element)
-			: emptyList();
+		return element != null ? List.of(element) : List.of();
 	}
 
 	XMLReader<? extends T> reader() {
@@ -470,7 +466,7 @@ final class IgnoreReader extends XMLReader<Object> {
 
 	IgnoreReader(final String name) {
 		super(name, Type.ELEM);
-		_reader = new ElemReader<>(name, o -> o, emptyList(), Type.ELEM);
+		_reader = new ElemReader<>(name, o -> o, List.of(), Type.ELEM);
 	}
 
 	@Override
@@ -811,7 +807,7 @@ final class ListResult implements ReaderResult {
 
 	@Override
 	public List<Object> value() {
-		return immutable(_value);
+		return copyOf(_value);
 	}
 
 }

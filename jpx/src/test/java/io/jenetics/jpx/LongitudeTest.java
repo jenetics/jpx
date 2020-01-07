@@ -19,6 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.Double.doubleToLongBits;
+import static java.lang.Double.longBitsToDouble;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.util.Random;
@@ -49,6 +52,15 @@ public class LongitudeTest extends ObjectTester<Longitude> {
 			Longitude.ofRadians(1).toRadians(),
 			Longitude.ofDegrees(Math.toDegrees(1)).toRadians()
 		);
+
+		Assert.assertEquals(
+			Longitude.ofRadians(excl(Math.PI)).toRadians(),
+			Longitude.ofDegrees(Math.toDegrees(excl(Math.PI))).toRadians()
+		);
+	}
+
+	static double excl(final double value) {
+		return longBitsToDouble(doubleToLongBits(value) - 1);
 	}
 
 	@Test

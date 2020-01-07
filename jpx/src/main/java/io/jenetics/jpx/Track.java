@@ -20,11 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.singletonList;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
-import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -117,11 +117,11 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = immutable(links);
+		_links = copyOf(links);
 		_number = number;
 		_type = type;
 		_extensions = extensions;
-		_segments = immutable(segments);
+		_segments = copyOf(segments);
 	}
 
 	/**
@@ -281,17 +281,16 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 31;
-		hash += 17*Objects.hashCode(_name) + 37;
-		hash += 17*Objects.hashCode(_comment) + 37;
-		hash += 17*Objects.hashCode(_description) + 37;
-		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*Objects.hashCode(_type) + 37;
-		hash += 17*Lists.hashCode(_links) + 37;
-		hash += 17*Objects.hashCode(_number) + 37;
-		hash += 17*Objects.hashCode(_segments) + 37;
-
-		return hash;
+		return hash(
+			_name,
+			_comment,
+			_description,
+			_source,
+			_type,
+			Lists.hashCode(_links),
+			_number,
+			_segments
+		);
 	}
 
 	@Override
@@ -436,7 +435,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			copyTo(links, _links);
 			return this;
 		}
 
@@ -574,7 +573,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder segments(final List<TrackSegment> segments) {
-			copy(segments, _segments);
+			copyTo(segments, _segments);
 			return this;
 		}
 
@@ -921,7 +920,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			(String)v[2],
 			(String)v[3],
 			v[4] != null
-				? singletonList(Link.of((URI)v[4], (String)v[5], null))
+				? List.of(Link.of((URI)v[4], (String)v[5], null))
 				: null,
 			(UInt)v[6],
 			(String)v[7],

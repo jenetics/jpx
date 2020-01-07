@@ -19,7 +19,6 @@
  */
 package io.jenetics.jpx.format;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,7 +34,7 @@ final class CompositeFormat<T> implements Format<T> {
 	private final List<Format<T>> _formats;
 
 	private CompositeFormat(final List<Format<T>> formats) {
-		_formats = new ArrayList<>(formats);
+		_formats = List.copyOf(formats);
 	}
 
 	@Override

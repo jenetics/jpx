@@ -28,6 +28,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Point;
 import io.jenetics.jpx.WayPoint;
 import io.jenetics.jpx.WayPointTest;
@@ -128,10 +129,12 @@ public class GeoidTest {
 
 	@Test(expectedExceptions = UnsupportedOperationException.class)
 	public void parallelPointStream() {
-		Stream.generate(() -> WayPointTest.nextWayPoint(new Random()))
+		Length length = Stream.generate(() -> WayPointTest.nextWayPoint(new Random()))
 			.limit(1000)
 			.parallel()
 			.collect(GEOID.toPathLength());
+
+		Assert.assertNotNull(length);
 	}
 
 }

@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.Double.doubleToLongBits;
+import static java.lang.Double.longBitsToDouble;
 import static java.lang.String.format;
 
 import java.io.DataInput;
@@ -33,12 +35,45 @@ import java.io.Serializable;
  * the range of {@code [-180..180]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version !__version__!
  * @since 1.0
  */
 public final class Longitude extends Number implements Serializable {
 
 	private static final long serialVersionUID = 2L;
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -180 inclusively.
+	 *
+	 * @since !__version__!
+	 */
+	public static final double MIN_DEGREES = -180;
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -180 inclusively.
+	 *
+	 * @since !__version__!
+	 */
+	public static final Longitude MIN_VALUE = ofDegrees(MIN_DEGREES);
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 180 exclusively (179.99999999999997 inclusively).
+	 *
+	 * @since !__version__!
+	 */
+	public static final double MAX_DEGREES =
+		longBitsToDouble(doubleToLongBits(180) - 1);
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 180 exclusively (179.99999999999997 inclusively).
+	 *
+	 * @since !__version__!
+	 */
+	public static final Longitude MAX_VALUE = ofDegrees(MAX_DEGREES);
 
 	private final double _value;
 
@@ -47,12 +82,12 @@ public final class Longitude extends Number implements Serializable {
 	 *
 	 * @param value the longitude value in decimal degrees
 	 * @throws IllegalArgumentException if the given value is not within the
-	 *         range of {@code [-180..180]}
+	 *         range of {@code [-180..180)}
 	 */
 	private Longitude(final double value) {
-		if (value < -180 || value > 180) {
+		if (value < MIN_DEGREES || value > MAX_DEGREES) {
 			throw new IllegalArgumentException(format(
-				"%f is not in range [-180, 180].", value
+				"%f is not in range [-180, 180).", value
 			));
 		}
 
@@ -130,7 +165,7 @@ public final class Longitude extends Number implements Serializable {
 	 * @param degrees the longitude value in decimal degrees
 	 * @return a new (decimal degrees) {@code Longitude} object
 	 * @throws IllegalArgumentException if the given value is not within the
-	 *         range of {@code [-180..180]}
+	 *         range of {@code [-180..180)}
 	 */
 	public static Longitude ofDegrees(final double degrees) {
 		return new Longitude(degrees);

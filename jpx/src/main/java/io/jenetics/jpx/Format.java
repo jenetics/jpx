@@ -40,9 +40,7 @@ final class Format {
 
 	static Double parseDouble(final String value) {
 		final String d = Strings.trim(value);
-		return d != null
-			? Double.parseDouble(d)
-			: null;
+		return d != null ? Double.parseDouble(d) : null;
 	}
 
 	/**
@@ -54,16 +52,13 @@ final class Format {
 	 */
 	static Duration parseDuration(final String value) {
 		final String duration = Strings.trim(value);
-
 		return duration != null
 			? Duration.ofSeconds(Long.parseLong(duration))
 			: null;
 	}
 
 	static String durationString(final Duration duration) {
-		return duration != null
-			? Long.toString(duration.getSeconds())
-			: null;
+		return duration != null ? Long.toString(duration.getSeconds()) : null;
 	}
 
 	/**

@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 
 import java.io.DataInput;
@@ -97,10 +98,7 @@ public final class Email implements Comparable<Email>, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_id) + 31;
-		hash += 17*Objects.hashCode(_domain) + 31;
-		return hash;
+		return hash(_id, _domain);
 	}
 
 	@Override

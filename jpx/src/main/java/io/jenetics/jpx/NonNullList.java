@@ -198,8 +198,7 @@ final class NonNullList<E> implements List<E>, Serializable {
 	}
 
 	@Override
-	public boolean addAll(final int index, final Collection<? extends E>
-		coll) {
+	public boolean addAll(final int index, final Collection<? extends E> coll) {
 		coll.forEach(Objects::requireNonNull);
 		return _adoptee.addAll(coll);
 	}

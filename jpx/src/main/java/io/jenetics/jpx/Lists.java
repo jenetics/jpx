@@ -21,66 +21,32 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Helper methods for handling lists. All method handles null values correctly.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
 final class Lists {
 
-	private static final Class<?> IMMUTABLE = Collections
-		.unmodifiableList(new LinkedList<>())
-		.getClass();
-
-	private static final Class<?> IMMUTABLE_RANDOM_ACCESS = Collections
-		.unmodifiableList(new ArrayList<>())
-		.getClass();
-
 	private Lists() {
 	}
 
-	static <T> List<T> immutable(final List<T> list) {
-		List<T> result = list;
-		if (result == null) {
-			result = Collections.emptyList();
-		} else if (list.isEmpty()) {
-			result = Collections.emptyList();
-		} else if (isMutable(list)) {
-			result = Collections.unmodifiableList(new ArrayList<>(list));
-		}
-
-		return result;
+	static <T> List<T> copyOf(final List<T> list) {
+		return list == null
+			? List.of()
+			: List.copyOf(list);
 	}
 
-	static boolean isImmutable(final List<?> list) {
-		return
-			list == null ||
-			list.getClass() == IMMUTABLE ||
-			list.getClass() == IMMUTABLE_RANDOM_ACCESS ||
-			list.isEmpty();
-	}
-
-	private static boolean isMutable(final List<?> list) {
-		return !isImmutable(list);
-	}
-
-	static <T> List<T> copy(final List<T> list) {
-		return list != null
-			? list.isEmpty()
-				? Collections.emptyList()
-				: new ArrayList<T>(list)
-			: Collections.emptyList();
-	}
-
-	static <T> void copy(final List<T> source, final List<T> target) {
+	static <T> void copyTo(final List<T> source, final List<T> target) {
 		requireNonNull(target);
 		if (source != null) {
 			source.forEach(Objects::requireNonNull);
@@ -104,7 +70,7 @@ final class Lists {
 			if (b != null) {
 				result = a.size() == b.size();
 				if (result) {
-					result = a.containsAll(b);
+					result = a.isEmpty()|| containsAll(a, b);
 				}
 			}
 		} else {
@@ -112,6 +78,34 @@ final class Lists {
 		}
 
 		return result;
+	}
+
+	private static boolean containsAll(final Collection<?> a, final Collection<?> b) {
+		final Iterator<?> ita = a.iterator();
+		final Set<Object> visited = new HashSet<>();
+
+		for (final Object next : b) {
+			if (visited.contains(next)) {
+				continue;
+			}
+
+			boolean foundCurrentElement = false;
+			while (ita.hasNext()) {
+				final Object p = ita.next();
+				visited.add(p);
+
+				if (Objects.equals(next, p)) {
+					foundCurrentElement = true;
+					break;
+				}
+			}
+
+			if (!foundCurrentElement) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

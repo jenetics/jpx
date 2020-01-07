@@ -20,8 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
-import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static java.util.Objects.hash;
+import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;
 
 import java.io.DataInput;
@@ -102,7 +102,7 @@ public final class Metadata implements Serializable {
 		_description = description;
 		_author = author;
 		_copyright = copyright;
-		_links = immutable(links);
+		_links = copyOf(links);
 		_time = time;
 		_keywords = keywords;
 		_bounds = bounds;
@@ -256,16 +256,16 @@ public final class Metadata implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_name) + 31;
-		hash += 17*Objects.hashCode(_description) + 31;
-		hash += 17*Objects.hashCode(_author) + 31;
-		hash += 17*Objects.hashCode(_copyright) + 31;
-		hash += 17*Lists.hashCode(_links) + 31;
-		hash += 17*Objects.hashCode(_time) + 31;
-		hash += 17*Objects.hashCode(_keywords) + 31;
-		hash += 17*Objects.hashCode(_bounds) + 31;
-		return hash;
+		return hash(
+			_name,
+			_description,
+			_author,
+			_copyright,
+			Lists.hashCode(_links),
+			ZonedDateTimes.hashCode(_time),
+			_keywords,
+			_bounds
+		);
 	}
 
 	@Override
@@ -318,7 +318,7 @@ public final class Metadata implements Serializable {
 			_description = metadata._description;
 			_author = metadata._author;
 			_copyright = metadata._copyright;
-			copy(metadata._links, _links);
+			Lists.copyTo(metadata._links, _links);
 			_time = metadata._time;
 			_keywords = metadata._keywords;
 			_bounds = metadata._bounds;
@@ -432,7 +432,7 @@ public final class Metadata implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			Lists.copyTo(links, _links);
 			return this;
 		}
 

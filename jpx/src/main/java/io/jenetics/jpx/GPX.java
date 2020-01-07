@@ -20,9 +20,10 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -65,7 +66,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * GPX documents contain a metadata header, followed by way-points, routes, and
  * tracks. You can add your own elements to the extensions section of the GPX
  * document.
- * <h3>Examples</h3>
+ * <em><b>Examples</b></em>
  * <b>Creating a GPX object with one track-segment and 3 track-points</b>
  * <pre>{@code
  * final GPX gpx = GPX.builder()
@@ -77,12 +78,12 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *     .build();
  * }</pre>
  *
- * <h4>Reading a GPX file</h4>
+ * <b>Reading a GPX file</b>
  * <pre>{@code
  * final GPX gpx = GPX.read("track.xml");
  * }</pre>
  *
- * <h4>Reading erroneous GPX files</h4>
+ * <b>Reading erroneous GPX files</b>
  * <pre>{@code
  * final boolean lenient = true;
  * final GPX gpx = GPX.read("track.xml", lenient);
@@ -154,7 +155,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.5
+ * @version !__version__!
  * @since 1.0
  */
 public final class GPX implements Serializable {
@@ -271,9 +272,9 @@ public final class GPX implements Serializable {
 		_version = requireNonNull(version);
 		_creator = requireNonNull(creator);
 		_metadata = metadata;
-		_wayPoints = immutable(wayPoints);
-		_routes = immutable(routes);
-		_tracks = immutable(tracks);
+		_wayPoints = copyOf(wayPoints);
+		_routes = copyOf(routes);
+		_tracks = copyOf(tracks);
 		_extensions = extensions;
 	}
 
@@ -405,14 +406,14 @@ public final class GPX implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_creator) + 31;
-		hash += 17*Objects.hashCode(_version) + 31;
-		hash += 17*Objects.hashCode(_metadata) + 31;
-		hash += 17*Objects.hashCode(_wayPoints) + 31;
-		hash += 17*Objects.hashCode(_routes) + 31;
-		hash += 17*Objects.hashCode(_tracks) + 31;
-		return hash;
+		return hash(
+			_creator,
+			_version,
+			_metadata,
+			_wayPoints,
+			_routes,
+			_tracks
+		);
 	}
 
 	@Override
@@ -559,7 +560,7 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
-			copy(wayPoints, _wayPoints);
+			copyTo(wayPoints, _wayPoints);
 			return this;
 		}
 
@@ -616,7 +617,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the routes is {@code null}
 		 */
 		public Builder routes(final List<Route> routes) {
-			copy(routes, _routes);
+			copyTo(routes, _routes);
 			return this;
 		}
 
@@ -629,7 +630,6 @@ public final class GPX implements Serializable {
 		 */
 		public Builder addRoute(final Route route) {
 			_routes.add(requireNonNull(route));
-
 			return this;
 		}
 
@@ -673,7 +673,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the tracks is {@code null}
 		 */
 		public Builder tracks(final List<Track> tracks) {
-			copy(tracks, _tracks);
+			copyTo(tracks, _tracks);
 			return this;
 		}
 
@@ -787,8 +787,7 @@ public final class GPX implements Serializable {
 		 * @return a new {@link WayPoint} filter
 		 */
 		public Filter<WayPoint, Builder> wayPointFilter() {
-			return new Filter<WayPoint, Builder>() {
-
+			return new Filter<>() {
 				@Override
 				public Filter<WayPoint, Builder> filter(
 					final Predicate<? super WayPoint> predicate
@@ -809,7 +808,7 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.map(mapper)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -824,7 +823,7 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.flatMap(wp -> mapper.apply(wp).stream())
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -864,7 +863,7 @@ public final class GPX implements Serializable {
 		 * @return a new {@link Route} filter
 		 */
 		public Filter<Route, Builder> routeFilter() {
-			return new Filter<Route, Builder>() {
+			return new Filter<>() {
 				@Override
 				public Filter<Route, Builder> filter(
 					final Predicate<? super Route> predicate
@@ -872,7 +871,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.filter(predicate)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -885,7 +884,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.map(mapper)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -898,7 +897,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.flatMap(route -> mapper.apply(route).stream())
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -941,7 +940,7 @@ public final class GPX implements Serializable {
 		 * @return a new {@link Track} filter
 		 */
 		public Filter<Track, Builder> trackFilter() {
-			return new Filter<Track, Builder>() {
+			return new Filter<>() {
 				@Override
 				public Filter<Track, Builder> filter(
 					final Predicate<? super Track> predicate
@@ -949,7 +948,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.filter(predicate)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -962,7 +961,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.map(mapper)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -975,7 +974,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.flatMap(track -> mapper.apply(track).stream())
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -1570,8 +1569,8 @@ public final class GPX implements Serializable {
 	private static final XMLWriters<GPX> WRITERS = new XMLWriters<GPX>()
 		.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
 		.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
-		.v11(XMLWriter.ns("http://www.topografix.com/GPX/1/1"))
-		.v10(XMLWriter.ns("http://www.topografix.com/GPX/1/0"))
+		.v11(XMLWriter.ns(Version.V11.getNamespaceURI()))
+		.v10(XMLWriter.ns(Version.V10.getNamespaceURI()))
 		.v11(Metadata.WRITER.map(gpx -> gpx._metadata))
 		.v10(XMLWriter.elem("name").map(GPX::name))
 		.v10(XMLWriter.elem("desc").map(GPX::desc))

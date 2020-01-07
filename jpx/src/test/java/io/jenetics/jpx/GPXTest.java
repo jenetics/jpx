@@ -25,16 +25,24 @@ import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InvalidObjectException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -249,7 +257,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.findFirst()
-			.orElseThrow(NoSuchElementException::new);
+			.orElseThrow();
 
 		Assert.assertEquals(
 			point.getLatitude(),
@@ -499,7 +507,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.filter(wp -> wp.getCourse().isPresent())
-			.map(wp -> wp.getCourse().orElseThrow(IllegalArgumentException::new))
+			.map(wp -> wp.getCourse().orElseThrow())
 			.collect(Collectors.toList());
 
 		Assert.assertEquals(
@@ -638,7 +646,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		//GPX.writer("    ").write(gpx, System.out);
 		Assert.assertTrue(XML.equals(
 			expected.getDocumentElement(),
-			gpx.getExtensions().get().getDocumentElement()
+			gpx.getExtensions().orElseThrow().getDocumentElement()
 		));
 	}
 
@@ -668,7 +676,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		Assert.assertTrue(XML.equals(
 			XML.removeNS(extensions),
-			gpx.getExtensions().get()
+			gpx.getExtensions().orElseThrow()
 		));
 	}
 
@@ -809,9 +817,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final long extensions = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.flatMap(p -> p.getExtensions()
-				.map(Stream::of)
-				.orElse(Stream.empty()))
+			.flatMap(p -> p.getExtensions().stream())
 			.count();
 		Assert.assertEquals(extensions, 479L);
 	}

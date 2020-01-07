@@ -101,8 +101,9 @@ public final class Location {
 	 */
 	public Optional<Point> toPoint() {
 		return latitude().flatMap(lat ->
-			longitude()
-				.map(lon -> WayPoint.of(lat, lon, _elevation, null))
+			longitude().map(lon ->
+				WayPoint.of(lat, lon, _elevation, null)
+			)
 		);
 	}
 
