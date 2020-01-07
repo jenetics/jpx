@@ -93,12 +93,12 @@ public final class DGPSStation
 
 	@Override
 	public double doubleValue() {
-		return (double)_value;
+		return _value;
 	}
 
 	@Override
 	public long longValue() {
-		return (long)_value;
+		return _value;
 	}
 
 	@Override
