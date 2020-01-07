@@ -157,7 +157,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 2.0
  * @since 1.0
  */
 public final class GPX implements Serializable {

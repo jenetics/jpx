@@ -51,7 +51,7 @@ public final class Degrees
 	 * A constant holding the maximum value a {@code Degrees} value can have,
 	 * 0 inclusively.
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final double MIN_VALUE = 0;
 
@@ -59,7 +59,7 @@ public final class Degrees
 	 * A constant holding the maximum value a {@code Degrees} value can have,
 	 * 360 inclusively.
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final double MAX_VALUE = 360;
 

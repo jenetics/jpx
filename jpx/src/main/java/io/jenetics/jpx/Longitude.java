@@ -35,7 +35,7 @@ import java.io.Serializable;
  * the range of {@code [-180..180]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 2.0
  * @since 1.0
  */
 public final class Longitude extends Number implements Serializable {
@@ -46,7 +46,7 @@ public final class Longitude extends Number implements Serializable {
 	 * A constant holding the maximum value a {@code Latitude} value can have,
 	 * -180 inclusively.
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final double MIN_DEGREES = -180;
 
@@ -54,7 +54,7 @@ public final class Longitude extends Number implements Serializable {
 	 * A constant holding the maximum value a {@code Latitude} value can have,
 	 * -180 inclusively.
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final Longitude MIN_VALUE = ofDegrees(MIN_DEGREES);
 
@@ -62,7 +62,7 @@ public final class Longitude extends Number implements Serializable {
 	 * A constant holding the maximum value a {@code Latitude} value can have,
 	 * 180 exclusively (179.99999999999997 inclusively).
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final double MAX_DEGREES =
 		longBitsToDouble(doubleToLongBits(180) - 1);
@@ -71,7 +71,7 @@ public final class Longitude extends Number implements Serializable {
 	 * A constant holding the maximum value a {@code Latitude} value can have,
 	 * 180 exclusively (179.99999999999997 inclusively).
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final Longitude MAX_VALUE = ofDegrees(MAX_DEGREES);
 

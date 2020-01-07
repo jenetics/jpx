@@ -32,7 +32,7 @@ import java.util.Set;
  * Helper methods for handling lists. All method handles null values correctly.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 2.0
  * @since 1.0
  */
 final class Lists {

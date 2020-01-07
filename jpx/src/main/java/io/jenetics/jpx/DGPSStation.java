@@ -51,7 +51,7 @@ public final class DGPSStation
 	 * A constant holding the maximum value a {@code DGPSStation} value can have,
 	 * 0 inclusively.
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final int MIN_VALUE = 0;
 
@@ -59,7 +59,7 @@ public final class DGPSStation
 	 * A constant holding the maximum value a {@code DGPSStation} value can have,
 	 * 1023 inclusively.
 	 *
-	 * @since !__version__!
+	 * @since 2.0
 	 */
 	public static final int MAX_VALUE = 1023;
 
