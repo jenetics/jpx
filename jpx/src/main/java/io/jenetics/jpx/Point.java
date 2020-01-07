@@ -29,7 +29,7 @@ import io.jenetics.jpx.geom.Geoid;
  * A geographic point with optional elevation and time.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.6
  * @since 1.0
  */
 public interface Point {
