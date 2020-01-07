@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.lang.Math.max;
 import static java.util.Objects.requireNonNull;
 
 import java.text.DecimalFormat;
@@ -69,20 +70,16 @@ final class LocationFieldFormat implements Format<Location> {
 	@Override
 	public String toString() {
 		final NumberFormat format = _format.get();
-		final int minValueDigit = format.getMinimumIntegerDigits();
-		final int minFractionDigit = format.getMinimumFractionDigits();
-		final int maxFractionDigit = format.getMaximumFractionDigits();
+		final int minValDigit = format.getMinimumIntegerDigits();
+		final int minFracDigit = format.getMinimumFractionDigits();
+		final int maxFracDigit = format.getMaximumFractionDigits();
 
 		final StringBuilder out = new StringBuilder();
-		for (int i = 0; i < minValueDigit; ++i) {
-			out.append(_field.type());
-		}
-		if (minFractionDigit != 0 || maxFractionDigit != 0) {
+		out.append(String.valueOf(_field.type()).repeat(max(0, minValDigit)));
+		if (minFracDigit != 0 || maxFracDigit != 0) {
 			out.append('.');
 		}
-		for (int i = 0; i < minFractionDigit; ++i) {
-			out.append(_field.type());
-		}
+		out.append(String.valueOf(_field.type()).repeat(max(0, minFracDigit)));
 
 		return out.toString();
 	}

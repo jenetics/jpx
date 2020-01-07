@@ -75,9 +75,6 @@ javadoc {
 }
 
 test {
-	outputs.upToDateWhen { false }
-	testLogging.showStandardStreams = true
-
 	useTestNG {
 		preserveOrder true
 		parallel = 'tests' // 'methods'

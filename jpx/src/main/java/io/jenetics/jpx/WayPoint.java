@@ -19,7 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.Lists.copyTo;
 import static java.time.ZoneOffset.UTC;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
@@ -438,31 +440,30 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_latitude) + 31;
-		hash += 17*Objects.hashCode(_longitude) + 31;
-		hash += 17*Objects.hashCode(_elevation) + 31;
-		hash += 17*Objects.hashCode(_speed) + 31;
-		hash += 17*Objects.hashCode(_time) + 31;
-		hash += 17*Objects.hashCode(_magneticVariation) + 31;
-		hash += 17*Objects.hashCode(_geoidHeight) + 31;
-		hash += 17*Objects.hashCode(_name) + 31;
-		hash += 17*Objects.hashCode(_comment) + 31;
-		hash += 17*Objects.hashCode(_description) + 31;
-		hash += 17*Objects.hashCode(_source) + 31;
-		hash += 17*Lists.hashCode(_links) + 31;
-		hash += 17*Objects.hashCode(_symbol) + 31;
-		hash += 17*Objects.hashCode(_type) + 31;
-		hash += 17*Objects.hashCode(_fix) + 31;
-		hash += 17*Objects.hashCode(_sat) + 31;
-		hash += 17*Objects.hashCode(_hdop) + 31;
-		hash += 17*Objects.hashCode(_vdop) + 31;
-		hash += 17*Objects.hashCode(_pdop) + 31;
-		hash += 17*Objects.hashCode(_ageOfGPSData) + 31;
-		hash += 17*Objects.hashCode(_dgpsID) + 31;
-		hash += 17*Objects.hashCode(_course) + 31;
-
-		return hash;
+		return hash(
+			_latitude,
+			_longitude,
+			_elevation,
+			_speed,
+			ZonedDateTimes.hashCode(_time),
+			_magneticVariation,
+			_geoidHeight,
+			_name,
+			_comment,
+			_description,
+			_source,
+			Lists.hashCode(_links),
+			_symbol,
+			_type,
+			_fix,
+			_sat,
+			_hdop,
+			_vdop,
+			_pdop,
+			_ageOfGPSData,
+			_dgpsID,
+			_course
+		);
 	}
 
 	@Override
@@ -803,7 +804,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current magnetic variation value.
 		 *
-		 * @version 1.1
+		 * @since 1.1
 		 *
 		 * @return the current magnetic variation value
 		 */
@@ -964,7 +965,7 @@ public final class WayPoint implements Point, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			Lists.copyTo(links, _links);
+			copyTo(links, _links);
 			return this;
 		}
 

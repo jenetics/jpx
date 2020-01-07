@@ -112,7 +112,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 				.build()
 		);
 		Assert.assertTrue(XML.equals(
-			gpx.getWayPoints().get(0).getExtensions().get(),
+			gpx.getWayPoints().get(0).getExtensions().orElseThrow(),
 			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
 		));
 	}

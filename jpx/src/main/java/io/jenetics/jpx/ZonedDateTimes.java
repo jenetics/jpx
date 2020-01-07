@@ -72,6 +72,13 @@ final class ZonedDateTimes {
 			: ZoneOffset.ofTotalSeconds(offsetByte*900);
 	}
 
+	static int hashCode(final ZonedDateTime a) {
+		final Instant i = a != null
+			? a.toInstant().truncatedTo(ChronoUnit.SECONDS)
+			: null;
+		return Objects.hashCode(i);
+	}
+
 	/**
 	 * Tests if the given date times represents the same point on the time-line.
 	 *

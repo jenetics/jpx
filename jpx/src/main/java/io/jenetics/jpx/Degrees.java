@@ -47,6 +47,22 @@ public final class Degrees
 
 	private static final long serialVersionUID = 2L;
 
+	/**
+	 * A constant holding the maximum value a {@code Degrees} value can have,
+	 * 0 inclusively.
+	 *
+	 * @since !__version__!
+	 */
+	public static final double MIN_VALUE = 0;
+
+	/**
+	 * A constant holding the maximum value a {@code Degrees} value can have,
+	 * 360 inclusively.
+	 *
+	 * @since !__version__!
+	 */
+	public static final double MAX_VALUE = 360;
+
 	private final double _value;
 
 	/**
@@ -58,7 +74,7 @@ public final class Degrees
 	 *         range of {@code [0..360]}
 	 */
 	private Degrees(final double value) {
-		if (value < 0 || value >= 360) {
+		if (value < MIN_VALUE || value >= MAX_VALUE) {
 			throw new IllegalArgumentException(format(
 				"%f not in the range [0, 360).", value
 			));

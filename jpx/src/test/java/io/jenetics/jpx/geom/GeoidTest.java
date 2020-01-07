@@ -24,6 +24,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import io.jenetics.jpx.Length;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -128,10 +129,12 @@ public class GeoidTest {
 
 	@Test(expectedExceptions = UnsupportedOperationException.class)
 	public void parallelPointStream() {
-		Stream.generate(() -> WayPointTest.nextWayPoint(new Random()))
+		Length length = Stream.generate(() -> WayPointTest.nextWayPoint(new Random()))
 			.limit(1000)
 			.parallel()
 			.collect(GEOID.toPathLength());
+
+		Assert.assertNotNull(length);
 	}
 
 }

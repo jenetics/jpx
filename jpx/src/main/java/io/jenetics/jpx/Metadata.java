@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.ZonedDateTimeFormat.format;
+import static java.util.Objects.hash;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -255,16 +256,16 @@ public final class Metadata implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_name) + 31;
-		hash += 17*Objects.hashCode(_description) + 31;
-		hash += 17*Objects.hashCode(_author) + 31;
-		hash += 17*Objects.hashCode(_copyright) + 31;
-		hash += 17*Lists.hashCode(_links) + 31;
-		hash += 17*Objects.hashCode(_time) + 31;
-		hash += 17*Objects.hashCode(_keywords) + 31;
-		hash += 17*Objects.hashCode(_bounds) + 31;
-		return hash;
+		return hash(
+			_name,
+			_description,
+			_author,
+			_copyright,
+			Lists.hashCode(_links),
+			ZonedDateTimes.hashCode(_time),
+			_keywords,
+			_bounds
+		);
 	}
 
 	@Override

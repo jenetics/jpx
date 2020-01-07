@@ -19,7 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.Lists.copyTo;
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copyOf;
@@ -279,17 +281,16 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 31;
-		hash += 17*Objects.hashCode(_name) + 37;
-		hash += 17*Objects.hashCode(_comment) + 37;
-		hash += 17*Objects.hashCode(_description) + 37;
-		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*Objects.hashCode(_type) + 37;
-		hash += 17*Lists.hashCode(_links) + 37;
-		hash += 17*Objects.hashCode(_number) + 37;
-		hash += 17*Objects.hashCode(_segments) + 37;
-
-		return hash;
+		return hash(
+			_name,
+			_comment,
+			_description,
+			_source,
+			_type,
+			Lists.hashCode(_links),
+			_number,
+			_segments
+		);
 	}
 
 	@Override
@@ -434,7 +435,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			Lists.copyTo(links, _links);
+			copyTo(links, _links);
 			return this;
 		}
 
@@ -572,7 +573,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder segments(final List<TrackSegment> segments) {
-			Lists.copyTo(segments, _segments);
+			copyTo(segments, _segments);
 			return this;
 		}
 

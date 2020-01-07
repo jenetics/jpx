@@ -19,7 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.Lists.copyTo;
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Lists.copyOf;
@@ -271,17 +273,16 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 31;
-		hash += 17*Objects.hashCode(_name) + 37;
-		hash += 17*Objects.hashCode(_comment) + 37;
-		hash += 17*Objects.hashCode(_description) + 37;
-		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*Objects.hashCode(_type) + 37;
-		hash += 17*Lists.hashCode(_links) + 31;
-		hash += 17*Objects.hashCode(_number) + 37;
-		hash += 17*Objects.hashCode(_points) + 37;
-
-		return hash;
+		return hash(
+			_name,
+			_comment,
+			_description,
+			_source,
+			_type,
+			Lists.hashCode(_links),
+			_number,
+			_points
+		);
 	}
 
 	@Override
@@ -442,7 +443,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			Lists.copyTo(links, _links);
+			copyTo(links, _links);
 			return this;
 		}
 
@@ -455,7 +456,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addLink(final Link link) {
 			_links.add(requireNonNull(link));
-
 			return this;
 		}
 
@@ -471,7 +471,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addLink(final String href) {
 			_links.add(Link.of(href));
-
 			return this;
 		}
 
@@ -582,7 +581,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @throws NullPointerException if one of the way-points is {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			Lists.copyTo(points, _points);
+			copyTo(points, _points);
 			return this;
 		}
 
@@ -595,7 +594,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addPoint(final WayPoint point) {
 			_points.add(requireNonNull(point));
-
 			return this;
 		}
 

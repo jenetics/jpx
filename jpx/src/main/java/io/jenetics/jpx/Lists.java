@@ -21,8 +21,12 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Helper methods for handling lists. All method handles null values correctly.
@@ -66,7 +70,7 @@ final class Lists {
 			if (b != null) {
 				result = a.size() == b.size();
 				if (result) {
-					result = a.containsAll(b);
+					result = a.isEmpty()|| containsAll(a, b);
 				}
 			}
 		} else {
@@ -74,6 +78,34 @@ final class Lists {
 		}
 
 		return result;
+	}
+
+	private static boolean containsAll(final Collection<?> a, final Collection<?> b) {
+		final Iterator<?> ita = a.iterator();
+		final Set<Object> visited = new HashSet<>();
+
+		for (final Object next : b) {
+			if (visited.contains(next)) {
+				continue;
+			}
+
+			boolean foundCurrentElement = false;
+			while (ita.hasNext()) {
+				final Object p = ita.next();
+				visited.add(p);
+
+				if (Objects.equals(next, p)) {
+					foundCurrentElement = true;
+					break;
+				}
+			}
+
+			if (!foundCurrentElement) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

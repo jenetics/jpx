@@ -19,10 +19,8 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.String.format;
-import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Lists.copyOf;
-import static io.jenetics.jpx.XMLWriter.elem;
+import io.jenetics.jpx.GPX.Version;
+import org.w3c.dom.Document;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -41,9 +39,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.w3c.dom.Document;
-
-import io.jenetics.jpx.GPX.Version;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
+import static io.jenetics.jpx.XMLWriter.elem;
+import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A Track Segment holds a list of Track Points which are logically connected in
@@ -201,7 +201,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			Lists.copyTo(points, _points);
+			copyTo(points, _points);
 			return this;
 		}
 

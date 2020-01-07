@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx;
 
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.parseURI;
 import static io.jenetics.jpx.Format.uriString;
@@ -95,11 +96,7 @@ public final class Copyright implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 31;
-		hash += 17*Objects.hashCode(_author) + 37;
-		hash += 17*Objects.hashCode(_year) + 37;
-		hash += 17*Objects.hashCode(_license) + 37;
-		return hash;
+		return hash(_author, _year, _license);
 	}
 
 	@Override

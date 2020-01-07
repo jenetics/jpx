@@ -259,7 +259,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.findFirst()
-			.orElseThrow(NoSuchElementException::new);
+			.orElseThrow();
 
 		Assert.assertEquals(
 			point.getLatitude(),
@@ -509,7 +509,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.filter(wp -> wp.getCourse().isPresent())
-			.map(wp -> wp.getCourse().orElseThrow(IllegalArgumentException::new))
+			.map(wp -> wp.getCourse().orElseThrow())
 			.collect(Collectors.toList());
 
 		Assert.assertEquals(
@@ -648,7 +648,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		//GPX.writer("    ").write(gpx, System.out);
 		Assert.assertTrue(XML.equals(
 			expected.getDocumentElement(),
-			gpx.getExtensions().get().getDocumentElement()
+			gpx.getExtensions().orElseThrow().getDocumentElement()
 		));
 	}
 
@@ -678,7 +678,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		Assert.assertTrue(XML.equals(
 			XML.removeNS(extensions),
-			gpx.getExtensions().get()
+			gpx.getExtensions().orElseThrow()
 		));
 	}
 
@@ -819,9 +819,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final long extensions = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.flatMap(p -> p.getExtensions()
-				.map(Stream::of)
-				.orElse(Stream.empty()))
+			.flatMap(p -> p.getExtensions().stream())
 			.count();
 		Assert.assertEquals(extensions, 479L);
 	}

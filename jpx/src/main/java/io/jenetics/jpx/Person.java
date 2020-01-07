@@ -28,6 +28,8 @@ import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
 
+import static java.util.Objects.hash;
+
 /**
  * A person or organization.
  *
@@ -107,11 +109,7 @@ public final class Person implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_name) + 31;
-		hash += 17*Objects.hashCode(_email) + 31;
-		hash += 17*Objects.hashCode(_link) + 31;
-		return hash;
+		return hash(_name, _email, _link);
 	}
 
 	@Override

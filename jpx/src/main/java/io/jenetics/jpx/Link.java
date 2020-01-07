@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.parseURI;
 
@@ -93,11 +94,7 @@ public final class Link implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_href) + 31;
-		hash += 17*Objects.hashCode(_text) + 31;
-		hash += 17*Objects.hashCode(_type) + 31;
-		return hash;
+		return hash(_href, _text, _type);
 	}
 
 	@Override

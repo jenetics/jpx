@@ -19,7 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static io.jenetics.jpx.Lists.copyTo;
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copyOf;
 
@@ -153,7 +155,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.5
+ * @version !__version__!
  * @since 1.0
  */
 public final class GPX implements Serializable {
@@ -404,14 +406,14 @@ public final class GPX implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_creator) + 31;
-		hash += 17*Objects.hashCode(_version) + 31;
-		hash += 17*Objects.hashCode(_metadata) + 31;
-		hash += 17*Objects.hashCode(_wayPoints) + 31;
-		hash += 17*Objects.hashCode(_routes) + 31;
-		hash += 17*Objects.hashCode(_tracks) + 31;
-		return hash;
+		return hash(
+			_creator,
+			_version,
+			_metadata,
+			_wayPoints,
+			_routes,
+			_tracks
+		);
 	}
 
 	@Override
@@ -558,7 +560,7 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public Builder wayPoints(final List<WayPoint> wayPoints) {
-			Lists.copyTo(wayPoints, _wayPoints);
+			copyTo(wayPoints, _wayPoints);
 			return this;
 		}
 
@@ -615,7 +617,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the routes is {@code null}
 		 */
 		public Builder routes(final List<Route> routes) {
-			Lists.copyTo(routes, _routes);
+			copyTo(routes, _routes);
 			return this;
 		}
 
@@ -628,7 +630,6 @@ public final class GPX implements Serializable {
 		 */
 		public Builder addRoute(final Route route) {
 			_routes.add(requireNonNull(route));
-
 			return this;
 		}
 
@@ -672,7 +673,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the tracks is {@code null}
 		 */
 		public Builder tracks(final List<Track> tracks) {
-			Lists.copyTo(tracks, _tracks);
+			copyTo(tracks, _tracks);
 			return this;
 		}
 
@@ -807,7 +808,7 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.map(mapper)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -822,7 +823,7 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.flatMap(wp -> mapper.apply(wp).stream())
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -870,7 +871,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.filter(predicate)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -883,7 +884,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.map(mapper)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -896,7 +897,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.flatMap(route -> mapper.apply(route).stream())
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -947,7 +948,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.filter(predicate)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -960,7 +961,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.map(mapper)
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -973,7 +974,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.flatMap(track -> mapper.apply(track).stream())
-							.collect(Collectors.toList())
+							.collect(Collectors.toUnmodifiableList())
 					);
 
 					return this;
@@ -1568,8 +1569,8 @@ public final class GPX implements Serializable {
 	private static final XMLWriters<GPX> WRITERS = new XMLWriters<GPX>()
 		.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
 		.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
-		.v11(XMLWriter.ns("http://www.topografix.com/GPX/1/1"))
-		.v10(XMLWriter.ns("http://www.topografix.com/GPX/1/0"))
+		.v11(XMLWriter.ns(Version.V11.getNamespaceURI()))
+		.v10(XMLWriter.ns(Version.V10.getNamespaceURI()))
 		.v11(Metadata.WRITER.map(gpx -> gpx._metadata))
 		.v10(XMLWriter.elem("name").map(GPX::name))
 		.v10(XMLWriter.elem("desc").map(GPX::desc))
