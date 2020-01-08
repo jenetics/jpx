@@ -19,8 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import static java.lang.Double.doubleToLongBits;
-import static java.lang.Double.longBitsToDouble;
 import static java.lang.String.format;
 
 import java.io.DataInput;
@@ -60,18 +58,15 @@ public final class Longitude extends Number implements Serializable {
 
 	/**
 	 * A constant holding the maximum value a {@code Latitude} value can have,
-	 * 179.99999999999997. This is the greatest {@code double} value smaller
-	 * than 180.0.
+	 * 180 inclusively.
 	 *
 	 * @since 2.0
 	 */
-	public static final double MAX_DEGREES =
-		longBitsToDouble(doubleToLongBits(180) - 1);
+	public static final double MAX_DEGREES = 180;
 
 	/**
 	 * A constant holding the maximum value a {@code Latitude} value can have,
-	 * 179.99999999999997. This is the greatest {@code double} value smaller
-	 * than 180.0.
+	 * 180 inclusively.
 	 *
 	 * @since 2.0
 	 */
@@ -84,7 +79,7 @@ public final class Longitude extends Number implements Serializable {
 	 *
 	 * @param value the longitude value in decimal degrees
 	 * @throws IllegalArgumentException if the given value is not within the
-	 *         range of {@code [-180..180)}
+	 *         range of {@code [-180..180]}
 	 */
 	private Longitude(final double value) {
 		if (value < MIN_DEGREES || value > MAX_DEGREES) {
