@@ -38,7 +38,7 @@ final class Strings {
 	 * @return the trimmed string value
 	 */
 	static String trim(final String value) {
-		return value != null && !value.isBlank() ? value.trim() : null;
+		return value != null && !value.isBlank() ? value.strip() : null;
 	}
 
 }
