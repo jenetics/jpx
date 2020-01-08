@@ -143,6 +143,7 @@ public final class Copyright implements Serializable {
 	 * @param license link to external file containing license text.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
+	 * @throws java.time.DateTimeException if the given {@code year} is invalid
 	 */
 	public static Copyright of(
 		final String author,
@@ -162,6 +163,7 @@ public final class Copyright implements Serializable {
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 * @throws IllegalArgumentException if the given {@code license} is not a
 	 *         valid {@code URI} object
+	 * @throws java.time.DateTimeException if the given {@code year} is invalid
 	 */
 	public static Copyright of(
 		final String author,
@@ -190,6 +192,7 @@ public final class Copyright implements Serializable {
 	 * @param year year of copyright.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
+	 * @throws java.time.DateTimeException if the given {@code year} is invalid
 	 */
 	public static Copyright of(final String author, final int year) {
 		return new Copyright(author, Year.of(year), null);
