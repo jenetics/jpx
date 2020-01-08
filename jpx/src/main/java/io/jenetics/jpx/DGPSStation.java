@@ -35,7 +35,7 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 2.0
  * @since 1.0
  */
 public final class DGPSStation
