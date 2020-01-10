@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -486,8 +485,9 @@ final class IO {
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		try {
-			return DocumentBuilderFactory
-				.newInstance()
+			return XMLProvider
+				.provider()
+				.documentBuilderFactory()
 				.newDocumentBuilder()
 				.parse(bin);
 		} catch (ParserConfigurationException|SAXException e) {

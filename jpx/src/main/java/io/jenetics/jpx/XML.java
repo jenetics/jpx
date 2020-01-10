@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -131,14 +130,10 @@ final class XML {
 		throws XMLStreamException
 	{
 		try {
-			final DocumentBuilderFactory factory =
-				DocumentBuilderFactory.newInstance();
-
-			factory.setValidating(true);
-			factory.setIgnoringElementContentWhitespace(true);
-			factory.setNamespaceAware(true);
-
-			return factory.newDocumentBuilder();
+			return XMLProvider
+				.provider()
+				.documentBuilderFactory()
+				.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			throw new XMLStreamException(e);
 		}
