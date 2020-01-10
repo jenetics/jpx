@@ -64,7 +64,6 @@ public abstract class XMLProvider {
 	 */
 	public DocumentBuilderFactory documentBuilderFactory() {
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		factory.setValidating(true);
 		factory.setIgnoringElementContentWhitespace(true);
 		factory.setNamespaceAware(true);
 		return factory;

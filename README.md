@@ -277,12 +277,12 @@ You can change the used classes by implementing and registering a different `XML
 
 ```java
 package org.acme;
-final class NonValidatingDocumentBuilder extends XMLProvider { 
+final class ValidatingDocumentBuilder extends XMLProvider { 
     @Override
     public DocumentBuilderFactory documentBuilderFactory() { 
         final DocumentBuilderFactory factory = 
             DocumentBuilderFactory.newInstance();
-        factory.setValidating(false);
+        factory.setValidating(true);
         factory.setNamespaceAware(true);
         return factory; 
     }
