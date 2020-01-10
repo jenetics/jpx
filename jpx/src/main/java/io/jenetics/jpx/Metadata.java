@@ -54,7 +54,7 @@ import org.w3c.dom.Document;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.5
+ * @version 2.0
  * @since 1.0
  */
 public final class Metadata implements Serializable {
@@ -454,12 +454,14 @@ public final class Metadata implements Serializable {
 		 *
 		 * @param href the link to add to the metadata
 		 * @return {@code this} {@code Builder} for method chaining
-		 * @throws NullPointerException if the given {@code href} is {@code null}
 		 * @throws IllegalArgumentException if the given {@code href} is not a
 		 *         valid URL
 		 */
 		public Builder addLink(final String href) {
-			return addLink(Link.of(href));
+			if (href != null) {
+				addLink(Link.of(href));
+			}
+			return this;
 		}
 
 		/**
