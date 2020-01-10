@@ -314,6 +314,11 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
+
+#### Improvements
+
+* [#116](https://github.com/jenetics/jpx/issues/116): Create `XMLProvider` SPI, which allows to change the used XML implementation. (Implemented by [avianey](https://github.com/avianey).)
 
 ### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
 
