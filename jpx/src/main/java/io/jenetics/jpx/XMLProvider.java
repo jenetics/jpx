@@ -34,7 +34,7 @@ import java.util.ServiceLoader;
  */
 public abstract class XMLProvider {
 
-	private static XMLProvider INSTANCE;
+	private static volatile XMLProvider INSTANCE;
 	private static final Object lock = new Object();
 
 	protected XMLProvider() {
