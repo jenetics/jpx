@@ -50,7 +50,7 @@ public class XMLProviderTest {
 			@Override
 			public Enumeration<URL> getResources(final String name) throws IOException {
 				if ("META-INF/services/io.jenetics.jpx.XMLProvider".equals(name)) {
-					return new Enumeration<>() {
+					return new Enumeration<URL>() {
 
 						private URL serviceFile =
 							new File("src/test/resources/io/jenetics/jpx/io.jenetics.jpx.XMLProvider")
