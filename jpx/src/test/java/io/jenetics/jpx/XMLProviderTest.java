@@ -31,10 +31,7 @@ public class XMLProviderTest {
 
 	public static final String MESSAGE = "provider does not support documentBuilderFactory";
 
-	public static class TestXMLProvider extends XMLProviderImpl {
-		public TestXMLProvider() {
-			super();
-		}
+	public static class TestXMLProvider extends XMLProvider {
 		public DocumentBuilderFactory documentBuilderFactory() {
 			throw new UnsupportedOperationException(MESSAGE);
 		}

@@ -29,8 +29,6 @@ import java.util.ServiceLoader;
 /**
  * A {@link ServiceLoader} for managing XML factories used by the library.
  * Custom implementation should be referenced in a META-INF/services/io.jenetics.jpx.XMLProvider file
- *
- * @see XMLProviderImpl
  */
 public abstract class XMLProvider {
 
@@ -45,21 +43,31 @@ public abstract class XMLProvider {
 	 *
 	 * @return the xml input factory
 	 */
-	public abstract XMLInputFactory xmlInputFactory();
+	public XMLInputFactory xmlInputFactory() {
+		return XMLInputFactory.newInstance();
+	}
 
 	/**
 	 * Returns {@link XMLOutputFactory} to be used for writing files.
 	 *
 	 * @return the xml output factory
 	 */
-	public abstract XMLOutputFactory xmlOutputFactory();
+	public XMLOutputFactory xmlOutputFactory() {
+		return XMLOutputFactory.newInstance();
+	}
 
 	/**
 	 * Returns the {@link DocumentBuilderFactory} used for handling extensions documents
 	 *
 	 * @return the document builder factory
 	 */
-	public abstract DocumentBuilderFactory documentBuilderFactory();
+	public DocumentBuilderFactory documentBuilderFactory() {
+		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		factory.setValidating(true);
+		factory.setIgnoringElementContentWhitespace(true);
+		factory.setNamespaceAware(true);
+		return factory;
+	}
 
 	public static XMLProvider provider() {
 		if (INSTANCE == null) {
@@ -91,7 +99,7 @@ public abstract class XMLProvider {
 		if (providers.hasNext()) {
 			INSTANCE = providers.next();
 		} else {
-			INSTANCE = new XMLProviderImpl();
+			INSTANCE = new XMLProvider() {};
 		}
 	}
 
