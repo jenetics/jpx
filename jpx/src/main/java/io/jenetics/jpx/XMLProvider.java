@@ -20,11 +20,12 @@
  */
 package io.jenetics.jpx;
 
+import java.util.Iterator;
+import java.util.ServiceLoader;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 
 /**
  * A {@link ServiceLoader} for managing XML factories used by the library.
