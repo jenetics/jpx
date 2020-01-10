@@ -1101,7 +1101,7 @@ public final class GPX implements Serializable {
 		public GPX read(final InputStream input)
 			throws IOException, InvalidObjectException
 		{
-			final XMLInputFactory factory = XMLInputFactory.newInstance();
+			final XMLInputFactory factory = XMLProvider.provider().xmlInputFactory();
 			try  (XMLStreamReaderAdapter reader = new XMLStreamReaderAdapter(
 						factory.createXMLStreamReader(input)))
 			{
@@ -1231,7 +1231,7 @@ public final class GPX implements Serializable {
 		public void write(final GPX gpx, final OutputStream output)
 			throws IOException
 		{
-			final XMLOutputFactory factory = XMLOutputFactory.newInstance();
+			final XMLOutputFactory factory = XMLProvider.provider().xmlOutputFactory();
 			try (XMLStreamWriterAdapter xml = writer(factory, output)) {
 				xml.writeStartDocument("UTF-8", "1.0");
 				GPX.xmlWriter(gpx._version).write(xml, gpx);

@@ -126,7 +126,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
+		final XMLOutputFactory factory = XMLProvider.provider().xmlOutputFactory();
 		final XMLStreamWriter streamWriter = new IndentingXMLStreamWriter(
 			factory.createXMLStreamWriter(out, "UTF-8"), "    ");
 
@@ -139,8 +139,8 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	{
 		final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 		final XMLStreamReaderAdapter streamReader = new XMLStreamReaderAdapter(
-			XMLInputFactory
-				.newFactory()
+			XMLProvider.provider()
+				.xmlInputFactory()
 				.createXMLStreamReader(in)
 		);
 
