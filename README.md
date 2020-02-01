@@ -265,6 +265,35 @@ final GPX gpx1 = gpx.toBuilder()
     .build();
 ```
 
+### XML configuration
+
+The _JPX_ library uses the XML classes available in the Java [`java.xml`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/module-summary.html) module. This API is highly configurable and it is possible to replace the underlying implementation. Especially for Android, using different XML implementation is a necessity. _JPX_ uses three _factory_ classes for reading/writing GPX files:
+
+1. [`XMLInputFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/stream/XMLInputFactory.html): This class is needed for reading GPX files.
+1. [`XMLOutputFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/stream/XMLOutputFactory.html): This class is needed for writing GPX files.
+1. [`DocumentBuilderFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/parsers/DocumentBuilderFactory.html): This class is used for creating XML-documents for the GPX `extensions` data.
+
+You can change the used classes by implementing and registering a different `XMLProvider` class. The following code show how to change the configuration of the `DocumentBuilderFactory` class.
+
+```java
+package org.acme;
+final class ValidatingDocumentBuilder extends XMLProvider { 
+    @Override
+    public DocumentBuilderFactory documentBuilderFactory() { 
+        final DocumentBuilderFactory factory = 
+            DocumentBuilderFactory.newInstance();
+        factory.setValidating(true);
+        factory.setNamespaceAware(true);
+        return factory; 
+    }
+}
+```
+And don't forget to create a `META-INF/services/io.jenetics.jpx.XMLProvider` file with the following content:
+
+```
+org.acme.NonValidatingDocumentBuilder
+```
+
 ## License
 
 The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
@@ -285,6 +314,11 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
+
+#### Improvements
+
+* [#116](https://github.com/jenetics/jpx/issues/116): Create `XMLProvider` SPI, which allows to change the used XML implementation. (Implemented by [avianey](https://github.com/avianey).)
 
 ### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
 

@@ -40,7 +40,7 @@ public class XMLTest {
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void checkExtensionsMissingRootElement() throws ParserConfigurationException {
-		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		final DocumentBuilderFactory dbf = XMLProvider.provider().documentBuilderFactory();
 		final DocumentBuilder db = dbf.newDocumentBuilder();
 		final Document doc = db.newDocument();
 
@@ -49,7 +49,7 @@ public class XMLTest {
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void checkExtensionsWrongRootElement() throws ParserConfigurationException {
-		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		final DocumentBuilderFactory dbf = XMLProvider.provider().documentBuilderFactory();
 		final DocumentBuilder db = dbf.newDocumentBuilder();
 		final Document doc = db.newDocument();
 		final Element root = doc.createElement("ext");
@@ -60,7 +60,7 @@ public class XMLTest {
 
 	@Test(expectedExceptions = IllegalArgumentException.class)
 	public void checkExtensionsWrongRootElementNS() throws ParserConfigurationException {
-		final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+		final DocumentBuilderFactory dbf = XMLProvider.provider().documentBuilderFactory();
 		final DocumentBuilder db = dbf.newDocumentBuilder();
 		final Document doc = db.newDocument();
 		final Element root = doc.createElementNS(
