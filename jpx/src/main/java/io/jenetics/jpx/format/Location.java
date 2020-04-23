@@ -25,8 +25,6 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Length.Unit.METER;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -101,8 +99,9 @@ public final class Location {
 	 */
 	public Optional<Point> toPoint() {
 		return latitude().flatMap(lat ->
-			longitude()
-				.map(lon -> WayPoint.of(lat, lon, _elevation, null))
+			longitude().map(lon ->
+				WayPoint.of(lat, lon, _elevation, null)
+			)
 		);
 	}
 
@@ -307,13 +306,6 @@ public final class Location {
 			"elevation", 'H',
 			loc -> loc.elevation().map(l -> abs(l.to(METER)))
 		);
-
-		static final Map<Character, Field> FIELD_MAP = new HashMap<>();
-		static {
-			for (final Field field : values()) {
-				FIELD_MAP.put(field.type(), field);
-			}
-		};
 
 		private final String _name;
 		private final char _type;

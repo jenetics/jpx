@@ -23,7 +23,7 @@ package io.jenetics.jpx;
  * Some string helper methods.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.5.2
+ * @version 2.0
  * @since 1.5.2
  */
 final class Strings {
@@ -38,15 +38,7 @@ final class Strings {
 	 * @return the trimmed string value
 	 */
 	static String trim(final String value) {
-		String result = null;
-		if (value != null) {
-			result = value.trim();
-			if (result.isEmpty()) {
-				result = null;
-			}
-		}
-
-		return result;
+		return value != null && !value.isBlank() ? value.strip() : null;
 	}
 
 }

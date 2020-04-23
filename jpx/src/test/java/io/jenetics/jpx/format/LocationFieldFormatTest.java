@@ -21,8 +21,6 @@ package io.jenetics.jpx.format;
 
 import java.util.Random;
 
-import org.testng.annotations.Test;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */

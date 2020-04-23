@@ -19,19 +19,14 @@
  */
 package io.jenetics.jpx;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -70,9 +65,9 @@ public final class Filters {
 	) {
 		final List<WayPoint> points = segments.stream()
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.collect(toUnmodifiableList());
 
-		return Collections.singletonList(TrackSegment.of(points));
+		return List.of(TrackSegment.of(points));
 	}
 
 	/**
@@ -94,11 +89,11 @@ public final class Filters {
 	public static List<Track> mergeTracks(final List<Track> tracks) {
 		final List<TrackSegment> segments = tracks.stream()
 			.flatMap(Track::segments)
-			.collect(Collectors.toList());
+			.collect(toUnmodifiableList());
 
 		return tracks.isEmpty()
-			? emptyList()
-			: singletonList(
+			? List.of()
+			: List.of(
 				tracks.get(0).toBuilder()
 					.segments(segments)
 					.build()
@@ -126,13 +121,13 @@ public final class Filters {
 		final List<WayPoint> points = tracks.stream()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.collect(toUnmodifiableList());
 
 		return tracks.isEmpty()
-			? emptyList()
-			: singletonList(
+			? List.of()
+			: List.of(
 					tracks.get(0).toBuilder()
-						.segments(singletonList(TrackSegment.of(points)))
+						.segments(List.of(TrackSegment.of(points)))
 						.build()
 				);
 	}
@@ -175,7 +170,7 @@ public final class Filters {
 	public static List<Route> nonEmptyRoutes(final List<Route> routes) {
 		return routes.stream()
 			.filter(Route::nonEmpty)
-			.collect(toList());
+			.collect(toUnmodifiableList());
 	}
 
 	/**
@@ -191,7 +186,7 @@ public final class Filters {
 				.listMap(Filters::nonEmptySegments)
 				.build())
 			.filter(Track::nonEmpty)
-			.collect(toList());
+			.collect(toUnmodifiableList());
 	}
 
 	/**
@@ -206,7 +201,7 @@ public final class Filters {
 	) {
 		return segments.stream()
 			.filter(TrackSegment::nonEmpty)
-			.collect(toList());
+			.collect(toUnmodifiableList());
 	}
 
 	static List<Track> splitByDay(final Track track) {
@@ -216,7 +211,7 @@ public final class Filters {
 			.stream()
 			.map(TrackSegment::of)
 			.map(segment -> Track.builder().addSegment(segment).build())
-			.collect(toList());
+			.collect(toUnmodifiableList());
 	}
 
 	private static List<List<WayPoint>> splitWayPointsByDay(
@@ -228,15 +223,15 @@ public final class Filters {
 				.orElse(LocalDate.MIN)));
 
 		return parts.entrySet().stream()
-			.sorted(Comparator.comparing(Entry::getKey))
+			.sorted(Entry.comparingByKey())
 			.map(Entry::getValue)
-			.collect(Collectors.toList());
+			.collect(toUnmodifiableList());
 	}
 
 	static List<TrackSegment> splitByDay(final TrackSegment segment) {
 		return splitWayPointsByDay(segment.points()).stream()
 			.map(TrackSegment::of)
-			.collect(Collectors.toList());
+			.collect(toUnmodifiableList());
 	}
 
 }

@@ -29,7 +29,7 @@ import java.io.StreamCorruptedException;
  * The shared serialization delegate for this package.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 2.0
  * @since 1.2
  */
 final class Serial implements Externalizable {
@@ -104,7 +104,9 @@ final class Serial implements Externalizable {
 			case UINT: ((UInt)_object).write(out); break;
 			case WAY_POINT: ((WayPoint)_object).write(out); break;
 			default:
-				throw new StreamCorruptedException("Unknown serialized type.");
+				throw new StreamCorruptedException(
+					"Unknown serialized type: " + _type
+				);
 		}
 	}
 
@@ -131,7 +133,9 @@ final class Serial implements Externalizable {
 			case UINT: _object = UInt.read(in); break;
 			case WAY_POINT: _object = WayPoint.read(in); break;
 			default:
-				throw new StreamCorruptedException("Unknown serialized type.");
+				throw new StreamCorruptedException(
+					"Unknown serialized type: " + _type
+				);
 		}
 	}
 

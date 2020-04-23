@@ -45,7 +45,7 @@ public interface Filter<T, R> {
 	 *        element to determine if it should be included
 	 * @return a new filter
 	 */
-	public Filter<T, R> filter(final Predicate<? super T> predicate);
+	Filter<T, R> filter(final Predicate<? super T> predicate);
 
 	/**
 	 * Return a filter with the results of applying the given mapper function.
@@ -54,7 +54,7 @@ public interface Filter<T, R> {
 	 *        element
 	 * @return a new filter
 	 */
-	public Filter<T, R> map(final Function<? super T, ? extends T> mapper);
+	Filter<T, R> map(final Function<? super T, ? extends T> mapper);
 
 	/**
 	 * Return a filter consisting of the results of replacing each element with
@@ -64,8 +64,7 @@ public interface Filter<T, R> {
 	 *        element which produces a list of new values
 	 * @return a new filter
 	 */
-	public Filter<T, R>
-	flatMap(final Function<? super T, ? extends List<T>> mapper);
+	Filter<T, R> flatMap(final Function<? super T, ? extends List<T>> mapper);
 
 	/**
 	 * Return a filter with the results of the applying given mapper function.
@@ -74,8 +73,7 @@ public interface Filter<T, R> {
 	 *        existing elements
 	 * @return a new filter
 	 */
-	public Filter<T, R>
-	listMap(final Function<? super List<T>, ? extends List<T>> mapper);
+	Filter<T, R> listMap(final Function<? super List<T>, ? extends List<T>> mapper);
 
 	/**
 	 * Return a new object of type {@code R} which contains the elements of the
@@ -83,6 +81,6 @@ public interface Filter<T, R> {
 	 *
 	 * @return a new object created from the given filter
 	 */
-	public R build();
+	R build();
 
 }

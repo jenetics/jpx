@@ -33,7 +33,7 @@ import java.io.Serializable;
  * the range of {@code [-90..90]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.0
  * @since 1.0
  */
 public final class Latitude extends Number implements Serializable {
@@ -41,18 +41,36 @@ public final class Latitude extends Number implements Serializable {
 	private static final long serialVersionUID = 2L;
 
 	/**
-	 * A constant holding the maximum value a {@code Latitude} value can have, -90.
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -90 inclusively.
 	 *
-	 * @since 1.4
+	 * @since 2.0
 	 */
-	public static final Latitude MIN_VALUE = ofDegrees(-90);
+	public static final double MIN_DEGREES = -90;
 
 	/**
-	 * A constant holding the maximum value a {@code Latitude} value can have, 90.
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -90 inclusively.
 	 *
 	 * @since 1.4
 	 */
-	public static final Latitude MAX_VALUE = ofDegrees(90);
+	public static final Latitude MIN_VALUE = ofDegrees(MIN_DEGREES);
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 90 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final double MAX_DEGREES = 90;
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 90 inclusively.
+	 *
+	 * @since 1.4
+	 */
+	public static final Latitude MAX_VALUE = ofDegrees(MAX_DEGREES);
 
 	private final double _value;
 
@@ -64,7 +82,7 @@ public final class Latitude extends Number implements Serializable {
 	 *         range of {@code [-90..90]}
 	 */
 	private Latitude(final double value) {
-		if (value < -90 || value > 90) {
+		if (value < MIN_DEGREES || value > MAX_DEGREES) {
 			throw new IllegalArgumentException(format(
 				"%f is not in range [-90, 90].", value
 			));

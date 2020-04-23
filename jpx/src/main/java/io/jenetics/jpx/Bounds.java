@@ -22,6 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 
 import java.io.DataInput;
@@ -108,12 +109,7 @@ public final class Bounds implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 17;
-		hash += 31*Objects.hashCode(_minLatitude) + 37;
-		hash += 31*Objects.hashCode(_minLongitude) + 37;
-		hash += 31*Objects.hashCode(_maxLatitude) + 37;
-		hash += 31*Objects.hashCode(_maxLongitude) + 37;
-		return hash;
+		return hash(_minLatitude, _minLongitude, _maxLatitude, _maxLongitude);
 	}
 
 	@Override

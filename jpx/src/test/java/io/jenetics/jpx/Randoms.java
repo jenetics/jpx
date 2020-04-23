@@ -75,20 +75,15 @@ public final class Randoms {
 		}
 
 		final int value;
-
-		if (origin < bound) {
-			int n = bound - origin;
-			if (n > 0) {
-				value = random.nextInt(n) + origin;
-			} else {
-				int r;
-				do {
-					r = random.nextInt();
-				} while (r < origin || r >= bound);
-				value = r;
-			}
+		int n = bound - origin;
+		if (n > 0) {
+			value = random.nextInt(n) + origin;
 		} else {
-			value = random.nextInt();
+			int r;
+			do {
+				r = random.nextInt();
+			} while (r < origin || r >= bound);
+			value = r;
 		}
 
 		return value;

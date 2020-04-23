@@ -20,14 +20,14 @@
 package io.jenetics.jpx;
 
 import static java.time.ZoneOffset.UTC;
-import static java.util.Collections.singletonList;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.doubleString;
 import static io.jenetics.jpx.Format.durationString;
 import static io.jenetics.jpx.Format.intString;
 import static io.jenetics.jpx.Length.Unit.METER;
-import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 import static io.jenetics.jpx.Speed.Unit.METERS_PER_SECOND;
 
 import java.io.DataInput;
@@ -174,7 +174,7 @@ public final class WayPoint implements Point, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = immutable(links);
+		_links = copyOf(links);
 		_symbol = symbol;
 		_type = type;
 		_fix = fix;
@@ -440,31 +440,30 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_latitude) + 31;
-		hash += 17*Objects.hashCode(_longitude) + 31;
-		hash += 17*Objects.hashCode(_elevation) + 31;
-		hash += 17*Objects.hashCode(_speed) + 31;
-		hash += 17*Objects.hashCode(_time) + 31;
-		hash += 17*Objects.hashCode(_magneticVariation) + 31;
-		hash += 17*Objects.hashCode(_geoidHeight) + 31;
-		hash += 17*Objects.hashCode(_name) + 31;
-		hash += 17*Objects.hashCode(_comment) + 31;
-		hash += 17*Objects.hashCode(_description) + 31;
-		hash += 17*Objects.hashCode(_source) + 31;
-		hash += 17*Lists.hashCode(_links) + 31;
-		hash += 17*Objects.hashCode(_symbol) + 31;
-		hash += 17*Objects.hashCode(_type) + 31;
-		hash += 17*Objects.hashCode(_fix) + 31;
-		hash += 17*Objects.hashCode(_sat) + 31;
-		hash += 17*Objects.hashCode(_hdop) + 31;
-		hash += 17*Objects.hashCode(_vdop) + 31;
-		hash += 17*Objects.hashCode(_pdop) + 31;
-		hash += 17*Objects.hashCode(_ageOfGPSData) + 31;
-		hash += 17*Objects.hashCode(_dgpsID) + 31;
-		hash += 17*Objects.hashCode(_course) + 31;
-
-		return hash;
+		return hash(
+			_latitude,
+			_longitude,
+			_elevation,
+			_speed,
+			ZonedDateTimes.hashCode(_time),
+			_magneticVariation,
+			_geoidHeight,
+			_name,
+			_comment,
+			_description,
+			_source,
+			Lists.hashCode(_links),
+			_symbol,
+			_type,
+			_fix,
+			_sat,
+			_hdop,
+			_vdop,
+			_pdop,
+			_ageOfGPSData,
+			_dgpsID,
+			_course
+		);
 	}
 
 	@Override
@@ -805,7 +804,7 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Return the current magnetic variation value.
 		 *
-		 * @version 1.1
+		 * @since 1.1
 		 *
 		 * @return the current magnetic variation value
 		 */
@@ -966,7 +965,7 @@ public final class WayPoint implements Point, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			copyTo(links, _links);
 			return this;
 		}
 
@@ -1621,7 +1620,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param longitudeDegree the longitude of the point
 	 * @param timeEpochMilli the timestamp of the way-point
 	 * @return a new {@code WayPoint}
-	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IllegalArgumentException if one of the given arguments is invalid
 	 */
 	public static WayPoint of(
 		final double latitudeDegree,
@@ -1689,7 +1688,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param elevationMeter the elevation of the point
 	 * @param timeEpochMilli the timestamp of the way-point
 	 * @return a new {@code WayPoint}
-	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 * @throws IllegalArgumentException if one of the given arguments is invalid
 	 */
 	public static WayPoint of(
 		final double latitudeDegree,
@@ -1708,101 +1707,7 @@ public final class WayPoint implements Point, Serializable {
 		);
 	}
 
-	/**
-	 * Create a new way-point with the given parameter.
-	 *
-	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
-	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
-	 * @param elevation the elevation (in meters) of the point (optional)
-	 * @param speed the current GPS speed (optional)
-	 * @param time creation/modification timestamp for element. Conforms to ISO
-	 *        8601 specification for date/time representation. Fractional seconds
-	 *        are allowed for millisecond timing in tracklogs. (optional)
-	 * @param magneticVariation the magnetic variation at the point (optional)
-	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
-	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
-	 * @param name the GPS name of the way-point. This field will be transferred
-	 *        to and from the GPS. GPX does not place restrictions on the length
-	 *        of this field or the characters contained in it. It is up to the
-	 *        receiving application to validate the field before sending it to
-	 *        the GPS. (optional)
-	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
-	 * @param description a text description of the element. Holds additional
-	 *        information about the element intended for the user, not the GPS.
-	 *        (optional)
-	 * @param source source of data. Included to give user some idea of
-	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
-	 *        Boston North", e.g. (optional)
-	 * @param links links to additional information about the way-point. May be
-	 *        empty, but not {@code null}.
-	 * @param symbol text of GPS symbol name. For interchange with other
-	 *        programs, use the exact spelling of the symbol as displayed on the
-	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
-	 * @param type type (classification) of the way-point (optional)
-	 * @param fix type of GPX fix (optional)
-	 * @param sat number of satellites used to calculate the GPX fix (optional)
-	 * @param hdop horizontal dilution of precision (optional)
-	 * @param vdop vertical dilution of precision (optional)
-	 * @param pdop position dilution of precision. (optional)
-	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
-	 * @param dgpsID ID of DGPS station used in differential correction (optional)
-	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
-	 *         is {@code null}
-	 * @return a new {@code WayPoint}
-	 *
-	 * @deprecated Use {@link #of(Latitude, Longitude, Length, Speed, ZonedDateTime, Degrees, Length, String, String, String, String, List, String, String, Fix, UInt, Double, Double, Double, Duration, DGPSStation, Degrees)}
-	 *             instead
-	 */
-	@Deprecated
-	public static WayPoint of(
-		final Latitude latitude,
-		final Longitude longitude,
-		final Length elevation,
-		final Speed speed,
-		final ZonedDateTime time,
-		final Degrees magneticVariation,
-		final Length geoidHeight,
-		final String name,
-		final String comment,
-		final String description,
-		final String source,
-		final List<Link> links,
-		final String symbol,
-		final String type,
-		final Fix fix,
-		final UInt sat,
-		final Double hdop,
-		final Double vdop,
-		final Double pdop,
-		final Duration ageOfGPSData,
-		final DGPSStation dgpsID
-	) {
-		return of(
-			latitude,
-			longitude,
-			elevation,
-			speed,
-			time,
-			magneticVariation,
-			geoidHeight,
-			name,
-			comment,
-			description,
-			source,
-			links,
-			symbol,
-			type,
-			fix,
-			sat,
-			hdop,
-			vdop,
-			pdop,
-			ageOfGPSData,
-			dgpsID,
-			null,
-			null
-		);
-	}
+
 
 	/**
 	 * Create a new way-point with the given parameter.
@@ -2211,7 +2116,7 @@ public final class WayPoint implements Point, Serializable {
 			(String)v[9],
 			(String)v[10],
 			v[11] != null
-				? singletonList(Link.of((URI)v[11], (String)v[12], null))
+				? List.of(Link.of((URI)v[11], (String)v[12], null))
 				: null,
 			(String)v[13],
 			(String)v[14],

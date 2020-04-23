@@ -30,7 +30,7 @@ import java.util.Objects;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 2.0
  * @since 1.2
  */
 final class ZonedDateTimes {
@@ -73,7 +73,29 @@ final class ZonedDateTimes {
 	}
 
 	/**
+	 * Return the hash code of the given date time object. Actually the hash
+	 * code of its {@link Instant}, truncated to seconds, is returned. The
+	 * argument may be {@code null}.
+	 *
+	 * @param a the date time, for which the hash code is calculated
+	 * @return the <em>truncated</em> hash code
+	 */
+	static int hashCode(final ZonedDateTime a) {
+		return Objects.hashCode(toInstant(a));
+	}
+
+	private static Instant toInstant(final ZonedDateTime zdt) {
+		return zdt != null
+			? zdt.toInstant().truncatedTo(ChronoUnit.SECONDS)
+			: null;
+	}
+
+	/**
 	 * Tests if the given date times represents the same point on the time-line.
+	 * The used resolution for comparision is <em>seconds</em>. If two
+	 * {@link ZonedDateTime} objects are equal to its seconds, they are treated
+	 * as equal, even if the milli-second part is different. The argument may be
+	 * {@code null}.
 	 *
 	 * @param a the first date time
 	 * @param b the second date time
@@ -81,14 +103,7 @@ final class ZonedDateTimes {
 	 *         the time-line, {@code false} otherwise
 	 */
 	static boolean equals(final ZonedDateTime a, final ZonedDateTime b) {
-		final Instant i1 = a != null
-			? a.toInstant().truncatedTo(ChronoUnit.SECONDS)
-			: null;
-		final Instant i2 = b != null
-			? b.toInstant().truncatedTo(ChronoUnit.SECONDS)
-			: null;
-
-		return Objects.equals(i1, i2);
+		return Objects.equals(toInstant(a), toInstant(b));
 	}
 
 }

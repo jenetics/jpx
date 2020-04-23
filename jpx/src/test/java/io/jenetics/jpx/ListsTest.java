@@ -19,27 +19,13 @@
  */
 package io.jenetics.jpx;
 
-import static java.util.Collections.emptyList;
-import static java.util.Collections.unmodifiableList;
-
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-
-import org.testng.Assert;
-import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class ListsTest {
-
-	@Test
-	public void isImmutable() {
-		Assert.assertTrue(Lists.isImmutable(unmodifiableList(new ArrayList<String>())));
-		Assert.assertTrue(Lists.isImmutable(unmodifiableList(new LinkedList<>())));
-		Assert.assertTrue(Lists.isImmutable(emptyList()));
-	}
 
 	static <T> List<T> revert(final List<T> list) {
 		final List<T> result = new ArrayList<T>(list.size());

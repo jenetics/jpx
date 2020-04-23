@@ -25,8 +25,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -43,7 +41,9 @@ import io.jenetics.jpx.format.Location.Field;
 
 /**
  * Formatter for printing and parsing geographic location objects.
- * <h3 id="patterns">Patterns for Formatting and Parsing</h3>
+ * <p>
+ * <b>Patterns for Formatting and Parsing</b>
+ * <p>
  * Patterns are based on a simple sequence of letters and symbols. A pattern is
  * used to create a Formatter using the {@code #ofPattern(String)} and
  * {@code #ofPattern(String, Locale)} methods.
@@ -81,9 +81,9 @@ import io.jenetics.jpx.format.Location.Field;
  */
 public final class LocationFormatter {
 
-	static final Set<Character> PROTECTED_CHARS = new HashSet<>(Arrays.asList(
+	static final Set<Character> PROTECTED_CHARS = Set.of(
 		'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H', 'X', 'x', '+', '[', ']'
-	));
+	);
 
 	/**
 	 * Latitude formatter with the pattern <em>{@code DD°MM''SS.SSS"X}</em>.

@@ -20,7 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -64,31 +64,6 @@ final class IO {
 	 */
 	interface Reader<T> {
 		T read(final DataInput in) throws IOException;
-	}
-
-	/**
-	 * Write the given, possible {@code null}, {@code value} to the data output
-	 * using the given {@code writer}. The value is only written if it is non
-	 * {@code null}.
-	 *
-	 * @param value the, possible {@code null}, value to write
-	 * @param writer the object writer
-	 * @param out the data output
-	 * @param <T> the object type
-	 * @throws NullPointerException if the {@code writer} or data output is
-	 *         {@code null}
-	 * @throws IOException if an I/O error occurs
-	 */
-	static <T> void writeNonNull(
-		final T value,
-		 final Writer<? super T> writer,
-		 final DataOutput out
-	)
-		throws IOException
-	{
-		if (value != null) {
-			writer.write(value, out);
-		}
 	}
 
 	/**
@@ -241,7 +216,7 @@ final class IO {
 		for (int i = 0; i < length; ++i) {
 			elements.add(reader.read(in));
 		}
-		return immutable(elements);
+		return copyOf(elements);
 	}
 
 	/**
