@@ -314,6 +314,13 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [2.0.0](https://github.com/jenetics/jpx/releases/tag/v2.0.0)
+
+#### Improvements
+
+* [#68](https://github.com/jenetics/jpx/issues/68): Remove deprecated methods.
+* [#113](https://github.com/jenetics/jpx/issues/113): Upgrade to Java 11.
+
 ### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
 
 #### Improvements
