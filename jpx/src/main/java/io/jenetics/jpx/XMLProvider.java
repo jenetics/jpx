@@ -29,7 +29,13 @@ import javax.xml.stream.XMLOutputFactory;
 
 /**
  * A {@link ServiceLoader} for managing XML factories used by the library.
- * Custom implementation should be referenced in a META-INF/services/io.jenetics.jpx.XMLProvider file
+ * Custom implementation should be referenced in a
+ * {@code META-INF/services/io.jenetics.jpx.XMLProvider} file.
+ *
+ * @see ServiceLoader
+ *
+ * @version 1.7
+ * @since 1.7
  */
 public abstract class XMLProvider {
 
@@ -69,6 +75,11 @@ public abstract class XMLProvider {
 		return factory;
 	}
 
+	/**
+	 * Return an instance of the current {@code XMLProvider}.
+	 *
+	 * @return an instance of the current {@code XMLProvider}
+	 */
 	public static XMLProvider provider() {
 		if (INSTANCE == null) {
 			synchronized (lock) {
@@ -94,8 +105,10 @@ public abstract class XMLProvider {
 	}
 
 	private static void loadInstance() {
-		ServiceLoader<XMLProvider> loader = ServiceLoader.load(XMLProvider.class);
-		Iterator<XMLProvider> providers = loader.iterator();
+		final ServiceLoader<XMLProvider> loader =
+			ServiceLoader.load(XMLProvider.class);
+
+		final Iterator<XMLProvider> providers = loader.iterator();
 		if (providers.hasNext()) {
 			INSTANCE = providers.next();
 		} else {
