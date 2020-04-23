@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
 	testCompile 'org.testng:testng:7.0.0'
-	testCompile 'nl.jqno.equalsverifier:equalsverifier:3.1.10'
+	testCompile 'nl.jqno.equalsverifier:equalsverifier:3.1.13'
 }
 
 javadoc {
