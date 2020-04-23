@@ -59,7 +59,7 @@ abstract class XMLReader<T> {
 	/**
 	 * Represents the XML element type.
 	 */
-	static enum Type {
+	enum Type {
 
 		/**
 		 * Denotes a element reader.

@@ -99,7 +99,7 @@ public final class Length
 
 		private final double _factor;
 
-		private Unit(final double factor) {
+		Unit(final double factor) {
 			_factor = factor;
 		}
 

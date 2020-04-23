@@ -19,8 +19,8 @@
  */
 package io.jenetics.jpx;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -43,8 +43,8 @@ final class IndentingXMLStreamWriter extends XMLStreamWriterAdapter {
 	private static final String NEW_LINE = System.lineSeparator();
 
 	private State _state;
-	private final Deque<State> _states = new LinkedList<>();
-	private String _indent;
+	private final Deque<State> _states = new ArrayDeque<>();
+	private final String _indent;
 	private int _depth;
 
 	IndentingXMLStreamWriter(final XMLStreamWriter writer, final String indent) {
