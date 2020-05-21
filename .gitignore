@@ -52,3 +52,4 @@ jpx/nbdist/
 .project
 .settings/
 .classpath
+*.iml
