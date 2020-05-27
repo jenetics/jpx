@@ -91,12 +91,15 @@ jar {
 			'Implementation-Vendor': 'jenetics',
 			'ProjectName': project.name,
 			'Version': project.version,
-			'Maintainer': 'Franz Wilhelmstötter',
-			'Automatic-Module-Name': 'io.jenetics.jpx'
+			'Maintainer': 'Franz Wilhelmstötter'
 		)
 	}
 }
 
+//https://docs.gradle.org/current/userguide/java_library_plugin.html#sec:java_library_modular
+java {
+	modularity.inferModulePath = true
+}
 
 / ******************************************************************************
  * Artifact publishing code.
