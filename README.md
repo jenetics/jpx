@@ -25,11 +25,11 @@ For  building the JPX library you have to check out the master branch from Githu
 *Executing the tests:*
     
     $ cd jpx
-    $ ./gradle test
+    $ ./gradlew test
 
 *Building the library:*
 
-    $ ./gradle jar
+    $ ./gradlew jar
     
 
 ## Examples
