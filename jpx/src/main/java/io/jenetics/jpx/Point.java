@@ -29,7 +29,7 @@ import io.jenetics.jpx.geom.Geoid;
  * A geographic point with optional elevation and time.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 1.6
  * @since 1.0
  */
 public interface Point {
@@ -39,21 +39,21 @@ public interface Point {
 	 *
 	 * @return the latitude of the point
 	 */
-	public Latitude getLatitude();
+	Latitude getLatitude();
 
 	/**
 	 * The longitude of the point, WGS84 datum.
 	 *
 	 * @return the longitude of the point
 	 */
-	public Longitude getLongitude();
+	Longitude getLongitude();
 
 	/**
 	 * The elevation (in meters) of the point.
 	 *
 	 * @return the elevation (in meters) of the point
 	 */
-	public default Optional<Length> getElevation() {
+	default Optional<Length> getElevation() {
 		return Optional.empty();
 	}
 
@@ -64,7 +64,7 @@ public interface Point {
 	 *
 	 * @return creation/modification timestamp for the point
 	 */
-	public default Optional<ZonedDateTime> getTime() {
+	default Optional<ZonedDateTime> getTime() {
 		return Optional.empty();
 	}
 
@@ -83,7 +83,7 @@ public interface Point {
 	 *
 	 * @return creation/modification instant for the point
 	 */
-	public default Optional<Instant> getInstant() {
+	default Optional<Instant> getInstant() {
 		return getTime().map(t -> t.toOffsetDateTime().toInstant());
 	}
 
@@ -103,7 +103,7 @@ public interface Point {
 	 * @return the distance between {@code this} and {@code end} in meters
 	 * @throws NullPointerException if the {@code end} point is {@code null}
 	 */
-	public default Length distance(final Point end) {
+	default Length distance(final Point end) {
 		return Geoid.DEFAULT.distance(this, end);
 	}
 

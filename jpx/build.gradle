@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
 	testCompile 'org.testng:testng:7.0.0'
-	testCompile 'nl.jqno.equalsverifier:equalsverifier:3.1.10'
+	testCompile 'nl.jqno.equalsverifier:equalsverifier:3.1.13'
 }
 
 javadoc {
@@ -50,7 +50,7 @@ javadoc {
 		charSet = 'UTF-8'
 		linkSource = true
 		links = [
-			'https://docs.oracle.com/javase/8/docs/api'
+			'https://docs.oracle.com/en/java/javase/11/docs/api'
 		]
 		windowTitle = "JPX ${project.version}"
 		docTitle = "<h1>JPX ${project.version}</h1>"
@@ -75,9 +75,6 @@ javadoc {
 }
 
 test {
-	outputs.upToDateWhen { false }
-	testLogging.showStandardStreams = true
-
 	useTestNG {
 		preserveOrder true
 		parallel = 'tests' // 'methods'

@@ -1,5 +1,26 @@
 ## Release notes
 
+### [2.0.0](https://github.com/jenetics/jpx/releases/tag/v2.0.0)
+
+#### Improvements
+
+* [#68](https://github.com/jenetics/jpx/issues/68): Remove deprecated methods.
+* [#113](https://github.com/jenetics/jpx/issues/113): Upgrade to Java 11.
+
+### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
+
+#### Improvements
+
+* [#116](https://github.com/jenetics/jpx/issues/116): Create `XMLProvider` SPI, which allows to change the used XML implementation. (Implemented by [avianey](https://github.com/avianey).)
+
+### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
+
+#### Bugs
+
+* [#105](https://github.com/jenetics/jpx/issues/105): Location dependent formatting in `LocationFormatter`. (Fixed by [Segelzwerg](https://github.com/Segelzwerg).)
+* [#108](https://github.com/jenetics/jpx/issues/108): Make library compileable with Java 13.
+* [#110](https://github.com/jenetics/jpx/issues/110): Fix `Bounds.toBounds` collector. Wrong results for only _negative_ points.
+
 ### [1.6.0](https://github.com/jenetics/jpx/releases/tag/v1.6.0)
 
 #### Improvements

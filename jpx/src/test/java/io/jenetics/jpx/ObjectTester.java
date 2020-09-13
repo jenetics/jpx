@@ -71,11 +71,11 @@ public abstract class ObjectTester<T> {
 			final Object other = factory(new Random()).get();
 
 			if (that.equals(other)) {
-				Assert.assertTrue(other.equals(that));
+				Assert.assertEquals(that, other);
 				Assert.assertEquals(that.hashCode(), other.hashCode());
 			} else {
-				Assert.assertFalse(other.equals(that));
-				Assert.assertFalse(that.equals(other));
+				Assert.assertNotEquals(that, other);
+				Assert.assertNotEquals(other, that);
 			}
 		}
 	}
@@ -83,19 +83,19 @@ public abstract class ObjectTester<T> {
 	@Test
 	public void notEqualsNull() {
 		final Object that = factory(new Random()).get();
-		Assert.assertFalse(that == null);
+		Assert.assertNotNull(that);
 	}
 
 	@Test
 	public void notEqualsStringType() {
 		final Object that = factory(new Random()).get();
-		Assert.assertFalse(that.equals("__some_string__"));
+		Assert.assertNotEquals(that, "__some_string__");
 	}
 
 	@Test
 	public void notEqualsClassType() {
 		final Object that = factory(new Random()).get();
-		Assert.assertFalse(that.equals(Class.class));
+		Assert.assertNotEquals(Class.class, that);
 	}
 
 	@Test

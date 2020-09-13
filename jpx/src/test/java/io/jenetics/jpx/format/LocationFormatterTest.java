@@ -19,7 +19,6 @@
  */
 package io.jenetics.jpx.format;
 
-import static java.util.Arrays.asList;
 import static io.jenetics.jpx.Length.Unit.METER;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_LONG;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_MEDIUM;
@@ -43,7 +42,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import io.jenetics.jpx.format.Location.Field;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
@@ -51,6 +49,7 @@ import org.testng.annotations.Test;
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
+import io.jenetics.jpx.format.Location.Field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -135,26 +134,26 @@ public class LocationFormatterTest {
 	@DataProvider
 	public Object[][] tokens() {
 		return new Object[][] {
-			{"LL", asList("LL")},
-			{".LL", asList(".LL")},
-			{"LL''", asList("LL", "'", "'")},
-			{"LL'''", asList("LL", "'", "'", "'")},
-			{"LL.LLL", asList("LL.LLL")},
-			{"+++LL[g''g]", asList("+", "+", "+", "LL", "[", "g", "'", "'", "g", "]")},
-			{"LL,LLL", asList("LL,LLL")},
-			{"LLDD", asList("LL", "DD")},
-			{"LL.LDD", asList("LL.L", "DD")},
-			{"LL.LDD.DDD", asList("LL.L", "DD.DDD")},
-			{"LL.L123DD.DDD", asList("LL.L", "123", "DD.DDD")},
-			{"LL.L123DD.DDD4567", asList("LL.L", "123", "DD.DDD", "4567")},
-			{"+LL.LDD.DDD", asList("+", "LL.L", "DD.DDD")},
-			{"+LL.LDD.DDDx", asList("+", "LL.L", "DD.DDD", "x")},
-			{"+LL.LDD.DDD''x", asList("+", "LL.L", "DD.DDD", "'", "'", "x")},
-			{"+LL.LDD.DDD'x'", asList("+", "LL.L", "DD.DDD", "'", "x", "'")},
-			{"+LL.LDD.DDD[x]ss", asList("+", "LL.L", "DD.DDD", "[", "x", "]", "ss")},
-			{"+LL.LDD.DDD[x]'ss", asList("+", "LL.L", "DD.DDD", "[", "x", "]", "'", "ss")},
-			{"+DD.DD[SSS]'XXX'sss.smm", asList("+", "DD.DD", "[", "SSS", "]", "'", "XXX", "'", "sss.s", "mm")},
-			{"+DD.DD[SSS]'XXXsss.smm", asList("+", "DD.DD", "[", "SSS", "]", "'", "XXXsss.smm")}
+			{"LL", List.of("LL")},
+			{".LL", List.of(".LL")},
+			{"LL''", List.of("LL", "'", "'")},
+			{"LL'''", List.of("LL", "'", "'", "'")},
+			{"LL.LLL", List.of("LL.LLL")},
+			{"+++LL[g''g]", List.of("+", "+", "+", "LL", "[", "g", "'", "'", "g", "]")},
+			{"LL,LLL", List.of("LL,LLL")},
+			{"LLDD", List.of("LL", "DD")},
+			{"LL.LDD", List.of("LL.L", "DD")},
+			{"LL.LDD.DDD", List.of("LL.L", "DD.DDD")},
+			{"LL.L123DD.DDD", List.of("LL.L", "123", "DD.DDD")},
+			{"LL.L123DD.DDD4567", List.of("LL.L", "123", "DD.DDD", "4567")},
+			{"+LL.LDD.DDD", List.of("+", "LL.L", "DD.DDD")},
+			{"+LL.LDD.DDDx", List.of("+", "LL.L", "DD.DDD", "x")},
+			{"+LL.LDD.DDD''x", List.of("+", "LL.L", "DD.DDD", "'", "'", "x")},
+			{"+LL.LDD.DDD'x'", List.of("+", "LL.L", "DD.DDD", "'", "x", "'")},
+			{"+LL.LDD.DDD[x]ss", List.of("+", "LL.L", "DD.DDD", "[", "x", "]", "ss")},
+			{"+LL.LDD.DDD[x]'ss", List.of("+", "LL.L", "DD.DDD", "[", "x", "]", "'", "ss")},
+			{"+DD.DD[SSS]'XXX'sss.smm", List.of("+", "DD.DD", "[", "SSS", "]", "'", "XXX", "'", "sss.s", "mm")},
+			{"+DD.DD[SSS]'XXXsss.smm", List.of("+", "DD.DD", "[", "SSS", "]", "'", "XXXsss.smm")}
 		};
 	}
 

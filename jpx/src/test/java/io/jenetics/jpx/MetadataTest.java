@@ -87,6 +87,8 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 			.author("Franz Wilhelmstötter")
 			.addLink(Link.of("http://jenetics.io/jpx"))
 			.build();
+
+		Assert.assertNotNull(metadata);
 	}
 
 	@Test

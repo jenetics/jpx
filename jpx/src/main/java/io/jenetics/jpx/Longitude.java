@@ -33,12 +33,44 @@ import java.io.Serializable;
  * the range of {@code [-180..180)}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 2.0
  * @since 1.0
  */
 public final class Longitude extends Number implements Serializable {
 
 	private static final long serialVersionUID = 2L;
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -180 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final double MIN_DEGREES = -180;
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -180 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final Longitude MIN_VALUE = ofDegrees(MIN_DEGREES);
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 180 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final double MAX_DEGREES = 180;
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 180 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final Longitude MAX_VALUE = ofDegrees(MAX_DEGREES);
 
 	private final double _value;
 
@@ -50,7 +82,7 @@ public final class Longitude extends Number implements Serializable {
 	 *         range of {@code [-180..180)}
 	 */
 	private Longitude(final double value) {
-		if (value < -180 || value >= 180) {
+		if (value < MIN_DEGREES || value > MAX_DEGREES) {
 			throw new IllegalArgumentException(format(
 				"%f is not in range [-180, 180).", value
 			));
@@ -130,7 +162,7 @@ public final class Longitude extends Number implements Serializable {
 	 * @param degrees the longitude value in decimal degrees
 	 * @return a new (decimal degrees) {@code Longitude} object
 	 * @throws IllegalArgumentException if the given value is not within the
-	 *         range of {@code [-180..180]}
+	 *         range of {@code [-180..180)}
 	 */
 	public static Longitude ofDegrees(final double degrees) {
 		return new Longitude(degrees);

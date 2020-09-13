@@ -20,11 +20,11 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.singletonList;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.intString;
-import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -110,11 +110,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = immutable(links);
+		_links = copyOf(links);
 		_number = number;
 		_type = type;
 		_extensions = extensions;
-		_points = immutable(points);
+		_points = copyOf(points);
 	}
 
 	/**
@@ -273,17 +273,16 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 31;
-		hash += 17*Objects.hashCode(_name) + 37;
-		hash += 17*Objects.hashCode(_comment) + 37;
-		hash += 17*Objects.hashCode(_description) + 37;
-		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*Objects.hashCode(_type) + 37;
-		hash += 17*Lists.hashCode(_links) + 31;
-		hash += 17*Objects.hashCode(_number) + 37;
-		hash += 17*Objects.hashCode(_points) + 37;
-
-		return hash;
+		return hash(
+			_name,
+			_comment,
+			_description,
+			_source,
+			_type,
+			Lists.hashCode(_links),
+			_number,
+			_points
+		);
 	}
 
 	@Override
@@ -444,7 +443,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			copyTo(links, _links);
 			return this;
 		}
 
@@ -457,7 +456,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addLink(final Link link) {
 			_links.add(requireNonNull(link));
-
 			return this;
 		}
 
@@ -473,7 +471,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addLink(final String href) {
 			_links.add(Link.of(href));
-
 			return this;
 		}
 
@@ -584,7 +581,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @throws NullPointerException if one of the way-points is {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			copy(points, _points);
+			copyTo(points, _points);
 			return this;
 		}
 
@@ -597,7 +594,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addPoint(final WayPoint point) {
 			_points.add(requireNonNull(point));
-
 			return this;
 		}
 
@@ -946,7 +942,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			(String)v[2],
 			(String)v[3],
 			v[4] != null
-				? singletonList(Link.of((URI)v[4], (String)v[5], null))
+				? List.of(Link.of((URI)v[4], (String)v[5], null))
 				: null,
 			(UInt)v[6],
 			(String)v[7],

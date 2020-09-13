@@ -13,7 +13,7 @@ Beside the basic functionality of reading and writing GPX files, the library als
 
 ## Dependencies
 
-No external dependencies are needed by the _JPX_ library. It only needs Java 8 to compile and run.
+No external dependencies are needed by the _JPX_ library. It only needs **Java 11** to compile and run.
 
 
 ## Building JPX
@@ -265,11 +265,40 @@ final GPX gpx1 = gpx.toBuilder()
     .build();
 ```
 
+### XML configuration
+
+The _JPX_ library uses the XML classes available in the Java [`java.xml`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/module-summary.html) module. This API is highly configurable and it is possible to replace the underlying implementation. Especially for Android, using different XML implementation is a necessity. _JPX_ uses three _factory_ classes for reading/writing GPX files:
+
+1. [`XMLInputFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/stream/XMLInputFactory.html): This class is needed for reading GPX files.
+1. [`XMLOutputFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/stream/XMLOutputFactory.html): This class is needed for writing GPX files.
+1. [`DocumentBuilderFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/parsers/DocumentBuilderFactory.html): This class is used for creating XML-documents for the GPX `extensions` data.
+
+You can change the used classes by implementing and registering a different `XMLProvider` class. The following code show how to change the configuration of the `DocumentBuilderFactory` class.
+
+```java
+package org.acme;
+final class ValidatingDocumentBuilder extends XMLProvider { 
+    @Override
+    public DocumentBuilderFactory documentBuilderFactory() { 
+        final DocumentBuilderFactory factory = 
+            DocumentBuilderFactory.newInstance();
+        factory.setValidating(true);
+        factory.setNamespaceAware(true);
+        return factory; 
+    }
+}
+```
+And don't forget to create a `META-INF/services/io.jenetics.jpx.XMLProvider` file with the following content:
+
+```
+org.acme.NonValidatingDocumentBuilder
+```
+
 ## License
 
 The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
-    Copyright 2016-2019 Franz Wilhelmstötter
+    Copyright 2016-2020 Franz Wilhelmstötter
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -285,13 +314,25 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-
-### [1.6.0](https://github.com/jenetics/jpx/releases/tag/v1.6.0)
+### [2.0.0](https://github.com/jenetics/jpx/releases/tag/v2.0.0)
 
 #### Improvements
 
-* [#87](https://github.com/jenetics/jpx/issues/87): Consistent exception handling. Invalid GPX files, read from file or input stream throwing now an `InvalidObjectException`. (Implemented by [Segelzwerg](https://github.com/Segelzwerg).)
-* [#97](https://github.com/jenetics/jpx/issues/97): Implement `Bounds.toBounds()` collector. This collector finds the bounds of a given `Point` stream.
-* [#102](https://github.com/jenetics/jpx/issues/102): Add `Point.getInstant` method.
+* [#68](https://github.com/jenetics/jpx/issues/68): Remove deprecated methods.
+* [#113](https://github.com/jenetics/jpx/issues/113): Upgrade to Java 11.
+
+### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
+
+#### Improvements
+
+* [#116](https://github.com/jenetics/jpx/issues/116): Create `XMLProvider` SPI, which allows to change the used XML implementation. (Implemented by [avianey](https://github.com/avianey).)
+
+### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
+
+#### Bugs
+
+* [#105](https://github.com/jenetics/jpx/issues/105): Location dependent formatting in `LocationFormatter`. (Fixed by [Segelzwerg](https://github.com/Segelzwerg).)
+* [#108](https://github.com/jenetics/jpx/issues/108): Make library compileable with Java 13.
+* [#110](https://github.com/jenetics/jpx/issues/110): Fix `Bounds.toBounds` collector. Wrong results for only _negative_ points.
 
 

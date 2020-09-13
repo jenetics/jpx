@@ -117,7 +117,7 @@ public final class Geoid {
 	 *
 	 * @return the ellipsoid the {@code Geom} object is using
 	 */
-	public Ellipsoid getEllipsoid() {
+	public Ellipsoid ellipsoid() {
 		return _ellipsoid;
 	}
 
