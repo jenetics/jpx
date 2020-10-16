@@ -38,7 +38,7 @@ public class MathUtilsTest {
 		final int ulps,
 		final boolean expected
 	) {
-		Assert.assertEquals(MathUtils.equals(x, y, ulps), expected);
+		Assert.assertEquals(MathUtils.equal(x, y, ulps), expected);
 	}
 
 	@DataProvider

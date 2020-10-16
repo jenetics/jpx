@@ -29,6 +29,7 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.geom.MathUtils.equal;
 
 import java.util.stream.Collector;
 
@@ -47,6 +48,8 @@ import io.jenetics.jpx.Point;
  * @since 1.0
  */
 public final class Geoid {
+
+	private static final int EPSILON_ULP = 10_000;
 
 	/**
 	 * {@link Geoid} using of the <em>World Geodetic System: WGS 84</em>
@@ -197,7 +200,7 @@ public final class Geoid {
 			sigma = atan2(sinsigma, cossigma);
 
 			// Eq. 17 Careful! sin2sigma might be almost 0!
-			final double sinalpha = sin2sigma == 0.0
+			final double sinalpha = equal(sin2sigma, 0.0, EPSILON_ULP)
 				? 0.0
 				: cosU1cosU2*sinlambda/sinsigma;
 			final double alpha = asin(sinalpha);
@@ -205,7 +208,7 @@ public final class Geoid {
 			double cos2alpha = cosalpha*cosalpha;
 
 			// Eq. 18 Careful! cos2alpha might be almost 0!
-			final double cos2sigmam = cos2alpha == 0.0
+			final double cos2sigmam = equal(cos2alpha, 0.0, EPSILON_ULP)
 				? 0.0
 				: cossigma - 2*sinU1sinU2/cos2alpha;
 			final double u2 = cos2alpha*AABBBB;

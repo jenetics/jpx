@@ -48,7 +48,7 @@ final class MathUtils {
 	 * @return {@code true} if there are fewer than {@code ulps}values between
 	 *         {@code x} and {@code y}, {@code false} otherwise
 	 */
-	static boolean equals(final double x, final double y, final int ulps) {
+	static boolean equal(final double x, final double y, final int ulps) {
 		long a = doubleToRawLongBits(x);
 		long b = doubleToRawLongBits(y);
 		if (a < b) {
