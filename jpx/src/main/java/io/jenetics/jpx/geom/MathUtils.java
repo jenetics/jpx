@@ -30,7 +30,6 @@ import static java.lang.Double.doubleToRawLongBits;
  */
 final class MathUtils {
 
-	private static final long SIGN_MASK = 0x8000000000000000L;
 	private static final long POSITIVE_ZERO_BITS = doubleToRawLongBits(+0.0);
 	private static final long NEGATIVE_ZERO_BITS = doubleToRawLongBits(-0.0);
 
@@ -57,12 +56,12 @@ final class MathUtils {
 		}
 
 		final boolean equal;
-		if (((a ^ b) & SIGN_MASK) == 0L) {
-			equal = a - b <= ulps;
-		} else {
-			final long diffPositive  = a - POSITIVE_ZERO_BITS;
+		if ((a ^ b) < 0) { // a and b have opposite sign.
+			final long diffPositive = a - POSITIVE_ZERO_BITS;
 			final long diffNegative = b - NEGATIVE_ZERO_BITS;
 			equal = diffPositive <= ulps && diffNegative <= (ulps - diffPositive);
+		} else {         // a and b have same sign.
+			equal = a - b <= ulps;
 		}
 
 		return equal && !Double.isNaN(x) && !Double.isNaN(y);

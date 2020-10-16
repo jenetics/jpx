@@ -66,7 +66,9 @@ public class MathUtilsTest {
 			{1.0, nextUp(1.0), 1, true},
 			{1.0, nextUp(nextUp(1.0)), 1, false},
 			{1.0, nextDown(1.0), 1, true},
-			{1.0, nextDown(nextDown(1.0)), 1, false}
+			{1.0, nextDown(nextDown(1.0)), 1, false},
+
+			{1.0, -1.0, 1, false},
 		};
 	}
 
