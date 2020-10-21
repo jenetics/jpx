@@ -1,5 +1,5 @@
 /*
- * Java GPX Library (@__identifier__@).
+ * Java Genetic Algorithm Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,23 +17,27 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx.jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
  * @version !__version__!
+ * @since !__version__!
  */
+public class PSQLDB extends DB {
 
-rootProject.name = 'jpx'
+	public final static DB INSTANCE = new PSQLDB();
 
-// The JPX projects.
-include 'jpx'
-include 'jpx.jdbc'
+	private static final String TEST_DB =
+		"jdbc:postgresql://localhost/gpx_db?user=gpx_usr&password=gpx_pwd";
 
-if (file('../FacileJDBC').exists()) {
-	includeBuild('../FacileJDBC') {
-		dependencySubstitution {
-			substitute module('io.jenetics:facilejdbc') with project(':facilejdbc')
-		}
+	@Override
+	public Connection getConnection() throws SQLException {
+		return DriverManager.getConnection(TEST_DB);
 	}
+
 }

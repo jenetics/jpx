@@ -50,8 +50,12 @@ allprojects {
 
 allprojects { Project prj ->
 	if (prj.plugins.hasPlugin('java')) {
-		sourceCompatibility = javaVersion
-		targetCompatibility = javaVersion
+		java {
+			sourceCompatibility = JavaVersion.VERSION_11
+			targetCompatibility = JavaVersion.VERSION_11
+		}
+		//sourceCompatibility = '11'
+		//targetCompatibility = '11'
 	}
 
 	def XLINT_OPTIONS = [

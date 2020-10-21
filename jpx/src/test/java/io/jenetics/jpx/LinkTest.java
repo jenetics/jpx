@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.testng.annotations.Test;
 
@@ -39,7 +41,7 @@ import io.jenetics.jpx.GPX.Version;
 public class LinkTest extends XMLStreamTestBase<Link> {
 
 	@Override
-	public Supplier<Link> factory(Random random) {
+	public Supplier<Link> factory(final Random random) {
 		return () -> nextLink(random);
 	}
 

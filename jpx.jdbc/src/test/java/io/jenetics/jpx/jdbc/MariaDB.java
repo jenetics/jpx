@@ -17,23 +17,27 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx.jdbc;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
  * @version !__version__!
+ * @since !__version__!
  */
+public class MariaDB extends DB {
 
-rootProject.name = 'jpx'
+	public final static DB INSTANCE = new MariaDB();
 
-// The JPX projects.
-include 'jpx'
-include 'jpx.jdbc'
+	private static final String TEST_DB =
+		"jdbc:mariadb://playstation:3307/gpx_test?user=gpx_test&password=gpx_test";
 
-if (file('../FacileJDBC').exists()) {
-	includeBuild('../FacileJDBC') {
-		dependencySubstitution {
-			substitute module('io.jenetics:facilejdbc') with project(':facilejdbc')
-		}
+	@Override
+	public Connection getConnection() throws SQLException {
+		return DriverManager.getConnection(TEST_DB);
 	}
+
 }

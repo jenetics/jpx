@@ -17,23 +17,39 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx.jdbc;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
  * @version !__version__!
+ * @since !__version__!
  */
+public class IO {
+	private IO() {
+	}
 
-rootProject.name = 'jpx'
+	public static String toSQLText(final InputStream in) throws IOException {
+		try(Reader r = new InputStreamReader(in);
+			BufferedReader br = new BufferedReader(r))
+		{
+			final StringBuilder builder = new StringBuilder();
 
-// The JPX projects.
-include 'jpx'
-include 'jpx.jdbc'
+			String line;
+			while ((line = br.readLine()) != null) {
+				if (!line.trim().startsWith("--")) {
+					builder.append(line);
+					builder.append("\n");
+				}
+			}
 
-if (file('../FacileJDBC').exists()) {
-	includeBuild('../FacileJDBC') {
-		dependencySubstitution {
-			substitute module('io.jenetics:facilejdbc') with project(':facilejdbc')
+			return builder.toString();
 		}
 	}
+
 }
