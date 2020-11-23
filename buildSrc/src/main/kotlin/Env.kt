@@ -30,7 +30,7 @@ object Env {
 
 	val YEAR = Year.now();
 
-	val COPYRIGHT_YEAR = "2019-${YEAR}"
+	val COPYRIGHT_YEAR = "2016-${YEAR}"
 
 	val DATE_FORMAT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
@@ -52,7 +52,7 @@ object Env {
  * Information about the library and author.
  */
 object JPX {
-	const val VERSION = "2.1.0-SNAPSHOT"
+	const val VERSION = "2.1.0"
 	const val ID = "jpx"
 	const val NAME = "jpx"
 	const val GROUP = "io.jenetics"
