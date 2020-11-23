@@ -25,8 +25,8 @@ import static java.lang.Double.doubleToRawLongBits;
  * Mathematical helper functions.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
- * @since !__version__!
+ * @version 2.1
+ * @since 2.1
  */
 final class MathUtils {
 
