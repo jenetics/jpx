@@ -19,12 +19,16 @@
  */
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
- * @version 1.0
+ * Defining the used external libraries.
  */
+object Libs {
+	const val ApacheCommonsMath = "org.apache.commons:commons-math3:3.6.1"
+	const val EqualsVerifier = "nl.jqno.equalsverifier:equalsverifier:3.5"
+	const val TestNG = "org.testng:testng:7.3.0"
 
-// The JPX projects.
-include 'jpx'
-
-rootProject.name = 'jpx'
+	val All = arrayOf(
+		ApacheCommonsMath,
+		EqualsVerifier,
+		TestNG
+	)
+}
