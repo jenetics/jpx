@@ -217,7 +217,6 @@ fun setupJavadoc(project: Project) {
 				it.execute(colorizer)
 			}
 
-
 			val java2html = project.tasks.findByName("java2html")
 			java2html?.actions?.forEach {
 				it.execute(java2html)
