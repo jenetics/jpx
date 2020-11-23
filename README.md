@@ -25,11 +25,11 @@ For  building the JPX library you have to check out the master branch from Githu
 *Executing the tests:*
     
     $ cd jpx
-    $ ./gradle test
+    $ ./gradlew test
 
 *Building the library:*
 
-    $ ./gradle jar
+    $ ./gradlew jar
     
 
 ## Examples
@@ -314,25 +314,22 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [2.1.0](https://github.com/jenetics/jpx/releases/tag/v2.1.0)
+
+#### Improvements
+
+* [#128](https://github.com/jenetics/jpx/issues/128): Added Java Module System support ([Adito5393](https://github.com/Adito5393)).
+* [#132](https://github.com/jenetics/jpx/issues/132): Convert Gradle build scripts from Groovy to Kotlin.
+* [#134](https://github.com/jenetics/jpx/issues/134): Make distance calculation more stable.
+
+#### Bugs
+
+* [#129](https://github.com/jenetics/jpx/issues/129): Fixed spelling of build script name ([marcusfey](https://github.com/marcusfey)).
+
 ### [2.0.0](https://github.com/jenetics/jpx/releases/tag/v2.0.0)
 
 #### Improvements
 
 * [#68](https://github.com/jenetics/jpx/issues/68): Remove deprecated methods.
 * [#113](https://github.com/jenetics/jpx/issues/113): Upgrade to Java 11.
-
-### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
-
-#### Improvements
-
-* [#116](https://github.com/jenetics/jpx/issues/116): Create `XMLProvider` SPI, which allows to change the used XML implementation. (Implemented by [avianey](https://github.com/avianey).)
-
-### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
-
-#### Bugs
-
-* [#105](https://github.com/jenetics/jpx/issues/105): Location dependent formatting in `LocationFormatter`. (Fixed by [Segelzwerg](https://github.com/Segelzwerg).)
-* [#108](https://github.com/jenetics/jpx/issues/108): Make library compileable with Java 13.
-* [#110](https://github.com/jenetics/jpx/issues/110): Fix `Bounds.toBounds` collector. Wrong results for only _negative_ points.
-
 
