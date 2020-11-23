@@ -21,10 +21,17 @@
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @since 1.0
- * @version 1.0
+ * @version !__version__!
  */
+pluginManagement {
+	repositories {
+		mavenLocal()
+		jcenter()
+		gradlePluginPortal()
+	}
+}
+
+rootProject.name = "jpx"
 
 // The JPX projects.
-include 'jpx'
-
-rootProject.name = 'jpx'
+include("jpx")
