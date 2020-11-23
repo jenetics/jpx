@@ -112,8 +112,14 @@ public abstract class XMLProvider {
 		if (providers.hasNext()) {
 			INSTANCE = providers.next();
 		} else {
-			INSTANCE = new XMLProvider() {};
+			INSTANCE = new DefaultXMLProvider();
 		}
 	}
 
 }
+
+/**
+ * Default implementation of the {@code XMLProvider} class. Doesn't need any
+ * additional implementation.
+ */
+final class DefaultXMLProvider extends XMLProvider { }
