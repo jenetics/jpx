@@ -204,7 +204,7 @@ fun setupJavadoc(project: Project) {
 					main = "de.java2html.Java2Html"
 					args = listOf(
 						"-srcdir", "src/main/java",
-						"-targetdir", "${javadoc.destinationDir}/src-html"
+						"-targetdir", "${javadoc.destinationDir}/src-html/${project.extra["moduleName"]}"
 					)
 					classpath = files("${project.rootDir}/buildSrc/lib/java2html.jar")
 				}
