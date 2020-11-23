@@ -31,7 +31,7 @@ plugins {
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "6.5"
+	version = "6.7.1"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -72,6 +72,10 @@ gradle.projectsEvaluated {
 			configure<JavaPluginConvention> {
 				sourceCompatibility = JavaVersion.VERSION_11
 				targetCompatibility = JavaVersion.VERSION_11
+			}
+
+			configure<JavaPluginExtension> {
+				modularity.inferModulePath.set(true)
 			}
 
 			setupJava(project)
@@ -166,8 +170,8 @@ fun setupJavadoc(project: Project) {
 			"https://docs.oracle.com/en/java/javase/11/docs/api",
 			"${project.rootDir}/buildSrc/resources/javadoc/java.se"
 		)
-		doclet.windowTitle = "FacileJDBC ${project.version}"
-		doclet.docTitle = "<h1>FacileJDBC ${project.version}</h1>"
+		doclet.windowTitle = "JPX ${project.version}"
+		doclet.docTitle = "<h1>JPX ${project.version}</h1>"
 		doclet.bottom = "&copy; ${Env.COPYRIGHT_YEAR} Franz Wilhelmst&ouml;tter  &nbsp;<i>(${Env.BUILD_DATE})</i>"
 		doclet.stylesheetFile = project.file("${project.rootDir}/buildSrc/resources/javadoc/stylesheet.css")
 
