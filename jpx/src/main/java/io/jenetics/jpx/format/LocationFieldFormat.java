@@ -25,6 +25,7 @@ import static java.util.Objects.requireNonNull;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
+import java.text.ParsePosition;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -56,6 +57,40 @@ final class LocationFieldFormat implements Format<Location> {
 	@Override
 	public Optional<String> format(final Location location) {
 		return _field.apply(location).map(v -> _format.get().format(v));
+	}
+
+	@Override
+	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+		// parse latitude, longitude, or elevation, as double
+		int i = pos.getIndex();
+		NumberFormat nf = _format.get();
+		String s = in.toString();
+		Number n = nf.parse(s, pos);//Does not throw an exception; if no object can be parsed, index is unchanged!
+		if(i==pos.getIndex()) {
+			pos.setErrorIndex(i);
+			throw new ParseException("bad field", i);
+		}
+		double d = n.doubleValue();
+		switch (_field){
+
+			case LATITUDE: // L
+			case DEGREE_OF_LATITUDE: // D
+				builder.addLatitude(d); return;
+			case MINUTE_OF_LATITUDE: builder.addLatitudeMinute(d); return; // M
+			case SECOND_OF_LATITUDE: builder.addLatitudeSecond(d); return; // S
+
+			case LONGITUDE: // l
+			case DEGREE_OF_LONGITUDE: // m
+				builder.addLongitude(d); return;
+			case MINUTE_OF_LONGITUDE: builder.addLongitudeMinute(d); return; // m
+			case SECOND_OF_LONGITUDE: builder.addLongitudeSecond(d); return; // s
+
+			case ELEVATION:	// E
+			case METER_OF_ELEVATION: // H
+				builder.addElevation(d); return;
+
+				default: throw new RuntimeException(_field.fieldName());
+		}
 	}
 
 	static LocationFieldFormat of(final Field field, final String pattern) {

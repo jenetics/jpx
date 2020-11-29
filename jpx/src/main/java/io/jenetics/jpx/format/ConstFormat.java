@@ -22,6 +22,7 @@ package io.jenetics.jpx.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.format.LocationFormatter.PROTECTED_CHARS;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 /**
@@ -48,6 +49,23 @@ final class ConstFormat<T> implements Format<T> {
 	@Override
 	public Optional<String> format(final T value) {
 		return Optional.of(_value);
+	}
+
+	@Override
+	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+		// parse _value
+		int start = pos.getIndex();
+		int end = start + _value.length();
+		if( end <= in.length()){
+			String s = in.subSequence(start, end).toString();
+			if(s.equals(_value)){
+				pos.setIndex(end);
+				// but no call to builder
+				return;
+			}
+		}
+		pos.setErrorIndex(start);
+		throw new ParseException("bad constant", start);
 	}
 
 	@Override

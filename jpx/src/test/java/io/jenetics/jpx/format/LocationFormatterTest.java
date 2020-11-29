@@ -38,6 +38,7 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -65,19 +66,25 @@ public class LocationFormatterTest {
 		Assert.assertEquals(formatter.format(location), format);
 	}
 
+	@Test(dataProvider = "formats")
+	public void parse(LocationFormatter formatter, Location location, String text) throws ParseException {
+		Location l = formatter.parse(text);
+		Assert.assertEquals(l, location);
+	}
+
 	@DataProvider
 	public Object[][] formats() {
 		return new Object[][] {
-			{ISO_HUMAN_LAT_LONG, Location.of(Latitude.ofDegrees(23.987635)), "24°59'15.486\"N"},
+			{ISO_HUMAN_LAT_LONG, Location.of(Latitude.ofDegrees(23.987635)), "24°59'15.486\"N"}, // right?
 			{ISO_HUMAN_LAT_LONG, Location.of(Latitude.ofDegrees(-65.234275)), "65°14'03.390\"S"},
-			{ISO_HUMAN_LON_LONG, Location.of(Longitude.ofDegrees(23.987635)), "24°59'15.486\"E"},
+			{ISO_HUMAN_LON_LONG, Location.of(Longitude.ofDegrees(23.987635)), "24°59'15.486\"E"}, // right?
 			{ISO_HUMAN_LON_LONG, Location.of(Longitude.ofDegrees(-65.234275)), "65°14'03.390\"W"},
 			{ISO_HUMAN_ELE_LONG, Location.of(Length.of(23.987635, METER)), "23.99m"},
 			{ISO_HUMAN_ELE_LONG, Location.of(Length.of(-65.234275, METER)), "-65.23m"},
 			{ISO_HUMAN_LONG, Location.of(
 				Latitude.ofDegrees(23.987635),
 				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "24°59'15.486\"N 65°14'03.390\"W -65.23m"},
+				Length.of(-65.234275, METER)), "24°59'15.486\"N 65°14'03.390\"W -65.23m"}, // right?
 
 			{ISO_LAT_SHORT, Location.of(Latitude.ofDegrees(23.987635)), "+23.99"},
 			{ISO_LAT_SHORT, Location.of(Latitude.ofDegrees(-65.234275)), "-65.23"},
@@ -115,7 +122,7 @@ public class LocationFormatterTest {
 			{LocationFormatter.ofPattern("DD°MMSS dd°mmss"),Location.of(
 				Latitude.ofDegrees(23.987635),
 				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "24°5915 65°1403"},
+				Length.of(-65.234275, METER)), "24°5915 65°1403"}, // right?
 
 			{LocationFormatter.ofPattern("LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "24g'g"},
 			{LocationFormatter.ofPattern("+LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24g'g"},
@@ -158,9 +165,8 @@ public class LocationFormatterTest {
 	}
 
 	@Test(dataProvider = "patterns")
-	public void parse(final String pattern) {
+	public void parsePatterns(final String pattern) {
 		Assert.assertEquals(LocationFormatter.ofPattern(pattern).toPattern(), pattern);
-		//System.out.println(LocationFormatter.ofPattern(pattern).toPattern());
 	}
 
 	@DataProvider

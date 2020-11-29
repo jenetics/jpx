@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.format;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 import io.jenetics.jpx.Longitude;
@@ -37,6 +38,24 @@ enum EastWestFormat implements Format<Location> {
 		return value.longitude()
 			.map(Longitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
+	}
+
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+		// find E or W at in[pos.index]
+		int i = pos.getIndex();
+		char c = in.charAt(i);
+		if(c=='E'){
+			pos.setIndex(i+1);
+			builder.setLatitudeSign(+1);
+		}
+		else if(c=='W'){
+			pos.setIndex(i+1);
+			builder.setLatitudeSign(-1);
+		}
+		else {
+			pos.setErrorIndex(i);
+			throw new ParseException("bad E/W", i);
+		}
 	}
 
 	@Override

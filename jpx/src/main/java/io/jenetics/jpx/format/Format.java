@@ -19,10 +19,11 @@
  */
 package io.jenetics.jpx.format;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 /**
- * Base interface for formatting (converting) a given type to it's string
+ * Base interface for formatting (converting) a given type to its string
  * representation.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -32,7 +33,7 @@ import java.util.Optional;
 interface Format<T> {
 
 	/**
-	 * Formats the given {@code value} to it's string representation. If it is
+	 * Formats the given {@code value} to its string representation. If it is
 	 * not possible to convert the {@code value} to a string,
 	 * {@link Optional#empty()} is returned.
 	 *
@@ -41,5 +42,8 @@ interface Format<T> {
 	 *         fails
 	 */
 	Optional<String> format(final T value);
+
+	// TODO Format is parameterised on T, but the builder is only for Location
+	void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException;
 
 }

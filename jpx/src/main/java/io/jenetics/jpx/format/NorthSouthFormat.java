@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.format;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 import io.jenetics.jpx.Latitude;
@@ -37,6 +38,24 @@ enum NorthSouthFormat implements Format<Location> {
 		return value.latitude()
 			.map(Latitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "N" : "S");
+	}
+
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+		// find N or S at in[pos.index]
+		int i = pos.getIndex();
+		char c = in.charAt(i);
+		if(c=='N'){
+			pos.setIndex(i+1);
+			builder.setLongitudeSign(+1);
+		}
+		else if(c=='S'){
+			pos.setIndex(i+1);
+			builder.setLongitudeSign(-1);
+		}
+		else {
+			pos.setErrorIndex(i);
+			throw new ParseException("bad N/S", i);
+		}
 	}
 
 	@Override

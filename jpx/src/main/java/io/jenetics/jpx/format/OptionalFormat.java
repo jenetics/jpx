@@ -21,6 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.ParsePosition;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,6 +41,12 @@ final class OptionalFormat<T> implements Format<T> {
 	@Override
 	public Optional<String> format(final T value) {
 		return Optional.of(_format.format(value).orElse(""));
+	}
+
+	@Override
+	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+		// try _format.parse(...), if it doesn't work, skip?
+		throw new RuntimeException("not implemented optional: " + _format);
 	}
 
 	@Override

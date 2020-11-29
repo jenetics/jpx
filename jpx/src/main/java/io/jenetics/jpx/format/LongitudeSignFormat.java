@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.format;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 import io.jenetics.jpx.Longitude;
@@ -37,6 +38,25 @@ enum LongitudeSignFormat implements Format<Location> {
 		return value.longitude()
 			.map(Longitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
+	}
+
+	@Override
+	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+		// parse '-' or '+'
+		int i = pos.getIndex();
+		char c = in.charAt(i);
+		if(c=='-'){
+			builder.setLongitudeSign(-1);
+			pos.setIndex(i+1);
+		}
+		else if(c=='+'){
+			builder.setLongitudeSign(+1);
+			pos.setIndex(i+1);
+		}
+		else {
+			pos.setErrorIndex(i);
+			throw new ParseException("bad longitude sign: " + c + " in " + in, i);
+		}
 	}
 
 	@Override

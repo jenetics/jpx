@@ -19,6 +19,7 @@
  */
 package io.jenetics.jpx.format;
 
+import java.text.ParsePosition;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,6 +51,13 @@ final class CompositeFormat<T> implements Format<T> {
 					.map(s -> s.orElseThrow(AssertionError::new))
 					.collect(Collectors.joining()))
 			: Optional.empty();
+	}
+
+	@Override
+	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+		// use each format in sequence
+		for( Format<T> f : _formats )
+			f.parse(in, pos, builder);
 	}
 
 	@Override

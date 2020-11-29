@@ -272,7 +272,7 @@ public final class Location {
 		 * the longitude of a given location.
 		 */
 		MINUTE_OF_LONGITUDE(
-			"latitude", 'm',
+			"longitude", 'm',
 			loc -> loc.longitude()
 				.map(Longitude::toDegrees)
 				.map(Field::toMinutes)
@@ -283,7 +283,7 @@ public final class Location {
 		 * the longitude of a given location.
 		 */
 		SECOND_OF_LONGITUDE(
-			"latitude", 's',
+			"longitude", 's',
 			loc -> loc.longitude()
 				.map(Longitude::toDegrees)
 				.map(Field::toSeconds)

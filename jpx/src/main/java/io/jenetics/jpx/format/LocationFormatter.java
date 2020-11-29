@@ -21,9 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.NumberFormat;
+import java.text.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -31,7 +29,11 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import io.jenetics.jpx.Latitude;
@@ -378,14 +380,56 @@ public final class LocationFormatter {
 	public String format(final Length ele) {
 		return format(null, null, ele);
 	}
-//
-//	public Location parse(final CharSequence text, final ParsePosition pos) {
-//		return null;
-//	}
-//
-//	public Location parse(final CharSequence text) {
-//		return null;
-//	}
+
+	/** Parses the text using this formatter, providing control over the text position.
+	 *
+	 * This parses the text without requiring the parse to start from the beginning of the string or finish at the end.
+	 *
+	 * The text will be parsed from the specified start ParsePosition.
+	 * The entire length of the text does not have to be parsed,
+	 * the ParsePosition will be updated with the index at the end of parsing.
+	 *
+	 * If the formatter parses the same field more than once with different values, the result will be an error.
+	 *
+	 * @param text the text to parse, not null
+	 * @param pos the position to parse from, updated with length parsed and the index of any error, not null
+	 * @return the parsed Location, not null
+	 * @throws ParseException - if unable to parse the requested result
+	 * @throws IndexOutOfBoundsException - if the position is invalid
+	 * */
+	public Location parse(final CharSequence text, final ParsePosition pos) throws ParseException {
+		requireNonNull(text);
+		requireNonNull(pos);
+		if(pos.getIndex() < 0 || text.length() <= pos.getIndex())
+			throw new IndexOutOfBoundsException(pos.getIndex());
+
+		LocationBuilder builder = new LocationBuilder();
+		for( Format<Location> f : _formats )
+			f.parse(text, pos, builder);
+
+		Location location = builder.build();
+		return location;
+	}
+
+	/** Fully parses the text producing a location.
+	 *
+	 * This parses the entire text producing a location.
+	 * It is typically more useful to use parse(CharSequence, TemporalQuery).
+	 *
+	 * If the parse completes without reading the entire length of the text,
+	 * or a problem occurs during parsing or merging, then an exception is thrown.
+	 *
+	 * @param text the text to parse, not null
+	 * @return the parsed temporal object, not null
+	 * @throws ParseException - if unable to parse the requested result
+	 * */
+	public Location parse(final CharSequence text) throws ParseException {
+		ParsePosition pos = new ParsePosition(0);
+		Location loc = parse(text, pos); // ParseException
+		if(pos.getIndex()!=text.length())
+			throw new ParseException("not used all input", pos.getIndex());
+		return loc;
+	}
 
 
 	@Override
