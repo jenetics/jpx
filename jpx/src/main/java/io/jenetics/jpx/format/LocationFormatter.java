@@ -427,7 +427,7 @@ public final class LocationFormatter {
 		ParsePosition pos = new ParsePosition(0);
 		Location loc = parse(text, pos); // ParseException
 		if(pos.getIndex()!=text.length())
-			throw new ParseException("not used all input", pos.getIndex());
+			throw new ParseException("Not used all input", text, pos.getIndex());
 		return loc;
 	}
 

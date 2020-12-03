@@ -65,7 +65,7 @@ final class ConstFormat<T> implements Format<T> {
 			}
 		}
 		pos.setErrorIndex(start);
-		throw new ParseException("bad constant", start);
+		throw new ParseException("Not found constant \"" + _value + "\"", in, start);
 	}
 
 	@Override

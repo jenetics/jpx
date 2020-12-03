@@ -55,7 +55,7 @@ enum ElevationSignFormat implements Format<Location> {
 		}
 		else {
 			pos.setErrorIndex(i);
-			throw new ParseException("bad elevation sign", i);
+			throw new ParseException("Not found elevation sign", in, i);
 		}
 	}
 

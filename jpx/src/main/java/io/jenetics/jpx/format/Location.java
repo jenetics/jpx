@@ -59,6 +59,25 @@ public final class Location {
 		_elevation = elevation;
 	}
 
+	@Override public boolean equals(Object other){
+		if(other==null)
+			return false;
+		if(!(other instanceof Location))
+			return false;
+		Location o = (Location) other;
+		return
+			((_latitude==null && o._latitude==null) || _latitude.equals(o._latitude)) &&
+		((_longitude==null && o._longitude==null) || _longitude.equals(o._longitude)) &&
+		((_elevation==null && o._elevation==null) || _elevation.equals(o._elevation));
+	}
+
+	@Override public int hashCode(){
+		int lat = _latitude==null ? 0 : _latitude.hashCode();
+		int lon = _longitude==null ? 0 : _longitude.hashCode();
+		int ele = _elevation==null ? 0 : _elevation.hashCode();
+		return 7 * lat + 13 * lon + 31 * ele;
+	}
+
 	/**
 	 * Return the <em>latitude</em> of {@code this} location.
 	 *

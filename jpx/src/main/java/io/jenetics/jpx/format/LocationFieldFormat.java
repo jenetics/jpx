@@ -68,7 +68,7 @@ final class LocationFieldFormat implements Format<Location> {
 		Number n = nf.parse(s, pos);//Does not throw an exception; if no object can be parsed, index is unchanged!
 		if(i==pos.getIndex()) {
 			pos.setErrorIndex(i);
-			throw new ParseException("bad field", i);
+			throw new ParseException("Not found " + _field, in, i);
 		}
 		double d = n.doubleValue();
 		switch (_field){

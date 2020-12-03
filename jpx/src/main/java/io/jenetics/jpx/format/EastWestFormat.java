@@ -46,15 +46,15 @@ enum EastWestFormat implements Format<Location> {
 		char c = in.charAt(i);
 		if(c=='E'){
 			pos.setIndex(i+1);
-			builder.setLatitudeSign(+1);
+			builder.setLongitudeSign(+1);
 		}
 		else if(c=='W'){
 			pos.setIndex(i+1);
-			builder.setLatitudeSign(-1);
+			builder.setLongitudeSign(-1);
 		}
 		else {
 			pos.setErrorIndex(i);
-			throw new ParseException("bad E/W", i);
+			throw new ParseException("Not found E/W", in, i);
 		}
 	}
 

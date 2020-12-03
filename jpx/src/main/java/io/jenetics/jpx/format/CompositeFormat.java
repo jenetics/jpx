@@ -55,7 +55,6 @@ final class CompositeFormat<T> implements Format<T> {
 
 	@Override
 	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		// use each format in sequence
 		for( Format<T> f : _formats )
 			f.parse(in, pos, builder);
 	}

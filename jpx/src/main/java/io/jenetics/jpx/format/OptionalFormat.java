@@ -45,8 +45,16 @@ final class OptionalFormat<T> implements Format<T> {
 
 	@Override
 	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		// try _format.parse(...), if it doesn't work, skip?
-		throw new RuntimeException("not implemented optional: " + _format);
+		int index = pos.getIndex();
+		int errorIndex = pos.getErrorIndex();
+		try {
+			_format.parse(in, pos, builder);
+		} catch (ParseException e){
+			// Assume that in and builder have not changed.
+			// Set pos back to what it was.
+			pos.setIndex(index);
+			pos.setErrorIndex(errorIndex);
+		}
 	}
 
 	@Override

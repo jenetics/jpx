@@ -46,15 +46,15 @@ enum NorthSouthFormat implements Format<Location> {
 		char c = in.charAt(i);
 		if(c=='N'){
 			pos.setIndex(i+1);
-			builder.setLongitudeSign(+1);
+			builder.setLatitudeSign(+1);
 		}
 		else if(c=='S'){
 			pos.setIndex(i+1);
-			builder.setLongitudeSign(-1);
+			builder.setLatitudeSign(-1);
 		}
 		else {
 			pos.setErrorIndex(i);
-			throw new ParseException("bad N/S", i);
+			throw new ParseException("Not found N/S", in, i);
 		}
 	}
 

@@ -55,7 +55,7 @@ enum LongitudeSignFormat implements Format<Location> {
 		}
 		else {
 			pos.setErrorIndex(i);
-			throw new ParseException("bad longitude sign: " + c + " in " + in, i);
+			throw new ParseException("Not found longitude sign. Found " + c + ".", in, i);
 		}
 	}
 
