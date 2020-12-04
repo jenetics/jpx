@@ -56,7 +56,11 @@ final class LocationFieldFormat implements Format<Location> {
 
 	@Override
 	public Optional<String> format(final Location location) {
-		return _field.apply(location).map(v -> _format.get().format(v));
+		//return _field.apply(location).map(v -> _format.get().format(v));
+		NumberFormat nf = _format.get();
+		int maxFractionDigits = nf.getMaximumFractionDigits();
+		Optional<Double> maybeD = _field.apply(location, nf);
+		return maybeD.map(v -> nf.format(v));
 	}
 
 	@Override

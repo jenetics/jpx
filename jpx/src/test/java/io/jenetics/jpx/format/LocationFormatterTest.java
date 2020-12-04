@@ -61,9 +61,11 @@ public class LocationFormatterTest {
 	public void format(
 		final LocationFormatter formatter,
 		final Location location,
-		final String format
+		final String expected
 	) {
-		Assert.assertEquals(formatter.format(location), format);
+		String actual = formatter.format(location);
+		String message = location.toString();
+		Assert.assertEquals(actual, expected, message);
 	}
 
 	@Test(dataProvider = "formats")

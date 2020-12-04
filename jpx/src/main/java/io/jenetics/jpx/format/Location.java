@@ -25,6 +25,7 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Length.Unit.METER;
 
+import java.text.NumberFormat;
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -359,7 +360,7 @@ public final class Location {
 		 * @param location the location
 		 * @return the value of the location field
 		 */
-		Optional<Double> apply(final Location location) {
+		Optional<Double> apply(final Location location, NumberFormat nf) {
 			return _accessor.apply(requireNonNull(location));
 		}
 
