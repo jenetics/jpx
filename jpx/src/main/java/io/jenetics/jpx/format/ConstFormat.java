@@ -51,9 +51,8 @@ final class ConstFormat<T> implements Format<T> {
 		return Optional.of(_value);
 	}
 
-	@Override
-	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		// parse _value
+	/** parse _value */
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
 		int start = pos.getIndex();
 		int end = start + _value.length();
 		if( end <= in.length()){
@@ -68,10 +67,7 @@ final class ConstFormat<T> implements Format<T> {
 		throw new ParseException("Not found constant \"" + _value + "\"", in, start);
 	}
 
-	@Override
-	public String toString() {
-		return escape(_value);
-	}
+	@Override public String toString() { return escape(_value); }
 
 	private static String escape(final String value) {
 		final StringBuilder out = new StringBuilder();

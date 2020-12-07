@@ -33,15 +33,14 @@ enum EastWestFormat implements Format<Location> {
 
 	INSTANCE;
 
-	@Override
-	public Optional<String> format(final Location value) {
+	@Override public Optional<String> format(final Location value) {
 		return value.longitude()
 			.map(Longitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
 	}
 
+	/** find E or W at in[pos.index]  */
 	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		// find E or W at in[pos.index]
 		int i = pos.getIndex();
 		char c = in.charAt(i);
 		if(c=='E'){
@@ -58,8 +57,7 @@ enum EastWestFormat implements Format<Location> {
 		}
 	}
 
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return "x";
 	}
 

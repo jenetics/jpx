@@ -38,8 +38,7 @@ final class CompositeFormat<T> implements Format<T> {
 		_formats = List.copyOf(formats);
 	}
 
-	@Override
-	public Optional<String> format(final T value) {
+	@Override public Optional<String> format(final T value) {
 		final List<Optional<String>> strings = _formats.stream()
 			.map(format -> format.format(value))
 			.collect(Collectors.toList());
@@ -53,16 +52,13 @@ final class CompositeFormat<T> implements Format<T> {
 			: Optional.empty();
 	}
 
-	@Override
-	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		for( Format<T> f : _formats )
-			f.parse(in, pos, builder);
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
+		for( Format<T> f : _formats ) f.parse(in, pos, b);
 	}
 
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return _formats.stream()
-			.map(Objects::toString)
+			.map( f -> f.toString() )
 			.collect(Collectors.joining());
 	}
 

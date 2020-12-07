@@ -36,9 +36,9 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
+import static org.testng.AssertJUnit.assertEquals;
 
 import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -50,7 +50,6 @@ import org.testng.annotations.Test;
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
-import io.jenetics.jpx.format.Location.Field;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -72,6 +71,15 @@ public class LocationFormatterTest {
 	public void parse(LocationFormatter formatter, Location location, String text) {
 		Location l = formatter.parse(text);
 		Assert.assertEquals(l, location, text);
+	}
+
+	@Test
+	public void t(){
+		LocationFormatter f = LocationFormatter.ofPattern("+ddmm.mmm");
+		Location l = Location.of(Longitude.ofDegrees(-65.23427));
+		String t = "01";
+		assertEquals(l, f.parse(t));
+		assertEquals(t, f.format(l));
 	}
 
 	@DataProvider
@@ -99,38 +107,38 @@ public class LocationFormatterTest {
 				Longitude.ofDegrees(-65.23),
 				Length.of(-65, METER)), "+23.99-065.23-65CRS"},
 
-			{ISO_LAT_MEDIUM, Location.of(Latitude.ofDegrees(23.987635)), "+2459.258"},
+			{ISO_LAT_MEDIUM, Location.of(Latitude.ofDegrees(23.987635)), "+2359.258"},
 			{ISO_LAT_MEDIUM, Location.of(Latitude.ofDegrees(-65.234275)), "-6514.056"},
-			{ISO_LON_MEDIUM, Location.of(Longitude.ofDegrees(23.987635)), "+02459.258"},
+			{ISO_LON_MEDIUM, Location.of(Longitude.ofDegrees(23.987635)), "+02359.258"},
 			{ISO_LON_MEDIUM, Location.of(Longitude.ofDegrees(-65.234275)), "-06514.056"},
 			{ISO_ELE_MEDIUM, Location.of(Length.of(24, METER)), "+24.0CRS"},
 			{ISO_ELE_MEDIUM, Location.of(Length.of(-65.2, METER)), "-65.2CRS"},
 			{ISO_MEDIUM, Location.of(
 				Latitude.ofDegrees(23.987635),
 				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "+2459.258-06514.056-65.2CRS"},
+				Length.of(-65.234275, METER)), "+2359.258-6514.056-65.2CRS"},
 
-			{ISO_LAT_LONG, Location.of(Latitude.ofDegrees(23.987635)), "+245915.49"},
+			{ISO_LAT_LONG, Location.of(Latitude.ofDegrees(23.987635)), "+235915.49"},
 			{ISO_LAT_LONG, Location.of(Latitude.ofDegrees(-65.234275)), "-651403.39"},
-			{ISO_LON_LONG, Location.of(Longitude.ofDegrees(23.987635)), "+0245915.49"},
+			{ISO_LON_LONG, Location.of(Longitude.ofDegrees(23.987635)), "+0235915.49"},
 			{ISO_LON_LONG, Location.of(Longitude.ofDegrees(-65.234275)), "-0651403.39"},
 			{ISO_ELE_LONG, Location.of(Length.of(23.99, METER)), "+23.99CRS"},
 			{ISO_ELE_LONG, Location.of(Length.of(-65.23, METER)), "-65.23CRS"},
 			{ISO_LONG, Location.of(
 				Latitude.ofDegrees(23.987635),
 				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "+245915.49-0651403.39-65.23CRS"},
+				Length.of(-65.234275, METER)), "+235915.49-0651403.39-65.23CRS"},
 
 			{LocationFormatter.ofPattern("DD°MMSS dd°mmss"),Location.of(
 				Latitude.ofDegrees(23.987635),
 				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "24°5915 65°1403"}, // right?
+				Length.of(-65.234275, METER)), "23°5915 65°1403"},
 
 			{LocationFormatter.ofPattern("LL[g''g]"), Location.of(Latitude.ofDegrees(24)), "24g'g"},
 			{LocationFormatter.ofPattern("+LL[g''g]"), Location.of(Latitude.ofDegrees(24)), "+24g'g"},
-			{LocationFormatter.ofPattern("+L+L[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24+24g'g"},
+			//{LocationFormatter.ofPattern("+L+L[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24+24g'g"},//bad pattern: L twice
 			{LocationFormatter.ofPattern("+++LL[g''g]"), Location.of(Latitude.ofDegrees(24)), "+++24g'g"},
-			{LocationFormatter.ofPattern("+++LL[g''g]++"), Location.of(Latitude.ofDegrees(23.987635)), "+++24g'g"}
+			{LocationFormatter.ofPattern("+++LL[g''g]++"), Location.of(Latitude.ofDegrees(24)), "+++24g'g"}
 		};
 	}
 
@@ -205,9 +213,7 @@ public class LocationFormatterTest {
 		Locale.setDefault(Locale.GERMANY);
 		DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
 		Location location = Location.of(Latitude.ofDegrees(23.987635));
-		LocationFormatter locationFormatter = LocationFormatter.builder()
-			.append(Field.DEGREE_OF_LATITUDE, "00.00")
-			.build();
+		LocationFormatter locationFormatter = LocationFormatter.ofPattern("DD.DD");
 		Assert.assertEquals(instance.getDecimalSeparator(), ',');
 		Assert.assertEquals(locationFormatter.toPattern(), "DD.DD");
 		Assert.assertEquals(locationFormatter.format(location), "23.99");

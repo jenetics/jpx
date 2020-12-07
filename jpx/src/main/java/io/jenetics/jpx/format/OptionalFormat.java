@@ -57,8 +57,7 @@ final class OptionalFormat<T> implements Format<T> {
 		}
 	}
 
-	@Override
-	public String toString() {
+	@Override public String toString() {
 		return String.format("[%s]", _format);
 	}
 

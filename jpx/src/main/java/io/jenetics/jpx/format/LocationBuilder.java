@@ -4,7 +4,6 @@ import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 
-// TODO maybe local to Location?
 class LocationBuilder {
 
 	LocationBuilder(){}
@@ -14,8 +13,7 @@ class LocationBuilder {
 
 	private Double latitude = null; // degrees
 	public void addLatitude(double d) {
-		if(latitude==null)
-			latitude = 0.0;
+		if(latitude==null) latitude = 0.0;
 		latitude += d;
 	}
 	public void addLatitudeMinute(double d) { addLatitude(d/60.0); }
@@ -26,8 +24,7 @@ class LocationBuilder {
 
 	private Double longitude = null; // degrees
 	public void addLongitude(double d) {
-		if(longitude==null)
-			longitude = 0.0;
+		if(longitude==null) longitude = 0.0;
 		longitude += d;
 	}
 	public void addLongitudeMinute(double d) { addLongitude(d/60.0); }
@@ -38,8 +35,7 @@ class LocationBuilder {
 
 	private Double elevation = null; // meters
 	public void addElevation(double d) {
-		if(elevation==null)
-			elevation=0.0;
+		if(elevation==null) elevation=0.0;
 		elevation += d;
 	}
 

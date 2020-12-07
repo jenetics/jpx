@@ -40,17 +40,16 @@ enum ElevationSignFormat implements Format<Location> {
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
 	}
 
-	@Override
-	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		// parse '-' or '+'
+	/** parse '-' or '+' */
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
 		int i = pos.getIndex();
 		char c = in.charAt(i);
 		if(c=='-'){
-			builder.setElevationSign(-1);
+			b.setElevationSign(-1);
 			pos.setIndex(i+1);
 		}
 		else if(c=='+'){
-			builder.setElevationSign(+1);
+			b.setElevationSign(+1);
 			pos.setIndex(i+1);
 		}
 		else {

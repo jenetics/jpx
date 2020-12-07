@@ -44,6 +44,6 @@ interface Format<T> {
 	Optional<String> format(final T value);
 
 	// TODO Format is parameterised on T, but the builder is only for Location
-	void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException;
+	void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException;
 
 }

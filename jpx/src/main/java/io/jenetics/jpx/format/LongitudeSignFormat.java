@@ -33,24 +33,22 @@ enum LongitudeSignFormat implements Format<Location> {
 
 	INSTANCE;
 
-	@Override
-	public Optional<String> format(final Location value) {
+	@Override public Optional<String> format(final Location value) {
 		return value.longitude()
 			.map(Longitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
 	}
 
-	@Override
-	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		// parse '-' or '+'
+	/** parse '-' or '+' */
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
 		int i = pos.getIndex();
 		char c = in.charAt(i);
 		if(c=='-'){
-			builder.setLongitudeSign(-1);
+			b.setLongitudeSign(-1);
 			pos.setIndex(i+1);
 		}
 		else if(c=='+'){
-			builder.setLongitudeSign(+1);
+			b.setLongitudeSign(+1);
 			pos.setIndex(i+1);
 		}
 		else {
@@ -59,9 +57,6 @@ enum LongitudeSignFormat implements Format<Location> {
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "+";
-	}
+	@Override public String toString() { return "+"; }
 
 }
