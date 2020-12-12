@@ -23,7 +23,7 @@ class LongitudeSecond extends Field {
 		return loc.longitude()
 			.map( lon -> lon.toDegrees() )
 			.map( d -> toSeconds(d) )
-			.map( v -> nf.format(v) );
+			.map( d -> nf.format(d) );
 	}
 
 }

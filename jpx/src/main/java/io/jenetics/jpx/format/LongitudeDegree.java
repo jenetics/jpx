@@ -1,14 +1,15 @@
 package io.jenetics.jpx.format;
 
+import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.util.Optional;
 
 import static java.lang.Math.abs;
+import static java.math.RoundingMode.DOWN;
+import static java.math.RoundingMode.HALF_EVEN;
 
-/**
- * This field allows to access the absolute value of the longitude
- * degrees of a given location. If you need to extract the signed
- * longitude degrees, use {@link #Longitude} instead.
+/** This field allows to access the longitude
+ * degrees of a given location.
  *
  * If the pattern has a fractional part, the longitude is rounded
  * to match the pattern.
@@ -16,17 +17,27 @@ import static java.lang.Math.abs;
  * If the pattern has no fractional part, the longitude is truncated
  * rather than rounded, on the assumption that the fractional part
  * will be represented by minutes and seconds.
- *
- * If the intention is to have no fractional part and no minutes and
- * seconds, use LONGITUDE (l) instead.
  */
 class LongitudeDegree extends Field {
 
+	private boolean prefixSign = false;
+
 	LongitudeDegree(String pattern){super(pattern);}
 
-	char type() { return 'd'; }
+	void setPrefixSign(boolean b){
+		prefixSign = b;
+		String decimalPattern = toDecimalPattern(pattern);
+		String p = b ? ("+" + decimalPattern + ";" + "-" + decimalPattern) :  decimalPattern;
+		nf = new DecimalFormat(p, symbols);
+	}
+	boolean isPrefixSign(){ return prefixSign; }
 
-	boolean isLongitude() { return true; }
+	void setTruncate(boolean b){ nf.setRoundingMode(b ? DOWN : HALF_EVEN); }
+
+	private boolean absolute = false;
+	void setAbsolute(boolean b){absolute=b;}
+
+	char type() { return 'd'; }
 
 	/** parse longitude degree as double */
 	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
@@ -34,13 +45,13 @@ class LongitudeDegree extends Field {
 		b.addLongitude(d);
 	}
 
-	// TODO must preserve leading zeroes
 	@Override public Optional<String> format(Location loc) {
 		return loc.longitude()
 			.map( lat -> lat.toDegrees() )
-			.map( d -> abs(d) )
-			.map( d -> hasFraction() ? d : truncate(d) )
+			.map( d -> absolute ? abs(d) : d )
 			.map( d -> nf.format(d) );
 	}
+
+	@Override public String toPattern(){ return prefixSign ? "+" + pattern : pattern; }
 
 }

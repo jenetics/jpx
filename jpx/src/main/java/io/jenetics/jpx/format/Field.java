@@ -17,11 +17,11 @@ import static java.lang.Math.*;
  * @version 1.4
  * @since 1.4
  */
-abstract class Field implements Format<Location> {
+abstract class Field implements Format {
 
-	private final static DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.US);
+	protected final static DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance(Locale.US);
 
-	protected final NumberFormat nf;
+	protected NumberFormat nf;
 	protected final String pattern;
 
 	protected Field(String pattern){
@@ -29,6 +29,8 @@ abstract class Field implements Format<Location> {
 		this.nf = new DecimalFormat(decimalPattern, symbols);
 		this.pattern = pattern;
 	}
+
+	void setPrefixSign(boolean b){}
 
 	abstract char type();
 
@@ -49,39 +51,43 @@ abstract class Field implements Format<Location> {
 		for (int i = 0; i < pattern.length(); ++i) {
 			char c = pattern.charAt(i);
 			switch (c){
-				case 'L': return Optional.of(new Latitude(pattern));
+				case 'L': {
+					String p = pattern.replace('L', 'D');
+					return Optional.of(new LatitudeDegree(p));
+				}
 				case 'D': return Optional.of(new LatitudeDegree(pattern));
 				case 'M': return Optional.of(new LatitudeMinute(pattern));
 				case 'S': return Optional.of(new LatitudeSecond(pattern));
-				case 'l': return Optional.of(new Longitude(pattern));
+				case 'l': {
+					String p = pattern.replace('l','d');
+					return Optional.of(new LongitudeDegree(p));
+				}
 				case 'd': return Optional.of(new LongitudeDegree(pattern));
 				case 'm': return Optional.of(new LongitudeMinute(pattern));
 				case 's': return Optional.of(new LongitudeSecond(pattern));
 				case 'E': return Optional.of(new Elevation(pattern));
-				case 'H': return Optional.of(new ElevationMeter(pattern));
+				case 'H': {
+					String p = pattern.replace('H', 'E');
+					return Optional.of(new Elevation(p));
+				}
 			}
 		}
 		return Optional.empty();
 	}
 
-	private String toDecimalPattern(String pattern) { return pattern.replace(type(), '0'); }
+	protected String toDecimalPattern(String pattern) { return pattern.replace(type(), '0'); }
 
-	boolean isLatitude() { return false; }
-	boolean isLongitude() { return false; }
-	boolean isElevation() { return false; }
-
-	/** Returns the pattern that created this field. */
-	@Override public String toString() { return pattern; }
-
-	protected int truncate(double d){ return (int)d; }
-	protected boolean hasFraction(){ return 0 < nf.getMinimumFractionDigits(); }
+	@Override public String toPattern() { return pattern; }
 
 	protected double parseDouble(CharSequence in, ParsePosition pos){
 		int i = pos.getIndex();
-		int end = i + pattern.length();
-		String s = in.subSequence(0, end).toString(); // don't eat more digits
-
-		Number n = nf.parse(s, pos);//Does not throw an exception; if no object can be parsed, index is unchanged!
+		String s = in.toString();
+		boolean strictWidth = 1 < nf.getMinimumIntegerDigits(); //better?
+		if(strictWidth) {
+			int end = i + toPattern().length(); // toPattern() rather than pattern because LatitudeDegree.toPattern()
+			s = in.subSequence(0, end).toString(); // don't eat more digits
+		}
+		Number n = nf.parse(s, pos);//Does not throw an exception; if no object can be parsed, index is unchanged.
 		if(i==pos.getIndex()) {
 			pos.setErrorIndex(i);
 			throw new ParseException("Not found " + pattern, in, i);

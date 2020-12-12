@@ -30,15 +30,15 @@ import java.util.stream.Collectors;
  * @version 1.4
  * @since 1.4
  */
-final class CompositeFormat<T> implements Format<T> {
+class CompositeFormat implements Format {
 
-	private final List<Format<T>> _formats;
+	private final List<Format> _formats;
 
-	private CompositeFormat(final List<Format<T>> formats) {
+	private CompositeFormat(List<Format> formats) {
 		_formats = List.copyOf(formats);
 	}
 
-	@Override public Optional<String> format(final T value) {
+	@Override public Optional<String> format(Location value) {
 		final List<Optional<String>> strings = _formats.stream()
 			.map(format -> format.format(value))
 			.collect(Collectors.toList());
@@ -53,17 +53,17 @@ final class CompositeFormat<T> implements Format<T> {
 	}
 
 	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
-		for( Format<T> f : _formats ) f.parse(in, pos, b);
+		for( Format f : _formats ) f.parse(in, pos, b);
 	}
 
-	@Override public String toString() {
+	@Override public String toPattern() {
 		return _formats.stream()
-			.map( f -> f.toString() )
+			.map( f -> f.toPattern() )
 			.collect(Collectors.joining());
 	}
 
-	static <T> CompositeFormat<T> of(final List<Format<T>> formats) {
-		return new CompositeFormat<>(formats);
+	static CompositeFormat of(List<Format> formats) {
+		return new CompositeFormat(formats);
 	}
 
 }

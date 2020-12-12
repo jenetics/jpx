@@ -30,43 +30,35 @@ import java.util.Optional;
  * @version 1.4
  * @since 1.4
  */
-final class OptionalFormat<T> implements Format<T> {
+class OptionalFormat implements Format {
 
-	private final Format<T> _format;
+	private final Format _format;
 
-	private OptionalFormat(final Format<T> format) {
+	private OptionalFormat(Format format) {
 		_format = requireNonNull(format);
 	}
 
-	@Override
-	public Optional<String> format(final T value) {
+	@Override public Optional<String> format(Location value) {
 		return Optional.of(_format.format(value).orElse(""));
 	}
 
-	@Override
-	public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
 		int index = pos.getIndex();
 		int errorIndex = pos.getErrorIndex();
+		LocationBuilder before = builder.copy();
 		try {
 			_format.parse(in, pos, builder);
 		} catch (ParseException e){
-			// Assume that in and builder have not changed.
-			// Set pos back to what it was.
-			pos.setIndex(index);
+			builder.copy(before);
+			pos.setIndex(index); // Set pos back to what it was.
 			pos.setErrorIndex(errorIndex);
 		}
 	}
 
-	@Override public String toString() {
-		return String.format("[%s]", _format);
+	@Override public String toPattern() {
+		return String.format("[%s]", _format.toPattern());
 	}
 
-	static <T> OptionalFormat<T> of(final Format<T> format) {
-		return new OptionalFormat<>(format);
-	}
-
-	static <T> OptionalFormat<T> of(final List<Format<T>> formats) {
-		return new OptionalFormat<>(CompositeFormat.of(formats));
-	}
+	static OptionalFormat of(List<Format> formats) { return new OptionalFormat(CompositeFormat.of(formats)); }
 
 }

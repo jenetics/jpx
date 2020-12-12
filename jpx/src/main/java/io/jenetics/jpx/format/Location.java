@@ -19,10 +19,15 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.floor;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.Length.Unit.METER;
 
+import java.text.NumberFormat;
 import java.util.Optional;
+import java.util.function.Function;
 
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
@@ -80,9 +85,7 @@ public final class Location {
 	 * @return the <em>latitude</em> of {@code this} location, or
 	 *         {@link Optional#empty()} if not available
 	 */
-	public Optional<Latitude> latitude() {
-		return Optional.ofNullable(_latitude);
-	}
+	public Optional<Latitude> latitude() { return Optional.ofNullable(_latitude); }
 
 	/**
 	 * Return the <em>longitude</em> of {@code this} location.
@@ -90,9 +93,7 @@ public final class Location {
 	 * @return the <em>longitude</em> of {@code this} location, or
 	 *         {@link Optional#empty()} if not available
 	 */
-	public Optional<Longitude> longitude() {
-		return Optional.ofNullable(_longitude);
-	}
+	public Optional<Longitude> longitude() { return Optional.ofNullable(_longitude); }
 
 	/**
 	 * Return the <em>elevation</em> of {@code this} location.
@@ -100,9 +101,7 @@ public final class Location {
 	 * @return the <em>elevation</em> of {@code this} location, or
 	 *         {@link Optional#empty()} if not available
 	 */
-	public Optional<Length> elevation() {
-		return Optional.ofNullable(_elevation);
-	}
+	public Optional<Length> elevation() { return Optional.ofNullable(_elevation); }
 
 	/**
 	 * Return a new {@link Point} from {@code this} location. If the

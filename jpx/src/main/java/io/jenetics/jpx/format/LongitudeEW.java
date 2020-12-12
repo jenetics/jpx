@@ -22,43 +22,43 @@ package io.jenetics.jpx.format;
 import java.text.ParsePosition;
 import java.util.Optional;
 
-import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.4
  * @since 1.4
  */
-enum NorthSouthFormat implements Format<Location> {
+enum LongitudeEW implements Format {
 
 	INSTANCE;
 
-	@Override
-	public Optional<String> format(final Location value) {
-		return value.latitude()
-			.map(Latitude::toDegrees)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "N" : "S");
+	@Override public Optional<String> format(final Location value) {
+		return value.longitude()
+			.map(Longitude::toDegrees)
+			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
 	}
 
+	/** find E or W at in[pos.index]  */
 	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
-		// find N or S at in[pos.index]
 		int i = pos.getIndex();
 		char c = in.charAt(i);
-		if(c=='N'){
+		if(c=='E'){
 			pos.setIndex(i+1);
-			builder.setLatitudeSign(+1);
+			builder.setLongitudeSign(+1);
 		}
-		else if(c=='S'){
+		else if(c=='W'){
 			pos.setIndex(i+1);
-			builder.setLatitudeSign(-1);
+			builder.setLongitudeSign(-1);
 		}
 		else {
 			pos.setErrorIndex(i);
-			throw new ParseException("Not found N/S", in, i);
+			throw new ParseException("Not found E/W", in, i);
 		}
 	}
 
-	@Override public String toString() {
-		return "X";
+	@Override public String toPattern() {
+		return "x";
 	}
+
 }

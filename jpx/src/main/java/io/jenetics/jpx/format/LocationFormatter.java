@@ -41,31 +41,250 @@ import io.jenetics.jpx.Longitude;
  * Patterns are based on a simple sequence of letters and symbols. A pattern is
  * used to create a Formatter using the {@code #ofPattern(String)} and
  * {@code #ofPattern(String, Locale)} methods.
- * For example, {@code DD°MM'SS.SSS"X} will format to
- * {@code 60°15'59.613"N}. A formatter created from a pattern can be used as
+ *
+ * For example, {@code D°MM'SS.SSS"X} will format to {@code 60°15'59.613"N}.
+ *
+ * A formatter created from a pattern can be used as
  * many times as necessary, it is immutable and is thread-safe.
+ *
  * <table class="striped">
  * <caption><b>Pattern Letters and Symbols</b></caption>
  * <thead>
  *  <tr><th scope="col">Symbol</th>   <th scope="col">Meaning</th>         <th scope="col">Examples</th>
  * </thead>
  * <tbody>
- *   <tr><th scope="row">L</th>       <td>latitude in degrees</td>         <td>-34.4334; 23.2332</td>
- *   <tr><th scope="row">D</th>       <td>absolute degree part of latitude</td>     <td>34; 23.2332</td>
- *   <tr><th scope="row">M</th>       <td>minute part of latitude</td>     <td>45; 45.6</td>
- *   <tr><th scope="row">S</th>       <td>second part of latitude</td>     <td>7; 07</td>
- *   <tr><th scope="row">X</th>       <td>hemisphere (N or S)</td>         <td>N; S</td>
- *   <tr><th scope="row">l</th>       <td>longitude in degrees</td>        <td>34; -23.2332</td>
- *   <tr><th scope="row">d</th>       <td>absolute degree part of longitude</td>    <td>34; 23.2332</td>
- *   <tr><th scope="row">m</th>       <td>minute part of longitude</td>    <td>45; 45.6</td>
- *   <tr><th scope="row">s</th>       <td>second part of longitude</td>    <td>7; 07</td>
- *   <tr><th scope="row">x</th>       <td>hemisphere (E or W)</td>         <td>E; W</td>
- *   <tr><th scope="row">E</th>       <td>elevation in meters</td>         <td>234; 1023; -12</td>
- *   <tr><th scope="row">H</th>       <td>absolute elevation in meters</td> <td>234; 1023; 12</td>
- *   <tr><th scope="row">'</th>       <td>escape for text</td>             <td></td>
- *   <tr><th scope="row">''</th>      <td>single quote</td>                <td>'</td>
- *   <tr><th scope="row">[</th>       <td>optional section start</td>      <td></td>
- *   <tr><th scope="row">]</th>       <td>optional section end</td>        <td></td>
+ *   <tr><th scope="row">L</th><td>deprecated synonym for 'D'</td></tr>
+ *   <tr>
+ *       <th scope="row">D</th>
+ *       <td>Latitude in degrees. Values in -90 <= d <= +90. See examples.</td>
+ *       <td>34; 23.2332</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">M</th>
+ *       <td>Latitude minutes. Values in 0 <= m < 60. See examples.</td>
+ *       <td>45; 45.6</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">S</th>
+ *       <td>Latitude seconds. Values in 0 <= s < 60. See examples.</td>
+ *       <td>7; 07</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">X</th>
+ *       <td>hemisphere (N or S)</td>
+ *       <td>N; S</td>
+ *   </tr>
+ *   <tr><th scope="row">l</th><td>deprecated synonym for 'd'</td></tr>
+ *   <tr>
+ *       <th scope="row">d</th>
+ *       <td>Longitude degrees. Values in -180 <= d <= +180. Similar to Latitude degrees.</td>
+ *       <td>34; 23.2332</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">m</th>
+ *       <td>Longitude minutes. Similar to latitude minutes.</td>
+ *       <td>45; 45.6</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">s</th>
+ *       <td>Longitude seconds. Similar to Latitude seconds.</td>
+ *       <td>7; 07</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">x</th>
+ *       <td>hemisphere (E or W)</td>
+ *       <td>E; W</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">E</th>
+ *       <td>Elevation in meters. See examples.</td>
+ *       <td>234; 1023; -12</td>
+ *   </tr>
+ *   <tr><th scope="row">H</th><td>deprecated synonym for 'E'</td></tr>
+ *   <tr>
+ *       <th scope="row">'</th>
+ *       <td>escape for text</td>
+ *       <td></td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">''</th>
+ *       <td>single quote</td>
+ *       <td>'</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">[</th>
+ *       <td>optional section start</td>
+ *       <td></td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">]</th>
+ *       <td>optional section end</td>
+ *       <td></td>
+ *   </tr>
+ * </tbody>
+ * </table>
+ *
+ *
+ * <table class="striped">
+ * <caption><b>Examples</b></caption>
+ * <thead>
+ *  <tr>
+ *      <th scope="col">Pattern</th>
+ *      <th scope="col">Meaning</th>
+ *      <th scope="col">Examples</th>
+ * </thead>
+ * <tbody>
+ *   <tr>
+ *       <th scope="row">+D</th>
+ *       <td>Latitude sign indicated by prefix +/-</td>
+ *       <td>+47; -24</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D X</th>
+ *       <td>Latitude sign indicated by X</td>
+ *       <td>47 N; 24 S</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D.DD</th>
+ *       <td>Latitude degrees with decimal faction</td>
+ *       <td>47.50</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D M</th>
+ *       <td>Latitude in degrees and minutes</td>
+ *       <td>47 30</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D</th>
+ *       <td>Latitude degrees in variable width</td>
+ *       <td>9; 47</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">DD</th>
+ *       <td>Latitude degrees in fixed width</td>
+ *       <td>09; 47</td>
+ *   </tr>
+ *
+ *   <tr>
+ *       <th scope="row">D M.MM</th>
+ *       <td>Latitude minutes with decimal fraction</td>
+ *       <td>47 2.25</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D M S</th>
+ *       <td>Latitude minutes and seconds</td>
+ *       <td>47 2 15</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D M</th>
+ *       <td>Latitude minutes in variable width</td>
+ *       <td>47 2; 46 12</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D MM</th>
+ *       <td>Latitude minutes in fixed width</td>
+ *       <td>47 02; 46 12</td>
+ *   </tr>
+ *
+ *   <tr>
+ *       <th scope="row">D M S</th>
+ *       <td>Latitude seconds in variable width</td>
+ *       <td>47 2 3; 46 2 13</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D M SS</th>
+ *       <td>Latitude seconds in fixed width</td>
+ *       <td>47 2 03; 46 2 13</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">D M S.SS</th>
+ *       <td>Latitude seconds with decimal fraction</td>
+ *       <td>46 2 13.54</td>
+ *   </tr>
+ *
+ *   <tr>
+ *       <th scope="row">+d</th>
+ *       <td>Longitude sign indicated by prefix +/-</td>
+ *       <td>+147; -124</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">d x</th>
+ *       <td>Latitude sign indicated by x</td>
+ *       <td>147 E; 124 W</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">d</th>
+ *       <td>Longitude degrees in variable width</td>
+ *       <td>9; 47; 175</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">ddd</th>
+ *       <td>Longitude degrees in fixed width</td>
+ *       <td>009; 047; 175</td>
+ *   </tr>
+ *
+ *   <tr>
+ *       <th scope="row">d m.mm</th>
+ *       <td>Longitude minutes with decimal fraction</td>
+ *       <td>47 2.25</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">d m s</th>
+ *       <td>Longitude minutes and seconds</td>
+ *       <td>47 2 15</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">d m</th>
+ *       <td>Longitude minutes in variable width</td>
+ *       <td>47 2; 46 12</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">d mm</th>
+ *       <td>Longitude minutes in fixed width</td>
+ *       <td>47 02; 46 12</td>
+ *   </tr>
+ *
+ *   <tr>
+ *       <th scope="row">d m s</th>
+ *       <td>Longitude seconds in variable width</td>
+ *       <td>47 2 3; 46 2 13</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">d m ss</th>
+ *       <td>Longitude seconds in fixed width</td>
+ *       <td>47 2 03; 46 2 13</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">d m s.ss</th>
+ *       <td>Longitude seconds with decimal fraction</td>
+ *       <td>46 2 13.54</td>
+ *   </tr>
+ *
+ *   <tr>
+ *       <th scope="row">E</th>
+ *       <td>Elevation without positive sign</td>
+ *       <td>9; -9</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">+E</th>
+ *       <td>Elevation with positive or negative sign</td>
+ *       <td>+9; -9</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">E</th>
+ *       <td>Elevation in variable width</td>
+ *       <td>9; 19; 190</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">EEE</th>
+ *       <td>Elevation in fixed width</td>
+ *       <td>009; 019; 190</td>
+ *   </tr>
+ *   <tr>
+ *       <th scope="row">E.EEE</th>
+ *       <td>Elevation with decimal fraction</td>
+ *       <td>9.123</td>
+ *   </tr>
  * </tbody>
  * </table>
  *
@@ -73,119 +292,73 @@ import io.jenetics.jpx.Longitude;
  * @version 1.4
  * @since 1.4
  */
-// TODO explain the use of + versus X,x
-// TODO explain behaviour of D,d: round or truncate
-// TODO explain behaviour of M,m: round or truncate
 public final class LocationFormatter {
 
 	static final Set<Character> PROTECTED_CHARS = Set.of(
 		'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H', 'X', 'x', '+', '[', ']'
 	);
 
-	/**
-	 * Latitude formatter with the pattern <em>{@code D°MM''SS.SSS"X}</em>.
-	 * Example: <em>{@code 16°27'59.180"N}</em>.
-	 */
+	/** Latitude formatter with the pattern <em>{@code D°MM''SS.SSS"X}</em>.
+	 * Example: <em>{@code 16°27'59.180"N}</em>. */
 	public static final LocationFormatter ISO_HUMAN_LAT_LONG = ofPattern("D°MM''SS.SSS\"X");
 
-	/**
-	 * Longitude formatter with the pattern <em>{@code dd°mm''ss.sss"x}</em>.
-	 * Example: <em>{@code 16°27'59.180"E}</em>.
-	 */
-	public static final LocationFormatter ISO_HUMAN_LON_LONG = ofPattern("dd°mm''ss.sss\"x");
+	/** Longitude formatter with the pattern <em>{@code d°mm''ss.sss"x}</em>.
+	 * Example: <em>{@code 16°27'59.180"E}</em>. */
+	public static final LocationFormatter ISO_HUMAN_LON_LONG = ofPattern("d°mm''ss.sss\"x");
 
-	/**
-	 * Elevation formatter with the pattern <em>{@code E.EE'm'}</em>. Example:
-	 * <em>{@code 2045m}</em>.
-	 */
+	/** Elevation formatter with the pattern <em>{@code E.EE'm'}</em>. Example:
+	 * <em>{@code 2045m}</em>. */
 	public static final LocationFormatter ISO_HUMAN_ELE_LONG = ofPattern("E.EE'm'");
 
-	/**
-	 * Elevation formatter with the pattern
-	 * <em>{@code DD°MM''SS.SSS"X dd°mm''ss.sss"x[ E.EE'm']}</em>.
-	 * Example: <em>{@code 50°03′46.461″S 125°48′26.533″E 978.90m}</em>.
-	 */
-	public static final LocationFormatter ISO_HUMAN_LONG = ofPattern("DD°MM''SS.SSS\"X dd°mm''ss.sss\"x[ E.EE'm']");
+	/** Elevation formatter with the pattern
+	 * <em>{@code D°MM''SS.SSS"X d°mm''ss.sss"x[ E.EE'm']}</em>.
+	 * Example: <em>{@code 50°03′46.461″S 125°48′26.533″E 978.90m}</em>.*/
+	public static final LocationFormatter ISO_HUMAN_LONG = ofPattern("D°MM''SS.SSS\"X d°mm''ss.sss\"x[ E.EE'm']");
 
-	/**
-	 * ISO 6709 conform latitude format, short: <em>{@code +DD.DD}</em>.
-	 */
+	/** ISO 6709 conform latitude format, short: <em>{@code +DD.DD}</em>.*/
 	public static final LocationFormatter ISO_LAT_SHORT = ofPattern("+DD.DD");
 
-	/**
-	 * ISO 6709 conform latitude format, medium: <em>{@code +DDMM.MMM}</em>.
-	 */
+	/** ISO 6709 conform latitude format, medium: <em>{@code +DDMM.MMM}</em>. */
 	public static final LocationFormatter ISO_LAT_MEDIUM = ofPattern("+DDMM.MMM");
 
-	/**
-	 * ISO 6709 conform latitude format, long: <em>{@code +DDMMSS.SS}</em>.
-	 */
+	/** ISO 6709 conform latitude format, long: <em>{@code +DDMMSS.SS}</em>.*/
 	public static final LocationFormatter ISO_LAT_LONG = ofPattern("+DDMMSS.SS");
 
-	/**
-	 * ISO 6709 conform longitude format, short: <em>{@code +ddd.dd}</em>.
-	 */
+	/** ISO 6709 conform longitude format, short: <em>{@code +ddd.dd}</em>.*/
 	public static final LocationFormatter ISO_LON_SHORT = ofPattern("+ddd.dd");
 
-	/**
-	 * ISO 6709 conform longitude format, medium: <em>{@code +dddmm.mmm}</em>.
-	 */
+	/** ISO 6709 conform longitude format, medium: <em>{@code +dddmm.mmm}</em>. */
 	public static final LocationFormatter ISO_LON_MEDIUM = ofPattern("+dddmm.mmm");
 
-	/**
-	 * ISO 6709 conform longitude format, long: <em>{@code +dddmmss.ss}</em>.
-	 */
+	/** ISO 6709 conform longitude format, long: <em>{@code +dddmmss.ss}</em>.*/
 	public static final LocationFormatter ISO_LON_LONG = ofPattern("+dddmmss.ss");
 
-	/**
-	 * ISO 6709 conform elevation format, short: <em>{@code +H'CRS'}</em>.
-	 */
-	public static final LocationFormatter ISO_ELE_SHORT = ofPattern("+H'CRS'");
+	/** ISO 6709 conform elevation format, short: <em>{@code +E'CRS'}</em>. */
+	public static final LocationFormatter ISO_ELE_SHORT = ofPattern("+E'CRS'");
 
-	/**
-	 * ISO 6709 conform elevation format, medium: <em>{@code +H.H'CRS'}</em>.
-	 */
-	public static final LocationFormatter ISO_ELE_MEDIUM = ofPattern("+H.H'CRS'");
+	/** ISO 6709 conform elevation format, medium: <em>{@code +E.E'CRS'}</em>. */
+	public static final LocationFormatter ISO_ELE_MEDIUM = ofPattern("+E.E'CRS'");
 
-	/**
-	 * ISO 6709 conform elevation format, long: <em>{@code +H.HH'CRS'}</em>.
-	 */
-	public static final LocationFormatter ISO_ELE_LONG = ofPattern("+H.HH'CRS'");
+	/** ISO 6709 conform elevation format, long: <em>{@code +E.EE'CRS'}</em>. */
+	public static final LocationFormatter ISO_ELE_LONG = ofPattern("+E.EE'CRS'");
 
-	/**
-	 * ISO 6709 conform location format, short:
-	 * <em>{@code +DD.DD+ddd.dd[+H'CRS']}</em>.
-	 */
-	public static final LocationFormatter ISO_SHORT = ofPattern("+DD.DD+ddd.dd[+H'CRS']");
+	/** ISO 6709 conform location format, short:
+	 * <em>{@code +DD.DD+ddd.dd[+E'CRS']}</em>.*/
+	public static final LocationFormatter ISO_SHORT = ofPattern("+DD.DD+ddd.dd[+E'CRS']");
 
-	/**
-	 * ISO 6709 conform location format, medium:
-	 * <em>{@code +DDMM.MMM+ddmm.mmm[+H.H'CRS']}</em>.
-	 */
-	public static final LocationFormatter ISO_MEDIUM = ofPattern("+DDMM.MMM+ddmm.mmm[+H.H'CRS']");
+	/** ISO 6709 conform location format, medium:
+	 * <em>{@code +DDMM.MMM+dddmm.mmm[+E.E'CRS']}</em>.	 */
+	public static final LocationFormatter ISO_MEDIUM = ofPattern("+DDMM.MMM+dddmm.mmm[+E.E'CRS']");
 
-	/**
-	 * ISO 6709 conform location format, medium:
-	 * <em>{@code +DDDMMSS.SS+dddmmss.ss[+H.HH'CRS']}</em>.
-	 */
-	public static final LocationFormatter ISO_LONG = ofPattern("+DDDMMSS.SS+dddmmss.ss[+H.HH'CRS']");
+	/** ISO 6709 conform location format, medium:
+	 * <em>{@code +DDMMSS.SS+dddmmss.ss[+E.EE'CRS']}</em>.*/
+	public static final LocationFormatter ISO_LONG = ofPattern("+DDMMSS.SS+dddmmss.ss[+E.EE'CRS']");
 
-	private final List<Format<Location>> _formats;
+	private final List<Format> _formats;
 
-	private LocationFormatter(List<Format<Location>> formats) {
-		_formats = requireNonNull(formats);
-	}
+	private LocationFormatter(List<Format> formats) { _formats = requireNonNull(formats); }
 
-	/**
-	 * Return a new formatter builder instance.
-	 *
-	 * @return a new formatter builder instance
-	 */
-	static Builder builder() { return new Builder(); }
-
-	/**
-	 * Formats the given {@code location} using {@code this} formatter.
-	 *
+	/** Formats the given {@code location} using {@code this} formatter.
 	 * @param location the location to format
 	 * @return the format string
 	 * @throws NullPointerException if the given {@code location} is {@code null}
@@ -201,97 +374,60 @@ public final class LocationFormatter {
 	}
 
 	private FormatterException toError(final Location location) {
-		return new FormatterException(String.format(
-			"Invalid format '%s' for location %s.",
-			toPattern(), location
-		));
+		return new FormatterException(String.format("Invalid format '%s' for location %s.", toPattern(), location));
 	}
 
-	/**
-	 * Return the pattern string represented by this formatter.
-	 *
+	/** Return the pattern string represented by this formatter.
 	 * @see #ofPattern(String)
-	 *
-	 * @return the pattern string of {@code this} formatter
-	 */
+	 * @return the pattern string of {@code this} formatter */
 	public String toPattern() {
 		return _formats.stream()
-			.map( f -> f.toString() ) // using toString() to return pattern
+			.map( f -> f.toPattern() )
 			.collect(Collectors.joining());
 	}
 
-	/**
-	 * Formats the given location elements using {@code this} formatter.
-	 *
+	/** Formats the given location elements using {@code this} formatter.
 	 * @see #format(Location)
-	 *
 	 * @param lat the latitude part of the location
 	 * @param lon the longitude part of the location
 	 * @param ele the elevation part of the location
 	 * @return the format string
 	 * @throws FormatterException if the formatter tries to format a non-existing,
-	 *         non-optional location fields.
-	 */
-	public String format(final Latitude lat, final Longitude lon, final Length ele) {
-		return format(Location.of(lat, lon, ele));
-	}
+	 *         non-optional location fields. */
+	public String format(Latitude lat, Longitude lon, Length ele) {return format(Location.of(lat, lon, ele)); }
 
-	/**
-	 * Formats the given location elements using {@code this} formatter.
-	 *
+	/** Formats the given location elements using {@code this} formatter.
 	 * @see #format(Location)
-	 *
 	 * @param lat the latitude part of the location
 	 * @param lon the longitude part of the location
 	 * @return the format string
 	 * @throws FormatterException if the formatter tries to format a non-existing,
-	 *         non-optional location fields.
-	 */
-	public String format(final Latitude lat, final Longitude lon) {
-		return format(lat, lon, null);
-	}
+	 *         non-optional location fields. */
+	public String format(Latitude lat, Longitude lon) { return format(lat, lon, null); }
 
-	/**
-	 * Formats the given location elements using {@code this} formatter.
-	 *
+	/** Formats the given location elements using {@code this} formatter.
 	 * @see #format(Location)
-	 *
 	 * @param lat the latitude part of the location
 	 * @return the format string
 	 * @throws FormatterException if the formatter tries to format a non-existing,
-	 *         non-optional location fields.
-	 */
-	public String format(final Latitude lat) {
-		return format(lat, null, null);
-	}
+	 *         non-optional location fields. */
+	public String format(Latitude lat) { return format(lat, null, null); }
 
-	/**
-	 * Formats the given location elements using {@code this} formatter.
-	 *
+	/** Formats the given location elements using {@code this} formatter.
 	 * @see #format(Location)
-	 *
 	 * @param lon the longitude part of the location
 	 * @return the format string
 	 * @throws FormatterException if the formatter tries to format a non-existing,
-	 *         non-optional location fields.
-	 */
-	public String format(final Longitude lon) {
-		return format(null, lon, null);
-	}
+	 *         non-optional location fields.*/
+	public String format(Longitude lon) { return format(null, lon, null); }
 
-	/**
-	 * Formats the given location elements using {@code this} formatter.
-	 *
+	/** Formats the given location elements using {@code this} formatter.
 	 * @see #format(Location)
-	 *
 	 * @param ele the elevation part of the location
 	 * @return the format string
 	 * @throws FormatterException if the formatter tries to format a non-existing,
-	 *         non-optional location field.
-	 */
-	public String format(final Length ele) {
-		return format(null, null, ele);
-	}
+	 *         non-optional location field.*/
+	public String format(Length ele) { return format(null, null, ele); }
 
 	/** Parses the text using this formatter, providing control over the text position.
 	 *
@@ -301,14 +437,11 @@ public final class LocationFormatter {
 	 * The entire length of the text does not have to be parsed,
 	 * the ParsePosition will be updated with the index at the end of parsing.
 	 *
-	 * If the formatter parses the same field more than once with different values, the result will be an error.
-	 *
 	 * @param text the text to parse, not null
 	 * @param pos the position to parse from, updated with length parsed and the index of any error, not null
 	 * @return the parsed Location, not null
 	 * @throws ParseException - if unable to parse the requested result
-	 * @throws IndexOutOfBoundsException - if the position is invalid
-	 * */
+	 * @throws IndexOutOfBoundsException - if the position is invalid */
 	public Location parse(CharSequence text, ParsePosition pos) throws ParseException {
 		requireNonNull(text);
 		requireNonNull(pos);
@@ -316,8 +449,7 @@ public final class LocationFormatter {
 			throw new IndexOutOfBoundsException(pos.getIndex());
 
 		LocationBuilder builder = new LocationBuilder();
-		for( Format<Location> f : _formats )
-			f.parse(text, pos, builder);
+		for( Format f : _formats ) f.parse(text, pos, builder);
 
 		Location location = builder.build();
 		return location;
@@ -333,8 +465,7 @@ public final class LocationFormatter {
 	 *
 	 * @param text the text to parse, not null
 	 * @return the parsed temporal object, not null
-	 * @throws ParseException - if unable to parse the requested result
-	 * */
+	 * @throws ParseException - if unable to parse the requested result */
 	public Location parse(CharSequence text) throws ParseException {
 		ParsePosition pos = new ParsePosition(0);
 		Location loc = parse(text, pos); // ParseException
@@ -349,18 +480,16 @@ public final class LocationFormatter {
 	 * Static factory methods.
 	 * ************************************************************************/
 
-	/**
-	 * Creates a formatter using the specified pattern.
-	 *
+	/** Creates a formatter using the specified pattern.
 	 * @see #toPattern()
-	 *
 	 * @param pattern the formatter pattern
 	 * @return the location-formatter of the given {@code pattern}
 	 * @throws NullPointerException if the given {@code pattern} is {@code null}
-	 * @throws IllegalArgumentException if the given {@code pattern} is invalid
-	 */
-	public static LocationFormatter ofPattern(final String pattern) {
-		return builder().appendPattern(pattern).build();
+	 * @throws IllegalArgumentException if the given {@code pattern} is invalid */
+	public static LocationFormatter ofPattern(String pattern) throws  IllegalArgumentException{
+		return new Builder()
+			.appendPattern(pattern)
+			.build();
 	}
 
 	/* *************************************************************************
@@ -381,7 +510,8 @@ public final class LocationFormatter {
 	 */
 	static class Builder {
 
-		private List<Format<Location>> _formats = new ArrayList<>();
+		/** The formats that will go into the LocationFormatter. */
+		private List<Format> _formats = new ArrayList<>();
 
 		private Builder() { }
 
@@ -395,80 +525,169 @@ public final class LocationFormatter {
 		 * @throws IllegalArgumentException if the given {@code pattern} is
 		 *         invalid
 		 */
-		Builder appendPattern(final String pattern) { parsePattern(pattern);return this; }
+		Builder appendPattern(String pattern) { parsePattern(pattern);return this; }
 
 		/**
 		 * Completes this builder by creating the {@code LocationFormatter}.
 		 *
 		 * @return a new location-formatter object
+		 * @throws IllegalArgumentException invalid pattern
 		 */
-		LocationFormatter build() {
-			return new LocationFormatter(new ArrayList<>(_formats));
+		LocationFormatter build() throws IllegalArgumentException {
+			validate(); // IllegalArgumentException
+			return new LocationFormatter(_formats);
+		}
+
+		private void validate(){
+			LatitudeDegree D = null;
+			LatitudeMinute M = null;
+			LatitudeSecond S = null;
+			LatitudeNS X = null;
+			LongitudeDegree d = null;
+			LongitudeMinute m = null;
+			LongitudeSecond s = null;
+			LongitudeEW x = null;
+			Elevation E = null;
+
+			for(Format f : _formats){
+				if(f instanceof LatitudeDegree) {
+					if(D==null) D = (LatitudeDegree) f; else throw new IllegalArgumentException("At most one D pattern");
+				} else if(f instanceof LatitudeMinute) {
+					if (M == null) M = (LatitudeMinute) f; else throw new IllegalArgumentException("At most one M pattern");
+				}else if(f instanceof LatitudeSecond) {
+					if (S == null) S = (LatitudeSecond) f; else throw new IllegalArgumentException("At most one S pattern");
+				}else if(f instanceof LatitudeNS && X==null) {
+					X = (LatitudeNS) f;
+				}else if(f instanceof LongitudeDegree) {
+					if (d == null) d = (LongitudeDegree) f; else throw new IllegalArgumentException("At most one d pattern");
+				}else if(f instanceof LongitudeMinute) {
+					if (m == null) m = (LongitudeMinute) f; else throw new IllegalArgumentException("At most one m pattern");
+				}else if(f instanceof LongitudeSecond) {
+					if (s == null) s = (LongitudeSecond) f; else throw new IllegalArgumentException("At most one s pattern");
+				}else if(f instanceof LongitudeEW && x == null) {
+					x = (LongitudeEW) f;
+				}else if(f instanceof Elevation){
+					if(E==null) E = (Elevation) f; else throw new IllegalArgumentException("At most one E pattern");
+				}
+			}
+
+			// latitude --------------------------------------
+
+			if(D==null && M!=null) throw new IllegalArgumentException("No M without D.");
+			if(M==null && S!=null) throw new IllegalArgumentException("No S without M.");
+
+			// If X, D without sign.
+			if(X!=null && D!=null && D.isPrefixSign())
+				throw new IllegalArgumentException("If X in pattern, D must be without +.");
+
+			// If D has fractional, no M or S
+			if(D!=null && 0<D.nf.getMinimumFractionDigits() && (M!=null || S!=null))
+				throw new IllegalArgumentException("If D has fraction, no M or S.");
+
+			// If M has fractional, no S
+			if(M!=null && 0<M.nf.getMinimumFractionDigits() && S!=null)
+				throw new IllegalArgumentException("If M has fraction, no S.");
+
+			// longitude ------------------------------------
+
+			if(d==null && m!=null) throw new IllegalArgumentException("No m without d.");
+			if(m==null && s!=null) throw new IllegalArgumentException("No s without m.");
+
+			// If x, d without sign.
+			if(x!=null && d!=null && d.isPrefixSign())
+				throw new IllegalArgumentException("If x in pattern, d must be without +.");
+
+			// If d has fractional, no m or s
+			if(d!=null && 0<d.nf.getMinimumFractionDigits() && (m!=null || s!=null))
+				throw new IllegalArgumentException("If d has fraction, no m or s.");
+
+			// If m has fractional, no s.
+			if(m!=null && 0<m.nf.getMinimumFractionDigits() && s!=null)
+				throw new IllegalArgumentException("If m has fraction, no s.");
+
+			// This is still construction, not a validity check. ---------------------
+
+			if(X!=null && D!=null) D.setAbsolute(true);
+			if(M!=null) D.setTruncate(true);
+			if(S!=null) M.setTruncate(true);
+
+			if(x!=null && d!=null) d.setAbsolute(true);
+			if(m!=null) d.setTruncate(true);
+			if(s!=null) m.setTruncate(true);
 		}
 
 		private void parsePattern(final String pattern) {
 			requireNonNull(pattern);
-			final List<Format<Location>> formats = new ArrayList<>();
 
-			boolean optional = false;
-			int signs = 0;
-			boolean quote = false;
+			// The formats we've collected and that are not yet added to _formats.
+			// They may be added to _formats directly or be bundled into an Optional first.
+			final List<Format> formats = new ArrayList<>();
 
-			List<Format<Location>> fmt;
-			for (Tokens tokens = new Tokens(tokenize(pattern)); tokens.hasNext();) {
-				final String token = tokens.next();
+			boolean optional = false; // Inside [ ] ?
+			int signs = 0; // How many unprocessed '+' ?
+			boolean quote = false; // last was ' ?
+
+			Tokens tokens = new Tokens(tokenize(pattern));
+			while ( tokens.hasNext() ) {
+				String token = tokens.next();
 				switch (token) {
 
-					case "X":
-						fmt = optional ? formats : _formats;
-						for (int i = 0; i < signs; ++i)
-							fmt.add(LatitudeSignFormat.INSTANCE);
+					case "X": {
+						List<Format> fs = optional ? formats : _formats;
+						for (int i = 0; i < signs; ++i) fs.add(Plus.INSTANCE);
 						signs = 0;
-						fmt.add(NorthSouthFormat.INSTANCE);
+						fs.add(LatitudeNS.INSTANCE);
 						break;
+					}
 
-					case "x":
-						fmt = optional ? formats : _formats;
-						for (int i = 0; i < signs; ++i)
-							fmt.add(LongitudeSignFormat.INSTANCE);
+					case "x": {
+						List<Format> fs = optional ? formats : _formats;
+						for (int i = 0; i < signs; ++i) fs.add(Plus.INSTANCE);
 						signs = 0;
-						fmt.add(EastWestFormat.INSTANCE);
+						fs.add(LongitudeEW.INSTANCE);
 						break;
+					}
 
 					case "+":
 						++signs;
 						break;
 
-					case "[":
+					case "[": {
 						if (optional)
 							throw new IllegalArgumentException("No nesting '[' (optional) allowed.");
-
-						if (signs > 0)
-							throw new IllegalArgumentException("No '[' after '+' allowed.");
-
+						for (int i = 0; i < signs; i++)
+							_formats.add(Plus.INSTANCE);
+						signs = 0;
 						optional = true;
 						break;
+					}
 
-					case "]":
+					case "]": {
 						if (!optional)
 							throw new IllegalArgumentException("Missing open '[' bracket.");
-
+						// formats will be bundled into Optional and added to _formats.
+						for (int i = 0; i < signs; i++)
+							formats.add(Plus.INSTANCE);
+						signs = 0;
 						optional = false;
-
 						_formats.add(OptionalFormat.of(formats));
 						formats.clear();
 						break;
+					}
 
-					case "'":
-						fmt = optional ? formats : _formats;
+					case "'": {
+						List<Format> fs = optional ? formats : _formats;
+						for (int i = 0; i < signs; ++i)
+							fs.add(Plus.INSTANCE);
+
 						if (tokens.after().filter("'"::equals).isPresent()) {
-							fmt.add(ConstFormat.of("'"));
+							fs.add(ConstFormat.of("'"));
 							tokens.next();
 							break;
 						}
 						if (quote) {
 							if (tokens.before().isPresent()) {
-								fmt.add(ConstFormat.of(
+								fs.add(ConstFormat.of(
 									tokens.before()
 										.orElseThrow(AssertionError::new)
 								));
@@ -478,9 +697,10 @@ public final class LocationFormatter {
 							quote = true;
 						}
 						break;
+					}
 
-					default:
-						fmt = optional ? formats : _formats;
+					default: {
+						List<Format> fs = optional ? formats : _formats;
 						if (!quote) {
 
 							final Optional<Field> field = Field.ofPattern(token);
@@ -489,45 +709,30 @@ public final class LocationFormatter {
 								Field f = field.get();
 
 								// Maybe first add some sign formats.
-								if (signs > 0) {
-									if (f.isLatitude()) // only really makes sense for D
-									{
-										for (int i = 0; i < signs; ++i)
-											fmt.add(LatitudeSignFormat.INSTANCE);
-									}
-
-									else if (f.isLongitude()) // only really makes sense for d
-									{
-										for (int i = 0; i < signs; ++i)
-											fmt.add(LongitudeSignFormat.INSTANCE);
-									}
-
-									else if (f.isElevation()) // only really makes sense for H
-									{
-										for (int i = 0; i < signs; ++i)
-											fmt.add(ElevationSignFormat.INSTANCE);
-									}
+								if (0 < signs) {
+									f.setPrefixSign(true); // One goes to the field.
+									for (int i = 1; i < signs; i++) fs.add(Plus.INSTANCE); // The rest will be Plus.
 								}
 
-								fmt.add(f);
+								fs.add(f);
 							} else {
-								fmt.add(ConstFormat.of(token));
+								fs.add(ConstFormat.of(token));
 							}
 						}
 						signs = 0;
 						break;
+					}
 				}
 			}
 
-			if (optional)
-				throw new IllegalArgumentException("No closing ']' found.");
+			// Maybe there are still signs left over.
+			for(int i=0; i<signs; i++) formats.add(Plus.INSTANCE);
 
-			if (quote)
-				throw new IllegalArgumentException("Missing closing ' character.");
+			if (optional) throw new IllegalArgumentException("No closing ']' found.");
+			if (quote) throw new IllegalArgumentException("Missing closing ' character.");
 
 			_formats.addAll(formats);
 		}
-
 
 		static List<String> tokenize(final String pattern) {
 			final List<String> tokens = new ArrayList<>();
@@ -613,13 +818,9 @@ public final class LocationFormatter {
 
 		private int _index = 0;
 
-		private Tokens(final List<String> tokens) {
-			_tokens = requireNonNull(tokens);
-		}
+		private Tokens(final List<String> tokens) { _tokens = requireNonNull(tokens); }
 
-		@Override public boolean hasNext() {
-			return _index < _tokens.size();
-		}
+		@Override public boolean hasNext() { return _index < _tokens.size(); }
 
 		@Override public String next() {
 			return _tokens.get(_index++);

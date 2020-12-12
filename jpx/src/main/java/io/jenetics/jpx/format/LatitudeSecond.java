@@ -13,8 +13,6 @@ class LatitudeSecond extends Field {
 
 	char type() { return 'S'; }
 
-	boolean isLatitude() { return true; }
-
 	/** parse latitude seconds as double */
 	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
 		double d = parseDouble(in, pos);
@@ -24,8 +22,8 @@ class LatitudeSecond extends Field {
 	@Override public Optional<String> format(Location loc) {
 		return loc.latitude()
 			.map( lat -> lat.toDegrees() )
-			.map(d -> toSeconds(d) )
-			.map( v -> nf.format(v) );
+			.map( d -> toSeconds(d) )
+			.map( d -> nf.format(d) );
 	}
 
 }

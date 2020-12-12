@@ -22,45 +22,42 @@ package io.jenetics.jpx.format;
 import java.text.ParsePosition;
 import java.util.Optional;
 
-import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Latitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.4
  * @since 1.4
  */
-enum ElevationSignFormat implements Format<Location> {
+enum LatitudeNS implements Format {
 
 	INSTANCE;
 
-	@Override
-	public Optional<String> format(final Location value) {
-		return value.elevation()
-			.map(Length::doubleValue)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
+	@Override public Optional<String> format(final Location value) {
+		return value.latitude()
+			.map(Latitude::toDegrees)
+			.map(v -> Double.compare(v, 0.0) >= 0 ? "N" : "S");
 	}
 
-	/** parse '-' or '+' */
-	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
+	/** find N or S at in[pos.index] */
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
 		int i = pos.getIndex();
 		char c = in.charAt(i);
-		if(c=='-'){
-			b.setElevationSign(-1);
+		if(c=='N'){
 			pos.setIndex(i+1);
+			builder.setLatitudeSign(+1);
 		}
-		else if(c=='+'){
-			b.setElevationSign(+1);
+		else if(c=='S'){
 			pos.setIndex(i+1);
+			builder.setLatitudeSign(-1);
 		}
 		else {
 			pos.setErrorIndex(i);
-			throw new ParseException("Not found elevation sign", in, i);
+			throw new ParseException("Not found N/S", in, i);
 		}
 	}
 
-	@Override
-	public String toString() {
-		return "+";
+	@Override public String toPattern() {
+		return "X";
 	}
-
 }

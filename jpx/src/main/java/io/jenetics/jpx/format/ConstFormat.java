@@ -32,7 +32,7 @@ import java.util.Optional;
  * @version 1.4
  * @since 1.4
  */
-final class ConstFormat<T> implements Format<T> {
+final class ConstFormat implements Format {
 
 	private final String _value;
 
@@ -46,8 +46,7 @@ final class ConstFormat<T> implements Format<T> {
 		_value = requireNonNull(value);
 	}
 
-	@Override
-	public Optional<String> format(final T value) {
+	@Override public Optional<String> format(Location value) {
 		return Optional.of(_value);
 	}
 
@@ -67,7 +66,7 @@ final class ConstFormat<T> implements Format<T> {
 		throw new ParseException("Not found constant \"" + _value + "\"", in, start);
 	}
 
-	@Override public String toString() { return escape(_value); }
+	@Override public String toPattern() { return escape(_value); }
 
 	private static String escape(final String value) {
 		final StringBuilder out = new StringBuilder();
@@ -88,8 +87,8 @@ final class ConstFormat<T> implements Format<T> {
 			: out.toString();
 	}
 
-	static <T> ConstFormat<T> of(final String value) {
-		return new ConstFormat<>(value);
+	static ConstFormat of(final String value) {
+		return new ConstFormat(value);
 	}
 
 }
