@@ -8,8 +8,7 @@ import static org.testng.Assert.assertEquals;
 
 public class FormatTest extends Fixture {
 
-	@DataProvider
-	public Object[][] data() {
+	@DataProvider public Object[][] data() {
 		return new Object[][]{
 			// testing D
 			{"D", latitude(-90), "-90"},

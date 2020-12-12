@@ -57,7 +57,6 @@ enum LatitudeNS implements Format {
 		}
 	}
 
-	@Override public String toPattern() {
-		return "X";
-	}
+	@Override public String toPattern() { return "X"; }
+
 }

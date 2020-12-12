@@ -57,8 +57,6 @@ enum LongitudeEW implements Format {
 		}
 	}
 
-	@Override public String toPattern() {
-		return "x";
-	}
+	@Override public String toPattern() { return "x"; }
 
 }
