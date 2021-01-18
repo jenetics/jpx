@@ -51,7 +51,7 @@ public class Normalizer {
 	);
 
 	public static void main(final String[] args) throws Exception {
-		final Path gpxDir = Paths.get("/home/fwilhelm/Downloads/gpx/raw/");
+		final Path gpxDir = Paths.get("/home/fwilhelm/Downloads/drive-download-20210102T082742Z-001/");
 		final Path outputDir = Paths.get("/home/fwilhelm/Downloads/gpx/normalized/");
 
 		Files.walkFileTree(gpxDir, new SimpleFileVisitor<>() {
