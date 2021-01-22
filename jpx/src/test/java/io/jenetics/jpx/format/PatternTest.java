@@ -19,7 +19,6 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.testng.annotations.DataProvider;

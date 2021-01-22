@@ -21,7 +21,7 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
-import java.text.*;
+import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
