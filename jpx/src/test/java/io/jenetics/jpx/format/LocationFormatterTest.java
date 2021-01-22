@@ -19,11 +19,27 @@
  */
 package io.jenetics.jpx.format;
 
+import static org.testng.Assert.assertEquals;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_ELE_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_LAT_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_LON_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import static io.jenetics.jpx.format.LocationFormatter.*;
-import static org.testng.Assert.assertEquals;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

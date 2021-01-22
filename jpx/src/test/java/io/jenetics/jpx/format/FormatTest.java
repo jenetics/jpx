@@ -1,10 +1,10 @@
 package io.jenetics.jpx.format;
 
+import static org.testng.Assert.assertEquals;
+import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
-import static org.testng.Assert.assertEquals;
 
 public class FormatTest extends Fixture {
 
@@ -110,7 +110,12 @@ public class FormatTest extends Fixture {
 		};
 	}
 
-	@Test(dataProvider = "data") public void testFormat(String pattern, Location location, String expected) {
+	@Test(dataProvider = "data")
+	public void testFormat(
+		final String pattern,
+		final Location location,
+		final String expected
+	) {
 		f = ofPattern(pattern);
 		String actual = f.format(location);
 		String message = location.toString();

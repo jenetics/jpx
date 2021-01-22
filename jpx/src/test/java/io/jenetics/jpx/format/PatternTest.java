@@ -1,18 +1,37 @@
 package io.jenetics.jpx.format;
 
-import org.testng.annotations.DataProvider;
-import org.testng.annotations.Test;
+import static org.testng.AssertJUnit.assertEquals;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_ELE_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_LAT_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_HUMAN_LON_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LAT_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_LONG;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
+import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static io.jenetics.jpx.format.LocationFormatter.*;
-import static org.testng.AssertJUnit.assertEquals;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
-/** Tests about patterns: validations, deprecations, ... */
+/**
+ * Tests about patterns: validations, deprecations, ...
+ */
 public class PatternTest extends Fixture {
 
-	@DataProvider public Object[] illegalPatterns(){
+	@DataProvider
+	public Object[] illegalPatterns() {
 		return new String[]{
 			"D D", "M M", "S S", "d d", "m m", "s s", "E E", // repetitions
 			"+DX", "+dx", // double sign
@@ -23,31 +42,38 @@ public class PatternTest extends Fixture {
 	}
 
 	@Test(dataProvider = "illegalPatterns", expectedExceptions = {IllegalArgumentException.class})
-	public void testIllegalPatterns(String pattern){ f = ofPattern(pattern); }
-
-	@Test public void deprecatedL(){
-		f = ofPattern("+LL.LLL");
-		assertEquals("+DD.DDD", f.toPattern() );
+	public void testIllegalPatterns(String pattern) {
+		f = ofPattern(pattern);
 	}
 
-	@Test public void deprecatedl(){
+	@Test
+	public void deprecatedL() {
+		f = ofPattern("+LL.LLL");
+		assertEquals("+DD.DDD", f.toPattern());
+	}
+
+	@Test
+	public void deprecatedl() {
 		f = ofPattern("+ll.lll");
 		assertEquals("+dd.ddd", f.toPattern());
 	}
 
-	@Test public void deprecatedH(){
+	@Test
+	public void deprecatedH() {
 		f = ofPattern("+H.HH");
 		assertEquals("+E.EE", f.toPattern());
 	}
 
-	@Test(dataProvider = "patterns") public void parse(final String pattern) {
+	@Test(dataProvider = "patterns")
+	public void parse(final String pattern) {
 		f = ofPattern(pattern);
 		String actual = f.toPattern();
 		assertEquals(pattern, actual);
 	}
 
-	@DataProvider public Object[][] patterns() {
-		final List<String> patterns = Arrays.asList(
+	@DataProvider
+	public Object[][] patterns() {
+		final List<String> patterns = List.of(
 			ISO_ELE_LONG.toPattern(),
 			ISO_ELE_MEDIUM.toPattern(),
 			ISO_ELE_SHORT.toPattern(),

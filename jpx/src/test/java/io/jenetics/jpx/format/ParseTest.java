@@ -1,10 +1,10 @@
 package io.jenetics.jpx.format;
 
+import static org.testng.Assert.assertEquals;
+import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
+
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-
-import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
-import static org.testng.Assert.assertEquals;
 
 public class ParseTest extends Fixture {
 
