@@ -56,17 +56,17 @@ import io.jenetics.jpx.Longitude;
  *   <tr><th scope="row">L</th><td>deprecated synonym for 'D'</td></tr>
  *   <tr>
  *       <th scope="row">D</th>
- *       <td>Latitude in degrees. Values in -90 <= d <= +90. See examples.</td>
+ *       <td>Latitude in degrees. Values in {@code -90 <= d <= +90}. See examples.</td>
  *       <td>34; 23.2332</td>
  *   </tr>
  *   <tr>
  *       <th scope="row">M</th>
- *       <td>Latitude minutes. Values in 0 <= m < 60. See examples.</td>
+ *       <td>Latitude minutes. Values in {@code 0 <= m < 60}. See examples.</td>
  *       <td>45; 45.6</td>
  *   </tr>
  *   <tr>
  *       <th scope="row">S</th>
- *       <td>Latitude seconds. Values in 0 <= s < 60. See examples.</td>
+ *       <td>Latitude seconds. Values in {@code 0 <= s < 60}. See examples.</td>
  *       <td>7; 07</td>
  *   </tr>
  *   <tr>
@@ -77,7 +77,7 @@ import io.jenetics.jpx.Longitude;
  *   <tr><th scope="row">l</th><td>deprecated synonym for 'd'</td></tr>
  *   <tr>
  *       <th scope="row">d</th>
- *       <td>Longitude degrees. Values in -180 <= d <= +180. Similar to Latitude degrees.</td>
+ *       <td>Longitude degrees. Values in {@code -180 <= d <= +180}. Similar to Latitude degrees.</td>
  *       <td>34; 23.2332</td>
  *   </tr>
  *   <tr>
