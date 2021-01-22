@@ -22,6 +22,7 @@ package io.jenetics.jpx.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.format.LocationFormatter.PROTECTED_CHARS;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 /**
@@ -31,7 +32,7 @@ import java.util.Optional;
  * @version 1.4
  * @since 1.4
  */
-final class ConstFormat<T> implements Format<T> {
+final class ConstFormat implements Format {
 
 	private final String _value;
 
@@ -45,15 +46,27 @@ final class ConstFormat<T> implements Format<T> {
 		_value = requireNonNull(value);
 	}
 
-	@Override
-	public Optional<String> format(final T value) {
+	@Override public Optional<String> format(Location value) {
 		return Optional.of(_value);
 	}
 
-	@Override
-	public String toString() {
-		return escape(_value);
+	/** parse _value */
+	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
+		int start = pos.getIndex();
+		int end = start + _value.length();
+		if( end <= in.length()){
+			String s = in.subSequence(start, end).toString();
+			if(s.equals(_value)){
+				pos.setIndex(end);
+				// but no call to builder
+				return;
+			}
+		}
+		pos.setErrorIndex(start);
+		throw new ParseException("Not found constant \"" + _value + "\"", in, start);
 	}
+
+	@Override public String toPattern() { return escape(_value); }
 
 	private static String escape(final String value) {
 		final StringBuilder out = new StringBuilder();
@@ -74,8 +87,8 @@ final class ConstFormat<T> implements Format<T> {
 			: out.toString();
 	}
 
-	static <T> ConstFormat<T> of(final String value) {
-		return new ConstFormat<>(value);
+	static ConstFormat of(final String value) {
+		return new ConstFormat(value);
 	}
 
 }
