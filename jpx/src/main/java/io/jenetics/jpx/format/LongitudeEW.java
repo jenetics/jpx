@@ -26,37 +26,44 @@ import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
 enum LongitudeEW implements Format {
 
 	INSTANCE;
 
-	@Override public Optional<String> format(final Location value) {
+	@Override
+	public Optional<String> format(final Location value) {
 		return value.longitude()
 			.map(Longitude::toDegrees)
 			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
 	}
 
-	/** find E or W at in[pos.index]  */
-	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+	@Override
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
 		int i = pos.getIndex();
 		char c = in.charAt(i);
-		if(c=='E'){
+
+		if ( c == 'E'){
 			pos.setIndex(i+1);
 			builder.setLongitudeSign(+1);
-		}
-		else if(c=='W'){
+		} else if(c == 'W'){
 			pos.setIndex(i+1);
 			builder.setLongitudeSign(-1);
-		}
-		else {
+		} else {
 			pos.setErrorIndex(i);
 			throw new ParseException("Not found E/W", in, i);
 		}
 	}
 
-	@Override public String toPattern() { return "x"; }
+	@Override
+	public String toPattern() {
+		return "x";
+	}
 
 }

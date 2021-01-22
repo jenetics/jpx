@@ -29,7 +29,7 @@ import java.util.Optional;
  * A format object which returns a constant value.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
 final class ConstFormat implements Format {
@@ -40,33 +40,45 @@ final class ConstFormat implements Format {
 	 * Create a new <em>constant</em> location format object.
 	 *
 	 * @param value the constant value, returned by the
-	 *        {@link Format#format(Object)} method
+	 *        {@link Format#format(Location)} method
 	 */
 	private ConstFormat(final String value) {
 		_value = requireNonNull(value);
 	}
 
-	@Override public Optional<String> format(Location value) {
+	@Override
+	public Optional<String> format(final Location value) {
 		return Optional.of(_value);
 	}
 
-	/** parse _value */
-	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
-		int start = pos.getIndex();
-		int end = start + _value.length();
-		if( end <= in.length()){
-			String s = in.subSequence(start, end).toString();
-			if(s.equals(_value)){
+	@Override
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		final int start = pos.getIndex();
+		final int end = start + _value.length();
+
+		if (end <= in.length()) {
+			final var s = in.subSequence(start, end).toString();
+			if (s.equals(_value)) {
 				pos.setIndex(end);
-				// but no call to builder
-				return;
+			} else {
+				pos.setErrorIndex(start);
+				throw new ParseException(
+					String.format("Not found constant '%s'", _value),
+					in,
+					start
+				);
 			}
 		}
-		pos.setErrorIndex(start);
-		throw new ParseException("Not found constant \"" + _value + "\"", in, start);
 	}
 
-	@Override public String toPattern() { return escape(_value); }
+	@Override
+	public String toPattern() {
+		return escape(_value);
+	}
 
 	private static String escape(final String value) {
 		final StringBuilder out = new StringBuilder();

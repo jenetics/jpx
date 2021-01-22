@@ -19,15 +19,11 @@
  */
 package io.jenetics.jpx.format;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.floor;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Length.Unit.METER;
 
-import java.text.NumberFormat;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
 
 import io.jenetics.jpx.Latitude;
 import io.jenetics.jpx.Length;
@@ -42,7 +38,7 @@ import io.jenetics.jpx.WayPoint;
  * @see Point
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
 public final class Location {
@@ -60,24 +56,7 @@ public final class Location {
 		_elevation = elevation;
 	}
 
-	@Override public boolean equals(Object other){
-		if(other==null)
-			return false;
-		if(!(other instanceof Location))
-			return false;
-		Location o = (Location) other;
-		return
-			((_latitude==null && o._latitude==null) || _latitude.equals(o._latitude)) &&
-		((_longitude==null && o._longitude==null) || _longitude.equals(o._longitude)) &&
-		((_elevation==null && o._elevation==null) || _elevation.equals(o._elevation));
-	}
 
-	@Override public int hashCode(){
-		int lat = _latitude==null ? 0 : _latitude.hashCode();
-		int lon = _longitude==null ? 0 : _longitude.hashCode();
-		int ele = _elevation==null ? 0 : _elevation.hashCode();
-		return 7 * lat + 13 * lon + 31 * ele;
-	}
 
 	/**
 	 * Return the <em>latitude</em> of {@code this} location.
@@ -85,7 +64,9 @@ public final class Location {
 	 * @return the <em>latitude</em> of {@code this} location, or
 	 *         {@link Optional#empty()} if not available
 	 */
-	public Optional<Latitude> latitude() { return Optional.ofNullable(_latitude); }
+	public Optional<Latitude> latitude() {
+		return Optional.ofNullable(_latitude);
+	}
 
 	/**
 	 * Return the <em>longitude</em> of {@code this} location.
@@ -93,7 +74,9 @@ public final class Location {
 	 * @return the <em>longitude</em> of {@code this} location, or
 	 *         {@link Optional#empty()} if not available
 	 */
-	public Optional<Longitude> longitude() { return Optional.ofNullable(_longitude); }
+	public Optional<Longitude> longitude() {
+		return Optional.ofNullable(_longitude);
+	}
 
 	/**
 	 * Return the <em>elevation</em> of {@code this} location.
@@ -101,7 +84,9 @@ public final class Location {
 	 * @return the <em>elevation</em> of {@code this} location, or
 	 *         {@link Optional#empty()} if not available
 	 */
-	public Optional<Length> elevation() { return Optional.ofNullable(_elevation); }
+	public Optional<Length> elevation() {
+		return Optional.ofNullable(_elevation);
+	}
 
 	/**
 	 * Return a new {@link Point} from {@code this} location. If the
@@ -117,6 +102,20 @@ public final class Location {
 				WayPoint.of(lat, lon, _elevation, null)
 			)
 		);
+	}
+
+	@Override
+	public int hashCode(){
+		return Objects.hash(_latitude, _longitude, _elevation);
+	}
+
+	@Override
+	public boolean equals(final Object other) {
+		return other == this ||
+			other instanceof Location &&
+			Objects.equals(_latitude, ((Location)other)._latitude) &&
+			Objects.equals(_longitude, ((Location)other)._longitude) &&
+			Objects.equals(_elevation, ((Location)other)._elevation);
 	}
 
 	@Override

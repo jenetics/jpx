@@ -22,22 +22,46 @@ package io.jenetics.jpx.format;
 import java.text.ParsePosition;
 import java.util.Optional;
 
-/** Base interface for formatting and parsing a location.
+/**
+ * Base interface for formatting and parsing a location.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
- * @since 1.4 */
+ * @version 2.2
+ * @since 1.4
+ */
 interface Format {
 
-	/** Formats the given {@code value} to its string representation. If it is
-	 * not possible to convert the {@code value} to a string,
-	 * {@link Optional#empty()} is returned.
+	/**
+	 * Formats the given {@code value} to its string representation. If it is not
+	 * possible to convert the {@code value} to a string, {@link Optional#empty()}
+	 * is returned.
+	 *
 	 * @param value the value which is converted to a string.
 	 * @return the converted value, or {@link Optional#empty()} if the format
-	 *         fails */
-	Optional<String> format(Location value);
+	 *         fails
+	 */
+	Optional<String> format(final Location value);
 
-	void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException;
+	/**
+	 * Parses the given input value, {@code in}.
+	 *
+	 * @param in the input string to parse
+	 * @param pos the current parse position
+	 * @param builder the location builder
+	 * @throws ParseException it the parsing fails
+	 * @throws NullPointerException if one of the given parameters is {@code null}
+	 */
+	void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	);
 
+	/**
+	 * Return a string representation of the format pattern.
+	 *
+	 * @return a string representation of the format pattern
+	 */
 	String toPattern();
+
 }

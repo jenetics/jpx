@@ -19,8 +19,11 @@ package io.jenetics.jpx.format;
  * This exception is thrown when the parsing of a location pattern string fails.
  *
  * @see LocationFormatter
+ *
+ * @version 2.2
+ * @since 2.2
  */
-public class ParseException extends RuntimeException {
+public class ParseException extends FormatterException {
 	private static final long serialVersionUID = 1;
 
 	/**

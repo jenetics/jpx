@@ -27,25 +27,32 @@ import java.util.Optional;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
 class OptionalFormat implements Format {
 
 	private final Format _format;
 
-	private OptionalFormat(Format format) {
+	private OptionalFormat(final Format format) {
 		_format = requireNonNull(format);
 	}
 
-	@Override public Optional<String> format(Location value) {
+	@Override
+	public Optional<String> format(final Location value) {
 		return Optional.of(_format.format(value).orElse(""));
 	}
 
-	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder builder) throws ParseException {
+	@Override
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
 		int index = pos.getIndex();
 		int errorIndex = pos.getErrorIndex();
 		LocationBuilder before = builder.copy();
+
 		try {
 			_format.parse(in, pos, builder);
 		} catch (ParseException e){
@@ -55,10 +62,13 @@ class OptionalFormat implements Format {
 		}
 	}
 
-	@Override public String toPattern() {
+	@Override
+	public String toPattern() {
 		return String.format("[%s]", _format.toPattern());
 	}
 
-	static OptionalFormat of(List<Format> formats) { return new OptionalFormat(CompositeFormat.of(formats)); }
+	static OptionalFormat of(final List<Format> formats) {
+		return new OptionalFormat(CompositeFormat.of(formats));
+	}
 
 }

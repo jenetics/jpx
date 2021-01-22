@@ -21,24 +21,24 @@ package io.jenetics.jpx.format;
 
 import java.text.ParsePosition;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
 class CompositeFormat implements Format {
 
 	private final List<Format> _formats;
 
-	private CompositeFormat(List<Format> formats) {
+	private CompositeFormat(final List<Format> formats) {
 		_formats = List.copyOf(formats);
 	}
 
-	@Override public Optional<String> format(Location value) {
+	@Override
+	public Optional<String> format(final Location value) {
 		final List<Optional<String>> strings = _formats.stream()
 			.map(format -> format.format(value))
 			.collect(Collectors.toList());
@@ -52,17 +52,25 @@ class CompositeFormat implements Format {
 			: Optional.empty();
 	}
 
-	@Override public void parse(CharSequence in, ParsePosition pos, LocationBuilder b) throws ParseException {
-		for( Format f : _formats ) f.parse(in, pos, b);
+	@Override
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		for(var format : _formats ) {
+			format.parse(in, pos, builder);
+		}
 	}
 
-	@Override public String toPattern() {
+	@Override
+	public String toPattern() {
 		return _formats.stream()
-			.map( f -> f.toPattern() )
+			.map(Format::toPattern)
 			.collect(Collectors.joining());
 	}
 
-	static CompositeFormat of(List<Format> formats) {
+	static CompositeFormat of(final List<Format> formats) {
 		return new CompositeFormat(formats);
 	}
 

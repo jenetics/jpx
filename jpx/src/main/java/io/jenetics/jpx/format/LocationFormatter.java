@@ -289,7 +289,7 @@ import io.jenetics.jpx.Longitude;
  * </table>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
 public final class LocationFormatter {
@@ -581,11 +581,11 @@ public final class LocationFormatter {
 				throw new IllegalArgumentException("If X in pattern, D must be without +.");
 
 			// If D has fractional, no M or S
-			if(D!=null && 0<D.nf.getMinimumFractionDigits() && (M!=null || S!=null))
+			if(D!=null && 0<D._numberFormat.getMinimumFractionDigits() && (M!=null || S!=null))
 				throw new IllegalArgumentException("If D has fraction, no M or S.");
 
 			// If M has fractional, no S
-			if(M!=null && 0<M.nf.getMinimumFractionDigits() && S!=null)
+			if(M!=null && 0<M._numberFormat.getMinimumFractionDigits() && S!=null)
 				throw new IllegalArgumentException("If M has fraction, no S.");
 
 			// longitude ------------------------------------
@@ -598,11 +598,11 @@ public final class LocationFormatter {
 				throw new IllegalArgumentException("If x in pattern, d must be without +.");
 
 			// If d has fractional, no m or s
-			if(d!=null && 0<d.nf.getMinimumFractionDigits() && (m!=null || s!=null))
+			if(d!=null && 0<d._numberFormat.getMinimumFractionDigits() && (m!=null || s!=null))
 				throw new IllegalArgumentException("If d has fraction, no m or s.");
 
 			// If m has fractional, no s.
-			if(m!=null && 0<m.nf.getMinimumFractionDigits() && s!=null)
+			if(m!=null && 0<m._numberFormat.getMinimumFractionDigits() && s!=null)
 				throw new IllegalArgumentException("If m has fraction, no s.");
 
 			// This is still construction, not a validity check. ---------------------
