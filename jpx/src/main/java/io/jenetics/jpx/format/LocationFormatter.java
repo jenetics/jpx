@@ -50,7 +50,7 @@ import io.jenetics.jpx.Longitude;
  * <table class="striped">
  * <caption><b>Pattern Letters and Symbols</b></caption>
  * <thead>
- *  <tr><th scope="col">Symbol</th>   <th scope="col">Meaning</th>         <th scope="col">Examples</th>
+ *  <tr><th scope="col">Symbol</th><th scope="col">Meaning</th><th scope="col">Examples</th>
  * </thead>
  * <tbody>
  *   <tr><th scope="row">L</th><td>deprecated synonym for 'D'</td></tr>

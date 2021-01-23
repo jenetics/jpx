@@ -27,7 +27,7 @@ import java.util.Optional;
  * @version 2.2
  * @since 2.2
  */
-class Elevation extends Field {
+final class Elevation extends Field {
 
 	private boolean _prefixSign = false;
 
@@ -57,7 +57,7 @@ class Elevation extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		builder.setElevation(parseDouble(in,pos));
+		builder.setElevation(parseDouble(in, pos));
 	}
 
 	@Override

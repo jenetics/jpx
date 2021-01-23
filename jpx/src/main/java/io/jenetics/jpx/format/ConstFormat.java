@@ -82,11 +82,11 @@ final class ConstFormat implements Format {
 
 	private static String escape(final String value) {
 		final StringBuilder out = new StringBuilder();
-		boolean quote = false;
+		boolean quoted = false;
 		for (int i = 0; i < value.length(); ++i) {
 			final char c = value.charAt(i);
 			if (PROTECTED_CHARS.contains(c)) {
-				quote = true;
+				quoted = true;
 			}
 			if (c == '\'') {
 				out.append(c);
@@ -94,7 +94,7 @@ final class ConstFormat implements Format {
 			out.append(c);
 		}
 
-		return quote
+		return quoted
 			? "'" + out.toString() + "'"
 			: out.toString();
 	}

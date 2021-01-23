@@ -111,12 +111,12 @@ abstract class Field implements Format {
 		int i = pos.getIndex();
 		String s = in.toString();
 		boolean strictWidth = 1 < _numberFormat.getMinimumIntegerDigits(); //better?
-		if(strictWidth) {
+		if (strictWidth) {
 			int end = i + toPattern().length(); // toPattern() rather than pattern because LatitudeDegree.toPattern()
 			s = in.subSequence(0, end).toString(); // don't eat more digits
 		}
 		Number n = _numberFormat.parse(s, pos);//Does not throw an exception; if no object can be parsed, index is unchanged.
-		if(i==pos.getIndex()) {
+		if (i == pos.getIndex()) {
 			pos.setErrorIndex(i);
 			throw new ParseException("Not found " + _pattern, in, i);
 		}
