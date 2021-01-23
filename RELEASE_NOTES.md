@@ -4,7 +4,7 @@
 
 #### Improvements
 
-* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of ISO 6709 location strings System support (thanks to [bunkenburg](https://github.com/bunkenburg)).
+* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709) location strings (thanks to [bunkenburg](https://github.com/bunkenburg)). This also contains fixes in the ISO 6709 location formatter.
 
 ### [2.1.0](https://github.com/jenetics/jpx/releases/tag/v2.1.0)
 
