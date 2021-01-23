@@ -30,7 +30,6 @@ final class LocationBuilder {
 	private int longitudeSign = +1;
 	private Double longitude = null; // degrees
 	private Double elevation = null; // meters
-	private final Length.Unit elevationUnit = Length.Unit.METER;
 
 	LocationBuilder copy() {
 		LocationBuilder c = new LocationBuilder();
@@ -55,10 +54,13 @@ final class LocationBuilder {
 	}
 
 	void addLatitude(final double d) {
+		if (d < 0.0) {
+			latitudeSign = -1;
+		}
 		if (latitude == null) {
 			latitude = 0.0;
 		}
-		latitude += d;
+		latitude += Math.abs(d);
 	}
 
 	void addLatitudeMinute(final double d) {
@@ -74,10 +76,13 @@ final class LocationBuilder {
 	}
 
 	void addLongitude(final double d) {
+		if (d < 0.0) {
+			longitudeSign = -1;
+		}
 		if (longitude == null) {
 			longitude = 0.0;
 		}
-		longitude += d;
+		longitude += Math.abs(d);
 	}
 
 	void addLongitudeMinute(final double d) {
@@ -101,7 +106,7 @@ final class LocationBuilder {
 			: Longitude.ofDegrees(longitudeSign*longitude);
 		final var ele = elevation == null
 			? null
-			: Length.of(elevation, elevationUnit);
+			: Length.of(elevation, Length.Unit.METER);
 
 		return Location.of(lat, lon, ele);
 	}

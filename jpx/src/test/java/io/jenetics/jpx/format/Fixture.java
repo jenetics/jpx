@@ -25,36 +25,44 @@ abstract class Fixture {
 
 	protected LocationFormatter f;
 
-	protected Location latitude(double d) {
+	protected Location latitude(final double d) {
 		return Location.of(Latitude.ofDegrees(d));
 	}
 
-	protected Location latitude(double d, double m) {
-		return latitude(d + m / 60.0);
+	protected Location latitude(final double d, final double m) {
+		final var sign = d >= 0.0 ? 1 : -1;
+		return latitude((Math.abs(d) + m/60.0)*sign);
 	}
 
-	protected Location latitude(double d, double m, double s) {
-		return latitude(d + m / 60.0 + s / 3600.0);
+	protected Location latitude(final double d, final double m, final double s) {
+		final var sign = d >= 0.0 ? 1 : -1;
+		return latitude((Math.abs(d) + m/60.0 + s/3600.0)*sign);
 	}
 
-	protected Location longitude(double d) {
+	protected Location longitude(final double d) {
 		return Location.of(Longitude.ofDegrees(d));
 	}
 
-	protected Location longitude(double d, double m) {
-		return longitude(d + m / 60.0);
+	protected Location longitude(final double d, final double m) {
+		final var sign = d >= 0.0 ? 1 : -1;
+		return longitude((Math.abs(d) + m/60.0*sign));
 	}
 
-	protected Location longitude(double d, double m, double s) {
-		return longitude(d + m / 60.0 + s / 3600.0);
+	protected Location longitude(final double d, final double m, final double s) {
+		final var sign = d >= 0.0 ? 1 : -1;
+		return longitude((Math.abs(d) + m/60.0 + s/3600.0)*sign);
 	}
 
-	protected Location elevation(double e) {
+	protected Location elevation(final double e) {
 		return Location.of(Length.of(e, METER));
 	}
 
-	protected Location location(double lat, double lon, double ele) {
-		return Location.of(Latitude.ofDegrees(lat), Longitude.ofDegrees(lon), Length.of(ele, METER));
+	protected Location location(final double lat, final double lon, final double ele) {
+		return Location.of(
+			Latitude.ofDegrees(lat),
+			Longitude.ofDegrees(lon),
+			Length.of(ele, METER)
+		);
 	}
 
 }

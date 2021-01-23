@@ -38,6 +38,9 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
 
+import java.util.Random;
+
+import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -47,8 +50,12 @@ import org.testng.annotations.Test;
 public class LocationFormatterTest extends Fixture {
 
 	@Test(dataProvider = "formats")
-	public void format(LocationFormatter formatter, Location location, String expected) {
-		String actual = formatter.format(location);
+	public void format(
+		final LocationFormatter formatter,
+		final Location location,
+		final String expected
+	) {
+		final String actual = formatter.format(location);
 		assertEquals(actual, expected);
 	}
 
@@ -95,5 +102,59 @@ public class LocationFormatterTest extends Fixture {
 			{ ofPattern("+++LL[g''g]++"), latitude(23.987635), "+++24g'g++"}
 		};
 	}
+
+	@Test(dataProvider = "formatters")
+	public void formatAndParse(final LocationFormatter formatter) {
+		final Random random = new Random(123);
+		final Location location = LocationRandom.nextLocation(random);
+
+		// Must be possible to safely parse previously formatted locations.
+		final String formatted = formatter.format(location);
+		final Location parsed = formatter.parse(formatted);
+
+		final String formatted2 = formatter.format(parsed);
+		Assert.assertEquals(formatted2, formatted);
+
+		final Location parsed2 = formatter.parse(formatted2);
+		Assert.assertEquals(parsed2, parsed);
+	}
+
+	@DataProvider
+	public Object[][] formatters() {
+		return new Object[][] {
+			{ISO_HUMAN_LAT_LONG},
+			{ISO_HUMAN_LAT_LONG},
+			{ISO_HUMAN_LON_LONG},
+			{ISO_HUMAN_LON_LONG},
+			{ISO_HUMAN_ELE_LONG},
+			{ISO_HUMAN_ELE_LONG},
+			{ISO_HUMAN_LONG},
+
+			{ISO_LAT_SHORT},
+			{ISO_LAT_SHORT},
+			{ISO_LON_SHORT},
+			{ISO_LON_SHORT},
+			{ISO_ELE_SHORT},
+			{ISO_ELE_SHORT},
+			{ISO_SHORT},
+
+			{ISO_LAT_MEDIUM},
+			{ISO_LAT_MEDIUM},
+			{ISO_LON_MEDIUM},
+			{ISO_LON_MEDIUM},
+			{ISO_ELE_MEDIUM},
+			{ISO_ELE_MEDIUM},
+			{ISO_MEDIUM},
+
+			{ISO_LAT_LONG},
+			{ISO_LAT_LONG},
+			{ISO_LON_LONG},
+			{ISO_LON_LONG},
+			{ISO_ELE_LONG},
+			{ISO_ELE_LONG},
+			{ISO_LONG}
+		};
+	}
+
 
 }

@@ -469,8 +469,9 @@ public final class LocationFormatter {
 	public Location parse(CharSequence text) throws ParseException {
 		ParsePosition pos = new ParsePosition(0);
 		Location loc = parse(text, pos); // ParseException
-		if(pos.getIndex()!=text.length())
+		if (pos.getIndex() != text.length()) {
 			throw new ParseException("Not used all input", text, pos.getIndex());
+		}
 		return loc;
 	}
 

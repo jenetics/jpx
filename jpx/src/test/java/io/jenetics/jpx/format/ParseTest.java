@@ -21,6 +21,8 @@ import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import io.jenetics.jpx.Latitude;
+
 public class ParseTest extends Fixture {
 
 	@DataProvider
@@ -49,6 +51,10 @@ public class ParseTest extends Fixture {
 			// testing M
 			{"D M", latitude(0, 6), "0 6"},
 			{"D M.MM", latitude(0, 5, 42), "0 5.70"}, // fractional minutes
+
+			{"+DDM.MMM", latitude(-18, 36, 0), "-1836.000"}, // fractional minutes
+			{"+DDM.MMM", Location.of(Latitude.ofDegrees(-18.6)), "-1836.000"}, // fractional minutes
+
 			{"D M S.SS", latitude(0, 5, 42), "0 5 42.00"}, // minutes and seconds
 			{"D M", latitude(0,6), "0 6"},
 			{"D M", latitude(0, 12), "0 12"}, // lax width
@@ -138,7 +144,7 @@ public class ParseTest extends Fixture {
 	public void testParse(String pattern, Location expected, String in) {
 		f = ofPattern(pattern);
 		Location actual = f.parse(in);
-		assertEquals(actual, expected, pattern + " " + in);
+		assertEquals(actual, expected, "[" + pattern + "] " + in);
 	}
 
 }
