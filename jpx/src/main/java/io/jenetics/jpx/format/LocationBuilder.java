@@ -25,85 +25,87 @@ import io.jenetics.jpx.Longitude;
  */
 final class LocationBuilder {
 
-	private int latitudeSign = +1;
-	private Double latitude = null; // degrees
-	private int longitudeSign = +1;
-	private Double longitude = null; // degrees
-	private Double elevation = null; // meters
+	private Double _latitude = null;
+	private int _latitudeSign = +1;
+
+	private Double _longitude = null;
+	private int _longitudeSign = +1;
+
+	private Double elevation = null;
 
 	LocationBuilder copy() {
 		LocationBuilder c = new LocationBuilder();
-		c.latitudeSign = latitudeSign;
-		c.latitude = latitude;
-		c.longitudeSign = longitudeSign;
-		c.longitude = longitude;
+		c._latitudeSign = _latitudeSign;
+		c._latitude = _latitude;
+		c._longitudeSign = _longitudeSign;
+		c._longitude = _longitude;
 		c.elevation = elevation;
 		return c;
 	}
 
 	void copy(final LocationBuilder from) {
-		latitudeSign = from.latitudeSign;
-		latitude = from.latitude;
-		longitudeSign = from.longitudeSign;
-		longitude = from.longitude;
+		_latitudeSign = from._latitudeSign;
+		_latitude = from._latitude;
+		_longitudeSign = from._longitudeSign;
+		_longitude = from._longitude;
 		elevation = from.elevation;
 	}
 
-	void setLatitudeSign(final int i) {
-		latitudeSign = i;
+	void setLatitudeSign(final int sign) {
+		_latitudeSign = sign;
 	}
 
-	void addLatitude(final double d) {
-		if (d < 0.0) {
-			latitudeSign = -1;
+	void addLatitude(final double degrees) {
+		if (degrees < 0.0) {
+			_latitudeSign = -1;
 		}
-		if (latitude == null) {
-			latitude = 0.0;
+		if (_latitude == null) {
+			_latitude = 0.0;
 		}
-		latitude += Math.abs(d);
+		_latitude += Math.abs(degrees);
 	}
 
-	void addLatitudeMinute(final double d) {
-		addLatitude(d/60.0);
+	void addLatitudeMinute(final double minutes) {
+		addLatitude(minutes/60.0);
 	}
 
-	void addLatitudeSecond(final double d) {
-		addLatitude( d/3600.0);
+	void addLatitudeSecond(final double seconds) {
+		addLatitude( seconds/3600.0);
 	}
 
-	void setLongitudeSign(final int i) {
-		longitudeSign = i;
+	void setLongitudeSign(final int sign) {
+		_longitudeSign = sign;
 	}
 
-	void addLongitude(final double d) {
-		if (d < 0.0) {
-			longitudeSign = -1;
+	void addLongitude(final double degrees) {
+		if (degrees < 0.0) {
+			_longitudeSign = -1;
 		}
-		if (longitude == null) {
-			longitude = 0.0;
+		if (_longitude == null) {
+			_longitude = 0.0;
 		}
-		longitude += Math.abs(d);
+		_longitude += Math.abs(degrees);
 	}
 
-	void addLongitudeMinute(final double d) {
-		addLongitude(d/60.0);
+	void addLongitudeMinute(final double minutes) {
+		addLongitude(minutes/60.0);
 	}
 
-	void addLongitudeSecond(final double d) {
-		addLongitude(d/3600.0);
+	void addLongitudeSecond(final double seconds) {
+		addLongitude(seconds/3600.0);
 	}
 
-	void setElevation(final double d) {
-		elevation = d;
+	void setElevation(final double meters) {
+		elevation = meters;
 	}
 
 	Location build() {
-		final var lat = latitude == null
+		final var lat = _latitude == null
 			? null
-			: Latitude.ofDegrees(latitudeSign*latitude);
-		final var lon = longitude == null
+			: Latitude.ofDegrees(_latitudeSign*_latitude);
+		final var lon = _longitude == null
 			? null
-			: Longitude.ofDegrees(longitudeSign*longitude);
+			: Longitude.ofDegrees(_longitudeSign*_longitude);
 		final var ele = elevation == null
 			? null
 			: Length.of(elevation, Length.Unit.METER);
