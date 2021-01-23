@@ -318,4 +318,4 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 #### Improvements
 
-* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of ISO 6709 location strings System support (thanks to [bunkenburg](https://github.com/bunkenburg)).
+* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709) location strings (thanks to [bunkenburg](https://github.com/bunkenburg)).
