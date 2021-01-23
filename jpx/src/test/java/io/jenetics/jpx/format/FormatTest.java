@@ -132,8 +132,8 @@ public class FormatTest extends Fixture {
 		final Location location,
 		final String expected
 	) {
-		f = ofPattern(pattern);
-		String actual = f.format(location);
+		_formatter = ofPattern(pattern);
+		String actual = _formatter.format(location);
 		String message = location.toString();
 		assertEquals(actual, expected, pattern + " " + message);
 	}

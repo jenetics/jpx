@@ -23,7 +23,7 @@ import io.jenetics.jpx.Longitude;
 
 abstract class Fixture {
 
-	protected LocationFormatter f;
+	protected LocationFormatter _formatter;
 
 	protected Location latitude(final double d) {
 		return Location.of(Latitude.ofDegrees(d));

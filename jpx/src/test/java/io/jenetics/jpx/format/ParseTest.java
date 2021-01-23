@@ -142,8 +142,8 @@ public class ParseTest extends Fixture {
 
 	@Test(dataProvider = "data")
 	public void testParse(String pattern, Location expected, String in) {
-		f = ofPattern(pattern);
-		Location actual = f.parse(in);
+		_formatter = ofPattern(pattern);
+		Location actual = _formatter.parse(in);
 		assertEquals(actual, expected, "[" + pattern + "] " + in);
 	}
 

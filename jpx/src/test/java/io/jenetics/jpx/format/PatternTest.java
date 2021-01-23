@@ -57,31 +57,31 @@ public class PatternTest extends Fixture {
 
 	@Test(dataProvider = "illegalPatterns", expectedExceptions = {IllegalArgumentException.class})
 	public void testIllegalPatterns(String pattern) {
-		f = ofPattern(pattern);
+		_formatter = ofPattern(pattern);
 	}
 
 	@Test
 	public void deprecatedL() {
-		f = ofPattern("+LL.LLL");
-		assertEquals("+DD.DDD", f.toPattern());
+		_formatter = ofPattern("+LL.LLL");
+		assertEquals("+DD.DDD", _formatter.toPattern());
 	}
 
 	@Test
 	public void deprecatedl() {
-		f = ofPattern("+ll.lll");
-		assertEquals("+dd.ddd", f.toPattern());
+		_formatter = ofPattern("+ll.lll");
+		assertEquals("+dd.ddd", _formatter.toPattern());
 	}
 
 	@Test
 	public void deprecatedH() {
-		f = ofPattern("+H.HH");
-		assertEquals("+E.EE", f.toPattern());
+		_formatter = ofPattern("+H.HH");
+		assertEquals("+E.EE", _formatter.toPattern());
 	}
 
 	@Test(dataProvider = "patterns")
 	public void parse(final String pattern) {
-		f = ofPattern(pattern);
-		String actual = f.toPattern();
+		_formatter = ofPattern(pattern);
+		String actual = _formatter.toPattern();
 		assertEquals(pattern, actual);
 	}
 
