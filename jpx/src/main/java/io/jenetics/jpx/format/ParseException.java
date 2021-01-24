@@ -15,6 +15,8 @@
  */
 package io.jenetics.jpx.format;
 
+import static java.lang.String.format;
+
 /**
  * This exception is thrown when the parsing of a location pattern string fails.
  *
@@ -38,7 +40,7 @@ public class ParseException extends FormatterException {
 		final CharSequence in,
 		final int position
 	) {
-		super(message + " at position " + position + " in " + in);
+		super(format("%s at position %d in '%s'.", message, position, in));
 	}
 
 }
