@@ -44,8 +44,8 @@ import io.jenetics.jpx.Longitude;
  *
  * For example, {@code D°MM'SS.SSS"X} will format to {@code 60°15'59.613"N}.
  *
- * A formatter created from a pattern can be used as
- * many times as necessary, it is immutable and is thread-safe.
+ * A formatter created from a pattern can be used as many times as necessary, it
+ * is immutable and is thread-safe.
  *
  * <table class="striped">
  * <caption><b>Pattern Letters and Symbols</b></caption>

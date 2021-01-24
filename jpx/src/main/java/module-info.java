@@ -15,7 +15,16 @@
  */
 
 /**
- * Module description of the JPX library.
+ * <em>JPX</em> is a library for creating, reading and writing
+ * <a href="https://en.wikipedia.org/wiki/Global_Positioning_System">GPS</a>
+ * data in <a href="https://en.wikipedia.org/wiki/GPS_Exchange_Format">GPX</a>
+ * format. It is a <em>full</em> implementation of version
+ * <a href="http://www.topografix.com/GPX/1/1/">1.1</a> and version
+ * <a href="http://www.topografix.com/gpx_manual.as">1.0</a> of the GPX format.
+ * The data classes are completely immutable and allows a functional programming
+ * style. It is also possible to convert the location information into strings
+ * which are compatible to the <a href="http://en.wikipedia.org/wiki/ISO_6709">
+ * ISO 6709</a> standard.
  */
 module io.jenetics.jpx {
 	requires transitive java.xml;
