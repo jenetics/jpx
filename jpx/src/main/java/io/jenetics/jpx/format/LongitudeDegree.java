@@ -46,9 +46,12 @@ class LongitudeDegree extends Field {
 
 	void setPrefixSign(final boolean b) {
 		prefixSign = b;
-		String decimalPattern = toDecimalPattern(_pattern);
-		String p = b ? ("+" + decimalPattern + ";" + "-" + decimalPattern) :  decimalPattern;
-		_numberFormat = new DecimalFormat(p, SYMBOLS);
+		final String decimalPattern = toDecimalPattern(_pattern);
+		final String pattern = prefixSign
+			? ("+" + decimalPattern + ";" + "-" + decimalPattern)
+			:  decimalPattern;
+
+		_numberFormat = new DecimalFormat(pattern, SYMBOLS);
 	}
 
 	boolean isPrefixSign() {

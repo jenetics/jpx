@@ -95,6 +95,7 @@ abstract class Field implements Format {
 				}
 			}
 		}
+
 		return Optional.empty();
 	}
 
@@ -115,7 +116,8 @@ abstract class Field implements Format {
 			int end = i + toPattern().length(); // toPattern() rather than pattern because LatitudeDegree.toPattern()
 			s = in.subSequence(0, end).toString(); // don't eat more digits
 		}
-		Number n = _numberFormat.parse(s, pos);//Does not throw an exception; if no object can be parsed, index is unchanged.
+
+		Number n = _numberFormat.parse(s, pos);
 		if (i == pos.getIndex()) {
 			pos.setErrorIndex(i);
 			throw new ParseException("Not found " + _pattern, in, i);

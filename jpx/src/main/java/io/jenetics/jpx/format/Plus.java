@@ -50,7 +50,6 @@ enum Plus implements Format {
 			throw new ParseException("Wanted +, found " + c, in, i);
 		}
 		pos.setIndex(i + 1);
-		// no call to builder
 	}
 
 	@Override

@@ -57,7 +57,7 @@ class OptionalFormat implements Format {
 			_format.parse(in, pos, builder);
 		} catch (ParseException e){
 			builder.copy(before);
-			pos.setIndex(index); // Set pos back to what it was.
+			pos.setIndex(index);
 			pos.setErrorIndex(errorIndex);
 		}
 	}
