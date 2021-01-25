@@ -162,6 +162,12 @@ which leads to the following output
 
     24°5915 65°1403
 
+This string can then also be parsed to a _location_.
+
+```java
+final Location location = format.parse("24°5915 65°1403");
+```
+
 ### Geodetic calculations
 
 #### Distance between two points
@@ -298,7 +304,7 @@ org.acme.NonValidatingDocumentBuilder
 
 The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
-    Copyright 2016-2020 Franz Wilhelmstötter
+    Copyright 2016-2021 Franz Wilhelmstötter
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -314,22 +320,9 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [2.1.0](https://github.com/jenetics/jpx/releases/tag/v2.1.0)
+### [2.2.0](https://github.com/jenetics/jpx/releases/tag/v2.2.0)
 
 #### Improvements
 
-* [#128](https://github.com/jenetics/jpx/issues/128): Added Java Module System support ([Adito5393](https://github.com/Adito5393)).
-* [#132](https://github.com/jenetics/jpx/issues/132): Convert Gradle build scripts from Groovy to Kotlin.
-* [#134](https://github.com/jenetics/jpx/issues/134): Make distance calculation more stable.
-
-#### Bugs
-
-* [#129](https://github.com/jenetics/jpx/issues/129): Fixed spelling of build script name ([marcusfey](https://github.com/marcusfey)).
-
-### [2.0.0](https://github.com/jenetics/jpx/releases/tag/v2.0.0)
-
-#### Improvements
-
-* [#68](https://github.com/jenetics/jpx/issues/68): Remove deprecated methods.
-* [#113](https://github.com/jenetics/jpx/issues/113): Upgrade to Java 11.
-
+* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709) location strings (thanks to [bunkenburg](https://github.com/bunkenburg)). This also contains fixes in the ISO 6709 location formatter.
+* [#140](https://github.com/jenetics/jpx/issues/140): Add `WayPoint` factory methods taking `Instant`.

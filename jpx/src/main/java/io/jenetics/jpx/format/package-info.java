@@ -1,6 +1,5 @@
 /*
  * Java GPX Library (@__identifier__@).
- * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * This package contains classes for formatting and parsing coordinates to and
+ * from a <a href="https://en.wikipedia.org/wiki/ISO_6709">ISO 6709</a> location
+ * string.
+ *
+ * @version 2.2
  * @since 1.0
- * @version 2.1
  */
-plugins {
-	`java-library`
-	idea
-	`maven-publish`
-}
-
-description = "JPX - Java GPX (GPS) Library"
-
-extra["moduleName"] = "io.jenetics.jpx"
-
-dependencies {
-	testImplementation(Libs.TestNG)
-	testImplementation(Libs.EqualsVerifier)
-}
+package io.jenetics.jpx.format;

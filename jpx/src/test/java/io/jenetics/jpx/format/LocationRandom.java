@@ -22,6 +22,8 @@ package io.jenetics.jpx.format;
 import java.util.Random;
 
 import io.jenetics.jpx.Latitude;
+import io.jenetics.jpx.Length;
+import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.Randoms;
 
 /**
@@ -32,13 +34,38 @@ public final class LocationRandom {
 	}
 
 	public static Latitude nextLatitude(final Random random) {
-		final double degrees = Randoms.nextDouble(
-			Latitude.MIN_VALUE.toDegrees(),
-			Latitude.MAX_VALUE.toDegrees(),
+		final double degrees = Randoms.nextInt(
+			((int)Latitude.MIN_VALUE.toDegrees())*10,
+			((int)Latitude.MAX_VALUE.toDegrees())*10,
 			random
 		);
 
-		return Latitude.ofDegrees(degrees);
+		return Latitude.ofDegrees(degrees/10);
+	}
+
+	public static Longitude nextLongitude(final Random random) {
+		final double degrees = Randoms.nextInt(
+			((int)Longitude.MIN_VALUE.toDegrees())*10,
+			((int)Longitude.MAX_VALUE.toDegrees())*10,
+			random
+		);
+
+		return Longitude.ofDegrees(degrees/10);
+	}
+
+	public static Length nextElevation(final Random random) {
+		return Length.of(
+			random.nextInt(10000),
+			Length.Unit.METER
+		);
+	}
+
+	public static Location nextLocation(final Random random) {
+		return Location.of(
+			nextLatitude(random),
+			nextLongitude(random),
+			nextElevation(random)
+		);
 	}
 
 

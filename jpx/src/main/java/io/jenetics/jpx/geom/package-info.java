@@ -17,31 +17,13 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.format;
-
-import java.util.Optional;
-
-import io.jenetics.jpx.Length;
 
 /**
+ * This package contains classes for calculating the distance between two
+ * way-points.
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
- * @since 1.4
+ * @version 2.2
+ * @since 1.0
  */
-enum ElevationSignFormat implements Format<Location> {
-
-	INSTANCE;
-
-	@Override
-	public Optional<String> format(final Location value) {
-		return value.elevation()
-			.map(Length::doubleValue)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
-	}
-
-	@Override
-	public String toString() {
-		return "+";
-	}
-
-}
+package io.jenetics.jpx.geom;

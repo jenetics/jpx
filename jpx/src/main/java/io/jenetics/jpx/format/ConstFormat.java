@@ -22,16 +22,17 @@ package io.jenetics.jpx.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.format.LocationFormatter.PROTECTED_CHARS;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 /**
  * A format object which returns a constant value.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
-final class ConstFormat<T> implements Format<T> {
+final class ConstFormat implements Format {
 
 	private final String _value;
 
@@ -39,29 +40,53 @@ final class ConstFormat<T> implements Format<T> {
 	 * Create a new <em>constant</em> location format object.
 	 *
 	 * @param value the constant value, returned by the
-	 *        {@link Format#format(Object)} method
+	 *        {@link Format#format(Location)} method
 	 */
 	private ConstFormat(final String value) {
 		_value = requireNonNull(value);
 	}
 
 	@Override
-	public Optional<String> format(final T value) {
+	public Optional<String> format(final Location value) {
 		return Optional.of(_value);
 	}
 
 	@Override
-	public String toString() {
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		final int start = pos.getIndex();
+		final int end = start + _value.length();
+
+		if (end <= in.length()) {
+			final var s = in.subSequence(start, end).toString();
+			if (s.equals(_value)) {
+				pos.setIndex(end);
+			} else {
+				pos.setErrorIndex(start);
+				throw new ParseException(
+					String.format("Not found constant '%s'", _value),
+					in,
+					start
+				);
+			}
+		}
+	}
+
+	@Override
+	public String toPattern() {
 		return escape(_value);
 	}
 
 	private static String escape(final String value) {
 		final StringBuilder out = new StringBuilder();
-		boolean quote = false;
+		boolean quoted = false;
 		for (int i = 0; i < value.length(); ++i) {
 			final char c = value.charAt(i);
 			if (PROTECTED_CHARS.contains(c)) {
-				quote = true;
+				quoted = true;
 			}
 			if (c == '\'') {
 				out.append(c);
@@ -69,13 +94,13 @@ final class ConstFormat<T> implements Format<T> {
 			out.append(c);
 		}
 
-		return quote
+		return quoted
 			? "'" + out.toString() + "'"
 			: out.toString();
 	}
 
-	static <T> ConstFormat<T> of(final String value) {
-		return new ConstFormat<>(value);
+	static ConstFormat of(final String value) {
+		return new ConstFormat(value);
 	}
 
 }

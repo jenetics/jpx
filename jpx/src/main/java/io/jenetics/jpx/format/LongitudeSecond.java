@@ -1,6 +1,5 @@
 /*
  * Java GPX Library (@__identifier__@).
- * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,35 +12,47 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.format;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
 import io.jenetics.jpx.Longitude;
 
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
- * @since 1.4
+ * This field allows to access the absolute value of the second part of the
+ * longitude of a given location.
+ *
+ * @version 2.2
+ * @since 2.2
  */
-enum LongitudeSignFormat implements Format<Location> {
+final class LongitudeSecond extends Field {
 
-	INSTANCE;
-
-	@Override
-	public Optional<String> format(final Location value) {
-		return value.longitude()
-			.map(Longitude::toDegrees)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
+	LongitudeSecond(final String pattern) {
+		super(pattern);
 	}
 
 	@Override
-	public String toString() {
-		return "+";
+	char type() {
+		return 's';
+	}
+
+	@Override public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		double d = parseDouble(in, pos);
+		builder.addLongitudeSecond(d);
+	}
+
+	@Override
+	public Optional<String> format(final Location loc) {
+		return loc.longitude()
+			.map(Longitude::toDegrees)
+			.map(Field::toSeconds)
+			.map(d -> _numberFormat.format(d));
 	}
 
 }

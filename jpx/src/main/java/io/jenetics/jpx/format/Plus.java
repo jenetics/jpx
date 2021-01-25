@@ -1,6 +1,5 @@
 /*
  * Java GPX Library (@__identifier__@).
- * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,34 +12,48 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 package io.jenetics.jpx.format;
 
+import java.text.ParsePosition;
 import java.util.Optional;
 
-import io.jenetics.jpx.Latitude;
-
 /**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
- * @since 1.4
+ * Just a '+' that is not participating in a field.
+ *
+ * @version 2.2
+ * @since 2.2
  */
-enum LatitudeSignFormat implements Format<Location> {
+enum Plus implements Format {
 
 	INSTANCE;
 
 	@Override
 	public Optional<String> format(final Location value) {
-		return value.latitude()
-			.map(Latitude::toDegrees)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
+		return Optional.of("+");
 	}
 
 	@Override
-	public String toString() {
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		int i = pos.getIndex();
+		if (in.length() <= i){
+			pos.setErrorIndex(i);
+			throw new ParseException("Cannot parse +", in, i);
+		}
+		char c = in.charAt(i);
+		if (c != '+'){
+			pos.setErrorIndex(i);
+			throw new ParseException("Wanted +, found " + c, in, i);
+		}
+		pos.setIndex(i + 1);
+	}
+
+	@Override
+	public String toPattern() {
 		return "+";
 	}
 
