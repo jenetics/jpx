@@ -162,6 +162,12 @@ which leads to the following output
 
     24°5915 65°1403
 
+This string can then also be parsed to a _location_.
+
+```java
+final Location location = format.parse("24°5915 65°1403");
+```
+
 ### Geodetic calculations
 
 #### Distance between two points
@@ -319,3 +325,4 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 #### Improvements
 
 * [#72](https://github.com/jenetics/jpx/issues/72): Parsing of [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709) location strings (thanks to [bunkenburg](https://github.com/bunkenburg)). This also contains fixes in the ISO 6709 location formatter.
+* [#140](https://github.com/jenetics/jpx/issues/140): Add `WayPoint` factory methods taking `Instant`.
