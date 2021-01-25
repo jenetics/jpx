@@ -872,7 +872,7 @@ public final class LocationFormatter {
 						if (!quote) {
 							final var field = Field.ofPattern(token);
 							if (field.isPresent()) {
-								Field f = field.get();
+								final var f = field.get();
 
 								// Maybe first add some sign formats.
 								if (0 < signs) {
