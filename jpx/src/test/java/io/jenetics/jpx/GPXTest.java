@@ -402,9 +402,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			gpx.toBuilder().build(),
 			gpx
 		);
-		Assert.assertNotSame(
-			gpx.toBuilder().build(),
-			gpx
+		Assert.assertNotEquals(
+			System.identityHashCode(gpx.toBuilder().build()),
+			System.identityHashCode(gpx)
 		);
 	}
 
