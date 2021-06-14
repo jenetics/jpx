@@ -40,7 +40,7 @@ import javax.xml.stream.XMLOutputFactory;
 public abstract class XMLProvider {
 
 	private static volatile XMLProvider INSTANCE;
-	private static final Object lock = new Object();
+	private static final Object lock = new Object(){};
 
 	protected XMLProvider() {
 	}

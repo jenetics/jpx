@@ -102,9 +102,9 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 			metadata.toBuilder().build(),
 			metadata
 		);
-		Assert.assertNotSame(
-			metadata.toBuilder().build(),
-			metadata
+		Assert.assertNotEquals(
+			System.identityHashCode(metadata.toBuilder().build()),
+			System.identityHashCode(metadata)
 		);
 	}
 

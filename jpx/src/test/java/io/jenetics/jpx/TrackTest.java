@@ -181,9 +181,9 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 			object.toBuilder().build(),
 			object
 		);
-		Assert.assertNotSame(
-			object.toBuilder().build(),
-			object
+		Assert.assertNotEquals(
+			System.identityHashCode(object.toBuilder().build()),
+			System.identityHashCode(object)
 		);
 	}
 

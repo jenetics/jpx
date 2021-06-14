@@ -23,8 +23,8 @@
  */
 object Libs {
 	const val ApacheCommonsMath = "org.apache.commons:commons-math3:3.6.1"
-	const val EqualsVerifier = "nl.jqno.equalsverifier:equalsverifier:3.5"
-	const val TestNG = "org.testng:testng:7.3.0"
+	const val EqualsVerifier = "nl.jqno.equalsverifier:equalsverifier:3.6"
+	const val TestNG = "org.testng:testng:7.4.0"
 
 	val All = arrayOf(
 		ApacheCommonsMath,
