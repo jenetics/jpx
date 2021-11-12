@@ -64,14 +64,14 @@ public enum  Fix {
 	 *         the given {@code name} is invalid
 	 */
 	public static Optional<Fix> ofName(final String name) {
-		switch (name) {
-			case "none": return Optional.of(Fix.NONE);
-			case "2d": return Optional.of(Fix.DIM_2);
-			case "3d": return Optional.of(Fix.DIM_3);
-			case "dgps": return Optional.of(Fix.DGPS);
-			case "pps": return Optional.of(Fix.PPS);
-			default: return Optional.empty();
-		}
+		return switch (name) {
+			case "none" -> Optional.of(Fix.NONE);
+			case "2d" -> Optional.of(Fix.DIM_2);
+			case "3d" -> Optional.of(Fix.DIM_3);
+			case "dgps" -> Optional.of(Fix.DGPS);
+			case "pps" -> Optional.of(Fix.PPS);
+			default -> Optional.empty();
+		};
 	}
 
 	static String format(final Fix fix) {
