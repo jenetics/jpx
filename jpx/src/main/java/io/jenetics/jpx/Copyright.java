@@ -30,6 +30,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.Year;
@@ -47,6 +48,7 @@ import java.util.Optional;
  */
 public final class Copyright implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _author;
@@ -225,10 +227,12 @@ public final class Copyright implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.COPYRIGHT, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

@@ -23,6 +23,7 @@ import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
+import java.io.Serial;
 import java.io.StreamCorruptedException;
 
 /**
@@ -33,6 +34,8 @@ import java.io.StreamCorruptedException;
  * @since 1.2
  */
 final class SerialProxy implements Externalizable {
+
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	static final byte BOUNDS = 1;
@@ -139,6 +142,7 @@ final class SerialProxy implements Externalizable {
 		}
 	}
 
+	@Serial
 	private Object readResolve() {
 		return _object;
 	}
