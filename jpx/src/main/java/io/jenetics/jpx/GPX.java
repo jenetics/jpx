@@ -229,13 +229,13 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public static Version of(final String version) {
-			switch (version) {
-				case "1.0": return V10;
-				case "1.1": return V11;
-				default: throw new IllegalArgumentException(format(
+			return switch (version) {
+				case "1.0" -> V10;
+				case "1.1" -> V11;
+				default -> throw new IllegalArgumentException(format(
 					"Unknown version string: '%s'.", version
 				));
-			}
+			};
 		}
 	}
 
@@ -423,13 +423,13 @@ public final class GPX implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof GPX &&
-			Objects.equals(((GPX)obj)._creator, _creator) &&
-			Objects.equals(((GPX)obj)._version, _version) &&
-			Objects.equals(((GPX)obj)._metadata, _metadata) &&
-			Objects.equals(((GPX)obj)._wayPoints, _wayPoints) &&
-			Objects.equals(((GPX)obj)._routes, _routes) &&
-			Objects.equals(((GPX)obj)._tracks, _tracks);
+			obj instanceof GPX gpx &&
+			Objects.equals(gpx._creator, _creator) &&
+			Objects.equals(gpx._version, _version) &&
+			Objects.equals(gpx._metadata, _metadata) &&
+			Objects.equals(gpx._wayPoints, _wayPoints) &&
+			Objects.equals(gpx._routes, _routes) &&
+			Objects.equals(gpx._tracks, _tracks);
 	}
 
 	/**
@@ -812,7 +812,8 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.map(mapper)
-							.collect(Collectors.toUnmodifiableList())
+							.map(WayPoint.class::cast)
+							.toList()
 					);
 
 					return this;
@@ -827,7 +828,7 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.flatMap(wp -> mapper.apply(wp).stream())
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;
@@ -875,7 +876,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.filter(predicate)
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;
@@ -888,7 +889,8 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.map(mapper)
-							.collect(Collectors.toUnmodifiableList())
+							.map(Route.class::cast)
+							.toList()
 					);
 
 					return this;
@@ -901,7 +903,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.flatMap(route -> mapper.apply(route).stream())
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;

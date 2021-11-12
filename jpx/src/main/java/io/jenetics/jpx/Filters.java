@@ -65,7 +65,7 @@ public final class Filters {
 	) {
 		final List<WayPoint> points = segments.stream()
 			.flatMap(TrackSegment::points)
-			.collect(toUnmodifiableList());
+			.toList();
 
 		return List.of(TrackSegment.of(points));
 	}
@@ -89,7 +89,7 @@ public final class Filters {
 	public static List<Track> mergeTracks(final List<Track> tracks) {
 		final List<TrackSegment> segments = tracks.stream()
 			.flatMap(Track::segments)
-			.collect(toUnmodifiableList());
+			.toList();
 
 		return tracks.isEmpty()
 			? List.of()
@@ -121,7 +121,7 @@ public final class Filters {
 		final List<WayPoint> points = tracks.stream()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.collect(toUnmodifiableList());
+			.toList();
 
 		return tracks.isEmpty()
 			? List.of()
@@ -170,7 +170,7 @@ public final class Filters {
 	public static List<Route> nonEmptyRoutes(final List<Route> routes) {
 		return routes.stream()
 			.filter(Route::nonEmpty)
-			.collect(toUnmodifiableList());
+			.toList();
 	}
 
 	/**
@@ -186,7 +186,7 @@ public final class Filters {
 				.listMap(Filters::nonEmptySegments)
 				.build())
 			.filter(Track::nonEmpty)
-			.collect(toUnmodifiableList());
+			.toList();
 	}
 
 	/**
@@ -201,7 +201,7 @@ public final class Filters {
 	) {
 		return segments.stream()
 			.filter(TrackSegment::nonEmpty)
-			.collect(toUnmodifiableList());
+			.toList();
 	}
 
 	static List<Track> splitByDay(final Track track) {
@@ -211,7 +211,7 @@ public final class Filters {
 			.stream()
 			.map(TrackSegment::of)
 			.map(segment -> Track.builder().addSegment(segment).build())
-			.collect(toUnmodifiableList());
+			.toList();
 	}
 
 	private static List<List<WayPoint>> splitWayPointsByDay(
@@ -225,13 +225,13 @@ public final class Filters {
 		return parts.entrySet().stream()
 			.sorted(Entry.comparingByKey())
 			.map(Entry::getValue)
-			.collect(toUnmodifiableList());
+			.toList();
 	}
 
 	static List<TrackSegment> splitByDay(final TrackSegment segment) {
 		return splitWayPointsByDay(segment.points()).stream()
 			.map(TrackSegment::of)
-			.collect(toUnmodifiableList());
+			.toList();
 	}
 
 }
