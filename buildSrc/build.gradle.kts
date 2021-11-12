@@ -26,8 +26,6 @@
 plugins {
 	`java-gradle-plugin`
 	`kotlin-dsl`
-	kotlin("jvm") version "1.3.72"
-
 }
 
 repositories {
@@ -35,7 +33,7 @@ repositories {
 	gradlePluginPortal()
 }
 
-configure<JavaPluginConvention> {
+configure<JavaPluginExtension> {
 	sourceCompatibility = JavaVersion.VERSION_11
 	targetCompatibility = JavaVersion.VERSION_11
 }

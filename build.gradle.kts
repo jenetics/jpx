@@ -25,13 +25,13 @@
  */
 plugins {
 	base
-	id("me.champeau.gradle.jmh") version "0.5.0" apply false
+	id("me.champeau.jmh") version "0.6.6" apply false
 }
 
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "6.8.1"
+	version = "7.3"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -48,7 +48,6 @@ allprojects {
 		}
 		mavenLocal()
 		mavenCentral()
-		jcenter()
 	}
 
 	configurations.all {
@@ -69,7 +68,7 @@ gradle.projectsEvaluated {
 		}
 
 		plugins.withType<JavaPlugin> {
-			configure<JavaPluginConvention> {
+			configure<JavaPluginExtension> {
 				sourceCompatibility = JavaVersion.VERSION_11
 				targetCompatibility = JavaVersion.VERSION_11
 			}
@@ -139,9 +138,9 @@ fun setupTestReporting(project: Project) {
 			dependsOn("test")
 
 			reports {
-				html.isEnabled = true
-				xml.isEnabled = true
-				csv.isEnabled = true
+				html.required.set(true)
+				xml.required.set(true)
+				csv.required.set(true)
 			}
 		}
 
@@ -201,7 +200,7 @@ fun setupJavadoc(project: Project) {
 		project.tasks.register("java2html") {
 			doLast {
 				project.javaexec {
-					main = "de.java2html.Java2Html"
+					mainClass.set("de.java2html.Java2Html")
 					args = listOf(
 						"-srcdir", "src/main/java",
 						"-targetdir", "${javadoc.destinationDir}/src-html/${project.extra["moduleName"]}"
