@@ -29,6 +29,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.Objects;
@@ -44,6 +45,7 @@ import java.util.Optional;
  */
 public final class Link implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final URI _href;
@@ -100,10 +102,10 @@ public final class Link implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Link &&
-			Objects.equals(((Link)obj)._href, _href) &&
-			Objects.equals(((Link)obj)._text, _text) &&
-			Objects.equals(((Link)obj)._type, _type);
+			obj instanceof Link link &&
+			Objects.equals(link._href, _href) &&
+			Objects.equals(link._text, _text) &&
+			Objects.equals(link._type, _type);
 	}
 
 	@Override
@@ -174,10 +176,12 @@ public final class Link implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.LINK, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

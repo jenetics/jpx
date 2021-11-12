@@ -649,49 +649,49 @@ public final class LocationFormatter {
 			Elevation E = null;
 
 			for (var format : _formats) {
-				if (format instanceof LatitudeDegree) {
+				if (format instanceof LatitudeDegree ld) {
 					if (D == null) {
-						D = (LatitudeDegree)format;
+						D = ld;
 					} else {
 						throw iae("Only one 'D' pattern allowed.");
 					}
-				} else if (format instanceof LatitudeMinute) {
+				} else if (format instanceof LatitudeMinute lm) {
 					if (M == null) {
-						M = (LatitudeMinute)format;
+						M = lm;
 					} else {
 						throw iae("Only one 'M' pattern allowed.");
 					}
-				} else if (format instanceof LatitudeSecond) {
+				} else if (format instanceof LatitudeSecond ls) {
 					if (S == null) {
-						S = (LatitudeSecond)format;
+						S = ls;
 					} else {
 						throw iae("Only one 'S' pattern allowed.");
 					}
 				} else if (format instanceof LatitudeNS && X==null) {
 					X = (LatitudeNS)format;
-				} else if (format instanceof LongitudeDegree) {
+				} else if (format instanceof LongitudeDegree ld) {
 					if (d == null) {
-						d = (LongitudeDegree)format;
+						d = ld;
 					} else {
 						throw iae("Only one 'd' pattern allowed.");
 					}
-				} else if (format instanceof LongitudeMinute) {
+				} else if (format instanceof LongitudeMinute lm) {
 					if (m == null) {
-						m = (LongitudeMinute)format;
+						m = lm;
 					} else {
 						throw iae("Only one 'm' pattern allowed.");
 					}
-				} else if (format instanceof LongitudeSecond) {
+				} else if (format instanceof LongitudeSecond ls) {
 					if (s == null) {
-						s = (LongitudeSecond)format;
+						s = ls;
 					} else {
 						throw iae("Only one 's' pattern allowed.");
 					}
-				} else if (format instanceof LongitudeEW && x == null) {
-					x = (LongitudeEW) format;
-				} else if (format instanceof Elevation){
+				} else if (format instanceof LongitudeEW lew && x == null) {
+					x = lew;
+				} else if (format instanceof Elevation ele) {
 					if (E == null) {
-						E = (Elevation)format;
+						E = ele;
 					} else {
 						throw iae("Only one 'E' pattern allowed.");
 					}

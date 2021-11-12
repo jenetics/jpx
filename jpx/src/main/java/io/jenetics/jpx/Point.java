@@ -74,7 +74,7 @@ public interface Point {
 	 * @implNote
 	 * The default implementation of this method forwards the call to the
 	 * {@link #getTime()} method. If you want to override this method, do it via
-	 * the {@link #getTime()}. Otherwise you have to re-implement this method as
+	 * the {@link #getTime()}. Otherwise, you have to re-implement this method as
 	 * well.
 	 *
 	 * @since 1.6

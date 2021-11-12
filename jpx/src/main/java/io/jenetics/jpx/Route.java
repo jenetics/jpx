@@ -31,6 +31,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -69,6 +70,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _name;
@@ -288,15 +290,15 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Route &&
-			Objects.equals(((Route)obj)._name, _name) &&
-			Objects.equals(((Route)obj)._comment, _comment) &&
-			Objects.equals(((Route)obj)._description, _description) &&
-			Objects.equals(((Route)obj)._source, _source) &&
-			Objects.equals(((Route)obj)._type, _type) &&
-			Lists.equals(((Route)obj)._links, _links) &&
-			Objects.equals(((Route)obj)._number, _number) &&
-			Objects.equals(((Route)obj)._points, _points);
+			obj instanceof Route route &&
+			Objects.equals(route._name, _name) &&
+			Objects.equals(route._comment, _comment) &&
+			Objects.equals(route._description, _description) &&
+			Objects.equals(route._source, _source) &&
+			Objects.equals(route._type, _type) &&
+			Lists.equals(route._links, _links) &&
+			Objects.equals(route._number, _number) &&
+			Objects.equals(route._points, _points);
 	}
 
 	@Override
@@ -638,7 +640,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.map(mapper)
-					.collect(Collectors.toList())
+					.map(WayPoint.class::cast)
+					.toList()
 			);
 
 			return this;
@@ -653,7 +656,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.flatMap(wp -> mapper.apply(wp).stream())
-					.collect(Collectors.toList())
+					.toList()
 			);
 
 			return this;
@@ -666,7 +669,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				? extends List<WayPoint>> mapper
 		) {
 			points(mapper.apply(_points));
-
 			return this;
 		}
 
@@ -823,10 +825,12 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.ROUTE, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

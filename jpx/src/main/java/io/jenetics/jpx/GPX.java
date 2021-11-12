@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Path;
@@ -162,6 +163,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  */
 public final class GPX implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	/**
@@ -947,12 +949,7 @@ public final class GPX implements Serializable {
 				public Filter<Track, Builder> filter(
 					final Predicate<? super Track> predicate
 				) {
-					tracks(
-						_tracks.stream()
-							.filter(predicate)
-							.collect(Collectors.toUnmodifiableList())
-					);
-
+					tracks(_tracks.stream().filter(predicate).toList());
 					return this;
 				}
 
@@ -963,7 +960,8 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.map(mapper)
-							.collect(Collectors.toUnmodifiableList())
+							.map(Track.class::cast)
+							.toList()
 					);
 
 					return this;
@@ -976,7 +974,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.flatMap(track -> mapper.apply(track).stream())
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;
@@ -1315,7 +1313,7 @@ public final class GPX implements Serializable {
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
 			try {
 				write(gpx, out);
-				return new String(out.toByteArray());
+				return out.toString();
 			} catch (IOException e) {
 				throw new IllegalStateException("Unexpected error.", e);
 			}
@@ -1473,10 +1471,12 @@ public final class GPX implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.GPX_TYPE, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
