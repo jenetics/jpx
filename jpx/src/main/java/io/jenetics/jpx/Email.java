@@ -28,6 +28,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -41,6 +42,7 @@ import java.util.Objects;
  */
 public final class Email implements Comparable<Email>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _id;
@@ -165,10 +167,12 @@ public final class Email implements Comparable<Email>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.EMAIL, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
