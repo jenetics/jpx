@@ -192,7 +192,7 @@ public final class Longitude extends Number implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.LONGITUDE, this);
+		return new SerialProxy(SerialProxy.LONGITUDE, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

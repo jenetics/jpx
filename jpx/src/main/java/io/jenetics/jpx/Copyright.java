@@ -226,7 +226,7 @@ public final class Copyright implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.COPYRIGHT, this);
+		return new SerialProxy(SerialProxy.COPYRIGHT, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

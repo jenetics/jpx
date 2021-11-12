@@ -191,7 +191,7 @@ public final class Degrees
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.DEGREES, this);
+		return new SerialProxy(SerialProxy.DEGREES, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

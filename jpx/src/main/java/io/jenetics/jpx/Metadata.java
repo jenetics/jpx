@@ -751,7 +751,7 @@ public final class Metadata implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.METADATA, this);
+		return new SerialProxy(SerialProxy.METADATA, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

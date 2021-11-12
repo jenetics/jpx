@@ -1474,7 +1474,7 @@ public final class GPX implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.GPX_TYPE, this);
+		return new SerialProxy(SerialProxy.GPX_TYPE, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

@@ -399,7 +399,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.TRACK_SEGMENT, this);
+		return new SerialProxy(SerialProxy.TRACK_SEGMENT, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

@@ -143,7 +143,7 @@ public final class UInt
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.UINT, this);
+		return new SerialProxy(SerialProxy.UINT, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

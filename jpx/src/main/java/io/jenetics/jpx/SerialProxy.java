@@ -32,7 +32,7 @@ import java.io.StreamCorruptedException;
  * @version 2.0
  * @since 1.2
  */
-final class Serial implements Externalizable {
+final class SerialProxy implements Externalizable {
 	private static final long serialVersionUID = 1L;
 
 	static final byte BOUNDS = 1;
@@ -67,7 +67,7 @@ final class Serial implements Externalizable {
 	/**
 	 * Constructor for deserialization.
 	 */
-	public Serial() {
+	public SerialProxy() {
 	}
 
 	/**
@@ -76,7 +76,7 @@ final class Serial implements Externalizable {
 	 * @param type  the type
 	 * @param object  the object
 	 */
-	Serial(final byte type, final Object object) {
+	SerialProxy(final byte type, final Object object) {
 		_type = type;
 		_object = object;
 	}

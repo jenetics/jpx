@@ -824,7 +824,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.ROUTE, this);
+		return new SerialProxy(SerialProxy.ROUTE, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

@@ -225,7 +225,7 @@ public final class Length
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.LENGTH, this);
+		return new SerialProxy(SerialProxy.LENGTH, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

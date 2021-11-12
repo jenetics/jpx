@@ -178,7 +178,7 @@ public final class Person implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.PERSON, this);
+		return new SerialProxy(SerialProxy.PERSON, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

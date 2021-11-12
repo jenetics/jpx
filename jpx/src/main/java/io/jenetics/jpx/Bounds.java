@@ -237,7 +237,7 @@ public final class Bounds implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.BOUNDS, this);
+		return new SerialProxy(SerialProxy.BOUNDS, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

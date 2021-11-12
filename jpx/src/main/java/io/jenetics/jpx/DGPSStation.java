@@ -157,7 +157,7 @@ public final class DGPSStation
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.DGPS_STATION, this);
+		return new SerialProxy(SerialProxy.DGPS_STATION, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

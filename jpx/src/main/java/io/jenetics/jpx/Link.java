@@ -175,7 +175,7 @@ public final class Link implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.LINK, this);
+		return new SerialProxy(SerialProxy.LINK, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

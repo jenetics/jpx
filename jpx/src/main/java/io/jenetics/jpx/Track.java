@@ -803,7 +803,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.TRACK, this);
+		return new SerialProxy(SerialProxy.TRACK, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

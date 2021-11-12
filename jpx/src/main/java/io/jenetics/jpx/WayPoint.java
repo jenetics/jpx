@@ -2116,7 +2116,7 @@ public final class WayPoint implements Point, Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() throws IOException {
-		return new Serial(Serial.WAY_POINT, this);
+		return new SerialProxy(SerialProxy.WAY_POINT, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

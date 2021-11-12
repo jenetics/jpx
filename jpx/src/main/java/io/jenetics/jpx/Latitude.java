@@ -192,7 +192,7 @@ public final class Latitude extends Number implements Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.LATITUDE, this);
+		return new SerialProxy(SerialProxy.LATITUDE, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

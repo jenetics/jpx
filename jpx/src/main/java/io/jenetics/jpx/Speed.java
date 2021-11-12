@@ -206,7 +206,7 @@ public final class Speed
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.SPEED, this);
+		return new SerialProxy(SerialProxy.SPEED, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)

@@ -166,7 +166,7 @@ public final class Email implements Comparable<Email>, Serializable {
 	 * ************************************************************************/
 
 	private Object writeReplace() {
-		return new Serial(Serial.EMAIL, this);
+		return new SerialProxy(SerialProxy.EMAIL, this);
 	}
 
 	private void readObject(final ObjectInputStream stream)
