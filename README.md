@@ -320,6 +320,10 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [2.3.0](https://github.com/jenetics/jpx/releases/tag/v2.3.0)
+
+_Mainentance release_
+
 ### [2.2.0](https://github.com/jenetics/jpx/releases/tag/v2.2.0)
 
 #### Improvements
