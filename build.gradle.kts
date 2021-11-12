@@ -157,6 +157,7 @@ fun setupTestReporting(project: Project) {
 fun setupJavadoc(project: Project) {
 	project.tasks.withType<Javadoc> {
 		val doclet = options as StandardJavadocDocletOptions
+		doclet.addBooleanOption("Xdoclint:accessibility,html,reference,syntax", true)
 
 		exclude("**/internal/**")
 
