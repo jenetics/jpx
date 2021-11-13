@@ -39,6 +39,7 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
 
 import java.util.Random;
+import java.util.stream.IntStream;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -156,5 +157,26 @@ public class LocationFormatterTest extends Fixture {
 		};
 	}
 
+	@Test
+	public void parallelFormatting() {
+		final var location = LocationRandom.nextLocation(new Random(123));
+		final var formatter = ISO_HUMAN_LONG;
+		final var expected = formatter.format(location);
+
+		IntStream.range(0, 100_000).parallel()
+			.mapToObj(i -> formatter.format(location))
+			.forEach(result -> assertEquals(result, expected));
+	}
+
+	@Test
+	public void parallelParsing() {
+		final var expected = LocationRandom.nextLocation(new Random(123));
+		final var formatter = ISO_HUMAN_LONG;
+		final var formatted = formatter.format(expected);
+
+		IntStream.range(0, 100_000).parallel()
+			.mapToObj(i -> formatter.parse(formatted))
+			.forEach(result -> assertEquals(result, expected));
+	}
 
 }
