@@ -1112,7 +1112,7 @@ public final class GPX implements Serializable {
 					throw new InvalidObjectException("No 'gpx' element found.");
 				}
 			} catch (XMLStreamException e) {
-				throw new InvalidObjectException("Invalid 'gpx' input.");
+				throw new InvalidObjectException("Invalid 'gpx' input: " + e.getMessage());
 			} catch (IllegalArgumentException e) {
 				throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
 						.initCause(e);

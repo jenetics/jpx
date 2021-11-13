@@ -140,8 +140,12 @@ abstract class XMLReader<T> {
 					return mapper.apply(XMLReader.this.read(xml, lenient));
 				} catch (RuntimeException e) {
 					if (!lenient) {
-						throw new XMLStreamException(format(
-							"Invalid value for '%s'.", _name), e
+						throw new XMLStreamException(
+							format(
+								"Invalid value for '%s': %s",
+								_name, e.getMessage()
+							),
+							e
 						);
 					} else {
 						return null;
