@@ -403,8 +403,9 @@ public final class LocationFormatter {
 	public String format(final Location location) {
 		requireNonNull(location);
 		return _formats.stream()
-			.map(format -> format.format(location)
-							.orElseThrow(() -> toError(location)))
+			.map(format -> format
+				.format(location)
+				.orElseThrow(() -> toError(location)))
 			.collect(Collectors.joining());
 	}
 
@@ -714,7 +715,7 @@ public final class LocationFormatter {
 
 			// If D has fractional, no M or S
 			if (D != null &&
-				0 < D._numberFormat.getMinimumFractionDigits()
+				0 < D.getMinimumFractionDigits()
 				&& M != null)
 			{
 				throw iae("If 'D' has fraction, no 'M' or 'S' allowed.");
@@ -722,7 +723,7 @@ public final class LocationFormatter {
 
 			// If M has fractional, no S
 			if (M != null &&
-				0 < M._numberFormat.getMinimumFractionDigits() &&
+				0 < M.getMinimumFractionDigits() &&
 				S != null)
 			{
 				throw iae("If 'M' has fraction, no 'S' allowed.");
@@ -744,7 +745,7 @@ public final class LocationFormatter {
 
 			// If d has fractional, no m or s
 			if (d != null &&
-				0 < d._numberFormat.getMinimumFractionDigits() &&
+				0 < d.getMinimumFractionDigits() &&
 				m != null)
 			{
 				throw iae("If 'd' has fraction, no 'm' or 's' allowed.");
@@ -752,7 +753,7 @@ public final class LocationFormatter {
 
 			// If m has fractional, no s.
 			if (m != null &&
-				0 < m._numberFormat.getMinimumFractionDigits() &&
+				0 < m.getMinimumFractionDigits() &&
 				s != null)
 			{
 				throw iae("If 'm' has fraction, no 's' allowed.");

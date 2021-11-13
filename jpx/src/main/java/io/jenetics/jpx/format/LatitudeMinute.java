@@ -15,9 +15,6 @@
  */
 package io.jenetics.jpx.format;
 
-import static java.math.RoundingMode.DOWN;
-import static java.math.RoundingMode.HALF_EVEN;
-
 import java.text.ParsePosition;
 import java.util.Optional;
 
@@ -33,16 +30,7 @@ import io.jenetics.jpx.Latitude;
 final class LatitudeMinute extends Field {
 
 	LatitudeMinute(final String pattern) {
-		super(pattern);
-	}
-
-	@Override
-	char type() {
-		return 'M';
-	}
-
-	void setTruncate(final boolean b) {
-		_numberFormat.setRoundingMode(b ? DOWN : HALF_EVEN);
+		super(pattern, 'M');
 	}
 
 	@Override
@@ -51,7 +39,7 @@ final class LatitudeMinute extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parseDouble(in, pos);
+		double d = parse(in, pos);
 		builder.addLatitudeMinute(d);
 	}
 
@@ -60,7 +48,7 @@ final class LatitudeMinute extends Field {
 		return loc.latitude()
 			.map(Latitude::toDegrees)
 			.map(Field::toMinutes)
-			.map(d -> _numberFormat.format(d));
+			.map(this::format);
 	}
 
 }

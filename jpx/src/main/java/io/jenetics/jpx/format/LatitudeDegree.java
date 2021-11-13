@@ -16,10 +16,7 @@
 package io.jenetics.jpx.format;
 
 import static java.lang.Math.abs;
-import static java.math.RoundingMode.DOWN;
-import static java.math.RoundingMode.HALF_EVEN;
 
-import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.util.Optional;
 
@@ -37,36 +34,8 @@ import io.jenetics.jpx.Latitude;
  */
 final class LatitudeDegree extends Field {
 
-	private boolean _prefixSign = false;
-
 	LatitudeDegree(final String pattern) {
-		super(pattern);
-	}
-
-	void setPrefixSign(boolean b) {
-		_prefixSign = b;
-		String decimalPattern = toDecimalPattern(_pattern);
-		String p = b ? ("+" + decimalPattern + ";" + "-" + decimalPattern) :  decimalPattern;
-		_numberFormat = new DecimalFormat(p, SYMBOLS);
-	}
-
-	boolean isPrefixSign() {
-		return _prefixSign;
-	}
-
-	void setTruncate(final boolean b) {
-		_numberFormat.setRoundingMode(b ? DOWN : HALF_EVEN);
-	}
-
-	private boolean absolute = false;
-
-	void setAbsolute(final boolean b) {
-		absolute = b;
-	}
-
-	@Override
-	char type() {
-		return 'D';
+		super(pattern, 'D');
 	}
 
 	@Override
@@ -75,7 +44,7 @@ final class LatitudeDegree extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parseDouble(in, pos);
+		double d = parse(in, pos);
 		builder.addLatitude(d);
 	}
 
@@ -83,13 +52,13 @@ final class LatitudeDegree extends Field {
 	public Optional<String> format(final Location loc) {
 		return loc.latitude()
 			.map(Latitude::toDegrees)
-			.map(d -> absolute ? abs(d) : d)
-			.map(d -> _numberFormat.format(d));
+			.map(d -> isAbsolute() ? abs(d) : d)
+			.map(this::format);
 	}
 
 	@Override
 	public String toPattern() {
-		return _prefixSign ? "+" + _pattern : _pattern;
+		return isPrefixSign() ? "+" + super.toPattern() : super.toPattern();
 	}
 
 }
