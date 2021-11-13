@@ -30,12 +30,7 @@ import io.jenetics.jpx.Latitude;
 final class LatitudeMinute extends Field {
 
 	LatitudeMinute(final String pattern) {
-		super(pattern);
-	}
-
-	@Override
-	char type() {
-		return 'M';
+		super(pattern, 'M');
 	}
 
 	@Override

@@ -30,12 +30,7 @@ import io.jenetics.jpx.Longitude;
 final class LongitudeSecond extends Field {
 
 	LongitudeSecond(final String pattern) {
-		super(pattern);
-	}
-
-	@Override
-	char type() {
-		return 's';
+		super(pattern, 's');
 	}
 
 	@Override public void parse(

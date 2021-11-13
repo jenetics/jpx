@@ -35,12 +35,7 @@ import io.jenetics.jpx.Latitude;
 final class LatitudeDegree extends Field {
 
 	LatitudeDegree(final String pattern) {
-		super(pattern);
-	}
-
-	@Override
-	char type() {
-		return 'D';
+		super(pattern, 'D');
 	}
 
 	@Override

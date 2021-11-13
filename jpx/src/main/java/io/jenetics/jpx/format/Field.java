@@ -43,31 +43,27 @@ abstract class Field implements Format {
 		DecimalFormatSymbols.getInstance(Locale.US);
 
 	private final String _pattern;
+	private final char _type;
+
 	private boolean _prefixSign = false;
 	private boolean _absolute = false;
 
 	private final AtomicReference<NumberFormat> _format = new AtomicReference<>();
 
-	Field(final String pattern) {
+	Field(final String pattern, final char type) {
 		_pattern = requireNonNull(pattern);
-		_format.set(new DecimalFormat(toDecimalPattern(pattern), SYMBOLS));
+		_type = type;
+		_format.set(new DecimalFormat(toDecimalPattern(pattern, type), SYMBOLS));
 	}
 
-	private String toDecimalPattern(final String pattern) {
-		return pattern.replace(type(), '0');
+	private static String toDecimalPattern(final String pattern, final char type) {
+		return pattern.replace(type, '0');
 	}
-
-	/**
-	 * Return the type character of this field.
-	 *
-	 * @return the type character of this field
-	 */
-	abstract char type();
 
 	final void setPrefixSign(final boolean b) {
 		_prefixSign = b;
 
-		final String decimalPattern = toDecimalPattern(_pattern);
+		final String decimalPattern = toDecimalPattern(_pattern, _type);
 		final String pattern = _prefixSign
 			? "+%1$s;-%1$s".formatted(decimalPattern)
 			:  decimalPattern;
@@ -111,7 +107,9 @@ abstract class Field implements Format {
 	 * @return the formatted double value
 	 */
 	final String format(final double value) {
-		return _format.get().format(value);
+		synchronized (_format) {
+			return _format.get().format(value);
+		}
 	}
 
 	/**
@@ -130,16 +128,20 @@ abstract class Field implements Format {
 			s = in.subSequence(0, end).toString();
 		}
 
-		final Number n; synchronized (_format) {
-			n = _format.get().parse(s, pos);
-		}
+		final Number n = parse0(s, pos);
 
 		if (i == pos.getIndex()) {
 			pos.setErrorIndex(i);
-			throw new ParseException("Not found " + _pattern, in, i);
+			throw new ParseException("Not found " + toPattern(), in, i);
 		}
 
 		return n.doubleValue();
+	}
+
+	private Number parse0(final String value, final ParsePosition pos) {
+		synchronized (_format) {
+			return _format.get().parse(value, pos);
+		}
 	}
 
 

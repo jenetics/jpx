@@ -35,12 +35,7 @@ import io.jenetics.jpx.Longitude;
 class LongitudeDegree extends Field {
 
 	LongitudeDegree(final String pattern) {
-		super(pattern);
-	}
-
-	@Override
-	char type() {
-		return 'd';
+		super(pattern, 'd');
 	}
 
 	@Override

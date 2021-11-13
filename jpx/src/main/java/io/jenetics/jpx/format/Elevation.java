@@ -29,12 +29,7 @@ import java.util.Optional;
 final class Elevation extends Field {
 
 	Elevation(final String pattern) {
-		super(pattern);
-	}
-
-	@Override
-	char type() {
-		return 'E';
+		super(pattern, 'E');
 	}
 
 	@Override
