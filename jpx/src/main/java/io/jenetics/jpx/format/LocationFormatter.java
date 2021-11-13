@@ -403,8 +403,9 @@ public final class LocationFormatter {
 	public String format(final Location location) {
 		requireNonNull(location);
 		return _formats.stream()
-			.map(format -> format.format(location)
-							.orElseThrow(() -> toError(location)))
+			.map(format -> format
+				.format(location)
+				.orElseThrow(() -> toError(location)))
 			.collect(Collectors.joining());
 	}
 
