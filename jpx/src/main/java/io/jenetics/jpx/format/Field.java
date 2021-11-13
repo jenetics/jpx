@@ -17,34 +17,37 @@ package io.jenetics.jpx.format;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
+import static java.util.Objects.requireNonNull;
 
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParsePosition;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Represents one of the existing location fields: latitude, longitude and
  * elevation.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 2.2
+ * @version !__version__!
  * @since 1.4
  */
 abstract class Field implements Format {
 
-	final static DecimalFormatSymbols SYMBOLS =
+	static final DecimalFormatSymbols SYMBOLS =
 		DecimalFormatSymbols.getInstance(Locale.US);
 
-	protected NumberFormat _numberFormat;
-	protected final String _pattern;
+	final String _pattern;
 
-	Field(final String pattern){
-		final var decimalPattern = toDecimalPattern(pattern);
-		_numberFormat = new DecimalFormat(decimalPattern, SYMBOLS);
-		_pattern = pattern;
+	private final AtomicReference<NumberFormat> _format = new AtomicReference<>();
+
+	Field(final String pattern) {
+		_pattern = requireNonNull(pattern);
+		_format.set(new DecimalFormat(toDecimalPattern(pattern), SYMBOLS));
 	}
 
 	/**
@@ -55,6 +58,18 @@ abstract class Field implements Format {
 	abstract char type();
 
 	void setPrefixSign(final boolean b) {
+	}
+
+	void setFormat(final NumberFormat format) {
+		_format.set(requireNonNull(format));
+	}
+
+	void setRoundingMode(final RoundingMode mode) {
+		_format.get().setRoundingMode(mode);
+	}
+
+	int getMinimumFractionDigits() {
+		return _format.get().getMinimumFractionDigits();
 	}
 
 	static double toMinutes(final double degrees) {
@@ -108,16 +123,37 @@ abstract class Field implements Format {
 		return _pattern;
 	}
 
-	double parseDouble(final CharSequence in, final ParsePosition pos) {
+	/**
+	 * Formatting the given double value with the field formatter.
+	 *
+	 * @param value the double value to format
+	 * @return the formatted double value
+	 */
+	String format(final double value) {
+		return _format.get().format(value);
+	}
+
+	/**
+	 * Parsers the given input string.
+	 *
+	 * @param in the input string to parse
+	 * @param pos the parse position
+	 * @return the parsed double value
+	 */
+	double parse(final CharSequence in, final ParsePosition pos) {
 		int i = pos.getIndex();
 		String s = in.toString();
-		boolean strictWidth = 1 < _numberFormat.getMinimumIntegerDigits(); //better?
+		boolean strictWidth = 1 < _format.get().getMinimumIntegerDigits(); //better?
 		if (strictWidth) {
 			int end = i + toPattern().length(); // toPattern() rather than pattern because LatitudeDegree.toPattern()
 			s = in.subSequence(0, end).toString(); // don't eat more digits
 		}
 
-		Number n = _numberFormat.parse(s, pos);
+		final Number n;
+		synchronized (_format) {
+			n = _format.get().parse(s, pos);
+		}
+
 		if (i == pos.getIndex()) {
 			pos.setErrorIndex(i);
 			throw new ParseException("Not found " + _pattern, in, i);
@@ -125,4 +161,5 @@ abstract class Field implements Format {
 
 		return n.doubleValue();
 	}
+
 }

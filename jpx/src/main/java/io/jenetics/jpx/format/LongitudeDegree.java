@@ -51,7 +51,7 @@ class LongitudeDegree extends Field {
 			? ("+" + decimalPattern + ";" + "-" + decimalPattern)
 			:  decimalPattern;
 
-		_numberFormat = new DecimalFormat(pattern, SYMBOLS);
+		setFormat(new DecimalFormat(pattern, SYMBOLS));
 	}
 
 	boolean isPrefixSign() {
@@ -59,7 +59,7 @@ class LongitudeDegree extends Field {
 	}
 
 	void setTruncate(final boolean b) {
-		_numberFormat.setRoundingMode(b ? DOWN : HALF_EVEN);
+		setRoundingMode(b ? DOWN : HALF_EVEN);
 	}
 
 	void setAbsolute(final boolean b) {
@@ -77,7 +77,7 @@ class LongitudeDegree extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parseDouble(in, pos);
+		double d = parse(in, pos);
 		builder.addLongitude(d);
 	}
 
@@ -86,7 +86,7 @@ class LongitudeDegree extends Field {
 		return loc.longitude()
 			.map(Longitude::toDegrees)
 			.map(d -> absolute ? abs(d) : d)
-			.map(d -> _numberFormat.format(d));
+			.map(this::format);
 	}
 
 	@Override

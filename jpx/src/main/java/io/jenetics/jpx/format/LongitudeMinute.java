@@ -42,7 +42,7 @@ final class LongitudeMinute extends Field {
 	}
 
 	void setTruncate(final boolean b) {
-		_numberFormat.setRoundingMode(b ? DOWN : HALF_EVEN);
+		setRoundingMode(b ? DOWN : HALF_EVEN);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ final class LongitudeMinute extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parseDouble(in, pos);
+		double d = parse(in, pos);
 		builder.addLongitudeMinute(d);
 	}
 
@@ -60,7 +60,7 @@ final class LongitudeMinute extends Field {
 		return loc.longitude()
 			.map(Longitude::toDegrees)
 			.map(Field::toMinutes)
-			.map(d -> _numberFormat.format(d));
+			.map(this::format);
 	}
 
 }

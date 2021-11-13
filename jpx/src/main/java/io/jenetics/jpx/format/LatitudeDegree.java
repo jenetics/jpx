@@ -47,7 +47,7 @@ final class LatitudeDegree extends Field {
 		_prefixSign = b;
 		String decimalPattern = toDecimalPattern(_pattern);
 		String p = b ? ("+" + decimalPattern + ";" + "-" + decimalPattern) :  decimalPattern;
-		_numberFormat = new DecimalFormat(p, SYMBOLS);
+		setFormat(new DecimalFormat(p, SYMBOLS));
 	}
 
 	boolean isPrefixSign() {
@@ -55,7 +55,7 @@ final class LatitudeDegree extends Field {
 	}
 
 	void setTruncate(final boolean b) {
-		_numberFormat.setRoundingMode(b ? DOWN : HALF_EVEN);
+		setRoundingMode(b ? DOWN : HALF_EVEN);
 	}
 
 	private boolean absolute = false;
@@ -75,7 +75,7 @@ final class LatitudeDegree extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parseDouble(in, pos);
+		double d = parse(in, pos);
 		builder.addLatitude(d);
 	}
 
@@ -84,7 +84,7 @@ final class LatitudeDegree extends Field {
 		return loc.latitude()
 			.map(Latitude::toDegrees)
 			.map(d -> absolute ? abs(d) : d)
-			.map(d -> _numberFormat.format(d));
+			.map(this::format);
 	}
 
 	@Override

@@ -58,7 +58,7 @@ class CompositeFormat implements Format {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		for(var format : _formats ) {
+		for(var format : _formats) {
 			format.parse(in, pos, builder);
 		}
 	}

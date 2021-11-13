@@ -43,7 +43,7 @@ final class Elevation extends Field {
 			? ("+" + decimalPattern + ";" + "-" + decimalPattern)
 			:  decimalPattern;
 
-		_numberFormat = new DecimalFormat(pattern, SYMBOLS);
+		setFormat(new DecimalFormat(pattern, SYMBOLS));
 	}
 
 	@Override
@@ -57,14 +57,14 @@ final class Elevation extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		builder.setElevation(parseDouble(in, pos));
+		builder.setElevation(parse(in, pos));
 	}
 
 	@Override
 	public Optional<String> format(final Location loc) {
 		return loc.elevation()
 			.map(l -> l.to(METER))
-			.map(d -> _numberFormat.format(d));
+			.map(this::format);
 	}
 
 	@Override

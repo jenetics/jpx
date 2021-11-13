@@ -44,7 +44,7 @@ final class LatitudeSecond extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parseDouble(in, pos);
+		double d = parse(in, pos);
 		builder.addLatitudeSecond(d);
 	}
 
@@ -53,7 +53,7 @@ final class LatitudeSecond extends Field {
 		return loc.latitude()
 			.map(Latitude::toDegrees)
 			.map(Field::toSeconds)
-			.map(d -> _numberFormat.format(d));
+			.map(this::format);
 	}
 
 }
