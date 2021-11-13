@@ -849,4 +849,15 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		Assert.assertEquals(gpx, expected);
 	}
 
+	@Test
+	public void issue151_Formatting() throws IOException {
+		final var resource = "/io/jenetics/jpx/ISSUE-151.gpx";
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		GPX.writer("    ").write(gpx, System.out);
+	}
+
 }
