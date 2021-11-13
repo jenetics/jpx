@@ -802,24 +802,20 @@ public final class LocationFormatter {
 			while (tokens.hasNext()) {
 				var token = tokens.next();
 				switch (token) {
-					case "X": {
+					case "X" -> {
 						List<Format> fs = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) fs.add(Plus.INSTANCE);
 						signs = 0;
 						fs.add(LatitudeNS.INSTANCE);
-						break;
 					}
-					case "x": {
+					case "x" -> {
 						List<Format> fs = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) fs.add(Plus.INSTANCE);
 						signs = 0;
 						fs.add(LongitudeEW.INSTANCE);
-						break;
 					}
-					case "+":
-						++signs;
-						break;
-					case "[": {
+					case "+" -> ++signs;
+					case "[" -> {
 						if (optional) {
 							throw iae("No nesting '[' (optional) allowed.");
 						}
@@ -828,9 +824,8 @@ public final class LocationFormatter {
 						}
 						signs = 0;
 						optional = true;
-						break;
 					}
-					case "]": {
+					case "]" -> {
 						if (!optional) {
 							throw iae("Missing open '[' bracket.");
 						}
@@ -843,9 +838,8 @@ public final class LocationFormatter {
 						optional = false;
 						_formats.add(OptionalFormat.of(formats));
 						formats.clear();
-						break;
 					}
-					case "'": {
+					case "'" -> {
 						List<Format> fs = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i)
 							fs.add(Plus.INSTANCE);
@@ -866,9 +860,8 @@ public final class LocationFormatter {
 						} else {
 							quote = true;
 						}
-						break;
 					}
-					default: {
+					default -> {
 						List<Format> fs = optional ? formats : _formats;
 						if (!quote) {
 							final var field = Field.ofPattern(token);
@@ -891,7 +884,6 @@ public final class LocationFormatter {
 							}
 						}
 						signs = 0;
-						break;
 					}
 				}
 			}
