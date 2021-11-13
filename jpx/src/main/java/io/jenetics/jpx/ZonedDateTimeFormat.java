@@ -116,9 +116,12 @@ enum ZonedDateTimeFormat {
 	 *         {@code Optional.empty()} of no formatter is found
 	 */
 	static Optional<ZonedDateTimeFormat> findFormat(final String time) {
-		return Stream.of(values())
-			.filter(tf -> tf.matches(time))
-			.findFirst();
+		for (var format : values()) {
+			if (format.matches(time)) {
+				return Optional.of(format);
+			}
+		}
+		return Optional.empty();
 	}
 
 	/**
