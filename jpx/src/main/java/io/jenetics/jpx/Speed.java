@@ -22,6 +22,8 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
+import static io.jenetics.jpx.Format.toDoubleString;
+
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -174,7 +176,7 @@ public final class Speed
 
 	@Override
 	public String toString() {
-		return format("%s m/s", _value);
+		return format("%s m/s", toDoubleString(_value));
 	}
 
 

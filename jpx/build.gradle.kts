@@ -36,4 +36,5 @@ extra["moduleName"] = "io.jenetics.jpx"
 dependencies {
 	testImplementation(Libs.TestNG)
 	testImplementation(Libs.EqualsVerifier)
+	testImplementation("org.assertj:assertj-core:3.20.2")
 }

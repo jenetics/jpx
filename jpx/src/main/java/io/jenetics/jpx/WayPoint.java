@@ -22,9 +22,9 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Format.doubleString;
-import static io.jenetics.jpx.Format.durationString;
-import static io.jenetics.jpx.Format.intString;
+import static io.jenetics.jpx.Format.toDoubleString;
+import static io.jenetics.jpx.Format.toDurationString;
+import static io.jenetics.jpx.Format.toIntString;
 import static io.jenetics.jpx.Length.Unit.METER;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.Lists.copyTo;
@@ -2290,13 +2290,13 @@ public final class WayPoint implements Point, Serializable {
 
 	// Define the needed writers for the different versions.
 	private static final XMLWriters<WayPoint> WRITERS = new XMLWriters<WayPoint>()
-		.v00(XMLWriter.attr("lat").map(wp -> wp._latitude))
-		.v00(XMLWriter.attr("lon").map(wp -> wp._longitude))
-		.v00(XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)))
-		.v00(XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)))
+		.v00(XMLWriter.attr("lat").map(wp -> toDoubleString(wp._latitude)))
+		.v00(XMLWriter.attr("lon").map(wp -> toDoubleString(wp._longitude)))
+		.v00(XMLWriter.elem("ele").map(wp -> toDoubleString(wp._elevation)))
+		.v00(XMLWriter.elem("speed").map(wp -> toDoubleString(wp._speed)))
 		.v00(XMLWriter.elem("time").map(wp -> ZonedDateTimeFormat.format(wp._time)))
-		.v00(XMLWriter.elem("magvar").map(wp -> doubleString(wp._magneticVariation)))
-		.v00(XMLWriter.elem("geoidheight").map(wp -> doubleString(wp._geoidHeight)))
+		.v00(XMLWriter.elem("magvar").map(wp -> toDoubleString(wp._magneticVariation)))
+		.v00(XMLWriter.elem("geoidheight").map(wp -> toDoubleString(wp._geoidHeight)))
 		.v00(XMLWriter.elem("name").map(wp -> wp._name))
 		.v00(XMLWriter.elem("cmt").map(wp -> wp._comment))
 		.v00(XMLWriter.elem("desc").map(wp -> wp._description))
@@ -2307,13 +2307,13 @@ public final class WayPoint implements Point, Serializable {
 		.v00(XMLWriter.elem("sym").map(wp -> wp._symbol))
 		.v00(XMLWriter.elem("type").map(wp -> wp._type))
 		.v00(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)))
-		.v00(XMLWriter.elem("sat").map(wp -> intString(wp._sat)))
-		.v00(XMLWriter.elem("hdop").map(wp -> doubleString(wp._hdop)))
-		.v00(XMLWriter.elem("vdop").map(wp -> doubleString(wp._vdop)))
-		.v00(XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)))
-		.v00(XMLWriter.elem("ageofdgpsdata").map(wp -> durationString(wp._ageOfGPSData)))
-		.v00(XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID)))
-		.v10(XMLWriter.elem("course").map(wp -> doubleString(wp._course)))
+		.v00(XMLWriter.elem("sat").map(wp -> toIntString(wp._sat)))
+		.v00(XMLWriter.elem("hdop").map(wp -> toDoubleString(wp._hdop)))
+		.v00(XMLWriter.elem("vdop").map(wp -> toDoubleString(wp._vdop)))
+		.v00(XMLWriter.elem("pdop").map(wp -> toDoubleString(wp._pdop)))
+		.v00(XMLWriter.elem("ageofdgpsdata").map(wp -> toDurationString(wp._ageOfGPSData)))
+		.v00(XMLWriter.elem("dgpsid").map(wp -> toIntString(wp._dgpsID)))
+		.v10(XMLWriter.elem("course").map(wp -> toDoubleString(wp._course)))
 		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
 
 	// Define the needed readers for the different versions.

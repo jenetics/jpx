@@ -22,7 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Format.intString;
+import static io.jenetics.jpx.Format.toIntString;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.Lists.copyTo;
 
@@ -868,7 +868,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
 		.v10(XMLWriter.elem("url").map(Track::url))
 		.v10(XMLWriter.elem("urlname").map(Track::urlname))
-		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
+		.v00(XMLWriter.elem("number").map(r -> toIntString(r._number)))
 		.v00(XMLWriter.elem("type").map(r -> r._type))
 		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
 		.v10(XMLWriter.elems(TrackSegment.xmlWriter(Version.V10)).map(r -> r._segments))

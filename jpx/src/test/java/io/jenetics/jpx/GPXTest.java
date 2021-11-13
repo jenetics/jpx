@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -733,7 +734,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
 			GPX.read(in);
-			Assert.assertFalse(true, "GXP.read must throw.");
+			Assert.fail("GXP.read must throw.");
 		} catch (IOException e) {
 			Assert.assertEquals(e.getClass(), InvalidObjectException.class);
 			Assert.assertTrue(e.getMessage().toLowerCase().contains("invalid"));
@@ -857,7 +858,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			gpx = GPX.read(in);
 		}
 
-		GPX.writer("    ").write(gpx, System.out);
+		final var out = new ByteArrayOutputStream();
+		GPX.writer("    ").write(gpx, out);
+		assertThat(out.toString()).doesNotContain("-3.1E-4");
 	}
 
 }

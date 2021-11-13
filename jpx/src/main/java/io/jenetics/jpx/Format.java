@@ -23,8 +23,10 @@ import static java.lang.String.format;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Year;
+import java.util.Locale;
 
 /**
  * Some helper methods for parsing GPS values.
@@ -34,6 +36,14 @@ import java.time.Year;
  * @since 1.0
  */
 final class Format {
+
+	private static final NumberFormat FORMAT = format0();
+
+	private static NumberFormat format0() {
+		final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
+		format.setMaximumFractionDigits(9);
+		return format;
+	}
 
 	private Format() {
 	}
@@ -57,7 +67,7 @@ final class Format {
 			: null;
 	}
 
-	static String durationString(final Duration duration) {
+	static String toDurationString(final Duration duration) {
 		return duration != null ? Long.toString(duration.getSeconds()) : null;
 	}
 
@@ -73,7 +83,7 @@ final class Format {
 		return year != null ? Year.of(Integer.parseInt(year)) : null;
 	}
 
-	static String yearString(final Year year) {
+	static String toYearString(final Year year) {
 		return year != null ? Integer.toString(year.getValue()) : null;
 	}
 
@@ -95,15 +105,17 @@ final class Format {
 		}
 	}
 
-	static String uriString(final URI uri) {
+	static String toUriString(final URI uri) {
 		return uri != null ? uri.toString() : null;
 	}
 
-	static String doubleString(final Number number) {
-		return number != null ? Double.toString(number.doubleValue()) : null;
+	static String toDoubleString(final Number number) {
+		return number != null
+			? FORMAT.format(number.doubleValue())
+			: null;
 	}
 
-	static String intString(final Number number) {
+	static String toIntString(final Number number) {
 		return number != null ? Integer.toString(number.intValue()) : null;
 	}
 
