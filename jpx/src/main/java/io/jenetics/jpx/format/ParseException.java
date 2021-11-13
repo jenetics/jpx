@@ -17,6 +17,8 @@ package io.jenetics.jpx.format;
 
 import static java.lang.String.format;
 
+import java.io.Serial;
+
 /**
  * This exception is thrown when the parsing of a location pattern string fails.
  *
@@ -26,6 +28,8 @@ import static java.lang.String.format;
  * @since 2.2
  */
 public class ParseException extends FormatterException {
+
+	@Serial
 	private static final long serialVersionUID = 1;
 
 	/**

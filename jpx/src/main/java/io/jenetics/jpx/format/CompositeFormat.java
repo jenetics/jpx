@@ -41,7 +41,7 @@ class CompositeFormat implements Format {
 	public Optional<String> format(final Location value) {
 		final List<Optional<String>> strings = _formats.stream()
 			.map(format -> format.format(value))
-			.collect(Collectors.toList());
+			.toList();
 
 		final boolean complete = strings.stream().allMatch(Optional::isPresent);
 		return complete

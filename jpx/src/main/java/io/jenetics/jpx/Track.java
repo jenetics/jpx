@@ -31,6 +31,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class Track implements Iterable<TrackSegment>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _name;
@@ -296,15 +298,15 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Track &&
-			Objects.equals(((Track)obj)._name, _name) &&
-			Objects.equals(((Track)obj)._comment, _comment) &&
-			Objects.equals(((Track)obj)._description, _description) &&
-			Objects.equals(((Track)obj)._source, _source) &&
-			Objects.equals(((Track)obj)._type, _type) &&
-			Lists.equals(((Track)obj)._links, _links) &&
-			Objects.equals(((Track)obj)._number, _number) &&
-			Objects.equals(((Track)obj)._segments, _segments);
+			obj instanceof Track track &&
+			Objects.equals(track._name, _name) &&
+			Objects.equals(track._comment, _comment) &&
+			Objects.equals(track._description, _description) &&
+			Objects.equals(track._source, _source) &&
+			Objects.equals(track._type, _type) &&
+			Lists.equals(track._links, _links) &&
+			Objects.equals(track._number, _number) &&
+			Objects.equals(track._segments, _segments);
 	}
 
 	@Override
@@ -647,7 +649,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			segments(
 				_segments.stream()
 					.map(mapper)
-					.collect(Collectors.toList())
+					.map(TrackSegment.class::cast)
+					.toList()
 			);
 
 			return this;
@@ -662,7 +665,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			segments(
 				_segments.stream()
 					.flatMap(segment -> mapper.apply(segment).stream())
-					.collect(Collectors.toList())
+					.toList()
 			);
 
 			return this;
@@ -802,10 +805,12 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.TRACK, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

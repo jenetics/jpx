@@ -35,6 +35,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.Duration;
@@ -67,6 +68,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class WayPoint implements Point, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final Latitude _latitude;
@@ -469,29 +471,29 @@ public final class WayPoint implements Point, Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof WayPoint &&
-			Objects.equals(((WayPoint)obj)._latitude, _latitude) &&
-			Objects.equals(((WayPoint)obj)._longitude, _longitude) &&
-			Objects.equals(((WayPoint)obj)._elevation, _elevation) &&
-			Objects.equals(((WayPoint)obj)._speed, _speed) &&
-			ZonedDateTimes.equals(((WayPoint)obj)._time, _time) &&
-			Objects.equals(((WayPoint)obj)._magneticVariation, _magneticVariation) &&
-			Objects.equals(((WayPoint)obj)._geoidHeight, _geoidHeight) &&
-			Objects.equals(((WayPoint)obj)._name, _name) &&
-			Objects.equals(((WayPoint)obj)._comment, _comment) &&
-			Objects.equals(((WayPoint)obj)._description, _description) &&
-			Objects.equals(((WayPoint)obj)._source, _source) &&
-			Lists.equals(((WayPoint)obj)._links, _links) &&
-			Objects.equals(((WayPoint)obj)._symbol, _symbol) &&
-			Objects.equals(((WayPoint)obj)._type, _type) &&
-			Objects.equals(((WayPoint)obj)._fix, _fix) &&
-			Objects.equals(((WayPoint)obj)._sat, _sat) &&
-			Objects.equals(((WayPoint)obj)._hdop, _hdop) &&
-			Objects.equals(((WayPoint)obj)._vdop, _vdop) &&
-			Objects.equals(((WayPoint)obj)._pdop, _pdop) &&
-			Objects.equals(((WayPoint)obj)._ageOfGPSData, _ageOfGPSData) &&
-			Objects.equals(((WayPoint)obj)._dgpsID, _dgpsID) &&
-			Objects.equals(((WayPoint)obj)._course, _course);
+			obj instanceof WayPoint wp &&
+			Objects.equals(wp._latitude, _latitude) &&
+			Objects.equals(wp._longitude, _longitude) &&
+			Objects.equals(wp._elevation, _elevation) &&
+			Objects.equals(wp._speed, _speed) &&
+			ZonedDateTimes.equals(wp._time, _time) &&
+			Objects.equals(wp._magneticVariation, _magneticVariation) &&
+			Objects.equals(wp._geoidHeight, _geoidHeight) &&
+			Objects.equals(wp._name, _name) &&
+			Objects.equals(wp._comment, _comment) &&
+			Objects.equals(wp._description, _description) &&
+			Objects.equals(wp._source, _source) &&
+			Lists.equals(wp._links, _links) &&
+			Objects.equals(wp._symbol, _symbol) &&
+			Objects.equals(wp._type, _type) &&
+			Objects.equals(wp._fix, _fix) &&
+			Objects.equals(wp._sat, _sat) &&
+			Objects.equals(wp._hdop, _hdop) &&
+			Objects.equals(wp._vdop, _vdop) &&
+			Objects.equals(wp._pdop, _pdop) &&
+			Objects.equals(wp._ageOfGPSData, _ageOfGPSData) &&
+			Objects.equals(wp._dgpsID, _dgpsID) &&
+			Objects.equals(wp._course, _course);
 	}
 
 	@Override
@@ -2115,10 +2117,12 @@ public final class WayPoint implements Point, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() throws IOException {
 		return new SerialProxy(SerialProxy.WAY_POINT, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

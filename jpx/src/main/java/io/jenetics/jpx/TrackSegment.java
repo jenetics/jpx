@@ -30,6 +30,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -58,6 +59,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final List<WayPoint> _points;
@@ -286,12 +288,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 		@Override
 		public Builder filter(final Predicate<? super WayPoint> predicate) {
-			points(
-				_points.stream()
-					.filter(predicate)
-					.collect(Collectors.toList())
-			);
-
+			points(_points.stream().filter(predicate).toList());
 			return this;
 		}
 
@@ -302,7 +299,8 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.map(mapper)
-					.collect(Collectors.toList())
+					.map(WayPoint.class::cast)
+					.toList()
 			);
 
 			return this;
@@ -317,7 +315,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.flatMap(wp -> mapper.apply(wp).stream())
-					.collect(Collectors.toList())
+					.toList()
 			);
 
 			return this;
@@ -330,7 +328,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 				? extends List<WayPoint>> mapper
 		) {
 			points(mapper.apply(_points));
-
 			return this;
 		}
 
@@ -398,10 +395,12 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.TRACK_SEGMENT, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

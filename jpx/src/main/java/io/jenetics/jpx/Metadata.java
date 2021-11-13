@@ -29,6 +29,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -59,6 +60,7 @@ import org.w3c.dom.Document;
  */
 public final class Metadata implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _name;
@@ -271,15 +273,15 @@ public final class Metadata implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Metadata &&
-			Objects.equals(((Metadata)obj)._name, _name) &&
-			Objects.equals(((Metadata)obj)._description, _description) &&
-			Objects.equals(((Metadata)obj)._author, _author) &&
-			Objects.equals(((Metadata)obj)._copyright, _copyright) &&
-			Lists.equals(((Metadata)obj)._links, _links) &&
-			ZonedDateTimes.equals(((Metadata)obj)._time, _time) &&
-			Objects.equals(((Metadata)obj)._keywords, _keywords) &&
-			Objects.equals(((Metadata)obj)._bounds, _bounds);
+			obj instanceof Metadata meta &&
+			Objects.equals(meta._name, _name) &&
+			Objects.equals(meta._description, _description) &&
+			Objects.equals(meta._author, _author) &&
+			Objects.equals(meta._copyright, _copyright) &&
+			Lists.equals(meta._links, _links) &&
+			ZonedDateTimes.equals(meta._time, _time) &&
+			Objects.equals(meta._keywords, _keywords) &&
+			Objects.equals(meta._bounds, _bounds);
 	}
 
 	/**
@@ -750,10 +752,12 @@ public final class Metadata implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.METADATA, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

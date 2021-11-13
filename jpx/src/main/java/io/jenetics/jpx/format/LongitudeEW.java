@@ -49,7 +49,7 @@ enum LongitudeEW implements Format {
 		int i = pos.getIndex();
 		char c = in.charAt(i);
 
-		if ( c == 'E'){
+		if ( c == 'E') {
 			pos.setIndex(i+1);
 			builder.setLongitudeSign(+1);
 		} else if(c == 'W'){

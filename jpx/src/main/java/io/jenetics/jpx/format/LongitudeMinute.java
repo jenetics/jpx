@@ -39,7 +39,7 @@ final class LongitudeMinute extends Field {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parse(in, pos);
+		final double d = parse(in, pos);
 		builder.addLongitudeMinute(d);
 	}
 

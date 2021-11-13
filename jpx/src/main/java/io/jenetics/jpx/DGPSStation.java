@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -45,6 +46,7 @@ public final class DGPSStation
 		Serializable
 {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	/**
@@ -119,8 +121,8 @@ public final class DGPSStation
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof DGPSStation &&
-			((DGPSStation)obj)._value == _value;
+			obj instanceof DGPSStation dgps &&
+			dgps._value == _value;
 	}
 
 	@Override
@@ -156,10 +158,12 @@ public final class DGPSStation
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.DGPS_STATION, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

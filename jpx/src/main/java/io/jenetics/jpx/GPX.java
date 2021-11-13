@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Path;
@@ -162,6 +163,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  */
 public final class GPX implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	/**
@@ -227,13 +229,13 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public static Version of(final String version) {
-			switch (version) {
-				case "1.0": return V10;
-				case "1.1": return V11;
-				default: throw new IllegalArgumentException(format(
+			return switch (version) {
+				case "1.0" -> V10;
+				case "1.1" -> V11;
+				default -> throw new IllegalArgumentException(format(
 					"Unknown version string: '%s'.", version
 				));
-			}
+			};
 		}
 	}
 
@@ -421,13 +423,13 @@ public final class GPX implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof GPX &&
-			Objects.equals(((GPX)obj)._creator, _creator) &&
-			Objects.equals(((GPX)obj)._version, _version) &&
-			Objects.equals(((GPX)obj)._metadata, _metadata) &&
-			Objects.equals(((GPX)obj)._wayPoints, _wayPoints) &&
-			Objects.equals(((GPX)obj)._routes, _routes) &&
-			Objects.equals(((GPX)obj)._tracks, _tracks);
+			obj instanceof GPX gpx &&
+			Objects.equals(gpx._creator, _creator) &&
+			Objects.equals(gpx._version, _version) &&
+			Objects.equals(gpx._metadata, _metadata) &&
+			Objects.equals(gpx._wayPoints, _wayPoints) &&
+			Objects.equals(gpx._routes, _routes) &&
+			Objects.equals(gpx._tracks, _tracks);
 	}
 
 	/**
@@ -810,7 +812,8 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.map(mapper)
-							.collect(Collectors.toUnmodifiableList())
+							.map(WayPoint.class::cast)
+							.toList()
 					);
 
 					return this;
@@ -825,7 +828,7 @@ public final class GPX implements Serializable {
 					wayPoints(
 						_wayPoints.stream()
 							.flatMap(wp -> mapper.apply(wp).stream())
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;
@@ -873,7 +876,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.filter(predicate)
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;
@@ -886,7 +889,8 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.map(mapper)
-							.collect(Collectors.toUnmodifiableList())
+							.map(Route.class::cast)
+							.toList()
 					);
 
 					return this;
@@ -899,7 +903,7 @@ public final class GPX implements Serializable {
 					routes(
 						_routes.stream()
 							.flatMap(route -> mapper.apply(route).stream())
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;
@@ -947,12 +951,7 @@ public final class GPX implements Serializable {
 				public Filter<Track, Builder> filter(
 					final Predicate<? super Track> predicate
 				) {
-					tracks(
-						_tracks.stream()
-							.filter(predicate)
-							.collect(Collectors.toUnmodifiableList())
-					);
-
+					tracks(_tracks.stream().filter(predicate).toList());
 					return this;
 				}
 
@@ -963,7 +962,8 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.map(mapper)
-							.collect(Collectors.toUnmodifiableList())
+							.map(Track.class::cast)
+							.toList()
 					);
 
 					return this;
@@ -976,7 +976,7 @@ public final class GPX implements Serializable {
 					tracks(
 						_tracks.stream()
 							.flatMap(track -> mapper.apply(track).stream())
-							.collect(Collectors.toUnmodifiableList())
+							.toList()
 					);
 
 					return this;
@@ -1315,7 +1315,7 @@ public final class GPX implements Serializable {
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
 			try {
 				write(gpx, out);
-				return new String(out.toByteArray());
+				return out.toString();
 			} catch (IOException e) {
 				throw new IllegalStateException("Unexpected error.", e);
 			}
@@ -1473,10 +1473,12 @@ public final class GPX implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
 		return new SerialProxy(SerialProxy.GPX_TYPE, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

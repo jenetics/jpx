@@ -117,11 +117,11 @@ public final class Bounds implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof  Bounds &&
-			Objects.equals(((Bounds)obj)._minLatitude, _minLatitude) &&
-			Objects.equals(((Bounds)obj)._minLongitude, _minLongitude) &&
-			Objects.equals(((Bounds)obj)._maxLatitude, _maxLatitude) &&
-			Objects.equals(((Bounds)obj)._maxLongitude, _maxLongitude);
+			obj instanceof  Bounds bounds &&
+			Objects.equals(bounds._minLatitude, _minLatitude) &&
+			Objects.equals(bounds._minLongitude, _minLongitude) &&
+			Objects.equals(bounds._maxLatitude, _maxLatitude) &&
+			Objects.equals(bounds._maxLongitude, _maxLongitude);
 	}
 
 	@Override
