@@ -34,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * elevation.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 3.0
  * @since 1.4
  */
 abstract class Field implements Format {
