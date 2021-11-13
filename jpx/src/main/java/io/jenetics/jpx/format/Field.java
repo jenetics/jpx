@@ -17,6 +17,8 @@ package io.jenetics.jpx.format;
 
 import static java.lang.Math.abs;
 import static java.lang.Math.floor;
+import static java.math.RoundingMode.DOWN;
+import static java.math.RoundingMode.HALF_EVEN;
 import static java.util.Objects.requireNonNull;
 
 import java.math.RoundingMode;
@@ -60,12 +62,12 @@ abstract class Field implements Format {
 	void setPrefixSign(final boolean b) {
 	}
 
-	void setFormat(final NumberFormat format) {
-		_format.set(requireNonNull(format));
+	void setTruncate(final boolean b) {
+		_format.get().setRoundingMode(b ? DOWN : HALF_EVEN);
 	}
 
-	void setRoundingMode(final RoundingMode mode) {
-		_format.get().setRoundingMode(mode);
+	void setFormat(final NumberFormat format) {
+		_format.set(requireNonNull(format));
 	}
 
 	int getMinimumFractionDigits() {

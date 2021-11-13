@@ -16,8 +16,6 @@
 package io.jenetics.jpx.format;
 
 import static java.lang.Math.abs;
-import static java.math.RoundingMode.DOWN;
-import static java.math.RoundingMode.HALF_EVEN;
 
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
@@ -56,10 +54,6 @@ class LongitudeDegree extends Field {
 
 	boolean isPrefixSign() {
 		return prefixSign;
-	}
-
-	void setTruncate(final boolean b) {
-		setRoundingMode(b ? DOWN : HALF_EVEN);
 	}
 
 	void setAbsolute(final boolean b) {

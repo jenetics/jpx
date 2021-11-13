@@ -15,9 +15,6 @@
  */
 package io.jenetics.jpx.format;
 
-import static java.math.RoundingMode.DOWN;
-import static java.math.RoundingMode.HALF_EVEN;
-
 import java.text.ParsePosition;
 import java.util.Optional;
 
@@ -39,10 +36,6 @@ final class LongitudeMinute extends Field {
 	@Override
 	char type() {
 		return 'm';
-	}
-
-	void setTruncate(final boolean b) {
-		setRoundingMode(b ? DOWN : HALF_EVEN);
 	}
 
 	@Override
