@@ -17,7 +17,6 @@ package io.jenetics.jpx.format;
 
 import static java.lang.Math.abs;
 
-import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.util.Optional;
 
@@ -35,27 +34,8 @@ import io.jenetics.jpx.Latitude;
  */
 final class LatitudeDegree extends Field {
 
-	private boolean _prefixSign = false;
-
 	LatitudeDegree(final String pattern) {
 		super(pattern);
-	}
-
-	void setPrefixSign(boolean b) {
-		_prefixSign = b;
-		String decimalPattern = toDecimalPattern(_pattern);
-		String p = b ? ("+" + decimalPattern + ";" + "-" + decimalPattern) :  decimalPattern;
-		setFormat(new DecimalFormat(p, SYMBOLS));
-	}
-
-	boolean isPrefixSign() {
-		return _prefixSign;
-	}
-
-	private boolean absolute = false;
-
-	void setAbsolute(final boolean b) {
-		absolute = b;
 	}
 
 	@Override
@@ -77,13 +57,13 @@ final class LatitudeDegree extends Field {
 	public Optional<String> format(final Location loc) {
 		return loc.latitude()
 			.map(Latitude::toDegrees)
-			.map(d -> absolute ? abs(d) : d)
+			.map(d -> isAbsolute() ? abs(d) : d)
 			.map(this::format);
 	}
 
 	@Override
 	public String toPattern() {
-		return _prefixSign ? "+" + _pattern : _pattern;
+		return isPrefixSign() ? "+" + super.toPattern() : super.toPattern();
 	}
 
 }

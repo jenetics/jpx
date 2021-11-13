@@ -17,7 +17,6 @@ package io.jenetics.jpx.format;
 
 import static io.jenetics.jpx.Length.Unit.METER;
 
-import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.util.Optional;
 
@@ -29,21 +28,8 @@ import java.util.Optional;
  */
 final class Elevation extends Field {
 
-	private boolean _prefixSign = false;
-
 	Elevation(final String pattern) {
 		super(pattern);
-	}
-
-	@Override
-	void setPrefixSign(final boolean b) {
-		_prefixSign = b;
-		final var decimalPattern = toDecimalPattern(_pattern);
-		final var pattern = b
-			? ("+" + decimalPattern + ";" + "-" + decimalPattern)
-			:  decimalPattern;
-
-		setFormat(new DecimalFormat(pattern, SYMBOLS));
 	}
 
 	@Override
@@ -69,7 +55,7 @@ final class Elevation extends Field {
 
 	@Override
 	public String toPattern() {
-		return _prefixSign ? "+" + _pattern : _pattern;
+		return isPrefixSign() ? "+" + super.toPattern() : super.toPattern();
 	}
 
 }
