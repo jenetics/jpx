@@ -57,8 +57,6 @@ public final class Location {
 		_elevation = elevation;
 	}
 
-
-
 	/**
 	 * Return the <em>latitude</em> of {@code this} location.
 	 *
