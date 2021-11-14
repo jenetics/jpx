@@ -23,10 +23,8 @@ import static java.lang.String.format;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Year;
-import java.util.Locale;
 
 /**
  * Some helper methods for parsing GPS values.
@@ -36,14 +34,6 @@ import java.util.Locale;
  * @since 1.0
  */
 final class Format {
-
-	private static final NumberFormat FORMAT = format0();
-
-	private static NumberFormat format0() {
-		final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-		format.setMaximumFractionDigits(20);
-		return format;
-	}
 
 	private Format() {
 	}
@@ -107,19 +97,6 @@ final class Format {
 
 	static String toUriString(final URI uri) {
 		return uri != null ? uri.toString() : null;
-	}
-
-	static String toDoubleString(final Number number) {
-		return number != null
-			//? Double.toString(number.doubleValue())
-			? doubleFormat(number.doubleValue())
-			: null;
-	}
-
-	private static String doubleFormat(final double value) {
-		synchronized (FORMAT) {
-			return FORMAT.format(value);
-		}
 	}
 
 	static String toIntString(final Number number) {

@@ -21,8 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 
-import static io.jenetics.jpx.Format.toDoubleString;
-
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -149,7 +147,7 @@ public final class Degrees
 
 	@Override
 	public String toString() {
-		return toDoubleString(_value);
+		return Double.toString(_value);
 	}
 
 

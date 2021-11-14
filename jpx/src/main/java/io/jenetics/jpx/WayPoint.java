@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Format.toDoubleString;
 import static io.jenetics.jpx.Format.toDurationString;
 import static io.jenetics.jpx.Format.toIntString;
 import static io.jenetics.jpx.Length.Unit.METER;
