@@ -41,7 +41,7 @@ final class Format {
 
 	private static NumberFormat format0() {
 		final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-		format.setMaximumFractionDigits(9);
+		format.setMaximumFractionDigits(20);
 		return format;
 	}
 
@@ -111,8 +111,15 @@ final class Format {
 
 	static String toDoubleString(final Number number) {
 		return number != null
-			? FORMAT.format(number.doubleValue())
+			//? Double.toString(number.doubleValue())
+			? doubleFormat(number.doubleValue())
 			: null;
+	}
+
+	private static String doubleFormat(final double value) {
+		synchronized (FORMAT) {
+			return FORMAT.format(value);
+		}
 	}
 
 	static String toIntString(final Number number) {

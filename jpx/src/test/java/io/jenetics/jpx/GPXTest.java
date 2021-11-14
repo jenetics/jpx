@@ -438,7 +438,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 
 		if (!read.equals(gpx)) {
-			System.out.println(new String(bout.toByteArray()));
+			System.out.println(bout);
 		}
 		Assert.assertEquals(read, gpx);
 	}
