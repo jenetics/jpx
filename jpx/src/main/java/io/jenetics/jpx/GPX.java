@@ -1206,34 +1206,11 @@ public final class GPX implements Serializable {
 		private static final int DEFAULT_FRACTION_DIGIT = 9;
 
 		private final String _indent;
-		private final Function<? super Number, String> _formatter;
+		private final int _maximalFractionDigits;
 
-		private Writer(
-			final String indent,
-			final Function<? super Number, String> formatter
-		) {
+		private Writer(final String indent, final int maximalFractionDigits) {
 			_indent = indent;
-			_formatter = requireNonNull(formatter);
-		}
-
-		private Writer(final String indent, final int maximalFractionDigit) {
-			this(indent, formatter(maximalFractionDigit));
-		}
-
-		private static Function<? super Number, String>
-		formatter(final int maximalFractionDigit) {
-			final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-			format.setMaximumFractionDigits(maximalFractionDigit);
-
-			return value -> {
-				if (value == null) {
-					return null;
-				} else {
-					synchronized (format) {
-						return format.format(value);
-					}
-				}
-			};
+			_maximalFractionDigits = maximalFractionDigits;
 		}
 
 		private Writer(final String indent) {
@@ -1252,6 +1229,17 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Return the maximum number of digits allowed in the fraction portion
+		 * of the written numbers like <em>latitude</em> and <em>longitude</em>.
+		 *
+		 * @return the maximum number of digits allowed in the fraction portion
+		 * 		   of the written numbers
+		 */
+		public int getMaximalFractionDigits() {
+			return _maximalFractionDigits;
+		}
+
+		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
 		 * {@code output} stream.
 		 *
@@ -1267,11 +1255,23 @@ public final class GPX implements Serializable {
 			final XMLOutputFactory factory = XMLProvider.provider().xmlOutputFactory();
 			try (XMLStreamWriterAdapter xml = writer(factory, output)) {
 				xml.writeStartDocument("UTF-8", "1.0");
-				GPX.xmlWriter(gpx._version, _formatter).write(xml, gpx);
+				final var writer = GPX.xmlWriter(
+					gpx._version,
+					formatter(_maximalFractionDigits)
+				);
+				writer.write(xml, gpx);
 				xml.writeEndDocument();
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
 			}
+		}
+
+		private static Function<? super Number, String>
+		formatter(final int maximalFractionDigit) {
+			final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
+			format.setMaximumFractionDigits(maximalFractionDigit);
+
+			return value -> value != null ? format.format(value) : null;
 		}
 
 		private XMLStreamWriterAdapter writer(
@@ -1720,6 +1720,15 @@ public final class GPX implements Serializable {
 	 * Return a new GPX writer with the given {@code indent} and number
 	 * formatter, which is used for formatting {@link WayPoint#getLatitude()},
 	 * {@link WayPoint#getLongitude()}, ...
+	 * <p>
+	 * The example below shows the <em>lat</em> and <em>lon</em> values with
+	 * maximal 5 fractional digits.
+	 * <pre>{@code
+	 * <trkpt lat="45.78068" lon="12.55368">
+	 *     <ele>1.2</ele>
+	 *     <time>2009-08-30T07:08:21Z</time>
+	 * </trkpt>
+	 * }</pre>
 	 *
 	 * @since !__version__!
 	 *
