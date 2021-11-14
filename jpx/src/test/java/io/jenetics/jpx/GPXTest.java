@@ -862,6 +862,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final var out = new ByteArrayOutputStream();
 		GPX.writer("    ").write(gpx, out);
+		//GPX.writer("    ").write(gpx, System.out);
 		assertThat(out.toString()).doesNotContain("-3.1E-4");
 	}
 
