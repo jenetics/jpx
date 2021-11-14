@@ -1805,7 +1805,6 @@ public final class GPX implements Serializable {
 	}
 
 
-
 	/**
 	 * Return a GPX reader, reading GPX files with the given version and in the
 	 * given reading mode.
@@ -1889,7 +1888,6 @@ public final class GPX implements Serializable {
 	}
 
 
-
 	/**
 	 * Read an GPX object from the given {@code input} stream. This method is a
 	 * shortcut for
@@ -1906,7 +1904,6 @@ public final class GPX implements Serializable {
 	public static GPX read(final Path path) throws IOException {
 		return reader(Version.V11, Mode.STRICT).read(path);
 	}
-
 
 
 	/**
