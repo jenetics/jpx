@@ -44,9 +44,11 @@ import java.io.Serializable;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -1201,10 +1203,41 @@ public final class GPX implements Serializable {
 	 */
 	public static final class Writer {
 
+		private static final int DEFAULT_FRACTION_DIGIT = 9;
+
 		private final String _indent;
+		private final Function<? super Number, String> _formatter;
+
+		private Writer(
+			final String indent,
+			final Function<? super Number, String> formatter
+		) {
+			_indent = indent;
+			_formatter = requireNonNull(formatter);
+		}
+
+		private Writer(final String indent, final int maximalFractionDigit) {
+			this(indent, formatter(maximalFractionDigit));
+		}
+
+		private static Function<? super Number, String>
+		formatter(final int maximalFractionDigit) {
+			final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
+			format.setMaximumFractionDigits(maximalFractionDigit);
+
+			return value -> {
+				if (value == null) {
+					return null;
+				}
+
+				synchronized (format) {
+					return format.format(value);
+				}
+			};
+		}
 
 		private Writer(final String indent) {
-			_indent = indent;
+			this(indent, DEFAULT_FRACTION_DIGIT);
 		}
 
 		/**
@@ -1234,7 +1267,7 @@ public final class GPX implements Serializable {
 			final XMLOutputFactory factory = XMLProvider.provider().xmlOutputFactory();
 			try (XMLStreamWriterAdapter xml = writer(factory, output)) {
 				xml.writeStartDocument("UTF-8", "1.0");
-				GPX.xmlWriter(gpx._version).write(xml, gpx);
+				GPX.xmlWriter(gpx._version, _formatter).write(xml, gpx);
 				xml.writeEndDocument();
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
@@ -1570,27 +1603,30 @@ public final class GPX implements Serializable {
 
 
 	// Define the needed writers for the different versions.
-	private static final XMLWriters<GPX> WRITERS = new XMLWriters<GPX>()
-		.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
-		.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
-		.v11(XMLWriter.ns(Version.V11.getNamespaceURI()))
-		.v10(XMLWriter.ns(Version.V10.getNamespaceURI()))
-		.v11(Metadata.WRITER.map(gpx -> gpx._metadata))
-		.v10(XMLWriter.elem("name").map(GPX::name))
-		.v10(XMLWriter.elem("desc").map(GPX::desc))
-		.v10(XMLWriter.elem("author").map(GPX::author))
-		.v10(XMLWriter.elem("email").map(GPX::email))
-		.v10(XMLWriter.elem("url").map(GPX::url))
-		.v10(XMLWriter.elem("urlname").map(GPX::urlname))
-		.v10(XMLWriter.elem("time").map(GPX::time))
-		.v10(XMLWriter.elem("keywords").map(GPX::keywords))
-		.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10,"wpt")).map(gpx -> gpx._wayPoints))
-		.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11,"wpt")).map(gpx -> gpx._wayPoints))
-		.v10(XMLWriter.elems(Route.xmlWriter(Version.V10)).map(gpx -> gpx._routes))
-		.v11(XMLWriter.elems(Route.xmlWriter(Version.V11)).map(gpx -> gpx._routes))
-		.v10(XMLWriter.elems(Track.xmlWriter(Version.V10)).map(gpx -> gpx._tracks))
-		.v11(XMLWriter.elems(Track.xmlWriter(Version.V11)).map(gpx -> gpx._tracks))
-		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
+	private static XMLWriters<GPX>
+	writers(final Function<? super Number, String> formatter) {
+		return new XMLWriters<GPX>()
+			.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
+			.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
+			.v11(XMLWriter.ns(Version.V11.getNamespaceURI()))
+			.v10(XMLWriter.ns(Version.V10.getNamespaceURI()))
+			.v11(Metadata.WRITER.map(gpx -> gpx._metadata))
+			.v10(XMLWriter.elem("name").map(GPX::name))
+			.v10(XMLWriter.elem("desc").map(GPX::desc))
+			.v10(XMLWriter.elem("author").map(GPX::author))
+			.v10(XMLWriter.elem("email").map(GPX::email))
+			.v10(XMLWriter.elem("url").map(GPX::url))
+			.v10(XMLWriter.elem("urlname").map(GPX::urlname))
+			.v10(XMLWriter.elem("time").map(GPX::time))
+			.v10(XMLWriter.elem("keywords").map(GPX::keywords))
+			.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10,"wpt", formatter)).map(gpx -> gpx._wayPoints))
+			.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11,"wpt", formatter)).map(gpx -> gpx._wayPoints))
+			.v10(XMLWriter.elems(Route.xmlWriter(Version.V10, formatter)).map(gpx -> gpx._routes))
+			.v11(XMLWriter.elems(Route.xmlWriter(Version.V11, formatter)).map(gpx -> gpx._routes))
+			.v10(XMLWriter.elems(Track.xmlWriter(Version.V10, formatter)).map(gpx -> gpx._tracks))
+			.v11(XMLWriter.elems(Track.xmlWriter(Version.V11, formatter)).map(gpx -> gpx._tracks))
+			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
+	}
 
 
 	// Define the needed readers for the different versions.
@@ -1616,8 +1652,11 @@ public final class GPX implements Serializable {
 		.v00(XMLReader.doc("extensions"));
 
 
-	static XMLWriter<GPX> xmlWriter(final Version version) {
-		return XMLWriter.elem("gpx", WRITERS.writers(version));
+	static XMLWriter<GPX> xmlWriter(
+		final Version version,
+		final Function<? super Number, String> formatter
+	) {
+		return XMLWriter.elem("gpx", writers(formatter).writers(version));
 	}
 
 	static XMLReader<GPX> xmlReader(final Version version) {
@@ -1675,6 +1714,29 @@ public final class GPX implements Serializable {
 	/* *************************************************************************
 	 *  Write and read GPX files
 	 * ************************************************************************/
+
+
+	/**
+	 * Return a new GPX writer with the given {@code indent} and number
+	 * formatter, which is used for formatting {@link WayPoint#getLatitude()},
+	 * {@link WayPoint#getLongitude()}, ...
+	 *
+	 * @since !__version__!
+	 *
+	 * @see #writer(String)
+	 * @see #writer()
+	 *
+	 * @param indent the element indentation
+	 * @param maximumFractionDigits the maximum number of digits allowed in the
+	 *        fraction portion of a number
+	 * @return a new GPX writer
+	 */
+	public static Writer writer(
+		final String indent,
+		final int maximumFractionDigits
+	) {
+		return new Writer(indent, maximumFractionDigits);
+	}
 
 	/**
 	 * Return a new GPX writer with the given {@code indent}.

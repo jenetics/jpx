@@ -40,8 +40,10 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -73,7 +75,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		return new Params<>(
 			() -> nextGPX(random),
 			GPX.xmlReader(version),
-			GPX.xmlWriter(version)
+			GPX.xmlWriter(version, Formats::format)
 		);
 	}
 
@@ -127,7 +129,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test(invocationCount = 5)
 	public void toStringFromString() {
 		final GPX expected = nextGPX(new Random());
-		final String string = GPX.writer("  ").toString(expected);
+		final String string = GPX.writer("  ", 20).toString(expected);
 		//System.out.println(string);
 		final GPX actual = GPX.reader().fromString(string);
 
@@ -417,7 +419,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.writer("    ").write(gpx, bout);
+		GPX.writer("    ", 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.read(bin);
@@ -431,7 +433,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.writer().write(gpx, bout);
+		GPX.writer(null, 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.read(bin);

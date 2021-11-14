@@ -880,19 +880,22 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	}
 
 	// Define the needed writers for the different versions.
-	private static final XMLWriters<Route> WRITERS = new XMLWriters<Route>()
-		.v00(XMLWriter.elem("name").map(r -> r._name))
-		.v00(XMLWriter.elem("cmt").map(r -> r._comment))
-		.v00(XMLWriter.elem("desc").map(r -> r._description))
-		.v00(XMLWriter.elem("src").map(r -> r._source))
-		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
-		.v10(XMLWriter.elem("url").map(Route::url))
-		.v10(XMLWriter.elem("urlname").map(Route::urlname))
-		.v00(XMLWriter.elem("number").map(r -> toIntString(r._number)))
-		.v00(XMLWriter.elem("type").map(r -> r._type))
-		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
-		.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10, "rtept")).map(r -> r._points))
-		.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11, "rtept")).map(r -> r._points));
+	private static XMLWriters<Route>
+	writers(final Function<? super Number, String> formatter) {
+		return new XMLWriters<Route>()
+			.v00(XMLWriter.elem("name").map(r -> r._name))
+			.v00(XMLWriter.elem("cmt").map(r -> r._comment))
+			.v00(XMLWriter.elem("desc").map(r -> r._description))
+			.v00(XMLWriter.elem("src").map(r -> r._source))
+			.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
+			.v10(XMLWriter.elem("url").map(Route::url))
+			.v10(XMLWriter.elem("urlname").map(Route::urlname))
+			.v00(XMLWriter.elem("number").map(r -> toIntString(r._number)))
+			.v00(XMLWriter.elem("type").map(r -> r._type))
+			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
+			.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10, "rtept", formatter)).map(r -> r._points))
+			.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11, "rtept", formatter)).map(r -> r._points));
+	}
 
 
 	// Define the needed readers for the different versions.
@@ -910,11 +913,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept")))
 		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")));
 
-	static XMLWriter<Route> xmlWriter(final Version version) {
-		return XMLWriter.elem("rte", WRITERS.writers(version));
+	static XMLWriter<Route> xmlWriter(
+		final Version version,
+		final Function<? super Number, String> formatter
+	) {
+		return XMLWriter.elem("rte", writers(formatter).writers(version));
 	}
 
-	@SuppressWarnings("unchecked")
 	static XMLReader<Route> xmlReader(final Version version) {
 		return XMLReader.elem(
 			version == Version.V10 ? Route::toRouteV10 : Route::toRouteV11,

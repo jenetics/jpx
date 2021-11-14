@@ -52,7 +52,7 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 		return new Params<>(
 			() -> nextTrack(random),
 			Track.xmlReader(version),
-			Track.xmlWriter(version)
+			Track.xmlWriter(version, Formats::format)
 		);
 	}
 
