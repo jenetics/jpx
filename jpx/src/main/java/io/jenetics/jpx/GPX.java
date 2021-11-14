@@ -1619,12 +1619,12 @@ public final class GPX implements Serializable {
 			.v10(XMLWriter.elem("urlname").map(GPX::urlname))
 			.v10(XMLWriter.elem("time").map(GPX::time))
 			.v10(XMLWriter.elem("keywords").map(GPX::keywords))
-			.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10,"wpt", formatter)).map(gpx -> gpx._wayPoints))
-			.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11,"wpt", formatter)).map(gpx -> gpx._wayPoints))
-			.v10(XMLWriter.elems(Route.xmlWriter(Version.V10, formatter)).map(gpx -> gpx._routes))
-			.v11(XMLWriter.elems(Route.xmlWriter(Version.V11, formatter)).map(gpx -> gpx._routes))
-			.v10(XMLWriter.elems(Track.xmlWriter(Version.V10, formatter)).map(gpx -> gpx._tracks))
-			.v11(XMLWriter.elems(Track.xmlWriter(Version.V11, formatter)).map(gpx -> gpx._tracks))
+			.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10,"wpt", formatter)).map(GPX::getWayPoints))
+			.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11,"wpt", formatter)).map(GPX::getWayPoints))
+			.v10(XMLWriter.elems(Route.xmlWriter(Version.V10, formatter)).map(GPX::getRoutes))
+			.v11(XMLWriter.elems(Route.xmlWriter(Version.V11, formatter)).map(GPX::getRoutes))
+			.v10(XMLWriter.elems(Track.xmlWriter(Version.V10, formatter)).map(GPX::getTracks))
+			.v11(XMLWriter.elems(Track.xmlWriter(Version.V11, formatter)).map(GPX::getTracks))
 			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
 	}
 
