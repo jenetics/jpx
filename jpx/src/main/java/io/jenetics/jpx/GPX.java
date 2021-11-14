@@ -1198,7 +1198,7 @@ public final class GPX implements Serializable {
 	 * @see GPX#writer()
 	 * @see GPX#writer(String)
 	 *
-	 * @version !__version__!
+	 * @version 3.0
 	 * @since 1.3
 	 */
 	public static final class Writer {
@@ -1730,7 +1730,7 @@ public final class GPX implements Serializable {
 	 * </trkpt>
 	 * }</pre>
 	 *
-	 * @since !__version__!
+	 * @since 3.0
 	 *
 	 * @see #writer(String)
 	 * @see #writer()
