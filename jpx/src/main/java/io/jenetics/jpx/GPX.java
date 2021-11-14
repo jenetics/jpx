@@ -1203,7 +1203,7 @@ public final class GPX implements Serializable {
 	 */
 	public static final class Writer {
 
-		private static final int DEFAULT_FRACTION_DIGIT = 9;
+		private static final int DEFAULT_FRACTION_DIGIT = 6;
 
 		private final String _indent;
 		private final int _maximalFractionDigits;
