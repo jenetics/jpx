@@ -118,7 +118,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX expected = nextGPX(new Random());
 		final String string = GPX.Writer.of("  ", 25).toString(expected);
 		//System.out.println(string);
-		final GPX actual = GPX.reader().fromString(string);
+		final GPX actual = GPX.Reader.of().fromString(string);
 
 		Assert.assertEquals(actual, expected);
 	}
@@ -128,7 +128,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		throws IOException
 	{
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx = GPX.read(in);
+			final GPX gpx = GPX.Reader.of().read(in);
 			Assert.assertEquals(gpx, expected);
 		}
 	}
@@ -176,7 +176,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test(dataProvider = "invalidGPXFiles", expectedExceptions = {IOException.class})
 	public void invalidGPX(final String resource) throws IOException {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
+			GPX.Reader.of().read(in);
 		}
 	}
 
@@ -194,7 +194,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 
 		final String[] names = gpx.wayPoints()
@@ -209,7 +209,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void lenientRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx = GPX.reader(Mode.LENIENT).read(in);
+			final GPX gpx = GPX.Reader.of(Mode.LENIENT).read(in);
 
 			Assert.assertTrue(gpx.getMetadata().isPresent());
 			Assert.assertFalse(gpx.getMetadata().get().getBounds().isPresent());
@@ -227,7 +227,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public void strictRead() throws IOException, InvalidObjectException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
+			GPX.Reader.of().read(in);
 		}
 	}
 
@@ -236,7 +236,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final String rsc = "/io/jenetics/jpx/Gpx-full-sample.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(rsc)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 
 		final long length = gpx.tracks()
@@ -294,7 +294,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final String rsc = "/io/jenetics/jpx/Austria.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(rsc)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 
 		Assert.assertEquals(
@@ -409,7 +409,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		GPX.Writer.of("    ", 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-		final GPX read = GPX.read(bin);
+		final GPX read = GPX.Reader.of().read(bin);
 
 		Assert.assertEquals(read, gpx);
 	}
@@ -423,7 +423,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		GPX.Writer.of(null, 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-		final GPX read = GPX.read(bin);
+		final GPX read = GPX.Reader.of().read(bin);
 
 
 		if (!read.equals(gpx)) {
@@ -435,11 +435,11 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test(dataProvider = "readWriteGPX")
 	public void readWrite(final String resource) throws IOException {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx1 = GPX.read(in);
+			final GPX gpx1 = GPX.Reader.of().read(in);
 
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
 			GPX.Writer.of("    ").write(gpx1, out);
-			final GPX gpx2 = GPX.read(new ByteArrayInputStream(out.toByteArray()));
+			final GPX gpx2 = GPX.Reader.of().read(new ByteArrayInputStream(out.toByteArray()));
 
 			Assert.assertEquals(gpx1, gpx2);
 		}
@@ -622,14 +622,14 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	private GPX readV10(final String name) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.V10, Mode.STRICT).read(in);
+			return GPX.Reader.of(Version.V10, Mode.STRICT).read(in);
 		}
 	}
 
 	private GPX readV11(final String name, final Mode mode) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.V11, mode).read(in);
+			return GPX.Reader.of(Version.V11, mode).read(in);
 		}
 	}
 
@@ -722,7 +722,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
 
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
+			GPX.Reader.of().read(in);
 			Assert.fail("GXP.read must throw.");
 		} catch (IOException e) {
 			Assert.assertEquals(e.getClass(), InvalidObjectException.class);
@@ -736,7 +736,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.reader(Mode.LENIENT).read(in);
+			gpx = GPX.Reader.of(Mode.LENIENT).read(in);
 		}
 
 		Assert.assertEquals(gpx.getWayPoints().size(), 1);
@@ -761,7 +761,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 
 		Assert.assertTrue(gpx.getMetadata().isPresent());
@@ -777,7 +777,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 		Assert.assertEquals(
 			gpx.getTracks().get(0).getName().orElse(null),
@@ -791,7 +791,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 		Assert.assertEquals(
 			gpx.getWayPoints().get(0).getName().orElse(null),
@@ -805,7 +805,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 
 		final long count = gpx.tracks()
@@ -827,13 +827,13 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		String resource = "/io/jenetics/jpx/GPX-full.gpx";
 		final GPX expected;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			expected = GPX.read(in);
+			expected = GPX.Reader.of().read(in);
 		}
 
 		resource = "/io/jenetics/jpx/ISSUE-86.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 
 		Assert.assertEquals(gpx, expected);
@@ -844,7 +844,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final var resource = "/io/jenetics/jpx/ISSUE-151.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.of().read(in);
 		}
 
 		final var out = new ByteArrayOutputStream();

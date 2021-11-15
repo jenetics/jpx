@@ -129,22 +129,24 @@ public class FiltersTest {
 
 	@Test
 	public void nonEmptyFilter() throws IOException {
-		final GPX gpx = GPX.read(new ByteArrayInputStream((
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-			"<gpx version=\"1.1\" creator=\"JPX - https://github.com/jenetics/jpx\" " +
-			"xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-			"    <metadata></metadata>\n" +
-			"    <trk><trkseg></trkseg></trk>\n" +
-			"    <trk>\n" +
-			"        <trkseg></trkseg>\n" +
-			"        <trkseg>\n" +
-			"            <trkpt lat=\"21.0\" lon=\"23.0\">\n" +
-			"                <ele>12.0</ele>\n" +
-			"            </trkpt>\n" +
-			"        </trkseg>\n" +
-			"    </trk>\n" +
-			"    <trk></trk>\n" +
-			"</gpx>").getBytes()));
+		final GPX gpx = GPX.Reader.of().read(new ByteArrayInputStream(("""
+				<?xml version="1.0" encoding="UTF-8"?>
+				<gpx
+				    version="1.1" creator="JPX - https://github.com/jenetics/jpx"
+				    xmlns="http://www.topografix.com/GPX/1/1"
+				>
+				    <metadata></metadata>
+				    <trk><trkseg></trkseg></trk>
+				    <trk>
+				        <trkseg></trkseg>
+				        <trkseg>
+				            <trkpt lat="21.0" lon="23.0">
+				                <ele>12.0</ele>
+				            </trkpt>
+				        </trkseg>
+				    </trk>
+				    <trk></trk>
+				</gpx>""").getBytes()));
 
 		final GPX nonEmpty = Filters.nonEmptyGPX(gpx);
 

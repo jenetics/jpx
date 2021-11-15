@@ -1074,10 +1074,7 @@ public final class GPX implements Serializable {
 	 * Class for reading GPX files. A reader instance can be created by the
 	 * {@code GPX.reader} factory methods.
 	 *
-	 * @see GPX#reader()
-	 * @see GPX#reader(Version, Reader.Mode)
-	 *
-	 * @version 1.3
+	 * @version 3.0
 	 * @since 1.3
 	 */
 	public static final class Reader {
@@ -1216,6 +1213,51 @@ public final class GPX implements Serializable {
 			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
+		}
+
+		/* *********************************************************************
+		 * Factory methods.
+		 * ********************************************************************/
+
+		/**
+		 * Return a GPX reader, reading GPX files with the given version and in the
+		 * given reading mode.
+		 *
+		 * @since 3.0
+		 *
+		 * @param version the GPX version to read
+		 * @param mode the reading mode
+		 * @return a new GPX reader object
+		 * @throws NullPointerException if one of the arguments is {@code null}
+		 */
+		public static Reader of(final Version version, final Mode mode) {
+			return new Reader(GPX.xmlReader(version), mode);
+		}
+
+		/**
+		 * Return a GPX reader, reading GPX files with version 1.1 and in the given
+		 * reading mode.
+		 *
+		 * @since 3.0
+		 *
+		 * @param mode the reading mode
+		 * @return a new GPX reader object
+		 * @throws NullPointerException if one of the arguments is {@code null}
+		 */
+		public static Reader of(final Mode mode) {
+			return new Reader(GPX.xmlReader(Version.V11), mode);
+		}
+
+		/**
+		 * Return a <em>default </em>GPX reader, reading GPX files (v1.1) with
+		 * reading mode {@link Mode#STRICT}.
+		 *
+		 * @since 3.0
+		 *
+		 * @return a new GPX reader object
+		 */
+		public static Reader of() {
+			return of(Version.V11, Mode.STRICT);
 		}
 
 	}
@@ -1829,7 +1871,7 @@ public final class GPX implements Serializable {
 
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
-	 * {@code output} stream.
+	 * {@code path}.
 	 *
 	 * @see Writer
 	 *
@@ -1845,94 +1887,9 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Return a GPX reader, reading GPX files with the given version and in the
-	 * given reading mode.
+	 * Read an GPX object from the given {@code input} stream.
 	 *
-	 * @since 1.3
-	 *
-	 * @see #reader()
-	 *
-	 * @param version the GPX version to read
-	 * @param mode the reading mode
-	 * @return a new GPX reader object
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public static Reader reader(final Version version, final Mode mode) {
-		return new Reader(GPX.xmlReader(version), mode);
-	}
-
-	/**
-	 * Return a GPX reader, reading GPX files with the given version and in
-	 * strict reading mode.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #reader()
-	 *
-	 * @param version the GPX version to read
-	 * @return a new GPX reader object
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public static Reader reader(final Version version) {
-		return new Reader(GPX.xmlReader(version), Mode.STRICT);
-	}
-
-	/**
-	 * Return a GPX reader, reading GPX files with version 1.1 and in the given
-	 * reading mode.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #reader()
-	 *
-	 * @param mode the reading mode
-	 * @return a new GPX reader object
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public static Reader reader(final Mode mode) {
-		return new Reader(GPX.xmlReader(Version.V11), mode);
-	}
-
-	/**
-	 * Return a GPX reader, reading GPX files (v1.1) with reading mode
-	 * {@link Mode#STRICT}.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #reader(Version, Reader.Mode)
-	 *
-	 * @return a new GPX reader object
-	 */
-	public static Reader reader() {
-		return reader(Version.V11, Mode.STRICT);
-	}
-
-
-	/**
-	 * Read an GPX object from the given {@code input} stream. This method is a
-	 * shortcut for
-	 * <pre>{@code
-	 * final GPX gpx = GPX.reader().read(input);
-	 * }</pre>
-	 *
-	 * @param input the input stream from where the GPX date is read
-	 * @return the GPX object read from the input stream
-	 * @throws IOException if the GPX object can't be read
-	 * @throws NullPointerException if the given {@code input} stream is
-	 *         {@code null}
-	 * @throws InvalidObjectException if the gpx input is invalid.
-	 */
-	public static GPX read(final InputStream input) throws IOException {
-		return reader(Version.V11, Mode.STRICT).read(input);
-	}
-
-
-	/**
-	 * Read an GPX object from the given {@code input} stream. This method is a
-	 * shortcut for
-	 * <pre>{@code
-	 * final GPX gpx = GPX.reader().read(path);
-	 * }</pre>
+	 * @see Reader
 	 *
 	 * @param path the input path from where the GPX date is read
 	 * @return the GPX object read from the input stream
@@ -1941,25 +1898,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return reader(Version.V11, Mode.STRICT).read(path);
-	}
-
-
-	/**
-	 * Read an GPX object from the given {@code input} stream. This method is a
-	 * shortcut for
-	 * <pre>{@code
-	 * final GPX gpx = GPX.reader().read(path);
-	 * }</pre>
-	 *
-	 * @param path the input path from where the GPX date is read
-	 * @return the GPX object read from the input stream
-	 * @throws IOException if the GPX object can't be read
-	 * @throws NullPointerException if the given {@code input} stream is
-	 *         {@code null}
-	 */
-	public static GPX read(final String path) throws IOException {
-		return reader(Version.V11, Mode.STRICT).read(path);
+		return Reader.of(Version.V11, Mode.STRICT).read(path);
 	}
 
 }
