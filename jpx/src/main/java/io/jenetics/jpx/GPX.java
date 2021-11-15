@@ -1733,66 +1733,27 @@ public final class GPX implements Serializable {
 	 * given fraction digits count, at the equator.
 	 *
 	 * <table class="striped">
-	 * <caption><b>Maximum fraction digits accuracy</b></caption>
-	 * <thead>
-	 *     <tr>
-	 *         <th scope="row">Fraction digits</th>
-	 * 	   	   <th scope="row">Degree</th>
-	 *         <th scope="row">Distance</th>
-	 *     </tr>
-	 * </thead>
-	 * <tbody>
-	 * <tr>
-	 * <td>0 </td>
-	 * <td>1 </td>
-	 * <td>111.31 km</td>
-	 * </tr>
-	 * <tr>
-	 * <td>1 </td>
-	 * <td>0.1 </td>
-	 * <td>11.13 km</td>
-	 * </tr>
-	 * <tr>
-	 * <td>2 </td>
-	 * <td>0,01 </td>
-	 * <td>1,11 km</td>
-	 * </tr>
-	 * <tr>
-	 * <td>3 </td>
-	 * <td>0.001 </td>
-	 * <td>111.3 m</td>
-	 * </tr>
-	 * <tr>
-	 * <td>4 </td>
-	 * <td>0.0001 </td>
-	 * <td>11.1 m</td>
-	 * </tr>
-	 * <tr>
-	 * <td>5 </td>
-	 * <td>0.00001 </td>
-	 * <td>1.11 m</td>
-	 * </tr>
-	 * <tr>
-	 * <td>6 </td>
-	 * <td>0.000001 </td>
-	 * <td>0.1 m</td>
-	 * </tr>
-	 * <tr>
-	 * <td>7 </td>
-	 * <td>0.0000001 </td>
-	 * <td>11.1 mm</td>
-	 * </tr>
-	 * <tr>
-	 * <td>8 </td>
-	 * <td>0.00000001 </td>
-	 * <td>1.1 mm</td>
-	 * </tr>
-	 * <tr>
-	 * <td>9 </td>
-	 * <td>0.000000001 </td>
-	 * <td>0.11 mm</td>
-	 * </tr>
-	 * </tbody></table>
+	 *     <caption><b>Maximum fraction digits accuracy</b></caption>
+	 *     <thead>
+	 *         <tr>
+	 *             <th scope="row">Fraction digits</th>
+	 *     	   	   <th scope="row">Degree</th>
+	 *             <th scope="row">Distance</th>
+	 *         </tr>
+	 *     </thead>
+	 *     <tbody>
+	 *         <tr><td>0 </td><td>1           </td><td>111.31 km  </td></tr>
+	 *         <tr><td>1 </td><td>0.1         </td><td> 11.13 km  </td></tr>
+	 *         <tr><td>2 </td><td>0,01        </td><td>  1.1 km   </td></tr>
+	 *         <tr><td>3 </td><td>0.001       </td><td>111.3 m    </td></tr>
+	 *         <tr><td>4 </td><td>0.0001      </td><td> 11.1 m    </td></tr>
+	 *         <tr><td>5 </td><td>0.00001     </td><td>  1.11 m   </td></tr>
+	 *         <tr><td>6 </td><td>0.000001    </td><td>    0.1 m  </td></tr>
+	 *         <tr><td>7 </td><td>0.0000001   </td><td> 11.1 mm   </td></tr>
+	 *         <tr><td>8 </td><td>0.00000001  </td><td>  1.1 mm   </td></tr>
+	 *         <tr><td>9 </td><td>0.000000001 </td><td>    0.11 mm</td></tr>
+	 *     </tbody>
+	 * </table>
 	 *
 	 * @since 3.0
 	 *
