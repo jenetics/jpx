@@ -1224,9 +1224,6 @@ public final class GPX implements Serializable {
 	 * Class for writing GPX files. A writer instance can be created by the
 	 * {@code GPX.writer} factory methods.
 	 *
-	 * @see GPX#writer()
-	 * @see GPX#writer(String)
-	 *
 	 * @version 3.0
 	 * @since 1.3
 	 */
@@ -1238,15 +1235,11 @@ public final class GPX implements Serializable {
 		public static final int DEFAULT_MAXIMUM_FRACTION_DIGITS = 6;
 
 		private final String _indent;
-		private final int _maximalFractionDigits;
+		private final int _maximumFractionDigits;
 
-		private Writer(final String indent, final int maximalFractionDigits) {
+		private Writer(final String indent, final int maximumFractionDigits) {
 			_indent = indent;
-			_maximalFractionDigits = maximalFractionDigits;
-		}
-
-		private Writer(final String indent) {
-			this(indent, DEFAULT_MAXIMUM_FRACTION_DIGITS);
+			_maximumFractionDigits = maximumFractionDigits;
 		}
 
 		/**
@@ -1267,8 +1260,8 @@ public final class GPX implements Serializable {
 		 * @return the maximum number of digits allowed in the fraction portion
 		 * 		   of the written numbers
 		 */
-		public int getMaximalFractionDigits() {
-			return _maximalFractionDigits;
+		public int getMaximumFractionDigits() {
+			return _maximumFractionDigits;
 		}
 
 		/**
@@ -1289,7 +1282,7 @@ public final class GPX implements Serializable {
 				xml.writeStartDocument("UTF-8", "1.0");
 				final var writer = GPX.xmlWriter(
 					gpx._version,
-					formatter(_maximalFractionDigits)
+					formatter(_maximumFractionDigits)
 				);
 				writer.write(xml, gpx);
 				xml.writeEndDocument();
@@ -1299,9 +1292,9 @@ public final class GPX implements Serializable {
 		}
 
 		private static Function<? super Number, String>
-		formatter(final int maximalFractionDigit) {
+		formatter(final int maximumFractionDigits) {
 			final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-			format.setMaximumFractionDigits(maximalFractionDigit);
+			format.setMaximumFractionDigits(maximumFractionDigits);
 
 			return value -> value != null ? format.format(value) : null;
 		}
@@ -1381,6 +1374,96 @@ public final class GPX implements Serializable {
 			} catch (IOException e) {
 				throw new AssertionError("Unexpected error: " + e);
 			}
+		}
+
+		/* *********************************************************************
+		 * Factory methods.
+		 * ********************************************************************/
+
+		/**
+		 * Return a new GPX writer with the given {@code indent} and number
+		 * formatter, which is used for formatting {@link WayPoint#getLatitude()},
+		 * {@link WayPoint#getLongitude()}, ...
+		 * <p>
+		 * The example below shows the <em>lat</em> and <em>lon</em> values with
+		 * maximal 5 fractional digits.
+		 * <pre>{@code
+		 * <trkpt lat="45.78068" lon="12.55368">
+		 *     <ele>1.2</ele>
+		 *     <time>2009-08-30T07:08:21Z</time>
+		 * </trkpt>
+		 * }</pre>
+		 *
+		 * The following table should give you a feeling about the accuracy of a
+		 * given fraction digits count, at the equator.
+		 *
+		 * <table class="striped">
+		 *     <caption><b>Maximum fraction digits accuracy</b></caption>
+		 *     <thead>
+		 *         <tr>
+		 *             <th scope="row">Fraction digits</th>
+		 *     	   	   <th scope="row">Degree</th>
+		 *             <th scope="row">Distance</th>
+		 *         </tr>
+		 *     </thead>
+		 *     <tbody>
+		 *         <tr><td>0 </td><td>1           </td><td>111.31 km  </td></tr>
+		 *         <tr><td>1 </td><td>0.1         </td><td> 11.13 km  </td></tr>
+		 *         <tr><td>2 </td><td>0,01        </td><td>  1.1 km   </td></tr>
+		 *         <tr><td>3 </td><td>0.001       </td><td>111.3 m    </td></tr>
+		 *         <tr><td>4 </td><td>0.0001      </td><td> 11.1 m    </td></tr>
+		 *         <tr><td>5 </td><td>0.00001     </td><td>  1.11 m   </td></tr>
+		 *         <tr><td>6 </td><td>0.000001    </td><td>    0.1 m  </td></tr>
+		 *         <tr><td>7 </td><td>0.0000001   </td><td> 11.1 mm   </td></tr>
+		 *         <tr><td>8 </td><td>0.00000001  </td><td>  1.1 mm   </td></tr>
+		 *         <tr><td>9 </td><td>0.000000001 </td><td>    0.11 mm</td></tr>
+		 *     </tbody>
+		 * </table>
+		 *
+		 * @see #of(String)
+		 * @see #of()
+		 *
+		 * @since 3.0
+		 *
+		 * @param indent the element indentation
+		 * @param maximumFractionDigits the maximum number of digits allowed in the
+		 *        fraction portion of a number
+		 * @return a new GPX writer
+		 */
+		public static Writer of(final String indent, final int maximumFractionDigits) {
+			return new Writer(indent, maximumFractionDigits);
+		}
+
+		/**
+		 * Return a new GPX writer with the given {@code indent} and with
+		 * <em>maximum fraction digits</em> of
+		 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
+		 *
+		 * @see #of(String, int)
+		 * @see #of()
+		 *
+		 * @since 3.0
+		 *
+		 * @param indent the element indentation
+		 * @return a new GPX writer
+		 */
+		public static Writer of(final String indent) {
+			return new Writer(indent, DEFAULT_MAXIMUM_FRACTION_DIGITS);
+		}
+
+		/**
+		 * Return the default GPX writer, with no indention and fraction digits
+		 * of {@link #DEFAULT_MAXIMUM_FRACTION_DIGITS}.
+		 *
+		 * @see #of(String, int)
+		 * @see #of(String)
+		 *
+		 * @since 3.0
+		 *
+		 * @return the default GPX writer
+		 */
+		public static Writer of() {
+			return new Writer(null, DEFAULT_MAXIMUM_FRACTION_DIGITS);
 		}
 
 	}
@@ -1744,100 +1827,13 @@ public final class GPX implements Serializable {
 	 *  Write and read GPX files
 	 * ************************************************************************/
 
-
-	/**
-	 * Return a new GPX writer with the given {@code indent} and number
-	 * formatter, which is used for formatting {@link WayPoint#getLatitude()},
-	 * {@link WayPoint#getLongitude()}, ...
-	 * <p>
-	 * The example below shows the <em>lat</em> and <em>lon</em> values with
-	 * maximal 5 fractional digits.
-	 * <pre>{@code
-	 * <trkpt lat="45.78068" lon="12.55368">
-	 *     <ele>1.2</ele>
-	 *     <time>2009-08-30T07:08:21Z</time>
-	 * </trkpt>
-	 * }</pre>
-	 *
-	 * The following table should give you a feeling about the accuracy of a
-	 * given fraction digits count, at the equator.
-	 *
-	 * <table class="striped">
-	 *     <caption><b>Maximum fraction digits accuracy</b></caption>
-	 *     <thead>
-	 *         <tr>
-	 *             <th scope="row">Fraction digits</th>
-	 *     	   	   <th scope="row">Degree</th>
-	 *             <th scope="row">Distance</th>
-	 *         </tr>
-	 *     </thead>
-	 *     <tbody>
-	 *         <tr><td>0 </td><td>1           </td><td>111.31 km  </td></tr>
-	 *         <tr><td>1 </td><td>0.1         </td><td> 11.13 km  </td></tr>
-	 *         <tr><td>2 </td><td>0,01        </td><td>  1.1 km   </td></tr>
-	 *         <tr><td>3 </td><td>0.001       </td><td>111.3 m    </td></tr>
-	 *         <tr><td>4 </td><td>0.0001      </td><td> 11.1 m    </td></tr>
-	 *         <tr><td>5 </td><td>0.00001     </td><td>  1.11 m   </td></tr>
-	 *         <tr><td>6 </td><td>0.000001    </td><td>    0.1 m  </td></tr>
-	 *         <tr><td>7 </td><td>0.0000001   </td><td> 11.1 mm   </td></tr>
-	 *         <tr><td>8 </td><td>0.00000001  </td><td>  1.1 mm   </td></tr>
-	 *         <tr><td>9 </td><td>0.000000001 </td><td>    0.11 mm</td></tr>
-	 *     </tbody>
-	 * </table>
-	 *
-	 * @since 3.0
-	 *
-	 * @see #writer(String)
-	 * @see #writer()
-	 *
-	 * @param indent the element indentation
-	 * @param maximumFractionDigits the maximum number of digits allowed in the
-	 *        fraction portion of a number
-	 * @return a new GPX writer
-	 */
-	public static Writer writer(
-		final String indent,
-		final int maximumFractionDigits
-	) {
-		return new Writer(indent, maximumFractionDigits);
-	}
-
-	/**
-	 * Return a new GPX writer with the given {@code indent} and with
-	 * <em>maximum fraction digits</em> of
-	 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #writer()
-	 * @see #writer(String, int)
-	 *
-	 * @param indent the element indentation
-	 * @return a new GPX writer
-	 */
-	public static Writer writer(final String indent) {
-		return new Writer(indent);
-	}
-
-	/**
-	 * Return a new GPX writer with no indentation and with
-	 * <em>maximum fraction digits</em> of
-	 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #writer(String)
-	 * @see #writer(String, int)
-	 *
-	 * @return a new GPX writer
-	 */
-	public static Writer writer() {
-		return new Writer(null);
-	}
-
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
+	 *
+	 * @see Writer#of(String, int)
+	 * @see Writer#of(String)
+	 * @see Writer#of()
 	 *
 	 * @param gpx the GPX object to write to the output
 	 * @param output the output stream where the GPX object is written to
@@ -1847,12 +1843,16 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final OutputStream output)
 		throws IOException
 	{
-		writer().write(gpx, output);
+		Writer.of().write(gpx, output);
 	}
 
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
+	 *
+	 * @see Writer#of(String, int)
+	 * @see Writer#of(String)
+	 * @see Writer#of()
 	 *
 	 * @since 1.1
 	 *
@@ -1862,7 +1862,26 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static void write(final GPX gpx, final Path path) throws IOException {
-		writer().write(gpx, path);
+		Writer.of().write(gpx, path);
+	}
+
+	/**
+	 * Writes the given {@code gpx} object (in GPX XML format) to the given
+	 * {@code output} stream.
+	 *
+	 * @see Writer#of(String, int)
+	 * @see Writer#of(String)
+	 * @see Writer#of()
+	 *
+	 * @since 3.0
+	 *
+	 * @param gpx the GPX object to write to the output
+	 * @param path the output path where the GPX object is written to
+	 * @throws IOException if the writing of the GPX object fails
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
+	public static void write(final GPX gpx, final String path) throws IOException {
+		Writer.of().write(gpx, path);
 	}
 
 
