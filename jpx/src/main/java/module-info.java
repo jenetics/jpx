@@ -34,15 +34,40 @@
  * final GPX gpx = GPX.builder()
  *     .addTrack(track -> track
  *         .addSegment(segment -> segment
- *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
- *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
- *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+ *             .addPoint(p -> p.lat(48.20100).lon(16.31651).ele(283))
+ *             .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
+ *             .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
  *     .build();
+ * }</pre>
+ *
+ * <b>Writing a GPX file</b>
+ * <pre>{@code
+ * final var indent = "    ";
+ * GPX.writer(indent).write(gpx, Path.of("points.gpx"));
+ * }</pre>
+ *
+ * This will produce the following output.
+ * <pre>{@code
+ * <gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" xmlns="http://www.topografix.com/GPX/1/1">
+ *     <trk>
+ *         <trkseg>
+ *             <trkpt lat="48.201" lon="16.31651">
+ *                 <ele>283</ele>
+ *             </trkpt>
+ *             <trkpt lat="48.20112" lon="16.31639">
+ *                 <ele>278</ele>
+ *             </trkpt>
+ *             <trkpt lat="48.20126" lon="16.31601">
+ *                 <ele>274</ele>
+ *             </trkpt>
+ *         </trkseg>
+ *     </trk>
+ * </gpx>
  * }</pre>
  *
  * <b>Reading a GPX file</b>
  * <pre>{@code
- * final GPX gpx = GPX.read("track.xml");
+ * final GPX gpx = GPX.read("points.xml");
  * }</pre>
  *
  * <b>Reading erroneous GPX files</b>
@@ -54,62 +79,67 @@
  * This allows to read otherwise invalid GPX files, like
  * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
- * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/0">
- *     <metadata>
- *         <time>2015-11-13T15:22:42.140Z</time>
- *         <bounds minlat="-37050536.000000000" minlon="-0.000000000" maxlat="48.359161377" maxlon="16.448385239"/>
- *     </metadata>
- *     <trk>
- *         <name>track-1</name>
- *         <desc>Log every 3 sec, 0 m</desc>
- *         <trkseg>
- *             <trkpt></trkpt>
- *             <trkpt lat="48.199352264" lon="16.403341293">
- *                 <ele>4325376.000000</ele>
- *                 <time>2015-10-23T17:07:08Z</time>
- *                 <speed>2.650000</speed>
- *                 <name>TP000001</name>
- *             </trkpt>
- *             <trkpt lat="6.376383781" lon="-0.000000000">
- *                 <ele>147573952589676412928.000000</ele>
- *                 <time>1992-07-19T10:10:58Z</time>
- *                 <speed>464.010010</speed>
- *                 <name>TP000002</name>
- *             </trkpt>
- *             <trkpt lat="-37050536.000000000" lon="0.000475423">
- *                 <ele>0.000000</ele>
- *                 <time>2025-12-17T05:10:27Z</time>
- *                 <speed>56528.671875</speed>
- *                 <name>TP000003</name>
- *             </trkpt>
- *             <trkpt></trkpt>
- *         </trkseg>
- *     </trk>
+ * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
+ *   <metadata>
+ *     <time>2019-12-31T21:36:04.134Z</time>
+ *     <bounds minlat="48.175186667" minlon="16.299580000" maxlat="48.199555000" maxlon="16.416933333"/>
+ *   </metadata>
+ *   <trk>
+ *     <trkseg>
+ *       <trkpt lat="48.184298333" lon="16.299580000">
+ *         <ele>0.000</ele>
+ *         <time>2011-03-20T09:47:16Z</time>
+ *         <geoidheight>43.5</geoidheight>
+ *         <fix>2d</fix>
+ *         <sat>3</sat>
+ *         <hdop>4.200000</hdop>
+ *         <vdop>1.000000</vdop>
+ *         <pdop>4.300000</pdop>
+ *       </trkpt>
+ *       <trkpt lat="48.175186667" lon="16.303916667">
+ *         <ele>0.000</ele>
+ *         <time>2011-03-20T09:51:31Z</time>
+ *         <geoidheight>43.5</geoidheight>
+ *         <fix>2d</fix>
+ *         <sat>3</sat>
+ *         <hdop>16.600000</hdop>
+ *         <vdop>0.900000</vdop>
+ *         <pdop>16.600000</pdop>
+ *       </trkpt>
+ *     </trkseg>
+ *   </trk>
  * </gpx>
  * }</pre>
  *
- * which is read as
+ * which is read as (if you write it again)
  * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
- * <gpx xmlns="http://www.topografix.com/GPX/1/1" version="1.1" creator="JPX" >
+ * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *     <metadata>
- *         <time>2015-11-13T15:22:42.140Z</time>
+ *         <time>2019-12-31T21:36:04.134Z</time>
+ *         <bounds minlat="48.175187" minlon="16.29958" maxlat="48.199555" maxlon="16.416933"></bounds>
  *     </metadata>
  *     <trk>
- *         <name>track-1</name>
- *         <desc>Log every 3 sec, 0 m</desc>
  *         <trkseg>
- *             <trkpt lat="48.199352264" lon="16.403341293">
- *                 <ele>4325376.000000</ele>
- *                 <time>2015-10-23T17:07:08Z</time>
- *                 <speed>2.650000</speed>
- *                 <name>TP000001</name>
+ *             <trkpt lat="48.184298" lon="16.29958">
+ *                 <ele>0</ele>
+ *                 <time>2011-03-20T09:47:16Z</time>
+ *                 <geoidheight>43.5</geoidheight>
+ *                 <fix>2d</fix>
+ *                 <sat>3</sat>
+ *                 <hdop>4.2</hdop>
+ *                 <vdop>1</vdop>
+ *                 <pdop>4.3</pdop>
  *             </trkpt>
- *             <trkpt lat="6.376383781" lon="-0.000000000">
- *                 <ele>147573952589676412928.000000</ele>
- *                 <time>1992-07-19T10:10:58Z</time>
- *                 <speed>464.010010</speed>
- *                 <name>TP000002</name>
+ *             <trkpt lat="48.175187" lon="16.303917">
+ *                 <ele>0</ele>
+ *                 <time>2011-03-20T09:51:31Z</time>
+ *                 <geoidheight>43.5</geoidheight>
+ *                 <fix>2d</fix>
+ *                 <sat>3</sat>
+ *                 <hdop>16.6</hdop>
+ *                 <vdop>0.9</vdop>
+ *                 <pdop>16.6</pdop>
  *             </trkpt>
  *         </trkseg>
  *     </trk>
