@@ -1203,7 +1203,10 @@ public final class GPX implements Serializable {
 	 */
 	public static final class Writer {
 
-		private static final int DEFAULT_FRACTION_DIGIT = 6;
+		/**
+		 * The default value for the <em>maximum fraction digits</em>.
+		 */
+		public static final int DEFAULT_MAXIMUM_FRACTION_DIGITS = 6;
 
 		private final String _indent;
 		private final int _maximalFractionDigits;
@@ -1214,7 +1217,7 @@ public final class GPX implements Serializable {
 		}
 
 		private Writer(final String indent) {
-			this(indent, DEFAULT_FRACTION_DIGIT);
+			this(indent, DEFAULT_MAXIMUM_FRACTION_DIGITS);
 		}
 
 		/**
@@ -1730,6 +1733,71 @@ public final class GPX implements Serializable {
 	 * </trkpt>
 	 * }</pre>
 	 *
+	 * The following table should give you a feeling about the accuracy of a
+	 * given fraction digits count, at the equator.
+	 *
+	 * <table class="striped">
+	 * <caption><b>Maximum fraction digits accuracy</b></caption>
+	 * <thead>
+	 *     <tr>
+	 *         <th scope="row">Fraction digits</th>
+	 * 	   	   <th scope="row">Degree</th>
+	 *         <th scope="row">Distance</th>
+	 *     </tr>
+	 * </thead>
+	 * <tbody>
+	 * <tr>
+	 * <td>0 </td>
+	 * <td>1 </td>
+	 * <td>111.31 km</td>
+	 * </tr>
+	 * <tr>
+	 * <td>1 </td>
+	 * <td>0.1 </td>
+	 * <td>11.13 km</td>
+	 * </tr>
+	 * <tr>
+	 * <td>2 </td>
+	 * <td>0,01 </td>
+	 * <td>1,11 km</td>
+	 * </tr>
+	 * <tr>
+	 * <td>3 </td>
+	 * <td>0.001 </td>
+	 * <td>111.3 m</td>
+	 * </tr>
+	 * <tr>
+	 * <td>4 </td>
+	 * <td>0.0001 </td>
+	 * <td>11.1 m</td>
+	 * </tr>
+	 * <tr>
+	 * <td>5 </td>
+	 * <td>0.00001 </td>
+	 * <td>1.11 m</td>
+	 * </tr>
+	 * <tr>
+	 * <td>6 </td>
+	 * <td>0.000001 </td>
+	 * <td>0.1 m</td>
+	 * </tr>
+	 * <tr>
+	 * <td>7 </td>
+	 * <td>0.0000001 </td>
+	 * <td>11.1 mm</td>
+	 * </tr>
+	 * <tr>
+	 * <td>8 </td>
+	 * <td>0.00000001 </td>
+	 * <td>1.1 mm</td>
+	 * </tr>
+	 * <tr>
+	 * <td>9 </td>
+	 * <td>0.000000001 </td>
+	 * <td>0.11 mm</td>
+	 * </tr>
+	 * </tbody></table>
+	 *
 	 * @since 3.0
 	 *
 	 * @see #writer(String)
@@ -1748,11 +1816,14 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Return a new GPX writer with the given {@code indent}.
+	 * Return a new GPX writer with the given {@code indent} and with
+	 * <em>maximum fraction digits</em> of
+	 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
 	 *
 	 * @since 1.3
 	 *
 	 * @see #writer()
+	 * @see #writer(String, int)
 	 *
 	 * @param indent the element indentation
 	 * @return a new GPX writer
@@ -1762,11 +1833,14 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Return a new GPX writer with no indentation.
+	 * Return a new GPX writer with no indentation and with
+	 * <em>maximum fraction digits</em> of
+	 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
 	 *
 	 * @since 1.3
 	 *
 	 * @see #writer(String)
+	 * @see #writer(String, int)
 	 *
 	 * @return a new GPX writer
 	 */
