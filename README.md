@@ -36,12 +36,12 @@ For  building the JPX library you have to check out the master branch from Githu
 
 ```java
 final GPX gpx = GPX.builder()
-	.addTrack(track -> track
-		.addSegment(segment -> segment
-		.addPoint(p -> p.lat(48.20100).lon(16.31651).ele(283))
-		.addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
-		.addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
-	.build();
+    .addTrack(track -> track
+        .addSegment(segment -> segment
+        .addPoint(p -> p.lat(48.20100).lon(16.31651).ele(283))
+        .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
+        .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
+    .build();
 ```
 
 **Writing GPX object to a file**
@@ -54,19 +54,19 @@ GPX.write(gpx, "track.gpx");
 
 ```xml
 <gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" xmlns="http://www.topografix.com/GPX/1/1">
-	<trk>
-		<trkseg>
-			<trkpt lat="48.201" lon="16.31651">
-				<ele>283</ele>
-			</trkpt>
-			<trkpt lat="48.20112" lon="16.31639">
-				<ele>278</ele>
-			</trkpt>
-			<trkpt lat="48.20126" lon="16.31601">
-				<ele>274</ele>
-			</trkpt>
-		</trkseg>
-	</trk>
+    <trk>
+        <trkseg>
+            <trkpt lat="48.201" lon="16.31651">
+                <ele>283</ele>
+            </trkpt>
+            <trkpt lat="48.20112" lon="16.31639">
+                <ele>278</ele>
+            </trkpt>
+            <trkpt lat="48.20126" lon="16.31601">
+                <ele>274</ele>
+            </trkpt>
+        </trkseg>
+    </trk>
 </gpx>
 ```
 
@@ -127,8 +127,8 @@ final GPX gpx10 = GPX.reader(GPX.Version.V10).read("track-v10.gpx");
 
 // Changing GPX version to 1.1.
 final GPX gpx11 = gpx10.toBuilder()
-	.version(GPX.Version.V11)
-	.build();
+    .version(GPX.Version.V11)
+    .build();
 
 // Writing GPX to file.
 GPX.write(gpx11, "track-v11.gpx");
@@ -198,7 +198,7 @@ final Length length = gpx.tracks()
 #### Filtering
 
 The following example filters empty tracks and track-segments from an existing `GPX` object.
-	
+    
 ```java
 final GPX gpx = GPX.read("track.gpx");
 
