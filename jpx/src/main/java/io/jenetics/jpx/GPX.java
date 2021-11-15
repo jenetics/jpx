@@ -1659,7 +1659,7 @@ public final class GPX implements Serializable {
 			.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
 			.v11(XMLWriter.ns(Version.V11.getNamespaceURI()))
 			.v10(XMLWriter.ns(Version.V10.getNamespaceURI()))
-			.v11(Metadata.WRITER.map(gpx -> gpx._metadata))
+			.v11(Metadata.writer(formatter).map(gpx -> gpx._metadata))
 			.v10(XMLWriter.elem("name").map(GPX::name))
 			.v10(XMLWriter.elem("desc").map(GPX::desc))
 			.v10(XMLWriter.elem("author").map(GPX::author))

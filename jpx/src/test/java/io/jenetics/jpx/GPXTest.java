@@ -37,13 +37,9 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.Random;
 import java.util.function.Supplier;
@@ -106,15 +102,6 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			"\t\t<gpxdata:intensity>active</gpxdata:intensity>\n" +
 			"\t</gpxdata:lap>\n" +
 			"</extensions>");
-	}
-
-	//@Test
-	public void foo() {
-		final Document doc1 = doc();
-		final Document doc2 = doc();
-		System.out.println(doc1.equals(doc2));
-		System.out.println(doc1.hashCode() + ":" + doc2.hashCode());
-		System.out.println(doc1.isEqualNode(doc2));
 	}
 
 	//@Test
@@ -864,6 +851,21 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		GPX.writer("    ").write(gpx, out);
 		//GPX.writer("    ").write(gpx, System.out);
 		assertThat(out.toString()).doesNotContain("-3.1E-4");
+	}
+
+	@Test
+	public void foo() throws IOException {
+		GPX gpx = GPX.builder()
+			  .addTrack(track -> track
+				  .addSegment(segment -> segment
+					  .addPoint(p -> p.lat(48.20100).lon(16.31651).ele(283))
+					  .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
+					  .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
+			  .build();
+
+		gpx = GPX.read("/home/fwilhelm/Downloads/track.gpx");
+
+		 GPX.writer("    ").write(gpx, System.out);
 	}
 
 }

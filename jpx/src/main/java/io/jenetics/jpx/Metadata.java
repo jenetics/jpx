@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.w3c.dom.Document;
 
@@ -795,17 +796,20 @@ public final class Metadata implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Metadata> WRITER = XMLWriter.elem("metadata",
-		XMLWriter.elem("name").map(md -> md._name),
-		XMLWriter.elem("desc").map(md -> md._description),
-		Person.writer("author").map(md -> md._author),
-		Copyright.WRITER.map(md -> md._copyright),
-		XMLWriter.elems(Link.WRITER).map(md -> md._links),
-		XMLWriter.elem("time").map(md -> format(md._time)),
-		XMLWriter.elem("keywords").map(md -> md._keywords),
-		Bounds.WRITER.map(md -> md._bounds),
-		XMLWriter.doc("extensions").map(gpx -> gpx._extensions)
-	);
+	static XMLWriter<Metadata>
+	writer(final Function<? super Number, String> formatter) {
+		return XMLWriter.elem("metadata",
+			XMLWriter.elem("name").map(md -> md._name),
+			XMLWriter.elem("desc").map(md -> md._description),
+			Person.writer("author").map(md -> md._author),
+			Copyright.WRITER.map(md -> md._copyright),
+			XMLWriter.elems(Link.WRITER).map(md -> md._links),
+			XMLWriter.elem("time").map(md -> format(md._time)),
+			XMLWriter.elem("keywords").map(md -> md._keywords),
+			Bounds.writer(formatter).map(md -> md._bounds),
+			XMLWriter.doc("extensions").map(gpx -> gpx._extensions)
+		);
+	}
 
 	@SuppressWarnings("unchecked")
 	static final XMLReader<Metadata> READER = XMLReader.elem(
