@@ -1831,28 +1831,7 @@ public final class GPX implements Serializable {
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code output} stream.
 	 *
-	 * @see Writer#of(String, int)
-	 * @see Writer#of(String)
-	 * @see Writer#of()
-	 *
-	 * @param gpx the GPX object to write to the output
-	 * @param output the output stream where the GPX object is written to
-	 * @throws IOException if the writing of the GPX object fails
-	 * @throws NullPointerException if one of the given arguments is {@code null}
-	 */
-	public static void write(final GPX gpx, final OutputStream output)
-		throws IOException
-	{
-		Writer.of().write(gpx, output);
-	}
-
-	/**
-	 * Writes the given {@code gpx} object (in GPX XML format) to the given
-	 * {@code output} stream.
-	 *
-	 * @see Writer#of(String, int)
-	 * @see Writer#of(String)
-	 * @see Writer#of()
+	 * @see Writer
 	 *
 	 * @since 1.1
 	 *
@@ -1864,26 +1843,6 @@ public final class GPX implements Serializable {
 	public static void write(final GPX gpx, final Path path) throws IOException {
 		Writer.of().write(gpx, path);
 	}
-
-	/**
-	 * Writes the given {@code gpx} object (in GPX XML format) to the given
-	 * {@code output} stream.
-	 *
-	 * @see Writer#of(String, int)
-	 * @see Writer#of(String)
-	 * @see Writer#of()
-	 *
-	 * @since 3.0
-	 *
-	 * @param gpx the GPX object to write to the output
-	 * @param path the output path where the GPX object is written to
-	 * @throws IOException if the writing of the GPX object fails
-	 * @throws NullPointerException if one of the given arguments is {@code null}
-	 */
-	public static void write(final GPX gpx, final String path) throws IOException {
-		Writer.of().write(gpx, path);
-	}
-
 
 	/**
 	 * Return a GPX reader, reading GPX files with the given version and in the
