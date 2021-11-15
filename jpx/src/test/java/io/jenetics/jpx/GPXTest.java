@@ -853,19 +853,4 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		assertThat(out.toString()).doesNotContain("-3.1E-4");
 	}
 
-	@Test
-	public void foo() throws IOException {
-		GPX gpx = GPX.builder()
-			  .addTrack(track -> track
-				  .addSegment(segment -> segment
-					  .addPoint(p -> p.lat(48.20100).lon(16.31651).ele(283))
-					  .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
-					  .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
-			  .build();
-
-		gpx = GPX.read("/home/fwilhelm/Downloads/track.gpx");
-
-		 GPX.writer("    ").write(gpx, System.out);
-	}
-
 }
