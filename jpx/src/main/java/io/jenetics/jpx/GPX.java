@@ -1267,20 +1267,19 @@ public final class GPX implements Serializable {
 		/**
 		 * The default value for the <em>maximum fraction digits</em>.
 		 */
-		public static final int DEFAULT_MAXIMUM_FRACTION_DIGITS = 6;
+		public static final int MAXIMUM_FRACTION_DIGITS = 6;
 
 		/**
 		 * The default GPX writer, with no indention and fraction digits
-		 * of {@link #DEFAULT_MAXIMUM_FRACTION_DIGITS}.
+		 * of {@link #MAXIMUM_FRACTION_DIGITS}.
 		 *
 		 * @see #of(String, int)
 		 * @see #of(String)
 		 *
 		 * @since 3.0
 		 */
-		public static final Writer DEFAULT = new Writer(
-			null, DEFAULT_MAXIMUM_FRACTION_DIGITS
-		);
+		public static final Writer DEFAULT =
+			new Writer(null, MAXIMUM_FRACTION_DIGITS);
 
 		private final String _indent;
 		private final int _maximumFractionDigits;
@@ -1485,7 +1484,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return a new GPX writer with the given {@code indent} and with
 		 * <em>maximum fraction digits</em> of
-		 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
+		 * {@link Writer#MAXIMUM_FRACTION_DIGITS}.
 		 *
 		 * @see #of(String, int)
 		 * @see #DEFAULT
@@ -1496,7 +1495,7 @@ public final class GPX implements Serializable {
 		 * @return a new GPX writer
 		 */
 		public static Writer of(final String indent) {
-			return new Writer(indent, DEFAULT_MAXIMUM_FRACTION_DIGITS);
+			return new Writer(indent, MAXIMUM_FRACTION_DIGITS);
 		}
 
 	}

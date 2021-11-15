@@ -102,7 +102,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			        <gpxdata:trigger kind="manual" />
 			        <gpxdata:intensity>active</gpxdata:intensity>
 			    </gpxdata:lap>
-			</extensions>""");
+			</extensions>
+			""");
 	}
 
 	//@Test
