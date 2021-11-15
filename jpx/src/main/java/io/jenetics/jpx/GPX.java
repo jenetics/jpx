@@ -56,7 +56,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
@@ -1270,6 +1269,19 @@ public final class GPX implements Serializable {
 		 */
 		public static final int DEFAULT_MAXIMUM_FRACTION_DIGITS = 6;
 
+		/**
+		 * The default GPX writer, with no indention and fraction digits
+		 * of {@link #DEFAULT_MAXIMUM_FRACTION_DIGITS}.
+		 *
+		 * @see #of(String, int)
+		 * @see #of(String)
+		 *
+		 * @since 3.0
+		 */
+		public static final Writer DEFAULT = new Writer(
+			null, DEFAULT_MAXIMUM_FRACTION_DIGITS
+		);
+
 		private final String _indent;
 		private final int _maximumFractionDigits;
 
@@ -1457,7 +1469,7 @@ public final class GPX implements Serializable {
 		 * </table>
 		 *
 		 * @see #of(String)
-		 * @see #of()
+		 * @see #DEFAULT
 		 *
 		 * @since 3.0
 		 *
@@ -1476,7 +1488,7 @@ public final class GPX implements Serializable {
 		 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
 		 *
 		 * @see #of(String, int)
-		 * @see #of()
+		 * @see #DEFAULT
 		 *
 		 * @since 3.0
 		 *
@@ -1485,21 +1497,6 @@ public final class GPX implements Serializable {
 		 */
 		public static Writer of(final String indent) {
 			return new Writer(indent, DEFAULT_MAXIMUM_FRACTION_DIGITS);
-		}
-
-		/**
-		 * Return the default GPX writer, with no indention and fraction digits
-		 * of {@link #DEFAULT_MAXIMUM_FRACTION_DIGITS}.
-		 *
-		 * @see #of(String, int)
-		 * @see #of(String)
-		 *
-		 * @since 3.0
-		 *
-		 * @return the default GPX writer
-		 */
-		public static Writer of() {
-			return new Writer(null, DEFAULT_MAXIMUM_FRACTION_DIGITS);
 		}
 
 	}
@@ -1877,7 +1874,7 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static void write(final GPX gpx, final Path path) throws IOException {
-		Writer.of().write(gpx, path);
+		Writer.DEFAULT.write(gpx, path);
 	}
 
 	/**
