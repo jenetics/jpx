@@ -54,7 +54,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		return new Params<>(
 			() -> nextTrackSegment(random),
 			TrackSegment.xmlReader(version),
-			TrackSegment.xmlWriter(version)
+			TrackSegment.xmlWriter(version, Formats::format)
 		);
 	}
 

@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -36,9 +37,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -72,7 +71,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		return new Params<>(
 			() -> nextGPX(random),
 			GPX.xmlReader(version),
-			GPX.xmlWriter(version)
+			GPX.xmlWriter(version, Formats::format)
 		);
 	}
 
@@ -106,15 +105,6 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	//@Test
-	public void foo() {
-		final Document doc1 = doc();
-		final Document doc2 = doc();
-		System.out.println(doc1.equals(doc2));
-		System.out.println(doc1.hashCode() + ":" + doc2.hashCode());
-		System.out.println(doc1.isEqualNode(doc2));
-	}
-
-	//@Test
 	public void print() throws IOException {
 		final GPX gpx = nextGPX(new Random(6123)).toBuilder()
 			.version(Version.V10)
@@ -126,7 +116,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test(invocationCount = 5)
 	public void toStringFromString() {
 		final GPX expected = nextGPX(new Random());
-		final String string = GPX.writer("  ").toString(expected);
+		final String string = GPX.writer("  ", 25).toString(expected);
 		//System.out.println(string);
 		final GPX actual = GPX.reader().fromString(string);
 
@@ -416,7 +406,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.writer("    ").write(gpx, bout);
+		GPX.writer("    ", 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.read(bin);
@@ -430,14 +420,14 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.writer().write(gpx, bout);
+		GPX.writer(null, 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.read(bin);
 
 
 		if (!read.equals(gpx)) {
-			System.out.println(new String(bout.toByteArray()));
+			System.out.println(bout);
 		}
 		Assert.assertEquals(read, gpx);
 	}
@@ -733,7 +723,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
 			GPX.read(in);
-			Assert.assertFalse(true, "GXP.read must throw.");
+			Assert.fail("GXP.read must throw.");
 		} catch (IOException e) {
 			Assert.assertEquals(e.getClass(), InvalidObjectException.class);
 			Assert.assertTrue(e.getMessage().toLowerCase().contains("invalid"));
@@ -847,6 +837,20 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 
 		Assert.assertEquals(gpx, expected);
+	}
+
+	@Test
+	public void issue151_Formatting() throws IOException {
+		final var resource = "/io/jenetics/jpx/ISSUE-151.gpx";
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.read(in);
+		}
+
+		final var out = new ByteArrayOutputStream();
+		GPX.writer("    ").write(gpx, out);
+		//GPX.writer("    ").write(gpx, System.out);
+		assertThat(out.toString()).doesNotContain("-3.1E-4");
 	}
 
 }

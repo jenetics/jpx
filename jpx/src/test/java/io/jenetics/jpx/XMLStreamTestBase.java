@@ -98,6 +98,22 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		final byte[] marshaled = toBytes(expected, params.writer);
 		final T actual = fromBytes(marshaled, params.reader);
 
+		/*
+		if (!Objects.equals(actual, expected)) {
+			//System.out.println(new String(marshaled));
+			//System.out.println();
+			//System.out.println(new String(toBytes(actual, params.writer)));
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/actual.xml"),
+				toBytes(actual, params.writer)
+			);
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/expected.xml"),
+				toBytes(expected, params.writer)
+			);
+		}
+		 */
+
 		assertEquals(actual, expected);
 	}
 

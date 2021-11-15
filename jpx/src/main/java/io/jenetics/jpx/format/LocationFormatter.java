@@ -790,13 +790,13 @@ public final class LocationFormatter {
 			requireNonNull(pattern);
 
 			// The formats we've collected and that are not yet added to
-			// _formats. They may be added to _formats directly or be bundled
+			// formats. They may be added to _formats directly or be bundled
 			// into an Optional first.
 			final List<Format> formats = new ArrayList<>();
 
 			boolean optional = false; // Inside [ ] ?
-			int signs = 0; // How many unprocessed '+' ?
-			boolean quote = false; // last was ' ?
+			int signs = 0;            // How many unprocessed '+' ?
+			boolean quote = false;    // last was ' ?
 
 			final var tokens = new Tokens(tokenize(pattern));
 			while (tokens.hasNext()) {
@@ -911,6 +911,7 @@ public final class LocationFormatter {
 			char pc = '\0';
 			for (int i = 0; i < pattern.length(); ++i) {
 				final char c = pattern.charAt(i);
+
 				switch (c) {
 					case '\'':
 						quote = !quote;
@@ -920,11 +921,7 @@ public final class LocationFormatter {
 						}
 						tokens.add(Character.toString(c));
 						break;
-					case 'x':
-					case 'X':
-					case '+':
-					case '[':
-					case ']':
+					case 'x', 'X', '+', '[', ']':
 						if (quote) {
 							token.append(c);
 						} else {
@@ -935,16 +932,7 @@ public final class LocationFormatter {
 							tokens.add(Character.toString(c));
 						}
 						break;
-					case 'L':
-					case 'D':
-					case 'M':
-					case 'S':
-					case 'l':
-					case 'd':
-					case 'm':
-					case 's':
-					case 'E':
-					case 'H':
+					case 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H':
 						if (c != pc &&
 							pc != '\0' &&
 							pc != '.' &&
@@ -958,8 +946,7 @@ public final class LocationFormatter {
 						}
 						token.append(c);
 						break;
-					case ',':
-					case '.':
+					case ',', '.':
 						token.append(c);
 						break;
 					default:

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
+import java.util.random.RandomGenerator;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -54,18 +55,18 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 		return new Params<>(
 			() -> nextWayPoint(random),
 			WayPoint.xmlReader(version, "wpt"),
-			WayPoint.xmlWriter(version, "wpt")
+			WayPoint.xmlWriter(version, "wpt", Formats::format)
 		);
 	}
 
 	public static WayPoint nextWayPoint(final Random random) {
 		return WayPoint.builder()
 			.ele(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
-			.speed(random.nextBoolean() ? Speed.of(random.nextDouble()*100, Speed.Unit.METERS_PER_SECOND) : null)
+			.speed(random.nextBoolean() ? Speed.of(nextDouble(random)*100, Speed.Unit.METERS_PER_SECOND) : null)
 			.time(random.nextBoolean()
 				? nextZonedDataTime(random)
 				: null)
-			.magvar(random.nextBoolean() ? Degrees.ofDegrees(random.nextDouble()*10) : null)
+			.magvar(random.nextBoolean() ? Degrees.ofDegrees(nextDouble(random)*10) : null)
 			.geoidheight(random.nextBoolean() ? Length.of(random.nextInt(1000), Unit.METER) : null)
 			.name(random.nextBoolean() ? format("name_%s", random.nextInt(100)) : null)
 			.cmt(random.nextBoolean() ? format("comment_%s", random.nextInt(100)) : null)
@@ -76,12 +77,18 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 			.type(random.nextBoolean() ? format("type_%s", random.nextInt(100)) : null)
 			.fix(random.nextBoolean() ? Fix.values()[random.nextInt(Fix.values().length)] : null)
 			.sat(random.nextBoolean() ? UInt.of(random.nextInt(100)) : null)
-			.hdop(random.nextBoolean() ? random.nextDouble() + 2: null)
-			.vdop(random.nextBoolean() ? random.nextDouble() + 2: null)
-			.pdop(random.nextBoolean() ? random.nextDouble() + 2: null)
+			.hdop(random.nextBoolean() ? nextDouble(random) + 2: null)
+			.vdop(random.nextBoolean() ? nextDouble(random) + 2: null)
+			.pdop(random.nextBoolean() ? nextDouble(random) + 2: null)
 			.ageofdgpsdata(random.nextBoolean() ? Duration.ofSeconds(random.nextInt(1000)) : null)
 			.dgpsid(random.nextBoolean() ? DGPSStation.of(random.nextInt(100)) : null)
-			.build(48 + random.nextDouble()*2, 16 + random.nextDouble()*2);
+			.build(48 + nextDouble(random)*2, 16 + nextDouble(random)*2);
+	}
+
+	private static double nextDouble(final RandomGenerator random) {
+		//final int scale = 10_000;
+		//return random.nextInt(scale)/(double)scale;
+		return random.nextDouble();
 	}
 
 	public static List<WayPoint> nextWayPoints(final Random random) {

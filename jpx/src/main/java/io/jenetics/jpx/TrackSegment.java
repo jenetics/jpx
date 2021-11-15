@@ -40,7 +40,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
@@ -424,10 +423,13 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static XMLWriter<TrackSegment> xmlWriter(final Version version) {
+	static XMLWriter<TrackSegment> xmlWriter(
+		final Version version,
+		final Function<? super Number, String> formatter
+	) {
 		return elem("trkseg",
 			XMLWriter
-				.elems(WayPoint.xmlWriter(version,"trkpt"))
+				.elems(WayPoint.xmlWriter(version,"trkpt", formatter))
 				.map(ts -> ts._points),
 			XMLWriter.doc("extensions").map(gpx -> gpx._extensions)
 		);
