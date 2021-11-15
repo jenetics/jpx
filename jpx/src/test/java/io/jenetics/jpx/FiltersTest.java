@@ -129,7 +129,7 @@ public class FiltersTest {
 
 	@Test
 	public void nonEmptyFilter() throws IOException {
-		final GPX gpx = GPX.Reader.of().read(new ByteArrayInputStream(("""
+		final GPX gpx = GPX.Reader.DEFAULT.read(new ByteArrayInputStream(("""
 				<?xml version="1.0" encoding="UTF-8"?>
 				<gpx
 				    version="1.1" creator="JPX - https://github.com/jenetics/jpx"

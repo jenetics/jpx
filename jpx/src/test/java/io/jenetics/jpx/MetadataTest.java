@@ -114,7 +114,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.Reader.of().read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		final Metadata md = gpx.getMetadata().get();

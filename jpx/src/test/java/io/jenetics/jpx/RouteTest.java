@@ -79,7 +79,7 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.Reader.of().read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(gpx.getRoutes().size(), 1);

@@ -1099,6 +1099,14 @@ public final class GPX implements Serializable {
 			STRICT
 		}
 
+		/**
+		 * The <em>default </em>GPX reader, reading GPX files (v1.1) with
+		 * reading mode {@link Mode#STRICT}.
+		 *
+		 * @since 3.0
+		 */
+		public static final Reader DEFAULT =  Reader.of(Version.V11, Mode.STRICT);
+
 		private final XMLReader<GPX> _reader;
 		private final Mode _mode;
 
@@ -1117,30 +1125,28 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read a GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code in} stream.
 		 *
-		 * @param input the input stream from where the GPX date is read
-		 * @return the GPX object read from the input stream
+		 * @param in the input stream from where the GPX date is read
+		 * @return the GPX object read from the in stream
 		 * @throws IOException if the GPX object can't be read
-		 * @throws NullPointerException if the given {@code input} stream is
+		 * @throws NullPointerException if the given {@code in} stream is
 		 *         {@code null}
-		 * @throws InvalidObjectException if the gpx input is invalid.
+		 * @throws InvalidObjectException if the gpx in is invalid.
 		 */
-		public GPX read(final InputStream input)
+		public GPX read(final InputStream in)
 			throws IOException, InvalidObjectException
 		{
-			final XMLInputFactory factory = XMLProvider.provider().xmlInputFactory();
-			try  (XMLStreamReaderAdapter reader = new XMLStreamReaderAdapter(
-						factory.createXMLStreamReader(input)))
-			{
-				if (reader.hasNext()) {
-					reader.next();
-					return _reader.read(reader, _mode == Mode.LENIENT);
+			final var f = XMLProvider.provider().xmlInputFactory();
+			try  (var r = new XMLStreamReaderAdapter(f.createXMLStreamReader(in))) {
+				if (r.hasNext()) {
+					r.next();
+					return _reader.read(r, _mode == Mode.LENIENT);
 				} else {
 					throw new InvalidObjectException("No 'gpx' element found.");
 				}
 			} catch (XMLStreamException e) {
-				throw new InvalidObjectException("Invalid 'gpx' input: " + e.getMessage());
+				throw new InvalidObjectException("Invalid 'gpx' in: " + e.getMessage());
 			} catch (IllegalArgumentException e) {
 				throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
 						.initCause(e);
@@ -1246,18 +1252,6 @@ public final class GPX implements Serializable {
 		 */
 		public static Reader of(final Mode mode) {
 			return new Reader(GPX.xmlReader(Version.V11), mode);
-		}
-
-		/**
-		 * Return a <em>default </em>GPX reader, reading GPX files (v1.1) with
-		 * reading mode {@link Mode#STRICT}.
-		 *
-		 * @since 3.0
-		 *
-		 * @return a new GPX reader object
-		 */
-		public static Reader of() {
-			return of(Version.V11, Mode.STRICT);
 		}
 
 	}
