@@ -129,7 +129,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	@Test(invocationCount = 5)
 	public void toStringFromString() {
 		final GPX expected = nextGPX(new Random());
-		final String string = GPX.writer("  ", 20).toString(expected);
+		final String string = GPX.writer("  ", 25).toString(expected);
 		//System.out.println(string);
 		final GPX actual = GPX.reader().fromString(string);
 
