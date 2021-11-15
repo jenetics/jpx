@@ -42,8 +42,10 @@ import java.io.OutputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.NumberFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -522,7 +524,7 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Allows to set partial metadata without messing up with the
+		 * Allows setting partial metadata without messing up with the
 		 * {@link Metadata.Builder} class.
 		 * <pre>{@code
 		 * final GPX gpx = GPX.builder()
@@ -1298,16 +1300,14 @@ public final class GPX implements Serializable {
 		 * {@code output} stream.
 		 *
 		 * @param gpx the GPX object to write to the output
-		 * @param file the output file where the GPX object is written to
+		 * @param path the output path where the GPX object is written to
 		 * @throws IOException if the writing of the GPX object fails
 		 * @throws NullPointerException if one of the given arguments is
 		 *         {@code null}
 		 */
-		public void write(final GPX gpx, final File file) throws IOException {
-			try (FileOutputStream out = new FileOutputStream(file);
-				 BufferedOutputStream bout = new BufferedOutputStream(out))
-			{
-				write(gpx, bout);
+		public void write(final GPX gpx, final Path path) throws IOException {
+			try (var out = Files.newOutputStream(path)) {
+				write(gpx, out);
 			}
 		}
 
@@ -1316,13 +1316,13 @@ public final class GPX implements Serializable {
 		 * {@code output} stream.
 		 *
 		 * @param gpx the GPX object to write to the output
-		 * @param path the output path where the GPX object is written to
+		 * @param file the output file where the GPX object is written to
 		 * @throws IOException if the writing of the GPX object fails
 		 * @throws NullPointerException if one of the given arguments is
 		 *         {@code null}
 		 */
-		public void write(final GPX gpx, final Path path) throws IOException {
-			write(gpx, path.toFile());
+		public void write(final GPX gpx, final File file) throws IOException {
+			write(gpx, file.toPath());
 		}
 
 		/**
@@ -1336,7 +1336,7 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public void write(final GPX gpx, final String path) throws IOException {
-			write(gpx, Paths.get(path));
+			write(gpx, Path.of(path));
 		}
 
 		/**
