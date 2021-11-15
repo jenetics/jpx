@@ -1340,12 +1340,11 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Create a XML string representation of the given {@code gpx} object.
+		 * Create an XML string representation of the given {@code gpx} object.
 		 *
 		 * @param gpx the GPX object to convert to a string
 		 * @return the XML string representation of the given {@code gpx} object
-		 * @throws NullPointerException if the given given GPX object is
-		 *         {@code null}
+		 * @throws NullPointerException if the given GPX object is {@code null}
 		 */
 		public String toString(final GPX gpx) {
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -1353,7 +1352,7 @@ public final class GPX implements Serializable {
 				write(gpx, out);
 				return out.toString();
 			} catch (IOException e) {
-				throw new IllegalStateException("Unexpected error.", e);
+				throw new AssertionError("Unexpected error: " + e);
 			}
 		}
 
