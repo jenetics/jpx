@@ -148,28 +148,18 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *         <vdop>0.900000</vdop>
  *         <pdop>16.600000</pdop>
  *       </trkpt>
- *       <trkpt lat="48.183075000" lon="16.302573333">
- *         <ele>0.000</ele>
- *         <time>2011-03-20T09:51:51Z</time>
- *         <geoidheight>43.5</geoidheight>
- *         <fix>2d</fix>
- *         <sat>3</sat>
- *         <hdop>1.500000</hdop>
- *         <vdop>1.000000</vdop>
- *         <pdop>1.800000</pdop>
- *       </trkpt>
  *     </trkseg>
  *   </trk>
  * </gpx>
  * }</pre>
  *
- * which is read as
+ * which is read as (if you write it again)
  * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *     <metadata>
  *         <time>2019-12-31T21:36:04.134Z</time>
- *         <bounds minlat="48.175186667" minlon="16.29958" maxlat="48.199555" maxlon="16.416933333"></bounds>
+ *         <bounds minlat="48.175187" minlon="16.29958" maxlat="48.199555" maxlon="16.416933"></bounds>
  *     </metadata>
  *     <trk>
  *         <trkseg>
@@ -192,16 +182,6 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *                 <hdop>16.6</hdop>
  *                 <vdop>0.9</vdop>
  *                 <pdop>16.6</pdop>
- *             </trkpt>
- *             <trkpt lat="48.183075" lon="16.302573">
- *                 <ele>0</ele>
- *                 <time>2011-03-20T09:51:51Z</time>
- *                 <geoidheight>43.5</geoidheight>
- *                 <fix>2d</fix>
- *                 <sat>3</sat>
- *                 <hdop>1.5</hdop>
- *                 <vdop>1</vdop>
- *                 <pdop>1.8</pdop>
  *             </trkpt>
  *         </trkseg>
  *     </trk>
