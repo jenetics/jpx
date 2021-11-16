@@ -56,7 +56,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 
@@ -1074,10 +1073,7 @@ public final class GPX implements Serializable {
 	 * Class for reading GPX files. A reader instance can be created by the
 	 * {@code GPX.reader} factory methods.
 	 *
-	 * @see GPX#reader()
-	 * @see GPX#reader(Version, Reader.Mode)
-	 *
-	 * @version 1.3
+	 * @version 3.0
 	 * @since 1.3
 	 */
 	public static final class Reader {
@@ -1102,6 +1098,14 @@ public final class GPX implements Serializable {
 			STRICT
 		}
 
+		/**
+		 * The <em>default </em>GPX reader, reading GPX files (v1.1) with
+		 * reading mode {@link Mode#STRICT}.
+		 *
+		 * @since 3.0
+		 */
+		public static final Reader DEFAULT =  Reader.of(Version.V11, Mode.STRICT);
+
 		private final XMLReader<GPX> _reader;
 		private final Mode _mode;
 
@@ -1120,30 +1124,28 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read a GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code in} stream.
 		 *
-		 * @param input the input stream from where the GPX date is read
-		 * @return the GPX object read from the input stream
+		 * @param in the input stream from where the GPX date is read
+		 * @return the GPX object read from the in stream
 		 * @throws IOException if the GPX object can't be read
-		 * @throws NullPointerException if the given {@code input} stream is
+		 * @throws NullPointerException if the given {@code in} stream is
 		 *         {@code null}
-		 * @throws InvalidObjectException if the gpx input is invalid.
+		 * @throws InvalidObjectException if the gpx in is invalid.
 		 */
-		public GPX read(final InputStream input)
+		public GPX read(final InputStream in)
 			throws IOException, InvalidObjectException
 		{
-			final XMLInputFactory factory = XMLProvider.provider().xmlInputFactory();
-			try  (XMLStreamReaderAdapter reader = new XMLStreamReaderAdapter(
-						factory.createXMLStreamReader(input)))
-			{
-				if (reader.hasNext()) {
-					reader.next();
-					return _reader.read(reader, _mode == Mode.LENIENT);
+			final var f = XMLProvider.provider().xmlInputFactory();
+			try  (var r = new XMLStreamReaderAdapter(f.createXMLStreamReader(in))) {
+				if (r.hasNext()) {
+					r.next();
+					return _reader.read(r, _mode == Mode.LENIENT);
 				} else {
 					throw new InvalidObjectException("No 'gpx' element found.");
 				}
 			} catch (XMLStreamException e) {
-				throw new InvalidObjectException("Invalid 'gpx' input: " + e.getMessage());
+				throw new InvalidObjectException("Invalid 'gpx' in: " + e.getMessage());
 			} catch (IllegalArgumentException e) {
 				throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
 						.initCause(e);
@@ -1218,14 +1220,44 @@ public final class GPX implements Serializable {
 			}
 		}
 
+		/* *********************************************************************
+		 * Factory methods.
+		 * ********************************************************************/
+
+		/**
+		 * Return a GPX reader, reading GPX files with the given version and in the
+		 * given reading mode.
+		 *
+		 * @since 3.0
+		 *
+		 * @param version the GPX version to read
+		 * @param mode the reading mode
+		 * @return a new GPX reader object
+		 * @throws NullPointerException if one of the arguments is {@code null}
+		 */
+		public static Reader of(final Version version, final Mode mode) {
+			return new Reader(GPX.xmlReader(version), mode);
+		}
+
+		/**
+		 * Return a GPX reader, reading GPX files with version 1.1 and in the given
+		 * reading mode.
+		 *
+		 * @since 3.0
+		 *
+		 * @param mode the reading mode
+		 * @return a new GPX reader object
+		 * @throws NullPointerException if one of the arguments is {@code null}
+		 */
+		public static Reader of(final Mode mode) {
+			return new Reader(GPX.xmlReader(Version.V11), mode);
+		}
+
 	}
 
 	/**
 	 * Class for writing GPX files. A writer instance can be created by the
 	 * {@code GPX.writer} factory methods.
-	 *
-	 * @see GPX#writer()
-	 * @see GPX#writer(String)
 	 *
 	 * @version 3.0
 	 * @since 1.3
@@ -1235,18 +1267,26 @@ public final class GPX implements Serializable {
 		/**
 		 * The default value for the <em>maximum fraction digits</em>.
 		 */
-		public static final int DEFAULT_MAXIMUM_FRACTION_DIGITS = 6;
+		public static final int MAXIMUM_FRACTION_DIGITS = 6;
+
+		/**
+		 * The default GPX writer, with no indention and fraction digits
+		 * of {@link #MAXIMUM_FRACTION_DIGITS}.
+		 *
+		 * @see #of(String, int)
+		 * @see #of(String)
+		 *
+		 * @since 3.0
+		 */
+		public static final Writer DEFAULT =
+			new Writer(null, MAXIMUM_FRACTION_DIGITS);
 
 		private final String _indent;
-		private final int _maximalFractionDigits;
+		private final int _maximumFractionDigits;
 
-		private Writer(final String indent, final int maximalFractionDigits) {
+		private Writer(final String indent, final int maximumFractionDigits) {
 			_indent = indent;
-			_maximalFractionDigits = maximalFractionDigits;
-		}
-
-		private Writer(final String indent) {
-			this(indent, DEFAULT_MAXIMUM_FRACTION_DIGITS);
+			_maximumFractionDigits = maximumFractionDigits;
 		}
 
 		/**
@@ -1267,8 +1307,8 @@ public final class GPX implements Serializable {
 		 * @return the maximum number of digits allowed in the fraction portion
 		 * 		   of the written numbers
 		 */
-		public int getMaximalFractionDigits() {
-			return _maximalFractionDigits;
+		public int getMaximumFractionDigits() {
+			return _maximumFractionDigits;
 		}
 
 		/**
@@ -1289,7 +1329,7 @@ public final class GPX implements Serializable {
 				xml.writeStartDocument("UTF-8", "1.0");
 				final var writer = GPX.xmlWriter(
 					gpx._version,
-					formatter(_maximalFractionDigits)
+					formatter(_maximumFractionDigits)
 				);
 				writer.write(xml, gpx);
 				xml.writeEndDocument();
@@ -1299,9 +1339,9 @@ public final class GPX implements Serializable {
 		}
 
 		private static Function<? super Number, String>
-		formatter(final int maximalFractionDigit) {
+		formatter(final int maximumFractionDigits) {
 			final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-			format.setMaximumFractionDigits(maximalFractionDigit);
+			format.setMaximumFractionDigits(maximumFractionDigits);
 
 			return value -> value != null ? format.format(value) : null;
 		}
@@ -1381,6 +1421,81 @@ public final class GPX implements Serializable {
 			} catch (IOException e) {
 				throw new AssertionError("Unexpected error: " + e);
 			}
+		}
+
+		/* *********************************************************************
+		 * Factory methods.
+		 * ********************************************************************/
+
+		/**
+		 * Return a new GPX writer with the given {@code indent} and number
+		 * formatter, which is used for formatting {@link WayPoint#getLatitude()},
+		 * {@link WayPoint#getLongitude()}, ...
+		 * <p>
+		 * The example below shows the <em>lat</em> and <em>lon</em> values with
+		 * maximal 5 fractional digits.
+		 * <pre>{@code
+		 * <trkpt lat="45.78068" lon="12.55368">
+		 *     <ele>1.2</ele>
+		 *     <time>2009-08-30T07:08:21Z</time>
+		 * </trkpt>
+		 * }</pre>
+		 *
+		 * The following table should give you a feeling about the accuracy of a
+		 * given fraction digits count, at the equator.
+		 *
+		 * <table class="striped">
+		 *     <caption><b>Maximum fraction digits accuracy</b></caption>
+		 *     <thead>
+		 *         <tr>
+		 *             <th scope="row">Fraction digits</th>
+		 *     	   	   <th scope="row">Degree</th>
+		 *             <th scope="row">Distance</th>
+		 *         </tr>
+		 *     </thead>
+		 *     <tbody>
+		 *         <tr><td>0 </td><td>1           </td><td>111.31 km  </td></tr>
+		 *         <tr><td>1 </td><td>0.1         </td><td> 11.13 km  </td></tr>
+		 *         <tr><td>2 </td><td>0,01        </td><td>  1.1 km   </td></tr>
+		 *         <tr><td>3 </td><td>0.001       </td><td>111.3 m    </td></tr>
+		 *         <tr><td>4 </td><td>0.0001      </td><td> 11.1 m    </td></tr>
+		 *         <tr><td>5 </td><td>0.00001     </td><td>  1.11 m   </td></tr>
+		 *         <tr><td>6 </td><td>0.000001    </td><td>    0.1 m  </td></tr>
+		 *         <tr><td>7 </td><td>0.0000001   </td><td> 11.1 mm   </td></tr>
+		 *         <tr><td>8 </td><td>0.00000001  </td><td>  1.1 mm   </td></tr>
+		 *         <tr><td>9 </td><td>0.000000001 </td><td>    0.11 mm</td></tr>
+		 *     </tbody>
+		 * </table>
+		 *
+		 * @see #of(String)
+		 * @see #DEFAULT
+		 *
+		 * @since 3.0
+		 *
+		 * @param indent the element indentation
+		 * @param maximumFractionDigits the maximum number of digits allowed in the
+		 *        fraction portion of a number
+		 * @return a new GPX writer
+		 */
+		public static Writer of(final String indent, final int maximumFractionDigits) {
+			return new Writer(indent, maximumFractionDigits);
+		}
+
+		/**
+		 * Return a new GPX writer with the given {@code indent} and with
+		 * <em>maximum fraction digits</em> of
+		 * {@link Writer#MAXIMUM_FRACTION_DIGITS}.
+		 *
+		 * @see #of(String, int)
+		 * @see #DEFAULT
+		 *
+		 * @since 3.0
+		 *
+		 * @param indent the element indentation
+		 * @return a new GPX writer
+		 */
+		public static Writer of(final String indent) {
+			return new Writer(indent, MAXIMUM_FRACTION_DIGITS);
 		}
 
 	}
@@ -1636,10 +1751,10 @@ public final class GPX implements Serializable {
 	writers(final Function<? super Number, String> formatter) {
 		return new XMLWriters<GPX>()
 			.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
-			.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
+			.v00(XMLWriter.attr("creator").map(GPX::getCreator))
 			.v11(XMLWriter.ns(Version.V11.getNamespaceURI()))
 			.v10(XMLWriter.ns(Version.V10.getNamespaceURI()))
-			.v11(Metadata.writer(formatter).map(gpx -> gpx._metadata))
+			.v11(Metadata.writer(formatter).flatMap(GPX::getMetadata))
 			.v10(XMLWriter.elem("name").map(GPX::name))
 			.v10(XMLWriter.elem("desc").map(GPX::desc))
 			.v10(XMLWriter.elem("author").map(GPX::author))
@@ -1654,7 +1769,7 @@ public final class GPX implements Serializable {
 			.v11(XMLWriter.elems(Route.xmlWriter(Version.V11, formatter)).map(GPX::getRoutes))
 			.v10(XMLWriter.elems(Track.xmlWriter(Version.V10, formatter)).map(GPX::getTracks))
 			.v11(XMLWriter.elems(Track.xmlWriter(Version.V11, formatter)).map(GPX::getTracks))
-			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
+			.v00(XMLWriter.doc("extensions").flatMap(GPX::getExtensions));
 	}
 
 
@@ -1744,115 +1859,11 @@ public final class GPX implements Serializable {
 	 *  Write and read GPX files
 	 * ************************************************************************/
 
-
-	/**
-	 * Return a new GPX writer with the given {@code indent} and number
-	 * formatter, which is used for formatting {@link WayPoint#getLatitude()},
-	 * {@link WayPoint#getLongitude()}, ...
-	 * <p>
-	 * The example below shows the <em>lat</em> and <em>lon</em> values with
-	 * maximal 5 fractional digits.
-	 * <pre>{@code
-	 * <trkpt lat="45.78068" lon="12.55368">
-	 *     <ele>1.2</ele>
-	 *     <time>2009-08-30T07:08:21Z</time>
-	 * </trkpt>
-	 * }</pre>
-	 *
-	 * The following table should give you a feeling about the accuracy of a
-	 * given fraction digits count, at the equator.
-	 *
-	 * <table class="striped">
-	 *     <caption><b>Maximum fraction digits accuracy</b></caption>
-	 *     <thead>
-	 *         <tr>
-	 *             <th scope="row">Fraction digits</th>
-	 *     	   	   <th scope="row">Degree</th>
-	 *             <th scope="row">Distance</th>
-	 *         </tr>
-	 *     </thead>
-	 *     <tbody>
-	 *         <tr><td>0 </td><td>1           </td><td>111.31 km  </td></tr>
-	 *         <tr><td>1 </td><td>0.1         </td><td> 11.13 km  </td></tr>
-	 *         <tr><td>2 </td><td>0,01        </td><td>  1.1 km   </td></tr>
-	 *         <tr><td>3 </td><td>0.001       </td><td>111.3 m    </td></tr>
-	 *         <tr><td>4 </td><td>0.0001      </td><td> 11.1 m    </td></tr>
-	 *         <tr><td>5 </td><td>0.00001     </td><td>  1.11 m   </td></tr>
-	 *         <tr><td>6 </td><td>0.000001    </td><td>    0.1 m  </td></tr>
-	 *         <tr><td>7 </td><td>0.0000001   </td><td> 11.1 mm   </td></tr>
-	 *         <tr><td>8 </td><td>0.00000001  </td><td>  1.1 mm   </td></tr>
-	 *         <tr><td>9 </td><td>0.000000001 </td><td>    0.11 mm</td></tr>
-	 *     </tbody>
-	 * </table>
-	 *
-	 * @since 3.0
-	 *
-	 * @see #writer(String)
-	 * @see #writer()
-	 *
-	 * @param indent the element indentation
-	 * @param maximumFractionDigits the maximum number of digits allowed in the
-	 *        fraction portion of a number
-	 * @return a new GPX writer
-	 */
-	public static Writer writer(
-		final String indent,
-		final int maximumFractionDigits
-	) {
-		return new Writer(indent, maximumFractionDigits);
-	}
-
-	/**
-	 * Return a new GPX writer with the given {@code indent} and with
-	 * <em>maximum fraction digits</em> of
-	 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #writer()
-	 * @see #writer(String, int)
-	 *
-	 * @param indent the element indentation
-	 * @return a new GPX writer
-	 */
-	public static Writer writer(final String indent) {
-		return new Writer(indent);
-	}
-
-	/**
-	 * Return a new GPX writer with no indentation and with
-	 * <em>maximum fraction digits</em> of
-	 * {@link Writer#DEFAULT_MAXIMUM_FRACTION_DIGITS}.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #writer(String)
-	 * @see #writer(String, int)
-	 *
-	 * @return a new GPX writer
-	 */
-	public static Writer writer() {
-		return new Writer(null);
-	}
-
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
-	 * {@code output} stream.
+	 * {@code path}.
 	 *
-	 * @param gpx the GPX object to write to the output
-	 * @param output the output stream where the GPX object is written to
-	 * @throws IOException if the writing of the GPX object fails
-	 * @throws NullPointerException if one of the given arguments is {@code null}
-	 */
-	public static void write(final GPX gpx, final OutputStream output)
-		throws IOException
-	{
-		writer().write(gpx, output);
-	}
-
-	/**
-	 * Writes the given {@code gpx} object (in GPX XML format) to the given
-	 * {@code output} stream.
+	 * @see Writer
 	 *
 	 * @since 1.1
 	 *
@@ -1862,99 +1873,13 @@ public final class GPX implements Serializable {
 	 * @throws NullPointerException if one of the given arguments is {@code null}
 	 */
 	public static void write(final GPX gpx, final Path path) throws IOException {
-		writer().write(gpx, path);
-	}
-
-
-	/**
-	 * Return a GPX reader, reading GPX files with the given version and in the
-	 * given reading mode.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #reader()
-	 *
-	 * @param version the GPX version to read
-	 * @param mode the reading mode
-	 * @return a new GPX reader object
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public static Reader reader(final Version version, final Mode mode) {
-		return new Reader(GPX.xmlReader(version), mode);
+		Writer.DEFAULT.write(gpx, path);
 	}
 
 	/**
-	 * Return a GPX reader, reading GPX files with the given version and in
-	 * strict reading mode.
+	 * Read an GPX object from the given {@code input} stream.
 	 *
-	 * @since 1.3
-	 *
-	 * @see #reader()
-	 *
-	 * @param version the GPX version to read
-	 * @return a new GPX reader object
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public static Reader reader(final Version version) {
-		return new Reader(GPX.xmlReader(version), Mode.STRICT);
-	}
-
-	/**
-	 * Return a GPX reader, reading GPX files with version 1.1 and in the given
-	 * reading mode.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #reader()
-	 *
-	 * @param mode the reading mode
-	 * @return a new GPX reader object
-	 * @throws NullPointerException if one of the arguments is {@code null}
-	 */
-	public static Reader reader(final Mode mode) {
-		return new Reader(GPX.xmlReader(Version.V11), mode);
-	}
-
-	/**
-	 * Return a GPX reader, reading GPX files (v1.1) with reading mode
-	 * {@link Mode#STRICT}.
-	 *
-	 * @since 1.3
-	 *
-	 * @see #reader(Version, Reader.Mode)
-	 *
-	 * @return a new GPX reader object
-	 */
-	public static Reader reader() {
-		return reader(Version.V11, Mode.STRICT);
-	}
-
-
-	/**
-	 * Read an GPX object from the given {@code input} stream. This method is a
-	 * shortcut for
-	 * <pre>{@code
-	 * final GPX gpx = GPX.reader().read(input);
-	 * }</pre>
-	 *
-	 * @param input the input stream from where the GPX date is read
-	 * @return the GPX object read from the input stream
-	 * @throws IOException if the GPX object can't be read
-	 * @throws NullPointerException if the given {@code input} stream is
-	 *         {@code null}
-	 * @throws InvalidObjectException if the gpx input is invalid.
-	 */
-	public static GPX read(final InputStream input) throws IOException {
-		return reader(Version.V11, Mode.STRICT).read(input);
-	}
-
-
-	/**
-	 * Read an GPX object from the given {@code input} stream. This method is a
-	 * shortcut for
-	 * <pre>{@code
-	 * final GPX gpx = GPX.reader().read(path);
-	 * }</pre>
+	 * @see Reader
 	 *
 	 * @param path the input path from where the GPX date is read
 	 * @return the GPX object read from the input stream
@@ -1963,25 +1888,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return reader(Version.V11, Mode.STRICT).read(path);
-	}
-
-
-	/**
-	 * Read an GPX object from the given {@code input} stream. This method is a
-	 * shortcut for
-	 * <pre>{@code
-	 * final GPX gpx = GPX.reader().read(path);
-	 * }</pre>
-	 *
-	 * @param path the input path from where the GPX date is read
-	 * @return the GPX object read from the input stream
-	 * @throws IOException if the GPX object can't be read
-	 * @throws NullPointerException if the given {@code input} stream is
-	 *         {@code null}
-	 */
-	public static GPX read(final String path) throws IOException {
-		return reader(Version.V11, Mode.STRICT).read(path);
+		return Reader.of(Version.V11, Mode.STRICT).read(path);
 	}
 
 }

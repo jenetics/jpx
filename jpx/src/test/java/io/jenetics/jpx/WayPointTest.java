@@ -105,7 +105,7 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(gpx.getWayPoints().size(), 1);
