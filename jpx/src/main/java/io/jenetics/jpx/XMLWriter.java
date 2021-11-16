@@ -65,10 +65,32 @@ interface XMLWriter<T> {
 	default <B> XMLWriter<B>
 	map(final Function<? super B, ? extends T> mapper) {
 		return (xml, data) -> {
-			if (data != null && data != Optional.empty()) {
+			if (data != null && !Optional.empty().equals(data)) {
 				final T value = mapper.apply(data);
 				if (value != null && value != Optional.empty()) {
 					write(xml, value);
+				}
+			}
+		};
+	}
+
+	/**
+	 * Maps this writer to a different base type. Mapping to a different data
+	 * type is necessary when you are going to write <em>sub</em>-objects of
+	 * your basic data type {@code T}. E.g. the chromosome length or the
+	 * {@code min} and {@code max} value of an {@code IntegerChromosome}.
+	 *
+	 * @param mapper the mapper function
+	 * @param <B> the new data type of returned writer
+	 * @return a writer with changed type
+	 */
+	default <B> XMLWriter<B>
+	flatMap(final Function<? super B, ? extends Optional<? extends T>> mapper) {
+		return (xml, data) -> {
+			if (data != null && !Optional.empty().equals(data)) {
+				final var value = mapper.apply(data);
+				if (value.isPresent()) {
+					write(xml, value.orElseThrow());
 				}
 			}
 		};
