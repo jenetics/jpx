@@ -56,9 +56,11 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMResult;
 
 import org.w3c.dom.Document;
@@ -1126,31 +1128,53 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read a GPX object from the given {@code in} stream.
+		 * Read a GPX object from the given {@code input} stream.
 		 *
-		 * @param in the input stream from where the GPX date is read
+		 * @param input the input stream from where the GPX date is read
 		 * @return the GPX object read from the in stream
 		 * @throws IOException if the GPX object can't be read
-		 * @throws NullPointerException if the given {@code in} stream is
+		 * @throws NullPointerException if the given {@code input} stream is
 		 *         {@code null}
-		 * @throws InvalidObjectException if the gpx in is invalid.
+		 * @throws InvalidObjectException if the gpx input is invalid.
 		 */
-		public GPX read(final InputStream in)
-			throws IOException, InvalidObjectException
+		public GPX read(final InputStream input)
+			throws IOException
 		{
-			final var f = XMLProvider.provider().xmlInputFactory();
-			try  (var r = new XMLStreamReaderAdapter(f.createXMLStreamReader(in))) {
-				if (r.hasNext()) {
-					r.next();
-					return _reader.read(r, _mode == Mode.LENIENT);
+			return read0(input);
+		}
+
+		private GPX read0(final Object source)
+			throws IOException
+		{
+			try {
+				final var factory = XMLProvider.provider().xmlInputFactory();
+
+				final XMLStreamReader xml;
+				if (source instanceof InputStream input) {
+					xml = factory.createXMLStreamReader(input);
+				} else if (source instanceof Source src) {
+					xml = factory.createXMLStreamReader(src);
 				} else {
-					throw new InvalidObjectException("No 'gpx' element found.");
+					throw new IllegalArgumentException(
+						"Unknown XML source: " + source
+					);
+				}
+
+				try (var reader = new XMLStreamReaderAdapter(xml)) {
+					if (reader.hasNext()) {
+						reader.next();
+						return _reader.read(reader, _mode == Mode.LENIENT);
+					} else {
+						throw new InvalidObjectException("No 'gpx' element found.");
+					}
+				} catch (XMLStreamException e) {
+					throw new InvalidObjectException("Invalid 'gpx' in: " + e.getMessage());
+				} catch (IllegalArgumentException e) {
+					throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
+						.initCause(e);
 				}
 			} catch (XMLStreamException e) {
-				throw new InvalidObjectException("Invalid 'gpx' in: " + e.getMessage());
-			} catch (IllegalArgumentException e) {
-				throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
-						.initCause(e);
+				throw new IOException(e);
 			}
 		}
 
@@ -1162,6 +1186,7 @@ public final class GPX implements Serializable {
 		 * @throws IOException if the GPX object can't be read
 		 * @throws NullPointerException if the given {@code input} stream is
 		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
 		 */
 		public GPX read(final File file) throws IOException {
 			try (FileInputStream fin = new FileInputStream(file);
@@ -1179,6 +1204,7 @@ public final class GPX implements Serializable {
 		 * @throws IOException if the GPX object can't be read
 		 * @throws NullPointerException if the given {@code input} stream is
 		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
 		 */
 		public GPX read(final Path path) throws IOException {
 			return read(path.toFile());
@@ -1192,9 +1218,56 @@ public final class GPX implements Serializable {
 		 * @throws IOException if the GPX object can't be read
 		 * @throws NullPointerException if the given {@code input} stream is
 		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
 		 */
 		public GPX read(final String path) throws IOException {
 			return read(Paths.get(path));
+		}
+
+		/**
+		 * Read a GPX object from the given input {@code source}. The following
+		 * example shows how a {@code GPX} object can be created from an XML
+		 * document.
+		 *
+		 * <pre>{@code
+		 * // The XML document, which contains the GPX data.
+		 * final Document doc = ...;
+		 *
+		 * // Reading the GPX object from the XML document.
+		 * // This method might throw an 'UnsupportedOperationException'
+		 * // if the defined 'javax.xml.stream.XMLInputFactory' doesn't
+		 * // support the given 'DOMSource'.
+		 * final GPX gpx = GPX.Reader.DEFAULT.read(new DOMSource(doc));
+		 * }</pre>
+		 *
+		 * If the {@link javax.xml.transform.dom.DOMSource} is not supported by
+		 * the defined {@link javax.xml.stream.XMLInputFactory}, the {@code GPX}
+		 * object can be created by creating an XML string first and then read
+		 * this GPX string.
+		 * <pre>{@code
+		 * // Workaround, if 'DOMSource' is not supported.
+		 * final var out = new ByteArrayOutputStream();
+		 * TransformerFactory.newInstance().newTransformer()
+		 *     .transform(new DOMSource(doc), new StreamResult(out));
+		 *
+		 * final String xml = out.toString();
+		 * final GPX gpx = GPX.Reader.DEFAULT.fromString(xml);
+		 * }</pre>
+		 *
+		 * @since 3.0
+		 *
+		 * @param source the input source from where the GPX date is read
+		 * @return the GPX object read from the source
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code source} is
+		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
+		 * @throws UnsupportedOperationException if the defined
+		 *         {@link javax.xml.stream.XMLInputFactory} doesn't support
+		 *         the given {@code source}
+		 */
+		public GPX read(final Source source) throws IOException {
+			return read0(source);
 		}
 
 		/**
@@ -1438,13 +1511,15 @@ public final class GPX implements Serializable {
 		 * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
 		 * }</pre>
 		 *
+		 * @since 3.0
+		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param output the output <em>document</em>
 		 * @throws IOException if the writing of the GPX object fails
 		 * @throws NullPointerException if one of the given arguments is
 		 *         {@code null}
 		 */
-		public void write(final GPX gpx, final DOMResult output)
+		public void write(final GPX gpx, final Result output)
 			throws IOException
 		{
 			try {
