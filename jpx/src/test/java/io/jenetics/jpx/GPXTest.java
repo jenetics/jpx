@@ -46,6 +46,7 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.dom.DOMResult;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -104,6 +105,24 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			    </gpxdata:lap>
 			</extensions>
 			""");
+	}
+
+	@Test
+	public void writeToDocument() throws Exception {
+		final var gpx = nextGPX(new Random());
+
+		final var doc = XMLProvider.provider()
+			.documentBuilderFactory()
+			.newDocumentBuilder()
+			.newDocument();
+
+		// The GPX data are written to the empty `doc` object.
+		GPX.Writer.of(null, 20).write(gpx, new DOMResult(doc));
+
+		final var xmlString = XML.toString(doc);
+		final var gpx2 = GPX.Reader.DEFAULT.fromString(xmlString);
+
+		assertThat(gpx2).isEqualTo(gpx);
 	}
 
 	//@Test

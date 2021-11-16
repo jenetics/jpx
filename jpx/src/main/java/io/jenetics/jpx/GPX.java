@@ -58,6 +58,8 @@ import java.util.stream.Stream;
 
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.dom.DOMResult;
 
 import org.w3c.dom.Document;
 
@@ -1311,28 +1313,18 @@ public final class GPX implements Serializable {
 			return _maximumFractionDigits;
 		}
 
-		/**
-		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
-		 *
-		 * @param gpx the GPX object to write to the output
-		 * @param output the output stream where the GPX object is written to
-		 * @throws IOException if the writing of the GPX object fails
-		 * @throws NullPointerException if one of the given arguments is
-		 *         {@code null}
-		 */
-		public void write(final GPX gpx, final OutputStream output)
+		private void write(final GPX gpx, final XMLStreamWriterAdapter output)
 			throws IOException
 		{
-			final XMLOutputFactory factory = XMLProvider.provider().xmlOutputFactory();
-			try (XMLStreamWriterAdapter xml = writer(factory, output)) {
-				xml.writeStartDocument("UTF-8", "1.0");
+			try {
+				output.writeStartDocument("UTF-8", "1.0");
 				final var writer = GPX.xmlWriter(
 					gpx._version,
 					formatter(_maximumFractionDigits)
 				);
-				writer.write(xml, gpx);
-				xml.writeEndDocument();
+				writer.write(output, gpx);
+
+				output.writeEndDocument();
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
 			}
@@ -1346,20 +1338,45 @@ public final class GPX implements Serializable {
 			return value -> value != null ? format.format(value) : null;
 		}
 
-		private XMLStreamWriterAdapter writer(
-			final XMLOutputFactory factory,
-			final OutputStream output
-		)
-			throws XMLStreamException
+		/**
+		 * Writes the given {@code gpx} object (in GPX XML format) to the given
+		 * {@code output} stream.
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param output the output stream where the GPX object is written to
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final OutputStream output)
+			throws IOException
 		{
-			final NonCloseableOutputStream out =
-				new NonCloseableOutputStream(output);
+			try (var writer = writer(output)) {
+				write(gpx, writer);
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
+		}
 
+		private XMLStreamWriterAdapter writer(final OutputStream output)
+			throws IOException
+		{
+			try {
+				final var out = new NonCloseableOutputStream(output);
+				final var writer = XMLProvider.provider()
+					.xmlOutputFactory()
+					.createXMLStreamWriter(out, "UTF-8");
+
+				return writer(writer);
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
+		}
+
+		private XMLStreamWriterAdapter writer(final XMLStreamWriter writer) {
 			return _indent == null
-				? new XMLStreamWriterAdapter(factory
-					.createXMLStreamWriter(out, "UTF-8"))
-				: new IndentingXMLStreamWriter(factory
-					.createXMLStreamWriter(out, "UTF-8"), _indent);
+				? new XMLStreamWriterAdapter(writer)
+				: new IndentingXMLStreamWriter(writer, _indent);
 		}
 
 		/**
@@ -1404,6 +1421,43 @@ public final class GPX implements Serializable {
 		 */
 		public void write(final GPX gpx, final String path) throws IOException {
 			write(gpx, Path.of(path));
+		}
+
+		/**
+		 * Writes the given {@code gpx} object to the given {@link DOMResult}.
+		 *
+		 * <pre>{@code
+		 * final GPX gpx = ...;
+		 *
+		 * final Document doc = XMLProvider.provider()
+		 *     .documentBuilderFactory()
+		 *     .newDocumentBuilder()
+		 *     .newDocument();
+		 *
+		 * // The GPX data are written to the empty `doc` object.
+		 * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+		 * }</pre>
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param output the output <em>document</em>
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final DOMResult output)
+			throws IOException
+		{
+			try {
+				final var sw = XMLProvider.provider()
+					.xmlOutputFactory()
+					.createXMLStreamWriter(output);
+
+				try (var writer = writer(sw)) {
+					write(gpx, writer);
+				}
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
 		}
 
 		/**
