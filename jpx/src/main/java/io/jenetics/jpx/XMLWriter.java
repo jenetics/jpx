@@ -65,7 +65,7 @@ interface XMLWriter<T> {
 	default <B> XMLWriter<B>
 	map(final Function<? super B, ? extends T> mapper) {
 		return (xml, data) -> {
-			if (data != null && !Optional.empty().equals(data)) {
+			if (data != null) {
 				final T value = mapper.apply(data);
 				if (value != null && value != Optional.empty()) {
 					write(xml, value);
@@ -87,7 +87,7 @@ interface XMLWriter<T> {
 	default <B> XMLWriter<B>
 	flatMap(final Function<? super B, ? extends Optional<? extends T>> mapper) {
 		return (xml, data) -> {
-			if (data != null && !Optional.empty().equals(data)) {
+			if (data != null) {
 				final var value = mapper.apply(data);
 				if (value.isPresent()) {
 					write(xml, value.orElseThrow());
@@ -123,7 +123,7 @@ interface XMLWriter<T> {
 		requireNonNull(name);
 
 		return (xml, data) -> {
-			if (data != null && data != Optional.empty()) {
+			if (data != null) {
 				xml.writeAttribute(name, data.toString());
 			}
 		};
@@ -157,7 +157,7 @@ interface XMLWriter<T> {
 		requireNonNull(children);
 
 		return (xml, data) -> {
-			if (data != null && data != Optional.empty()) {
+			if (data != null) {
 				if (children.length > 0) {
 					xml.writeStartElement(name);
 					for (XMLWriter<? super T> child : children) {
@@ -183,7 +183,7 @@ interface XMLWriter<T> {
 	 */
 	static <T> XMLWriter<T> text() {
 		return (xml, data) -> {
-			if (data != null && data != Optional.empty()) {
+			if (data != null) {
 				xml.writeCharacters(data.toString());
 			}
 		};

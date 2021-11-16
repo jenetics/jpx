@@ -1751,10 +1751,10 @@ public final class GPX implements Serializable {
 	writers(final Function<? super Number, String> formatter) {
 		return new XMLWriters<GPX>()
 			.v00(XMLWriter.attr("version").map(gpx -> gpx._version._value))
-			.v00(XMLWriter.attr("creator").map(gpx -> gpx._creator))
+			.v00(XMLWriter.attr("creator").map(GPX::getCreator))
 			.v11(XMLWriter.ns(Version.V11.getNamespaceURI()))
 			.v10(XMLWriter.ns(Version.V10.getNamespaceURI()))
-			.v11(Metadata.writer(formatter).map(gpx -> gpx._metadata))
+			.v11(Metadata.writer(formatter).flatMap(GPX::getMetadata))
 			.v10(XMLWriter.elem("name").map(GPX::name))
 			.v10(XMLWriter.elem("desc").map(GPX::desc))
 			.v10(XMLWriter.elem("author").map(GPX::author))
@@ -1769,7 +1769,7 @@ public final class GPX implements Serializable {
 			.v11(XMLWriter.elems(Route.xmlWriter(Version.V11, formatter)).map(GPX::getRoutes))
 			.v10(XMLWriter.elems(Track.xmlWriter(Version.V10, formatter)).map(GPX::getTracks))
 			.v11(XMLWriter.elems(Track.xmlWriter(Version.V11, formatter)).map(GPX::getTracks))
-			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
+			.v00(XMLWriter.doc("extensions").flatMap(GPX::getExtensions));
 	}
 
 
