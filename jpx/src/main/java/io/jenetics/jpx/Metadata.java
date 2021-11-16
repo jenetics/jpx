@@ -807,7 +807,7 @@ public final class Metadata implements Serializable {
 			XMLWriter.elem("time").map(md -> format(md._time)),
 			XMLWriter.elem("keywords").map(md -> md._keywords),
 			Bounds.writer(formatter).map(md -> md._bounds),
-			XMLWriter.doc("extensions").map(gpx -> gpx._extensions)
+			XMLWriter.doc("extensions").map(md -> md._extensions)
 		);
 	}
 
