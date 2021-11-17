@@ -1141,34 +1141,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Read a GPX object from the given input {@code source}. This is the
-		 * most general method for reading a {@code GPX} object. The following
-		 * example shows how a {@code GPX} object can be created from an XML
-		 * document.
-		 *
-		 * <pre>{@code
-		 * // The XML document, which contains the GPX data.
-		 * final Document doc = ...;
-		 *
-		 * // Reading the GPX object from the XML document.
-		 * // This method might throw an 'UnsupportedOperationException'
-		 * // if the defined 'javax.xml.stream.XMLInputFactory' doesn't
-		 * // support the given 'DOMSource'.
-		 * final GPX gpx = GPX.Reader.DEFAULT.read(new DOMSource(doc));
-		 * }</pre>
-		 *
-		 * If the {@link javax.xml.transform.dom.DOMSource} is not supported by
-		 * the defined {@link javax.xml.stream.XMLInputFactory}, the {@code GPX}
-		 * object can be created by creating an XML string first and then read
-		 * this GPX string.
-		 * <pre>{@code
-		 * // Workaround, if 'DOMSource' is not supported.
-		 * final var out = new ByteArrayOutputStream();
-		 * TransformerFactory.newInstance().newTransformer()
-		 *     .transform(new DOMSource(doc), new StreamResult(out));
-		 *
-		 * final String xml = out.toString();
-		 * final GPX gpx = GPX.Reader.DEFAULT.fromString(xml);
-		 * }</pre>
+		 * most general method for reading a {@code GPX} object.
 		 *
 		 * @since 3.0
 		 *
