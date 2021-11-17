@@ -36,7 +36,7 @@ import java.util.stream.Stream;
  * Enumeration of the valid date time formats.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 3.0
  * @since 1.0
  */
 enum ZonedDateTimeFormat {
@@ -78,8 +78,12 @@ enum ZonedDateTimeFormat {
 	}
 
 	private boolean matches(final String time) {
-		return Stream.of(_patterns)
-			.anyMatch(p -> p.matcher(time).matches());
+		for (var pattern : _patterns) {
+			if  (pattern.matcher(time).matches()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -103,9 +107,13 @@ enum ZonedDateTimeFormat {
 		return time != null ? FORMATTER.format(time) : null;
 	}
 
-	public static Optional<ZonedDateTime> parseOptional(final String time) {
-		return findFormat(time)
-			.map(tf -> tf.formatParse(time));
+	static Optional<ZonedDateTime> parseOptional(final String time) {
+		final var format = findFormat(time);
+		if (format != null) {
+			return Optional.of(format.formatParse(time));
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	/**
@@ -115,13 +123,14 @@ enum ZonedDateTimeFormat {
 	 * @return the formatter which fits to the given {@code time} string, or
 	 *         {@code Optional.empty()} of no formatter is found
 	 */
-	static Optional<ZonedDateTimeFormat> findFormat(final String time) {
-		for (var format : values()) {
-			if (format.matches(time)) {
-				return Optional.of(format);
-			}
+	static ZonedDateTimeFormat findFormat(final String time) {
+		if (ISO_DATE_TIME_UTC.matches(time)) {
+			return ISO_DATE_TIME_UTC;
+		} else if (ISO_DATE_TIME_OFFSET.matches(time)) {
+			return ISO_DATE_TIME_OFFSET;
+		} else {
+			return null;
 		}
-		return Optional.empty();
 	}
 
 	/**
@@ -133,11 +142,18 @@ enum ZonedDateTimeFormat {
 	static ZonedDateTime parse(final String value) {
 		final String time = Strings.trim(value);
 
-		return time != null
-			? ZonedDateTimeFormat.parseOptional(time).orElseThrow(() ->
-				new IllegalArgumentException(
-					String.format("Can't parse time: '%s'", time)))
-			: null;
+		if (time != null) {
+			final var format = findFormat(time);
+			if (format != null) {
+				return format.formatParse(time);
+			} else {
+				throw new IllegalArgumentException(
+					String.format("Can't parse time: '%s'", time)
+				);
+			}
+		} else {
+			return null;
+		}
 	}
 
 }
