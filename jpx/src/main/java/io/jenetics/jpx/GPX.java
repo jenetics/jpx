@@ -1190,14 +1190,7 @@ public final class GPX implements Serializable {
 					.xmlInputFactory()
 					.createXMLStreamReader(source);
 
-				final var closeable = new AutoCloseable() {
-					@Override
-					public void close() throws XMLStreamException {
-						reader.close();
-					}
-				};
-
-				try (closeable; var input = new XMLStreamReaderAdapter(reader)) {
+				try (var input = new XMLStreamReaderAdapter(reader)) {
 					if (input.hasNext()) {
 						input.next();
 
@@ -1435,14 +1428,16 @@ public final class GPX implements Serializable {
 					? new XMLStreamWriterAdapter(writer)
 					: new IndentingXMLStreamWriter(writer, _indent);
 
-				final NumberFormat format = NumberFormat.getNumberInstance(ENGLISH);
-				format.setMaximumFractionDigits(_maximumFractionDigits);
-				final Function<Number, String> formatter = value ->
-					value != null ? format.format(value) : null;
+				try (output) {
+					final NumberFormat format = NumberFormat.getNumberInstance(ENGLISH);
+					format.setMaximumFractionDigits(_maximumFractionDigits);
+					final Function<Number, String> formatter = value ->
+						value != null ? format.format(value) : null;
 
-				output.writeStartDocument("UTF-8", "1.0");
-				GPX.xmlWriter(gpx._version, formatter).write(output, gpx);
-				output.writeEndDocument();
+					output.writeStartDocument("UTF-8", "1.0");
+					GPX.xmlWriter(gpx._version, formatter).write(output, gpx);
+					output.writeEndDocument();
+				}
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
 			}
