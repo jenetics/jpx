@@ -30,6 +30,19 @@ pluginManagement {
 	}
 }
 
+enableFeaturePreview("VERSION_CATALOGS")
+dependencyResolutionManagement {
+	versionCatalogs {
+		create("libs") {
+			alias("assertj").to("org.assertj:assertj-core:3.20.2")
+			alias("commonsmath").to("org.apache.commons:commons-math3:3.6.1")
+			alias("equalsverifier").to("nl.jqno.equalsverifier:equalsverifier:3.7.1")
+			alias("prngine").to("io.jenetics:prngine:2.0.0")
+			alias("testng").to("org.testng:testng:7.4.0")
+		}
+	}
+}
+
 rootProject.name = "jpx"
 
 // The JPX projects.

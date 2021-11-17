@@ -52,7 +52,6 @@ allprojects {
 
 	configurations.all {
 		resolutionStrategy.failOnVersionConflict()
-		resolutionStrategy.force(*Libs.All)
 	}
 }
 
