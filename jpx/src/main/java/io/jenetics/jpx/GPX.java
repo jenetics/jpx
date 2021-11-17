@@ -1122,6 +1122,15 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Return the GPX version {@code this} reader is able to read.
+		 *
+		 * @return the GPX version of {@code this} reader
+		 */
+		public Version getVersion() {
+			return _version;
+		}
+
+		/**
 		 * Return the current reader mode.
 		 *
 		 * @return the current reader mode
@@ -1192,11 +1201,11 @@ public final class GPX implements Serializable {
 					}
 				} catch (XMLStreamException e) {
 					throw new InvalidObjectException(
-						"Invalid 'gpx' in: " + e.getMessage()
+						"Invalid GPX: " + e.getMessage()
 					);
 				} catch (IllegalArgumentException e) {
-					throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
-						.initCause(e);
+					final var ioe = new InvalidObjectException(e.getMessage());
+					throw (InvalidObjectException)ioe.initCause(e);
 				}
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
@@ -1277,15 +1286,14 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public GPX fromString(final String xml) {
-			final byte[] bytes = xml.getBytes();
-			final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 			try {
-				return read(in);
+				return read(new ByteArrayInputStream(xml.getBytes()));
 			} catch (InvalidObjectException e) {
-				if (e.getCause() instanceof IllegalArgumentException) {
-					throw (IllegalArgumentException)e.getCause();
+				if (e.getCause() instanceof IllegalArgumentException iae) {
+					throw iae;
+				} else {
+					throw new IllegalArgumentException(e);
 				}
-				throw new IllegalArgumentException(e);
 			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
