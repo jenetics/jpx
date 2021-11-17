@@ -1190,7 +1190,14 @@ public final class GPX implements Serializable {
 					.xmlInputFactory()
 					.createXMLStreamReader(source);
 
-				try (var input = new XMLStreamReaderAdapter(reader)) {
+				final var closeable = new AutoCloseable() {
+					@Override
+					public void close() throws XMLStreamException {
+						reader.close();
+					}
+				};
+
+				try (closeable; var input = new XMLStreamReaderAdapter(reader)) {
 					if (input.hasNext()) {
 						input.next();
 
