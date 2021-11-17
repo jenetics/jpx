@@ -1402,7 +1402,7 @@ public final class GPX implements Serializable {
 					: new IndentingXMLStreamWriter(writer, _indent);
 
 				try (output) {
-					final NumberFormat format = NumberFormat.getNumberInstance(ENGLISH);
+					final var format = NumberFormat.getNumberInstance(ENGLISH);
 					format.setMaximumFractionDigits(_maximumFractionDigits);
 					final Function<Number, String> formatter = value ->
 						value != null ? format.format(value) : null;
