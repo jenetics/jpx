@@ -228,21 +228,27 @@ fun setupJavadoc(project: Project) {
  * The Java compiler XLint flags.
  */
 fun xlint(): String {
-	// See https://docs.oracle.com/javase/9/tools/javac.htm#JSWOR627
+	// See https://docs.oracle.com/en/java/javase/17/docs/specs/man/javac.html#extra-options
 	return listOf(
+		"auxiliaryclass",
 		"cast",
 		"classfile",
-		"deprecation",
 		"dep-ann",
+		"deprecation",
 		"divzero",
 		"empty",
+		"exports",
 		"finally",
+		"module",
+		"opens",
 		"overrides",
 		"rawtypes",
+		"removal",
 		"serial",
 		"static",
 		"try",
-		"unchecked"
+		"unchecked",
+		"varargs"
 	).joinToString(separator = ",")
 }
 
