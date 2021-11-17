@@ -20,6 +20,8 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Locale.ENGLISH;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copyOf;
@@ -37,8 +39,10 @@ import java.io.InputStream;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serial;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,7 +51,6 @@ import java.text.NumberFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -61,7 +64,7 @@ import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 
@@ -1386,29 +1389,55 @@ public final class GPX implements Serializable {
 			return _maximumFractionDigits;
 		}
 
-		private void write(final GPX gpx, final XMLStreamWriterAdapter output)
+		/**
+		 * Writes the given {@code gpx} object to the given {@link Result}. This
+		 * is the most general way for writing {@link GPX} objects.
+		 * <p>
+		 * The following example shows how to create an XML-Document from a
+		 * given {@code GPX} object.
+		 * <pre>{@code
+		 * final GPX gpx = ...;
+		 *
+		 * final Document doc = XMLProvider.provider()
+		 *     .documentBuilderFactory()
+		 *     .newDocumentBuilder()
+		 *     .newDocument();
+		 *
+		 * // The GPX data are written to the empty `doc` object.
+		 * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+		 * }</pre>
+		 *
+		 * @since 3.0
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param result the output <em>document</em>
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final Result result)
 			throws IOException
 		{
 			try {
-				output.writeStartDocument("UTF-8", "1.0");
-				final var writer = GPX.xmlWriter(
-					gpx._version,
-					formatter(_maximumFractionDigits)
-				);
-				writer.write(output, gpx);
+				final XMLStreamWriter writer = XMLProvider.provider()
+					.xmlOutputFactory()
+					.createXMLStreamWriter(result);
 
+				final XMLStreamWriterAdapter output = _indent == null
+					? new XMLStreamWriterAdapter(writer)
+					: new IndentingXMLStreamWriter(writer, _indent);
+
+				final NumberFormat format = NumberFormat.getNumberInstance(ENGLISH);
+				format.setMaximumFractionDigits(_maximumFractionDigits);
+				final Function<Number, String> formatter = value ->
+					value != null ? format.format(value) : null;
+
+				output.writeStartDocument("UTF-8", "1.0");
+				GPX.xmlWriter(gpx._version, formatter).write(output, gpx);
 				output.writeEndDocument();
 			} catch (XMLStreamException e) {
 				throw new IOException(e);
 			}
-		}
-
-		private static Function<? super Number, String>
-		formatter(final int maximumFractionDigits) {
-			final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-			format.setMaximumFractionDigits(maximumFractionDigits);
-
-			return value -> value != null ? format.format(value) : null;
 		}
 
 		/**
@@ -1424,32 +1453,9 @@ public final class GPX implements Serializable {
 		public void write(final GPX gpx, final OutputStream output)
 			throws IOException
 		{
-			try (var writer = writer(output)) {
-				write(gpx, writer);
-			} catch (XMLStreamException e) {
-				throw new IOException(e);
+			try (var writer = new OutputStreamWriter(output, UTF_8)) {
+				write(gpx, new StreamResult(writer));
 			}
-		}
-
-		private XMLStreamWriterAdapter writer(final OutputStream output)
-			throws IOException
-		{
-			try {
-				final var out = new NonCloseableOutputStream(output);
-				final var writer = XMLProvider.provider()
-					.xmlOutputFactory()
-					.createXMLStreamWriter(out, "UTF-8");
-
-				return writer(writer);
-			} catch (XMLStreamException e) {
-				throw new IOException(e);
-			}
-		}
-
-		private XMLStreamWriterAdapter writer(final XMLStreamWriter writer) {
-			return _indent == null
-				? new XMLStreamWriterAdapter(writer)
-				: new IndentingXMLStreamWriter(writer, _indent);
 		}
 
 		/**
@@ -1497,45 +1503,6 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Writes the given {@code gpx} object to the given {@link DOMResult}.
-		 *
-		 * <pre>{@code
-		 * final GPX gpx = ...;
-		 *
-		 * final Document doc = XMLProvider.provider()
-		 *     .documentBuilderFactory()
-		 *     .newDocumentBuilder()
-		 *     .newDocument();
-		 *
-		 * // The GPX data are written to the empty `doc` object.
-		 * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
-		 * }</pre>
-		 *
-		 * @since 3.0
-		 *
-		 * @param gpx the GPX object to write to the output
-		 * @param output the output <em>document</em>
-		 * @throws IOException if the writing of the GPX object fails
-		 * @throws NullPointerException if one of the given arguments is
-		 *         {@code null}
-		 */
-		public void write(final GPX gpx, final Result output)
-			throws IOException
-		{
-			try {
-				final var sw = XMLProvider.provider()
-					.xmlOutputFactory()
-					.createXMLStreamWriter(output);
-
-				try (var writer = writer(sw)) {
-					write(gpx, writer);
-				}
-			} catch (XMLStreamException e) {
-				throw new IOException(e);
-			}
-		}
-
-		/**
 		 * Create an XML string representation of the given {@code gpx} object.
 		 *
 		 * @param gpx the GPX object to convert to a string
@@ -1548,7 +1515,7 @@ public final class GPX implements Serializable {
 				write(gpx, out);
 				return out.toString();
 			} catch (IOException e) {
-				throw new AssertionError("Unexpected error: " + e);
+				throw new UncheckedIOException(e);
 			}
 		}
 
