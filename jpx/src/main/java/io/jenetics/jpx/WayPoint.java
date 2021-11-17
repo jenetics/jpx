@@ -642,12 +642,12 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Set the elevation of the point.
 		 *
-		 * @param meters the elevation of the point
+		 * @param elevation the elevation of the point
 		 * @param unit the length unit
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder ele(final double meters, final Length.Unit unit) {
-			_elevation = Length.of(meters, unit);
+		public Builder ele(final double elevation, final Length.Unit unit) {
+			_elevation = Length.of(elevation, unit);
 			return this;
 		}
 
