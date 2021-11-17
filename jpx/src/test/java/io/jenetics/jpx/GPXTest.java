@@ -46,6 +46,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -104,6 +108,48 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			    </gpxdata:lap>
 			</extensions>
 			""");
+	}
+
+	@Test
+	public void writeToDocument() throws Exception {
+		final var gpx = nextGPX(new Random());
+
+		final var doc = XMLProvider.provider()
+			.documentBuilderFactory()
+			.newDocumentBuilder()
+			.newDocument();
+
+		// The GPX data are written to the empty `doc` object.
+		GPX.Writer.of(null, 20).write(gpx, new DOMResult(doc));
+
+		final var xmlString = XML.toString(doc);
+		final var gpx2 = GPX.Reader.DEFAULT.fromString(xmlString);
+
+		assertThat(gpx2).isEqualTo(gpx);
+	}
+
+	@Test
+	public void readFromDocument() throws Exception {
+		final var gpx = nextGPX(new Random());
+
+		final var doc = XMLProvider.provider()
+			.documentBuilderFactory()
+			.newDocumentBuilder()
+			.newDocument();
+
+		// The GPX data are written to the empty `doc` object.
+		GPX.Writer.of(null, 20).write(gpx, new DOMResult(doc));
+
+		//final var gpx2 = GPX.Reader.DEFAULT.read(new DOMSource(doc));
+		//assertThat(gpx2).isEqualTo(gpx);
+
+		final var out = new ByteArrayOutputStream();
+		TransformerFactory.newInstance().newTransformer()
+			.transform(new DOMSource(doc), new StreamResult(out));
+
+		final String xml = out.toString();
+		final GPX gpx2 = GPX.Reader.DEFAULT.fromString(out.toString());
+		assertThat(gpx2).isEqualTo(gpx);
 	}
 
 	//@Test

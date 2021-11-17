@@ -20,25 +20,28 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Locale.ENGLISH;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.Lists.copyTo;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serial;
 import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -47,7 +50,6 @@ import java.text.NumberFormat;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -56,8 +58,13 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
@@ -1106,12 +1113,21 @@ public final class GPX implements Serializable {
 		 */
 		public static final Reader DEFAULT =  Reader.of(Version.V11, Mode.STRICT);
 
-		private final XMLReader<GPX> _reader;
+		private final Version _version;
 		private final Mode _mode;
 
-		private Reader(final XMLReader<GPX> reader, final Mode mode) {
-			_reader = requireNonNull(reader);
+		private Reader(final Version version, final Mode mode) {
+			_version = requireNonNull(version);
 			_mode = requireNonNull(mode);
+		}
+
+		/**
+		 * Return the GPX version {@code this} reader is able to read.
+		 *
+		 * @return the GPX version of {@code this} reader
+		 */
+		public Version getVersion() {
+			return _version;
 		}
 
 		/**
@@ -1124,72 +1140,109 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read a GPX object from the given {@code in} stream.
+		 * Read a GPX object from the given input {@code source}. This is the
+		 * most general method for reading a {@code GPX} object.
 		 *
-		 * @param in the input stream from where the GPX date is read
-		 * @return the GPX object read from the in stream
+		 * @since 3.0
+		 *
+		 * @param source the input source from where the GPX date is read
+		 * @return the GPX object read from the source
 		 * @throws IOException if the GPX object can't be read
-		 * @throws NullPointerException if the given {@code in} stream is
+		 * @throws NullPointerException if the given {@code source} is
 		 *         {@code null}
-		 * @throws InvalidObjectException if the gpx in is invalid.
+		 * @throws InvalidObjectException if the gpx input is invalid.
+		 * @throws UnsupportedOperationException if the defined
+		 *         {@link javax.xml.stream.XMLInputFactory} doesn't support
+		 *         the given {@code source}
 		 */
-		public GPX read(final InputStream in)
-			throws IOException, InvalidObjectException
+		public GPX read(final Source source)
+			throws IOException
 		{
-			final var f = XMLProvider.provider().xmlInputFactory();
-			try  (var r = new XMLStreamReaderAdapter(f.createXMLStreamReader(in))) {
-				if (r.hasNext()) {
-					r.next();
-					return _reader.read(r, _mode == Mode.LENIENT);
-				} else {
-					throw new InvalidObjectException("No 'gpx' element found.");
+			try {
+				final XMLStreamReader reader = XMLProvider.provider()
+					.xmlInputFactory()
+					.createXMLStreamReader(source);
+
+				try (var input = new XMLStreamReaderAdapter(reader)) {
+					if (input.hasNext()) {
+						input.next();
+
+						return GPX.xmlReader(_version)
+							.read(input, _mode == Mode.LENIENT);
+					} else {
+						throw new InvalidObjectException("No 'gpx' element found.");
+					}
+				} catch (XMLStreamException e) {
+					throw new InvalidObjectException(
+						"Invalid GPX: " + e.getMessage()
+					);
+				} catch (IllegalArgumentException e) {
+					final var ioe = new InvalidObjectException(e.getMessage());
+					throw (InvalidObjectException)ioe.initCause(e);
 				}
 			} catch (XMLStreamException e) {
-				throw new InvalidObjectException("Invalid 'gpx' in: " + e.getMessage());
-			} catch (IllegalArgumentException e) {
-				throw (InvalidObjectException)new InvalidObjectException(e.getMessage())
-						.initCause(e);
+				throw new IOException(e);
 			}
 		}
 
 		/**
 		 * Read a GPX object from the given {@code input} stream.
+		 *
+		 * @param input the input stream from where the GPX date is read
+		 * @return the GPX object read from the in stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
+		 */
+		public GPX read(final InputStream input)
+			throws IOException
+		{
+			final var wrapper = new NonCloseableInputStream(input);
+			try (var reader = new InputStreamReader(wrapper, UTF_8)) {
+				return read(new StreamSource(reader));
+			}
+		}
+
+		/**
+		 * Read a GPX object from the given {@code path}.
+		 *
+		 * @param path the input path from where the GPX date is read
+		 * @return the GPX object read from the input stream
+		 * @throws IOException if the GPX object can't be read
+		 * @throws NullPointerException if the given {@code input} stream is
+		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
+		 */
+		public GPX read(final Path path) throws IOException {
+			try (var input = Files.newInputStream(path)) {
+				return read(input);
+			}
+		}
+
+		/**
+		 * Read a GPX object from the given {@code file}.
 		 *
 		 * @param file the input file from where the GPX date is read
 		 * @return the GPX object read from the input stream
 		 * @throws IOException if the GPX object can't be read
 		 * @throws NullPointerException if the given {@code input} stream is
 		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
 		 */
 		public GPX read(final File file) throws IOException {
-			try (FileInputStream fin = new FileInputStream(file);
-				 BufferedInputStream bin = new BufferedInputStream(fin))
-			{
-				return read(bin);
-			}
+			return read(file.toPath());
 		}
 
 		/**
-		 * Read a GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code path}.
 		 *
 		 * @param path the input path from where the GPX date is read
 		 * @return the GPX object read from the input stream
 		 * @throws IOException if the GPX object can't be read
 		 * @throws NullPointerException if the given {@code input} stream is
 		 *         {@code null}
-		 */
-		public GPX read(final Path path) throws IOException {
-			return read(path.toFile());
-		}
-
-		/**
-		 * Read a GPX object from the given {@code input} stream.
-		 *
-		 * @param path the input path from where the GPX date is read
-		 * @return the GPX object read from the input stream
-		 * @throws IOException if the GPX object can't be read
-		 * @throws NullPointerException if the given {@code input} stream is
-		 *         {@code null}
+		 * @throws InvalidObjectException if the gpx input is invalid.
 		 */
 		public GPX read(final String path) throws IOException {
 			return read(Paths.get(path));
@@ -1206,15 +1259,14 @@ public final class GPX implements Serializable {
 		 *         {@code null}
 		 */
 		public GPX fromString(final String xml) {
-			final byte[] bytes = xml.getBytes();
-			final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 			try {
-				return read(in);
+				return read(new ByteArrayInputStream(xml.getBytes()));
 			} catch (InvalidObjectException e) {
-				if (e.getCause() instanceof IllegalArgumentException) {
-					throw (IllegalArgumentException)e.getCause();
+				if (e.getCause() instanceof IllegalArgumentException iae) {
+					throw iae;
+				} else {
+					throw new IllegalArgumentException(e);
 				}
-				throw new IllegalArgumentException(e);
 			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
@@ -1236,7 +1288,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the arguments is {@code null}
 		 */
 		public static Reader of(final Version version, final Mode mode) {
-			return new Reader(GPX.xmlReader(version), mode);
+			return new Reader(version, mode);
 		}
 
 		/**
@@ -1250,7 +1302,7 @@ public final class GPX implements Serializable {
 		 * @throws NullPointerException if one of the arguments is {@code null}
 		 */
 		public static Reader of(final Mode mode) {
-			return new Reader(GPX.xmlReader(Version.V11), mode);
+			return new Reader(Version.V11, mode);
 		}
 
 	}
@@ -1312,8 +1364,62 @@ public final class GPX implements Serializable {
 		}
 
 		/**
+		 * Writes the given {@code gpx} object to the given {@code result}. This
+		 * is the most general way for writing {@link GPX} objects.
+		 * <p>
+		 * The following example shows how to create an XML-Document from a
+		 * given {@code GPX} object.
+		 * <pre>{@code
+		 * final GPX gpx = ...;
+		 *
+		 * final Document doc = XMLProvider.provider()
+		 *     .documentBuilderFactory()
+		 *     .newDocumentBuilder()
+		 *     .newDocument();
+		 *
+		 * // The GPX data are written to the empty `doc` object.
+		 * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+		 * }</pre>
+		 *
+		 * @since 3.0
+		 *
+		 * @param gpx the GPX object to write to the output
+		 * @param result the output <em>document</em>
+		 * @throws IOException if the writing of the GPX object fails
+		 * @throws NullPointerException if one of the given arguments is
+		 *         {@code null}
+		 */
+		public void write(final GPX gpx, final Result result)
+			throws IOException
+		{
+			try {
+				final XMLStreamWriter writer = XMLProvider.provider()
+					.xmlOutputFactory()
+					.createXMLStreamWriter(result);
+
+				final XMLStreamWriterAdapter output = _indent == null
+					? new XMLStreamWriterAdapter(writer)
+					: new IndentingXMLStreamWriter(writer, _indent);
+
+				try (output) {
+					final var format = NumberFormat.getNumberInstance(ENGLISH);
+					format.setMaximumFractionDigits(_maximumFractionDigits);
+					final Function<Number, String> formatter = value ->
+						value != null ? format.format(value) : null;
+
+					output.writeStartDocument("UTF-8", "1.0");
+					GPX.xmlWriter(gpx._version, formatter).write(output, gpx);
+					output.writeEndDocument();
+				}
+			} catch (XMLStreamException e) {
+				throw new IOException(e);
+			}
+		}
+
+		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
+		 * {@code output} stream. <em>The caller of this method is responsible
+		 * for closing the given {@code output} stream.</em>
 		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param output the output stream where the GPX object is written to
@@ -1324,47 +1430,15 @@ public final class GPX implements Serializable {
 		public void write(final GPX gpx, final OutputStream output)
 			throws IOException
 		{
-			final XMLOutputFactory factory = XMLProvider.provider().xmlOutputFactory();
-			try (XMLStreamWriterAdapter xml = writer(factory, output)) {
-				xml.writeStartDocument("UTF-8", "1.0");
-				final var writer = GPX.xmlWriter(
-					gpx._version,
-					formatter(_maximumFractionDigits)
-				);
-				writer.write(xml, gpx);
-				xml.writeEndDocument();
-			} catch (XMLStreamException e) {
-				throw new IOException(e);
+			final var wrapper = new NonCloseableOutputStream(output);
+			try (var writer = new OutputStreamWriter(wrapper, UTF_8)) {
+				write(gpx, new StreamResult(writer));
 			}
-		}
-
-		private static Function<? super Number, String>
-		formatter(final int maximumFractionDigits) {
-			final var format = NumberFormat.getNumberInstance(Locale.ENGLISH);
-			format.setMaximumFractionDigits(maximumFractionDigits);
-
-			return value -> value != null ? format.format(value) : null;
-		}
-
-		private XMLStreamWriterAdapter writer(
-			final XMLOutputFactory factory,
-			final OutputStream output
-		)
-			throws XMLStreamException
-		{
-			final NonCloseableOutputStream out =
-				new NonCloseableOutputStream(output);
-
-			return _indent == null
-				? new XMLStreamWriterAdapter(factory
-					.createXMLStreamWriter(out, "UTF-8"))
-				: new IndentingXMLStreamWriter(factory
-					.createXMLStreamWriter(out, "UTF-8"), _indent);
 		}
 
 		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
+		 * {@code path}.
 		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param path the output path where the GPX object is written to
@@ -1380,7 +1454,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
+		 * {@code file}.
 		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param file the output file where the GPX object is written to
@@ -1394,7 +1468,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
+		 * {@code path}.
 		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param path the output path where the GPX object is written to
@@ -1419,7 +1493,7 @@ public final class GPX implements Serializable {
 				write(gpx, out);
 				return out.toString();
 			} catch (IOException e) {
-				throw new AssertionError("Unexpected error: " + e);
+				throw new UncheckedIOException(e);
 			}
 		}
 
