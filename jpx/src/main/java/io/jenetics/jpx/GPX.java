@@ -1205,7 +1205,7 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read a GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code path}.
 		 *
 		 * @param path the input path from where the GPX date is read
 		 * @return the GPX object read from the input stream
@@ -1221,7 +1221,7 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read a GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code file}.
 		 *
 		 * @param file the input file from where the GPX date is read
 		 * @return the GPX object read from the input stream
@@ -1235,7 +1235,7 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Read a GPX object from the given {@code input} stream.
+		 * Read a GPX object from the given {@code path}.
 		 *
 		 * @param path the input path from where the GPX date is read
 		 * @return the GPX object read from the input stream
@@ -1364,7 +1364,7 @@ public final class GPX implements Serializable {
 		}
 
 		/**
-		 * Writes the given {@code gpx} object to the given {@link Result}. This
+		 * Writes the given {@code gpx} object to the given {@code result}. This
 		 * is the most general way for writing {@link GPX} objects.
 		 * <p>
 		 * The following example shows how to create an XML-Document from a
@@ -1438,7 +1438,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
+		 * {@code path}.
 		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param path the output path where the GPX object is written to
@@ -1454,7 +1454,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
+		 * {@code file}.
 		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param file the output file where the GPX object is written to
@@ -1468,7 +1468,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Writes the given {@code gpx} object (in GPX XML format) to the given
-		 * {@code output} stream.
+		 * {@code path}.
 		 *
 		 * @param gpx the GPX object to write to the output
 		 * @param path the output path where the GPX object is written to
