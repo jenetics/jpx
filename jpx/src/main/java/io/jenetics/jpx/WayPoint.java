@@ -22,9 +22,8 @@ package io.jenetics.jpx;
 import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Format.doubleString;
-import static io.jenetics.jpx.Format.durationString;
-import static io.jenetics.jpx.Format.intString;
+import static io.jenetics.jpx.Format.toDurationString;
+import static io.jenetics.jpx.Format.toIntString;
 import static io.jenetics.jpx.Length.Unit.METER;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.Lists.copyTo;
@@ -35,6 +34,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.Duration;
@@ -45,6 +45,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.w3c.dom.Document;
 
@@ -67,6 +68,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class WayPoint implements Point, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final Latitude _latitude;
@@ -469,29 +471,29 @@ public final class WayPoint implements Point, Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof WayPoint &&
-			Objects.equals(((WayPoint)obj)._latitude, _latitude) &&
-			Objects.equals(((WayPoint)obj)._longitude, _longitude) &&
-			Objects.equals(((WayPoint)obj)._elevation, _elevation) &&
-			Objects.equals(((WayPoint)obj)._speed, _speed) &&
-			ZonedDateTimes.equals(((WayPoint)obj)._time, _time) &&
-			Objects.equals(((WayPoint)obj)._magneticVariation, _magneticVariation) &&
-			Objects.equals(((WayPoint)obj)._geoidHeight, _geoidHeight) &&
-			Objects.equals(((WayPoint)obj)._name, _name) &&
-			Objects.equals(((WayPoint)obj)._comment, _comment) &&
-			Objects.equals(((WayPoint)obj)._description, _description) &&
-			Objects.equals(((WayPoint)obj)._source, _source) &&
-			Lists.equals(((WayPoint)obj)._links, _links) &&
-			Objects.equals(((WayPoint)obj)._symbol, _symbol) &&
-			Objects.equals(((WayPoint)obj)._type, _type) &&
-			Objects.equals(((WayPoint)obj)._fix, _fix) &&
-			Objects.equals(((WayPoint)obj)._sat, _sat) &&
-			Objects.equals(((WayPoint)obj)._hdop, _hdop) &&
-			Objects.equals(((WayPoint)obj)._vdop, _vdop) &&
-			Objects.equals(((WayPoint)obj)._pdop, _pdop) &&
-			Objects.equals(((WayPoint)obj)._ageOfGPSData, _ageOfGPSData) &&
-			Objects.equals(((WayPoint)obj)._dgpsID, _dgpsID) &&
-			Objects.equals(((WayPoint)obj)._course, _course);
+			obj instanceof WayPoint wp &&
+			Objects.equals(wp._latitude, _latitude) &&
+			Objects.equals(wp._longitude, _longitude) &&
+			Objects.equals(wp._elevation, _elevation) &&
+			Objects.equals(wp._speed, _speed) &&
+			ZonedDateTimes.equals(wp._time, _time) &&
+			Objects.equals(wp._magneticVariation, _magneticVariation) &&
+			Objects.equals(wp._geoidHeight, _geoidHeight) &&
+			Objects.equals(wp._name, _name) &&
+			Objects.equals(wp._comment, _comment) &&
+			Objects.equals(wp._description, _description) &&
+			Objects.equals(wp._source, _source) &&
+			Lists.equals(wp._links, _links) &&
+			Objects.equals(wp._symbol, _symbol) &&
+			Objects.equals(wp._type, _type) &&
+			Objects.equals(wp._fix, _fix) &&
+			Objects.equals(wp._sat, _sat) &&
+			Objects.equals(wp._hdop, _hdop) &&
+			Objects.equals(wp._vdop, _vdop) &&
+			Objects.equals(wp._pdop, _pdop) &&
+			Objects.equals(wp._ageOfGPSData, _ageOfGPSData) &&
+			Objects.equals(wp._dgpsID, _dgpsID) &&
+			Objects.equals(wp._course, _course);
 	}
 
 	@Override
@@ -640,12 +642,12 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Set the elevation of the point.
 		 *
-		 * @param meters the elevation of the point
+		 * @param elevation the elevation of the point
 		 * @param unit the length unit
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder ele(final double meters, final Length.Unit unit) {
-			_elevation = Length.of(meters, unit);
+		public Builder ele(final double elevation, final Length.Unit unit) {
+			_elevation = Length.of(elevation, unit);
 			return this;
 		}
 
@@ -1513,6 +1515,104 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	/**
+	 * Create a new way-point with the given parameter.
+	 *
+	 * @since 2.2
+	 *
+	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
+	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
+	 * @param elevation the elevation (in meters) of the point (optional)
+	 * @param speed the current GPS speed (optional)
+	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 *        8601 specification for date/time representation. Fractional seconds
+	 *        are allowed for millisecond timing in tracklogs. (optional)
+	 * @param magneticVariation the magnetic variation at the point (optional)
+	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
+	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
+	 * @param name the GPS name of the way-point. This field will be transferred
+	 *        to and from the GPS. GPX does not place restrictions on the length
+	 *        of this field or the characters contained in it. It is up to the
+	 *        receiving application to validate the field before sending it to
+	 *        the GPS. (optional)
+	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
+	 * @param description a text description of the element. Holds additional
+	 *        information about the element intended for the user, not the GPS.
+	 *        (optional)
+	 * @param source source of data. Included to give user some idea of
+	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
+	 *        Boston North", e.g. (optional)
+	 * @param links links to additional information about the way-point. May be
+	 *        empty, but not {@code null}.
+	 * @param symbol text of GPS symbol name. For interchange with other
+	 *        programs, use the exact spelling of the symbol as displayed on the
+	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
+	 * @param type type (classification) of the way-point (optional)
+	 * @param fix type of GPX fix (optional)
+	 * @param sat number of satellites used to calculate the GPX fix (optional)
+	 * @param hdop horizontal dilution of precision (optional)
+	 * @param vdop vertical dilution of precision (optional)
+	 * @param pdop position dilution of precision. (optional)
+	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
+	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @param course the Instantaneous course at the point
+	 * @param extensions the extensions document
+	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
+	 *         is {@code null}
+	 * @return a new {@code WayPoint}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Length elevation,
+		final Speed speed,
+		final Instant time,
+		final Degrees magneticVariation,
+		final Length geoidHeight,
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final String symbol,
+		final String type,
+		final Fix fix,
+		final UInt sat,
+		final Double hdop,
+		final Double vdop,
+		final Double pdop,
+		final Duration ageOfGPSData,
+		final DGPSStation dgpsID,
+		final Degrees course,
+		final Document extensions
+	) {
+		return new WayPoint(
+			latitude,
+			longitude,
+			elevation,
+			speed,
+			time != null ? ZonedDateTime.ofInstant(time, UTC) : null,
+			magneticVariation,
+			geoidHeight,
+			name,
+			comment,
+			description,
+			source,
+			links,
+			symbol,
+			type,
+			fix,
+			sat,
+			hdop,
+			vdop,
+			pdop,
+			ageOfGPSData,
+			dgpsID,
+			course,
+			XML.extensions(XML.clone(extensions))
+		);
+	}
+
+	/**
 	 * Create a new {@code WayPoint} with the given {@code latitude} and
 	 * {@code longitude} value.
 	 *
@@ -1530,7 +1630,7 @@ public final class WayPoint implements Point, Serializable {
 			longitude,
 			null,
 			null,
-			null,
+			(ZonedDateTime)null,
 			null,
 			null,
 			null,
@@ -1616,6 +1716,49 @@ public final class WayPoint implements Point, Serializable {
 	/**
 	 * Create a new {@code WayPoint} with the given parameters.
 	 *
+	 * @since 2.2
+	 *
+	 * @param latitude the latitude of the point
+	 * @param longitude the longitude of the point
+	 * @param time the timestamp of the way-point
+	 * @return a new {@code WayPoint}
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Instant time
+	) {
+		return of(
+			latitude,
+			longitude,
+			null,
+			null,
+			time,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
+	}
+
+	/**
+	 * Create a new {@code WayPoint} with the given parameters.
+	 *
 	 * @param latitudeDegree the latitude of the point
 	 * @param longitudeDegree the longitude of the point
 	 * @param timeEpochMilli the timestamp of the way-point
@@ -1652,6 +1795,51 @@ public final class WayPoint implements Point, Serializable {
 		final Longitude longitude,
 		final Length elevation,
 		final ZonedDateTime time
+	) {
+		return of(
+			latitude,
+			longitude,
+			elevation,
+			null,
+			time,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null
+		);
+	}
+
+	/**
+	 * Create a new {@code WayPoint} with the given parameters.
+	 *
+	 * @since 2.2
+	 *
+	 * @param latitude the latitude of the point
+	 * @param longitude the longitude of the point
+	 * @param elevation the elevation of the point
+	 * @param time the timestamp of the way-point
+	 * @return a new {@code WayPoint}
+	 * @throws NullPointerException if one of the given arguments is {@code null}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Length elevation,
+		final Instant time
 	) {
 		return of(
 			latitude,
@@ -1806,6 +1994,102 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	/**
+	 * Create a new way-point with the given parameter.
+	 *
+	 * @since 2.2
+	 *
+	 * @param latitude the latitude of the point, WGS84 datum (mandatory)
+	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
+	 * @param elevation the elevation (in meters) of the point (optional)
+	 * @param speed the current GPS speed (optional)
+	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 *        8601 specification for date/time representation. Fractional seconds
+	 *        are allowed for millisecond timing in tracklogs. (optional)
+	 * @param magneticVariation the magnetic variation at the point (optional)
+	 * @param geoidHeight height (in meters) of geoid (mean sea level) above
+	 *        WGS84 earth ellipsoid. As defined in NMEA GGA message. (optional)
+	 * @param name the GPS name of the way-point. This field will be transferred
+	 *        to and from the GPS. GPX does not place restrictions on the length
+	 *        of this field or the characters contained in it. It is up to the
+	 *        receiving application to validate the field before sending it to
+	 *        the GPS. (optional)
+	 * @param comment GPS way-point comment. Sent to GPS as comment (optional)
+	 * @param description a text description of the element. Holds additional
+	 *        information about the element intended for the user, not the GPS.
+	 *        (optional)
+	 * @param source source of data. Included to give user some idea of
+	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
+	 *        Boston North", e.g. (optional)
+	 * @param links links to additional information about the way-point. May be
+	 *        empty, but not {@code null}.
+	 * @param symbol text of GPS symbol name. For interchange with other
+	 *        programs, use the exact spelling of the symbol as displayed on the
+	 *        GPS. If the GPS abbreviates words, spell them out. (optional)
+	 * @param type type (classification) of the way-point (optional)
+	 * @param fix type of GPX fix (optional)
+	 * @param sat number of satellites used to calculate the GPX fix (optional)
+	 * @param hdop horizontal dilution of precision (optional)
+	 * @param vdop vertical dilution of precision (optional)
+	 * @param pdop position dilution of precision. (optional)
+	 * @param ageOfGPSData number of seconds since last DGPS update (optional)
+	 * @param dgpsID ID of DGPS station used in differential correction (optional)
+	 * @param course the Instantaneous course at the point
+	 * @throws NullPointerException if the {@code latitude} or {@code longitude}
+	 *         is {@code null}
+	 * @return a new {@code WayPoint}
+	 */
+	public static WayPoint of(
+		final Latitude latitude,
+		final Longitude longitude,
+		final Length elevation,
+		final Speed speed,
+		final Instant time,
+		final Degrees magneticVariation,
+		final Length geoidHeight,
+		final String name,
+		final String comment,
+		final String description,
+		final String source,
+		final List<Link> links,
+		final String symbol,
+		final String type,
+		final Fix fix,
+		final UInt sat,
+		final Double hdop,
+		final Double vdop,
+		final Double pdop,
+		final Duration ageOfGPSData,
+		final DGPSStation dgpsID,
+		final Degrees course
+	) {
+		return of(
+			latitude,
+			longitude,
+			elevation,
+			speed,
+			time,
+			magneticVariation,
+			geoidHeight,
+			name,
+			comment,
+			description,
+			source,
+			links,
+			symbol,
+			type,
+			fix,
+			sat,
+			hdop,
+			vdop,
+			pdop,
+			ageOfGPSData,
+			dgpsID,
+			course,
+			null
+		);
+	}
+
+	/**
 	 * Return a (new) WayPoint from the given input {@code point}. If the given
 	 * {@code point} is already a {@code WayPoint} instance, the input is casted
 	 * to a {@code WayPoint} and returned.
@@ -1833,10 +2117,12 @@ public final class WayPoint implements Point, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() throws IOException {
-		return new Serial(Serial.WAY_POINT, this);
+		return new SerialProxy(SerialProxy.WAY_POINT, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
@@ -2003,32 +2289,35 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	// Define the needed writers for the different versions.
-	private static final XMLWriters<WayPoint> WRITERS = new XMLWriters<WayPoint>()
-		.v00(XMLWriter.attr("lat").map(wp -> wp._latitude))
-		.v00(XMLWriter.attr("lon").map(wp -> wp._longitude))
-		.v00(XMLWriter.elem("ele").map(wp -> doubleString(wp._elevation)))
-		.v00(XMLWriter.elem("speed").map(wp -> doubleString(wp._speed)))
-		.v00(XMLWriter.elem("time").map(wp -> ZonedDateTimeFormat.format(wp._time)))
-		.v00(XMLWriter.elem("magvar").map(wp -> doubleString(wp._magneticVariation)))
-		.v00(XMLWriter.elem("geoidheight").map(wp -> doubleString(wp._geoidHeight)))
-		.v00(XMLWriter.elem("name").map(wp -> wp._name))
-		.v00(XMLWriter.elem("cmt").map(wp -> wp._comment))
-		.v00(XMLWriter.elem("desc").map(wp -> wp._description))
-		.v00(XMLWriter.elem("src").map(wp -> wp._source))
-		.v11(XMLWriter.elems(Link.WRITER).map(wp -> wp._links))
-		.v10(XMLWriter.elem("url").map(WayPoint::url))
-		.v10(XMLWriter.elem("urlname").map(WayPoint::urlname))
-		.v00(XMLWriter.elem("sym").map(wp -> wp._symbol))
-		.v00(XMLWriter.elem("type").map(wp -> wp._type))
-		.v00(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)))
-		.v00(XMLWriter.elem("sat").map(wp -> intString(wp._sat)))
-		.v00(XMLWriter.elem("hdop").map(wp -> doubleString(wp._hdop)))
-		.v00(XMLWriter.elem("vdop").map(wp -> doubleString(wp._vdop)))
-		.v00(XMLWriter.elem("pdop").map(wp -> doubleString(wp._pdop)))
-		.v00(XMLWriter.elem("ageofdgpsdata").map(wp -> durationString(wp._ageOfGPSData)))
-		.v00(XMLWriter.elem("dgpsid").map(wp -> intString(wp._dgpsID)))
-		.v10(XMLWriter.elem("course").map(wp -> doubleString(wp._course)))
-		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
+	private static XMLWriters<WayPoint>
+	writers(final Function<? super Number, String> formatter) {
+		return new XMLWriters<WayPoint>()
+			.v00(XMLWriter.attr("lat").map(wp -> formatter.apply(wp._latitude)))
+			.v00(XMLWriter.attr("lon").map(wp -> formatter.apply(wp._longitude)))
+			.v00(XMLWriter.elem("ele").map(wp -> formatter.apply(wp._elevation)))
+			.v00(XMLWriter.elem("speed").map(wp -> formatter.apply(wp._speed)))
+			.v00(XMLWriter.elem("time").map(wp -> ZonedDateTimeFormat.format(wp._time)))
+			.v00(XMLWriter.elem("magvar").map(wp -> formatter.apply(wp._magneticVariation)))
+			.v00(XMLWriter.elem("geoidheight").map(wp -> formatter.apply(wp._geoidHeight)))
+			.v00(XMLWriter.elem("name").map(wp -> wp._name))
+			.v00(XMLWriter.elem("cmt").map(wp -> wp._comment))
+			.v00(XMLWriter.elem("desc").map(wp -> wp._description))
+			.v00(XMLWriter.elem("src").map(wp -> wp._source))
+			.v11(XMLWriter.elems(Link.WRITER).map(wp -> wp._links))
+			.v10(XMLWriter.elem("url").map(WayPoint::url))
+			.v10(XMLWriter.elem("urlname").map(WayPoint::urlname))
+			.v00(XMLWriter.elem("sym").map(wp -> wp._symbol))
+			.v00(XMLWriter.elem("type").map(wp -> wp._type))
+			.v00(XMLWriter.elem("fix").map(wp -> Fix.format(wp._fix)))
+			.v00(XMLWriter.elem("sat").map(wp -> toIntString(wp._sat)))
+			.v00(XMLWriter.elem("hdop").map(wp -> formatter.apply(wp._hdop)))
+			.v00(XMLWriter.elem("vdop").map(wp -> formatter.apply(wp._vdop)))
+			.v00(XMLWriter.elem("pdop").map(wp -> formatter.apply(wp._pdop)))
+			.v00(XMLWriter.elem("ageofdgpsdata").map(wp -> toDurationString(wp._ageOfGPSData)))
+			.v00(XMLWriter.elem("dgpsid").map(wp -> toIntString(wp._dgpsID)))
+			.v10(XMLWriter.elem("course").map(wp -> formatter.apply(wp._course)))
+			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
+	}
 
 	// Define the needed readers for the different versions.
 	private static final XMLReaders READERS = new XMLReaders()
@@ -2058,8 +2347,12 @@ public final class WayPoint implements Point, Serializable {
 		.v10(XMLReader.elem("course").map(Degrees::parse))
 		.v00(XMLReader.doc("extensions"));
 
-	static XMLWriter<WayPoint> xmlWriter(final Version version, final String name) {
-		return XMLWriter.elem(name, WRITERS.writers(version));
+	static XMLWriter<WayPoint> xmlWriter(
+		final Version version,
+		final String name,
+		final Function<? super Number, String> formatter
+	) {
+		return XMLWriter.elem(name, writers(formatter).writers(version));
 	}
 
 	@SuppressWarnings("unchecked")

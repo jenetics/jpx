@@ -19,13 +19,14 @@
  */
 package io.jenetics.jpx;
 
-import org.testng.annotations.Test;
-
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.testng.annotations.Test;
 
 public class XMLProviderTest {
 

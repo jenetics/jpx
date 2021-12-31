@@ -22,7 +22,7 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Format.intString;
+import static io.jenetics.jpx.Format.toIntString;
 import static io.jenetics.jpx.Lists.copyOf;
 import static io.jenetics.jpx.Lists.copyTo;
 
@@ -31,6 +31,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class Track implements Iterable<TrackSegment>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _name;
@@ -296,15 +298,15 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Track &&
-			Objects.equals(((Track)obj)._name, _name) &&
-			Objects.equals(((Track)obj)._comment, _comment) &&
-			Objects.equals(((Track)obj)._description, _description) &&
-			Objects.equals(((Track)obj)._source, _source) &&
-			Objects.equals(((Track)obj)._type, _type) &&
-			Lists.equals(((Track)obj)._links, _links) &&
-			Objects.equals(((Track)obj)._number, _number) &&
-			Objects.equals(((Track)obj)._segments, _segments);
+			obj instanceof Track track &&
+			Objects.equals(track._name, _name) &&
+			Objects.equals(track._comment, _comment) &&
+			Objects.equals(track._description, _description) &&
+			Objects.equals(track._source, _source) &&
+			Objects.equals(track._type, _type) &&
+			Lists.equals(track._links, _links) &&
+			Objects.equals(track._number, _number) &&
+			Objects.equals(track._segments, _segments);
 	}
 
 	@Override
@@ -647,7 +649,8 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			segments(
 				_segments.stream()
 					.map(mapper)
-					.collect(Collectors.toList())
+					.map(TrackSegment.class::cast)
+					.toList()
 			);
 
 			return this;
@@ -662,7 +665,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			segments(
 				_segments.stream()
 					.flatMap(segment -> mapper.apply(segment).stream())
-					.collect(Collectors.toList())
+					.toList()
 			);
 
 			return this;
@@ -802,10 +805,12 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.TRACK, this);
+		return new SerialProxy(SerialProxy.TRACK, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
@@ -855,19 +860,22 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	}
 
 	// Define the needed writers for the different versions.
-	private static final XMLWriters<Track> WRITERS = new XMLWriters<Track>()
-		.v00(XMLWriter.elem("name").map(t -> t._name))
-		.v00(XMLWriter.elem("cmt").map(r -> r._comment))
-		.v00(XMLWriter.elem("desc").map(r -> r._description))
-		.v00(XMLWriter.elem("src").map(r -> r._source))
-		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
-		.v10(XMLWriter.elem("url").map(Track::url))
-		.v10(XMLWriter.elem("urlname").map(Track::urlname))
-		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
-		.v00(XMLWriter.elem("type").map(r -> r._type))
-		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
-		.v10(XMLWriter.elems(TrackSegment.xmlWriter(Version.V10)).map(r -> r._segments))
-		.v11(XMLWriter.elems(TrackSegment.xmlWriter(Version.V11)).map(r -> r._segments));
+	private static XMLWriters<Track>
+	writers(final Function<? super Number, String> formatter) {
+		return new XMLWriters<Track>()
+			.v00(XMLWriter.elem("name").map(t -> t._name))
+			.v00(XMLWriter.elem("cmt").map(r -> r._comment))
+			.v00(XMLWriter.elem("desc").map(r -> r._description))
+			.v00(XMLWriter.elem("src").map(r -> r._source))
+			.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
+			.v10(XMLWriter.elem("url").map(Track::url))
+			.v10(XMLWriter.elem("urlname").map(Track::urlname))
+			.v00(XMLWriter.elem("number").map(r -> toIntString(r._number)))
+			.v00(XMLWriter.elem("type").map(r -> r._type))
+			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
+			.v10(XMLWriter.elems(TrackSegment.xmlWriter(Version.V10, formatter)).map(r -> r._segments))
+			.v11(XMLWriter.elems(TrackSegment.xmlWriter(Version.V11, formatter)).map(r -> r._segments));
+	}
 
 	// Define the needed readers for the different versions.
 	private static final XMLReaders READERS = new XMLReaders()
@@ -884,11 +892,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		.v10(XMLReader.elems(TrackSegment.xmlReader(Version.V10)))
 		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)));
 
-	static XMLWriter<Track> xmlWriter(final Version version) {
-		return XMLWriter.elem("trk", WRITERS.writers(version));
+	static XMLWriter<Track> xmlWriter(
+		final Version version,
+		final Function<? super Number, String> formatter
+	) {
+		return XMLWriter.elem("trk", writers(formatter).writers(version));
 	}
 
-	@SuppressWarnings("unchecked")
 	static XMLReader<Track> xmlReader(final Version version) {
 		return XMLReader.elem(
 			version == Version.V10 ? Track::toTrackV10 : Track::toTrackV11,

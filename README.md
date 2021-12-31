@@ -1,10 +1,8 @@
 # JPX
 
-[![Build Status](https://travis-ci.org/jenetics/jpx.svg?branch=master)](https://travis-ci.org/jenetics/jpx)
+![Build Status](https://github.com/jenetics/jpx/actions/workflows/gradle.yml/badge.svg)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.jenetics/jpx/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22)
 [![Javadoc](https://www.javadoc.io/badge/io.jenetics/jpx.svg)](http://www.javadoc.io/doc/io.jenetics/jpx)
-[![Code Quality: Java](https://img.shields.io/lgtm/grade/java/g/jenetics/jpx.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jenetics/jpx/context:java)
-[![Total Alerts](https://img.shields.io/lgtm/alerts/g/jenetics/jpx.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/jenetics/jpx/alerts)
 
 **JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
 
@@ -25,11 +23,11 @@ For  building the JPX library you have to check out the master branch from Githu
 *Executing the tests:*
     
     $ cd jpx
-    $ ./gradle test
+    $ ./gradlew test
 
 *Building the library:*
 
-    $ ./gradle jar
+    $ ./gradlew jar
     
 
 ## Examples
@@ -40,9 +38,9 @@ For  building the JPX library you have to check out the master branch from Githu
 final GPX gpx = GPX.builder()
     .addTrack(track -> track
         .addSegment(segment -> segment
-            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
-            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
-            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+        .addPoint(p -> p.lat(48.20100).lon(16.31651).ele(283))
+        .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
+        .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
     .build();
 ```
 
@@ -55,23 +53,21 @@ GPX.write(gpx, "track.gpx");
 *GPX output*
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="JPX - Java GPX library" xmlns="http://www.topografix.com/GPX/1/1">
+<gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" xmlns="http://www.topografix.com/GPX/1/1">
     <trk>
         <trkseg>
-            <trkpt lat="48.2081743" lon="16.3738189">
-                <ele>160.0</ele>
+            <trkpt lat="48.201" lon="16.31651">
+                <ele>283</ele>
             </trkpt>
-            <trkpt lat="48.2081743" lon="16.3738189">
-                <ele>161.0</ele>
+            <trkpt lat="48.20112" lon="16.31639">
+                <ele>278</ele>
             </trkpt>
-            <trkpt lat="48.2081743" lon="16.3738189">
-                <ele>162.0</ele>
+            <trkpt lat="48.20126" lon="16.31601">
+                <ele>274</ele>
             </trkpt>
         </trkseg>
     </trk>
 </gpx>
-
 ```
 
 ### Reading GPX object from file
@@ -90,9 +86,9 @@ GPX.read("gpx.xml").tracks()
 *Console output*
 
 ```bash
-$ [lat=48.2081743, lon=48.2081743, ele=160]
-$ [lat=48.2081743, lon=48.2081743, ele=161]
-$ [lat=48.2081743, lon=48.2081743, ele=162]
+$ [lat=48.201, lon=16.31651, ele=283]
+$ [lat=48.20112, lon=16.31639, ele=278]
+$ [lat=48.20126, lon=16.31601, ele=274]
 
 ```
 
@@ -131,8 +127,8 @@ final GPX gpx10 = GPX.reader(GPX.Version.V10).read("track-v10.gpx");
 
 // Changing GPX version to 1.1.
 final GPX gpx11 = gpx10.toBuilder()
-	.version(GPX.Version.V11)
-	.build();
+    .version(GPX.Version.V11)
+    .build();
 
 // Writing GPX to file.
 GPX.write(gpx11, "track-v11.gpx");
@@ -161,6 +157,12 @@ final LocationFormatter format =
 which leads to the following output
 
     24°5915 65°1403
+
+This string can then also be parsed to a _location_.
+
+```java
+final Location location = format.parse("24°5915 65°1403");
+```
 
 ### Geodetic calculations
 
@@ -196,7 +198,7 @@ final Length length = gpx.tracks()
 #### Filtering
 
 The following example filters empty tracks and track-segments from an existing `GPX` object.
-	
+    
 ```java
 final GPX gpx = GPX.read("track.gpx");
 
@@ -298,7 +300,7 @@ org.acme.NonValidatingDocumentBuilder
 
 The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
-    Copyright 2016-2020 Franz Wilhelmstötter
+    Copyright 2016-2021 Franz Wilhelmstötter
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -314,25 +316,13 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [2.0.0](https://github.com/jenetics/jpx/releases/tag/v2.0.0)
+### [2.3.0](https://github.com/jenetics/jpx/releases/tag/v2.3.0)
+
+_Mainentance release_
+
+### [2.2.0](https://github.com/jenetics/jpx/releases/tag/v2.2.0)
 
 #### Improvements
 
-* [#68](https://github.com/jenetics/jpx/issues/68): Remove deprecated methods.
-* [#113](https://github.com/jenetics/jpx/issues/113): Upgrade to Java 11.
-
-### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
-
-#### Improvements
-
-* [#116](https://github.com/jenetics/jpx/issues/116): Create `XMLProvider` SPI, which allows to change the used XML implementation. (Implemented by [avianey](https://github.com/avianey).)
-
-### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
-
-#### Bugs
-
-* [#105](https://github.com/jenetics/jpx/issues/105): Location dependent formatting in `LocationFormatter`. (Fixed by [Segelzwerg](https://github.com/Segelzwerg).)
-* [#108](https://github.com/jenetics/jpx/issues/108): Make library compileable with Java 13.
-* [#110](https://github.com/jenetics/jpx/issues/110): Fix `Bounds.toBounds` collector. Wrong results for only _negative_ points.
-
-
+* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709) location strings (thanks to [bunkenburg](https://github.com/bunkenburg)). This also contains fixes in the ISO 6709 location formatter.
+* [#140](https://github.com/jenetics/jpx/issues/140): Add `WayPoint` factory methods taking `Instant`.

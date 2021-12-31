@@ -28,7 +28,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -98,6 +97,22 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		final T expected = params.supplier.get();
 		final byte[] marshaled = toBytes(expected, params.writer);
 		final T actual = fromBytes(marshaled, params.reader);
+
+		/*
+		if (!Objects.equals(actual, expected)) {
+			//System.out.println(new String(marshaled));
+			//System.out.println();
+			//System.out.println(new String(toBytes(actual, params.writer)));
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/actual.xml"),
+				toBytes(actual, params.writer)
+			);
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/expected.xml"),
+				toBytes(expected, params.writer)
+			);
+		}
+		 */
 
 		assertEquals(actual, expected);
 	}

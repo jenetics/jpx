@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -45,6 +46,7 @@ public final class Degrees
 		Serializable
 {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	/**
@@ -139,8 +141,8 @@ public final class Degrees
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Degrees &&
-			Double.compare(((Degrees)obj)._value, _value) == 0;
+			obj instanceof Degrees deg &&
+			Double.compare(deg._value, _value) == 0;
 	}
 
 	@Override
@@ -190,10 +192,12 @@ public final class Degrees
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.DEGREES, this);
+		return new SerialProxy(SerialProxy.DEGREES, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

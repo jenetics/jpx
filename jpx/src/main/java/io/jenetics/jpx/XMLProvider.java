@@ -40,7 +40,7 @@ import javax.xml.stream.XMLOutputFactory;
 public abstract class XMLProvider {
 
 	private static volatile XMLProvider INSTANCE;
-	private static final Object lock = new Object();
+	private static final Object lock = new Object(){};
 
 	protected XMLProvider() {
 	}
@@ -112,8 +112,14 @@ public abstract class XMLProvider {
 		if (providers.hasNext()) {
 			INSTANCE = providers.next();
 		} else {
-			INSTANCE = new XMLProvider() {};
+			INSTANCE = new DefaultXMLProvider();
 		}
 	}
 
 }
+
+/**
+ * Default implementation of the {@code XMLProvider} class. Doesn't need any
+ * additional implementation.
+ */
+final class DefaultXMLProvider extends XMLProvider { }

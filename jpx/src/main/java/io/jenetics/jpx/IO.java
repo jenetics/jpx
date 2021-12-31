@@ -53,6 +53,7 @@ final class IO {
 	 *
 	 * @param <T> the object type
 	 */
+	@FunctionalInterface
 	interface Writer<T> {
 		void write(final T value, final DataOutput out) throws IOException;
 	}
@@ -62,6 +63,7 @@ final class IO {
 	 *
 	 * @param <T> the object type
 	 */
+	@FunctionalInterface
 	interface Reader<T> {
 		T read(final DataInput in) throws IOException;
 	}

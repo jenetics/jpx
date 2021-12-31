@@ -27,6 +27,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -45,6 +46,7 @@ public final class Length
 		Serializable
 {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	/**
@@ -224,10 +226,12 @@ public final class Length
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.LENGTH, this);
+		return new SerialProxy(SerialProxy.LENGTH, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

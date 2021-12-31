@@ -17,31 +17,47 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.format;
+package io.jenetics.gradle;
 
-import java.util.Optional;
+import java.io.File;
+import java.io.IOException;
 
-import io.jenetics.jpx.Longitude;
+import org.gradle.api.DefaultTask;
+import org.gradle.api.tasks.InputFile;
+import org.gradle.api.tasks.TaskAction;
+import org.gradle.api.tasks.TaskExecutionException;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
  * @since 1.4
+ * @version 6.1
  */
-enum EastWestFormat implements Format<Location> {
+public class ColorizerTask extends DefaultTask {
 
-	INSTANCE;
+	private File _directory;
 
-	@Override
-	public Optional<String> format(final Location value) {
-		return value.longitude()
-			.map(Longitude::toDegrees)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
+	@InputFile
+	public File getDirectory() {
+		return _directory;
 	}
 
-	@Override
-	public String toString() {
-		return "x";
+	public void setDirectory(final File directory) {
+		_directory = directory;
+	}
+
+	@TaskAction
+	public void colorize() {
+		try {
+			final Colorizer colorizer = new Colorizer(_directory);
+			colorizer.colorize();
+
+			getLogger().lifecycle(
+				"Colorizer processed {} files and modified {}.",
+				colorizer.getProcessed(), colorizer.getModified()
+			);
+		} catch (final IOException e) {
+			throw new TaskExecutionException(this, e);
+		}
 	}
 
 }

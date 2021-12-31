@@ -19,7 +19,7 @@
  */
 package io.jenetics.jpx.format;
 
-import static io.jenetics.jpx.Length.Unit.METER;
+import static org.testng.Assert.assertEquals;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_LONG;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_ELE_SHORT;
@@ -36,185 +36,147 @@ import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_LON_SHORT;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_MEDIUM;
 import static io.jenetics.jpx.format.LocationFormatter.ISO_SHORT;
+import static io.jenetics.jpx.format.LocationFormatter.ofPattern;
 
-import java.text.DecimalFormatSymbols;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.Random;
+import java.util.stream.IntStream;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
-import io.jenetics.jpx.Latitude;
-import io.jenetics.jpx.Length;
-import io.jenetics.jpx.Longitude;
-import io.jenetics.jpx.format.Location.Field;
-
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class LocationFormatterTest {
+public class LocationFormatterTest extends Fixture {
 
 	@Test(dataProvider = "formats")
 	public void format(
 		final LocationFormatter formatter,
 		final Location location,
-		final String format
+		final String expected
 	) {
-		Assert.assertEquals(formatter.format(location), format);
+		final String actual = formatter.format(location);
+		assertEquals(actual, expected);
 	}
 
 	@DataProvider
 	public Object[][] formats() {
 		return new Object[][] {
-			{ISO_HUMAN_LAT_LONG, Location.of(Latitude.ofDegrees(23.987635)), "24°59'15.486\"N"},
-			{ISO_HUMAN_LAT_LONG, Location.of(Latitude.ofDegrees(-65.234275)), "65°14'03.390\"S"},
-			{ISO_HUMAN_LON_LONG, Location.of(Longitude.ofDegrees(23.987635)), "24°59'15.486\"E"},
-			{ISO_HUMAN_LON_LONG, Location.of(Longitude.ofDegrees(-65.234275)), "65°14'03.390\"W"},
-			{ISO_HUMAN_ELE_LONG, Location.of(Length.of(23.987635, METER)), "23.99m"},
-			{ISO_HUMAN_ELE_LONG, Location.of(Length.of(-65.234275, METER)), "-65.23m"},
-			{ISO_HUMAN_LONG, Location.of(
-				Latitude.ofDegrees(23.987635),
-				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "24°59'15.486\"N 65°14'03.390\"W -65.23m"},
+			{ISO_HUMAN_LAT_LONG, latitude(23.987635), "23°59'15.486\"N"},
+			{ISO_HUMAN_LAT_LONG, latitude(-65.234275), "65°14'03.390\"S"},
+			{ISO_HUMAN_LON_LONG, longitude(23.987635), "23°59'15.486\"E"},
+			{ISO_HUMAN_LON_LONG, longitude(-65.234275), "65°14'03.390\"W"},
+			{ISO_HUMAN_ELE_LONG, elevation(23.987635), "23.99m"},
+			{ISO_HUMAN_ELE_LONG, elevation(-65.234275), "-65.23m"},
+			{ISO_HUMAN_LONG, location(23.987635, -65.234275,-65.234275), "23°59'15.486\"N 65°14'03.390\"W -65.23m"},
 
-			{ISO_LAT_SHORT, Location.of(Latitude.ofDegrees(23.987635)), "+23.99"},
-			{ISO_LAT_SHORT, Location.of(Latitude.ofDegrees(-65.234275)), "-65.23"},
-			{ISO_LON_SHORT, Location.of(Longitude.ofDegrees(23.987635)), "+023.99"},
-			{ISO_LON_SHORT, Location.of(Longitude.ofDegrees(-65.234275)), "-065.23"},
-			{ISO_ELE_SHORT, Location.of(Length.of(23.987635, METER)), "+24CRS"},
-			{ISO_ELE_SHORT, Location.of(Length.of(-65.234275, METER)), "-65CRS"},
-			{ISO_SHORT, Location.of(
-				Latitude.ofDegrees(23.987635),
-				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "+23.99-065.23-65CRS"},
+			{ISO_LAT_SHORT, latitude(23.987635), "+23.99"},
+			{ISO_LAT_SHORT, latitude(-65.234275), "-65.23"},
+			{ISO_LON_SHORT, longitude(23.987635), "+023.99"},
+			{ISO_LON_SHORT, longitude(-65.234275), "-065.23"},
+			{ISO_ELE_SHORT, elevation(23.987635), "+24CRS"},
+			{ISO_ELE_SHORT, elevation(-65.234275), "-65CRS"},
+			{ISO_SHORT, location(23.987635,-65.234275,-65.234275), "+23.99-065.23-65CRS"},
 
-			{ISO_LAT_MEDIUM, Location.of(Latitude.ofDegrees(23.987635)), "+2459.258"},
-			{ISO_LAT_MEDIUM, Location.of(Latitude.ofDegrees(-65.234275)), "-6514.056"},
-			{ISO_LON_MEDIUM, Location.of(Longitude.ofDegrees(23.987635)), "+02459.258"},
-			{ISO_LON_MEDIUM, Location.of(Longitude.ofDegrees(-65.234275)), "-06514.056"},
-			{ISO_ELE_MEDIUM, Location.of(Length.of(23.987635, METER)), "+24.0CRS"},
-			{ISO_ELE_MEDIUM, Location.of(Length.of(-65.234275, METER)), "-65.2CRS"},
-			{ISO_MEDIUM, Location.of(
-				Latitude.ofDegrees(23.987635),
-				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "+2459.258-06514.056-65.2CRS"},
+			{ISO_LAT_MEDIUM, latitude(23.987635), "+2359.258"},
+			{ISO_LAT_MEDIUM, latitude(-65.234275), "-6514.056"},
+			{ISO_LON_MEDIUM, longitude(23.987635), "+02359.258"},
+			{ISO_LON_MEDIUM, longitude(-65.234275), "-06514.056"},
+			{ISO_ELE_MEDIUM, elevation(23.987635), "+24.0CRS"},
+			{ISO_ELE_MEDIUM, elevation(-65.234275), "-65.2CRS"},
+			{ISO_MEDIUM, location(23.987635,-65.234275,-65.234275), "+2359.258-06514.056-65.2CRS"},
 
-			{ISO_LAT_LONG, Location.of(Latitude.ofDegrees(23.987635)), "+245915.49"},
-			{ISO_LAT_LONG, Location.of(Latitude.ofDegrees(-65.234275)), "-651403.39"},
-			{ISO_LON_LONG, Location.of(Longitude.ofDegrees(23.987635)), "+0245915.49"},
-			{ISO_LON_LONG, Location.of(Longitude.ofDegrees(-65.234275)), "-0651403.39"},
-			{ISO_ELE_LONG, Location.of(Length.of(23.987635, METER)), "+23.99CRS"},
-			{ISO_ELE_LONG, Location.of(Length.of(-65.234275, METER)), "-65.23CRS"},
-			{ISO_LONG, Location.of(
-				Latitude.ofDegrees(23.987635),
-				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "+245915.49-0651403.39-65.23CRS"},
+			{ISO_LAT_LONG, latitude(23.987635), "+235915.49"},
+			{ISO_LAT_LONG, latitude(-65.234275), "-651403.39"},
+			{ISO_LON_LONG, longitude(23.987635), "+0235915.49"},
+			{ISO_LON_LONG, longitude(-65.234275), "-0651403.39"},
+			{ISO_ELE_LONG, elevation(23.987635), "+23.99CRS"},
+			{ISO_ELE_LONG, elevation(-65.234275), "-65.23CRS"},
+			{ISO_LONG, location(23.987635,-65.234275,-65.234275), "+235915.49-0651403.39-65.23CRS"},
 
-			{LocationFormatter.ofPattern("DD°MMSS dd°mmss"),Location.of(
-				Latitude.ofDegrees(23.987635),
-				Longitude.ofDegrees(-65.234275),
-				Length.of(-65.234275, METER)), "24°5915 65°1403"},
-
-			{LocationFormatter.ofPattern("LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "24g'g"},
-			{LocationFormatter.ofPattern("+LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24g'g"},
-			{LocationFormatter.ofPattern("+L+L[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24+24g'g"},
-			{LocationFormatter.ofPattern("+++LL[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+++24g'g"},
-			{LocationFormatter.ofPattern("+++LL[g''g]++"), Location.of(Latitude.ofDegrees(23.987635)), "+++24g'g"}
+			{ ofPattern("DD°MMSS dd°mmss"), location(23.987635,-65.234275,-65.234275), "23°5915 -65°1403"}, // bad
+			{ ofPattern("LL[g''g]"), latitude(23.987635), "24g'g"},
+			{ ofPattern("+LL[g''g]"), latitude(23.987635), "+24g'g"},
+			//{ ofPattern("+L+L[g''g]"), Location.of(Latitude.ofDegrees(23.987635)), "+24+24g'g"}, // double L
+			{ ofPattern("+++LL[g''g]"), latitude(23.987635), "+++24g'g"},
+			{ ofPattern("+++LL[g''g]++"), latitude(23.987635), "+++24g'g++"}
 		};
 	}
 
-	@Test(dataProvider = "tokens")
-	public void tokenize(final String pattern, final List<String> tokens) {
-		final List<String> t = LocationFormatter.Builder.tokenize(pattern);
-		Assert.assertEquals(t, tokens, String.format("%s != %s", t, tokens));
+	@Test(dataProvider = "formatters")
+	public void formatAndParse(final LocationFormatter formatter) {
+		final Random random = new Random(123);
+		final Location location = LocationRandom.nextLocation(random);
+
+		// Must be possible to safely parse previously formatted locations.
+		final String formatted = formatter.format(location);
+		final Location parsed = formatter.parse(formatted);
+
+		final String formatted2 = formatter.format(parsed);
+		Assert.assertEquals(formatted2, formatted);
+
+		final Location parsed2 = formatter.parse(formatted2);
+		Assert.assertEquals(parsed2, parsed);
 	}
 
 	@DataProvider
-	public Object[][] tokens() {
+	public Object[][] formatters() {
 		return new Object[][] {
-			{"LL", List.of("LL")},
-			{".LL", List.of(".LL")},
-			{"LL''", List.of("LL", "'", "'")},
-			{"LL'''", List.of("LL", "'", "'", "'")},
-			{"LL.LLL", List.of("LL.LLL")},
-			{"+++LL[g''g]", List.of("+", "+", "+", "LL", "[", "g", "'", "'", "g", "]")},
-			{"LL,LLL", List.of("LL,LLL")},
-			{"LLDD", List.of("LL", "DD")},
-			{"LL.LDD", List.of("LL.L", "DD")},
-			{"LL.LDD.DDD", List.of("LL.L", "DD.DDD")},
-			{"LL.L123DD.DDD", List.of("LL.L", "123", "DD.DDD")},
-			{"LL.L123DD.DDD4567", List.of("LL.L", "123", "DD.DDD", "4567")},
-			{"+LL.LDD.DDD", List.of("+", "LL.L", "DD.DDD")},
-			{"+LL.LDD.DDDx", List.of("+", "LL.L", "DD.DDD", "x")},
-			{"+LL.LDD.DDD''x", List.of("+", "LL.L", "DD.DDD", "'", "'", "x")},
-			{"+LL.LDD.DDD'x'", List.of("+", "LL.L", "DD.DDD", "'", "x", "'")},
-			{"+LL.LDD.DDD[x]ss", List.of("+", "LL.L", "DD.DDD", "[", "x", "]", "ss")},
-			{"+LL.LDD.DDD[x]'ss", List.of("+", "LL.L", "DD.DDD", "[", "x", "]", "'", "ss")},
-			{"+DD.DD[SSS]'XXX'sss.smm", List.of("+", "DD.DD", "[", "SSS", "]", "'", "XXX", "'", "sss.s", "mm")},
-			{"+DD.DD[SSS]'XXXsss.smm", List.of("+", "DD.DD", "[", "SSS", "]", "'", "XXXsss.smm")}
+			{ISO_HUMAN_LAT_LONG},
+			{ISO_HUMAN_LAT_LONG},
+			{ISO_HUMAN_LON_LONG},
+			{ISO_HUMAN_LON_LONG},
+			{ISO_HUMAN_ELE_LONG},
+			{ISO_HUMAN_ELE_LONG},
+			{ISO_HUMAN_LONG},
+
+			{ISO_LAT_SHORT},
+			{ISO_LAT_SHORT},
+			{ISO_LON_SHORT},
+			{ISO_LON_SHORT},
+			{ISO_ELE_SHORT},
+			{ISO_ELE_SHORT},
+			{ISO_SHORT},
+
+			{ISO_LAT_MEDIUM},
+			{ISO_LAT_MEDIUM},
+			{ISO_LON_MEDIUM},
+			{ISO_LON_MEDIUM},
+			{ISO_ELE_MEDIUM},
+			{ISO_ELE_MEDIUM},
+			{ISO_MEDIUM},
+
+			{ISO_LAT_LONG},
+			{ISO_LAT_LONG},
+			{ISO_LON_LONG},
+			{ISO_LON_LONG},
+			{ISO_ELE_LONG},
+			{ISO_ELE_LONG},
+			{ISO_LONG}
 		};
 	}
 
-	@Test(dataProvider = "patterns")
-	public void parse(final String pattern) {
-		Assert.assertEquals(LocationFormatter.ofPattern(pattern).toPattern(), pattern);
-		//System.out.println(LocationFormatter.ofPattern(pattern).toPattern());
-	}
+	@Test
+	public void parallelFormatting() {
+		final var location = LocationRandom.nextLocation(new Random(123));
+		final var formatter = ISO_HUMAN_LONG;
+		final var expected = formatter.format(location);
 
-	@DataProvider
-	public Object[][] patterns() {
-		final List<String> patterns = Arrays.asList(
-			ISO_ELE_LONG.toPattern(),
-			ISO_ELE_MEDIUM.toPattern(),
-			ISO_ELE_SHORT.toPattern(),
-			ISO_HUMAN_ELE_LONG.toPattern(),
-			ISO_HUMAN_LAT_LONG.toPattern(),
-			ISO_HUMAN_LONG.toPattern(),
-			ISO_HUMAN_LON_LONG.toPattern(),
-			ISO_LAT_LONG.toPattern(),
-			ISO_LAT_MEDIUM.toPattern(),
-			ISO_LAT_SHORT.toPattern(),
-			ISO_LONG.toPattern(),
-			ISO_LON_LONG.toPattern(),
-			ISO_LON_MEDIUM.toPattern(),
-			ISO_LON_SHORT.toPattern(),
-			ISO_MEDIUM.toPattern(),
-			ISO_SHORT.toPattern(),
-			".LLf",
-			"LL[gg]",
-			"LL[g''g]"
-		);
-
-		return patterns.stream()
-			.map(f -> new Object[]{f})
-			.toArray(Object[][]::new);
+		IntStream.range(0, 100_000).parallel()
+			.mapToObj(i -> formatter.format(location))
+			.forEach(result -> assertEquals(result, expected));
 	}
 
 	@Test
-	public void testAppend() {
-		Locale.setDefault(Locale.GERMANY);
-		DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
-		Location location = Location.of(Latitude.ofDegrees(23.987635));
-		LocationFormatter locationFormatter = LocationFormatter.builder()
-			.append(Field.DEGREE_OF_LATITUDE, "00.00")
-			.build();
-		Assert.assertEquals(instance.getDecimalSeparator(), ',');
-		Assert.assertEquals(locationFormatter.toPattern(), "DD.DD");
-		Assert.assertEquals(locationFormatter.format(location), "23.99");
+	public void parallelParsing() {
+		final var expected = LocationRandom.nextLocation(new Random(123));
+		final var formatter = ISO_HUMAN_LONG;
+		final var formatted = formatter.format(expected);
+
+		IntStream.range(0, 100_000).parallel()
+			.mapToObj(i -> formatter.parse(formatted))
+			.forEach(result -> assertEquals(result, expected));
 	}
 
-	@Test
-	public void testParsePattern() {
-		Locale.setDefault(Locale.GERMANY);
-		DecimalFormatSymbols instance = DecimalFormatSymbols.getInstance();
-		Location location = Location.of(Latitude.ofDegrees(23.987635));
-		LocationFormatter locationFormatter = LocationFormatter.builder()
-			.appendPattern("DD.DD")
-			.build();
-		Assert.assertEquals(instance.getDecimalSeparator(), ',');
-		Assert.assertEquals(locationFormatter.toPattern(), "DD.DD");
-		Assert.assertEquals(locationFormatter.format(location), "23.99");
-	}
 }

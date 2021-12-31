@@ -19,31 +19,51 @@
  */
 package io.jenetics.jpx.format;
 
-import java.util.Random;
+import java.text.ParsePosition;
+import java.util.Optional;
+
+import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version 2.2
+ * @since 1.4
  */
-public class LocationFieldFormatTest {
+enum LongitudeEW implements Format {
 
-	//@Test
-	public void format() {
-		final Random random = new Random(123);
+	INSTANCE;
 
-		final Location loc = Location.of(
-			LocationRandom.nextLatitude(random),
-			null,
-			null
-		);
+	@Override
+	public Optional<String> format(final Location value) {
+		return value.longitude()
+			.map(Longitude::toDegrees)
+			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
+	}
 
-		/*
-		final LocationFieldFormat df = LocationFieldFormat.ofPattern("DD");
-		final LocationFieldFormat mf = LocationFieldFormat.ofPattern("MM");
-		final LocationFieldFormat sf = LocationFieldFormat.ofPattern("SS.SSS");
+	@Override
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		int i = pos.getIndex();
+		char c = in.charAt(i);
 
-		System.out.println(loc.latitude());
-		System.out.println(df.format(loc) + "°" + mf.format(loc) + "'" + sf.format(loc) + "\"");
-		*/
+		if ( c == 'E') {
+			pos.setIndex(i+1);
+			builder.setLongitudeSign(+1);
+		} else if(c == 'W'){
+			pos.setIndex(i+1);
+			builder.setLongitudeSign(-1);
+		} else {
+			pos.setErrorIndex(i);
+			throw new ParseException("Not found E/W", in, i);
+		}
+	}
+
+	@Override
+	public String toPattern() {
+		return "x";
 	}
 
 }

@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -44,6 +45,7 @@ public final class UInt
 		Serializable
 {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final int _value;
@@ -104,8 +106,8 @@ public final class UInt
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof UInt &&
-			((UInt)obj)._value == _value;
+			obj instanceof UInt uint &&
+			uint._value == _value;
 	}
 
 	@Override
@@ -142,10 +144,12 @@ public final class UInt
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.UINT, this);
+		return new SerialProxy(SerialProxy.UINT, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

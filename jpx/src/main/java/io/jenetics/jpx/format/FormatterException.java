@@ -19,6 +19,8 @@
  */
 package io.jenetics.jpx.format;
 
+import java.io.Serial;
+
 /**
  * This exception is thrown if formatting or parsing of a location object fails.
  *
@@ -27,6 +29,8 @@ package io.jenetics.jpx.format;
  * @since 1.4
  */
 public class FormatterException extends RuntimeException {
+
+	@Serial
 	private static final long serialVersionUID = 1;
 
 	/**

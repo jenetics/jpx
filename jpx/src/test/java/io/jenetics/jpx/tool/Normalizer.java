@@ -51,7 +51,7 @@ public class Normalizer {
 	);
 
 	public static void main(final String[] args) throws Exception {
-		final Path gpxDir = Paths.get("/home/fwilhelm/Downloads/drive-download-20211102T182904Z-001/");
+		final Path gpxDir = Paths.get("/home/fwilhelm/Downloads/2021/");
 		final Path outputDir = Paths.get("/home/fwilhelm/Downloads/normalized/");
 
 		Files.walkFileTree(gpxDir, new SimpleFileVisitor<>() {
@@ -73,8 +73,7 @@ public class Normalizer {
 	private static void normalize(final Path file, final Path dir) throws IOException {
 		System.out.println("Normalizing: " + file);
 
-		final GPX gpx = GPX
-			.reader(GPX.Version.V11, GPX.Reader.Mode.LENIENT)
+		final GPX gpx = GPX.Reader.of(GPX.Version.V11, GPX.Reader.Mode.LENIENT)
 			.read(file);
 
 		final Map<LocalDate, List<WayPoint>> split = split(gpx);
@@ -106,7 +105,7 @@ public class Normalizer {
 
 			System.out.println("Writing " + file);
 
-			GPX.writer("    ").write(gpx, file);
+			GPX.Writer.of("    ").write(gpx, file);
 			setFileTime(file, time.toLocalDateTime());
 			//writeNative(file, gpx);
 		}

@@ -17,30 +17,25 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.format;
-
-import java.util.Optional;
-
-import io.jenetics.jpx.Latitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
- * @since 1.4
+ * @since 1.0
+ * @version 2.1
  */
-enum NorthSouthFormat implements Format<Location> {
+plugins {
+	`java-library`
+	idea
+	`maven-publish`
+}
 
-	INSTANCE;
+description = "JPX - Java GPX (GPS) Library"
 
-	@Override
-	public Optional<String> format(final Location value) {
-		return value.latitude()
-			.map(Latitude::toDegrees)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "N" : "S");
-	}
+extra["moduleName"] = "io.jenetics.jpx"
 
-	@Override
-	public String toString() {
-		return "X";
-	}
+dependencies {
+	testImplementation(libs.assertj)
+	testImplementation(libs.equalsverifier)
+	testImplementation(libs.prngine)
+	testImplementation(libs.testng)
 }

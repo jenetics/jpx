@@ -17,31 +17,33 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.jpx.format;
-
-import java.util.Optional;
-
-import io.jenetics.jpx.Latitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
- * @since 1.4
+ * @since 1.0
+ * @version 2.1
  */
-enum LatitudeSignFormat implements Format<Location> {
-
-	INSTANCE;
-
-	@Override
-	public Optional<String> format(final Location value) {
-		return value.latitude()
-			.map(Latitude::toDegrees)
-			.map(v -> Double.compare(v, 0.0) >= 0 ? "+" : "-");
+pluginManagement {
+	repositories {
+		mavenLocal()
+		gradlePluginPortal()
 	}
-
-	@Override
-	public String toString() {
-		return "+";
-	}
-
 }
+
+enableFeaturePreview("VERSION_CATALOGS")
+dependencyResolutionManagement {
+	versionCatalogs {
+		create("libs") {
+			alias("assertj").to("org.assertj:assertj-core:3.20.2")
+			alias("commonsmath").to("org.apache.commons:commons-math3:3.6.1")
+			alias("equalsverifier").to("nl.jqno.equalsverifier:equalsverifier:3.7.1")
+			alias("prngine").to("io.jenetics:prngine:2.0.0")
+			alias("testng").to("org.testng:testng:7.4.0")
+		}
+	}
+}
+
+rootProject.name = "jpx"
+
+// The JPX projects.
+include("jpx")

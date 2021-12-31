@@ -30,8 +30,10 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collector;
 
 /**
@@ -43,6 +45,7 @@ import java.util.stream.Collector;
  */
 public final class Bounds implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final Latitude _minLatitude;
@@ -115,11 +118,11 @@ public final class Bounds implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof  Bounds &&
-			Objects.equals(((Bounds)obj)._minLatitude, _minLatitude) &&
-			Objects.equals(((Bounds)obj)._minLongitude, _minLongitude) &&
-			Objects.equals(((Bounds)obj)._maxLatitude, _maxLatitude) &&
-			Objects.equals(((Bounds)obj)._maxLongitude, _maxLongitude);
+			obj instanceof  Bounds bounds &&
+			Objects.equals(bounds._minLatitude, _minLatitude) &&
+			Objects.equals(bounds._minLongitude, _minLongitude) &&
+			Objects.equals(bounds._maxLatitude, _maxLatitude) &&
+			Objects.equals(bounds._maxLongitude, _maxLongitude);
 	}
 
 	@Override
@@ -236,10 +239,12 @@ public final class Bounds implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.BOUNDS, this);
+		return new SerialProxy(SerialProxy.BOUNDS, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
@@ -264,12 +269,15 @@ public final class Bounds implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Bounds> WRITER = XMLWriter.elem("bounds",
-		XMLWriter.attr("minlat").map(Bounds::getMinLatitude),
-		XMLWriter.attr("minlon").map(Bounds::getMinLongitude),
-		XMLWriter.attr("maxlat").map(Bounds::getMaxLatitude),
-		XMLWriter.attr("maxlon").map(Bounds::getMaxLongitude)
-	);
+	static XMLWriter<Bounds>
+	writer(final Function<? super Number, String> formatter) {
+		return XMLWriter.elem("bounds",
+			XMLWriter.attr("minlat").map(b -> formatter.apply(b.getMinLatitude())),
+			XMLWriter.attr("minlon").map(b -> formatter.apply(b.getMinLongitude())),
+			XMLWriter.attr("maxlat").map(b -> formatter.apply(b.getMaxLatitude())),
+			XMLWriter.attr("maxlon").map(b -> formatter.apply(b.getMaxLongitude()))
+		);
+	}
 
 	static final XMLReader<Bounds> READER = XMLReader.elem(
 		v -> Bounds.of(

@@ -54,7 +54,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		return new Params<>(
 			() -> nextTrackSegment(random),
 			TrackSegment.xmlReader(version),
-			TrackSegment.xmlWriter(version)
+			TrackSegment.xmlWriter(version, Formats::format)
 		);
 	}
 
@@ -77,7 +77,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(gpx.getTracks().size(), 1);
@@ -183,9 +183,9 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 			object.toBuilder().build(),
 			object
 		);
-		Assert.assertNotSame(
-			object.toBuilder().build(),
-			object
+		Assert.assertNotEquals(
+			System.identityHashCode(object.toBuilder().build()),
+			System.identityHashCode(object)
 		);
 	}
 

@@ -19,23 +19,51 @@
  */
 package io.jenetics.jpx.format;
 
-import org.testng.annotations.Test;
+import java.text.ParsePosition;
+import java.util.Optional;
+
+import io.jenetics.jpx.Latitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ *
+ * @version 2.2
+ * @since 1.4
  */
-public class ValueFormatTest {
+enum LatitudeNS implements Format {
 
-	// -7.287954696138044 07°17'17"S 07°17'S -07.28795
-	// +88.918540267041150	88°55'07
-	@Test
-	public void format() {
-		//final double d = -7.287954696138044;
-		final double d = 88.918540267041150;
+	INSTANCE;
 
-		//System.out.println(ValueFormat.ofDegrees("#00").format(d));
-		//System.out.println(ValueFormat.ofMinutes("#00").format(d));
-		//System.out.println(ValueFormat.ofSeconds("#00.000").format(d));
+	@Override
+	public Optional<String> format(final Location value) {
+		return value.latitude()
+			.map(Latitude::toDegrees)
+			.map(v -> Double.compare(v, 0.0) >= 0 ? "N" : "S");
+	}
+
+	@Override
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		int i = pos.getIndex();
+		char c = in.charAt(i);
+		if (c == 'N'){
+			pos.setIndex(i+1);
+			builder.setLatitudeSign(+1);
+		} else if (c == 'S'){
+			pos.setIndex(i+1);
+			builder.setLatitudeSign(-1);
+		} else {
+			pos.setErrorIndex(i);
+			throw new ParseException("Not found N/S", in, i);
+		}
+	}
+
+	@Override
+	public String toPattern() {
+		return "X";
 	}
 
 }
