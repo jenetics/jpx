@@ -90,8 +90,8 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *
  * <b>Writing a GPX file</b>
  * <pre>{@code
- * final var indent = "    ";
- * GPX.writer(indent).write(gpx, Path.of("points.gpx"));
+ * final var indent = new GPX.Writer.Indent("    ");
+ * GPX.Writer.of(indent).write(gpx, Path.of("points.gpx"));
  * }</pre>
  *
  * This will produce the following output.
@@ -120,8 +120,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *
  * <b>Reading erroneous GPX files</b>
  * <pre>{@code
- * final boolean lenient = true;
- * final GPX gpx = GPX.read("track.xml", lenient);
+ * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
  * }</pre>
  *
  * This allows to read otherwise invalid GPX files, like
@@ -1126,7 +1125,7 @@ public final class GPX implements Serializable {
 		 *
 		 * @return the GPX version of {@code this} reader
 		 */
-		public Version getVersion() {
+		public Version version() {
 			return _version;
 		}
 
@@ -1135,7 +1134,7 @@ public final class GPX implements Serializable {
 		 *
 		 * @return the current reader mode
 		 */
-		public Mode getMode() {
+		public Mode mode() {
 			return _mode;
 		}
 
@@ -1317,6 +1316,33 @@ public final class GPX implements Serializable {
 	public static final class Writer {
 
 		/**
+		 * Represents the indentation value, the writer is using. An indentation
+		 * string of {@code null} means that the GPX data is written as one XML
+		 * line. An empty string adds line feeds, but with no indentation.
+		 *
+		 * @since 3.0
+		 *
+		 * @param value the indentation value
+		 */
+		public record Indent(String value) {
+			/**
+			 * This indentation lets the {@link Writer} write the GPX data into
+			 * one XML line.
+			 */
+			public static final Indent NULL = new Indent(null);
+
+			/**
+			 * No indentation, but with new-lines.
+			 */
+			public static final Indent NONE = new Indent("");
+
+			/**
+			 * Default indentation with 4 spaces.
+			 */
+			public static final Indent DEFAULT = new Indent("    ");
+		}
+
+		/**
 		 * The default value for the <em>maximum fraction digits</em>.
 		 */
 		public static final int MAXIMUM_FRACTION_DIGITS = 6;
@@ -1325,31 +1351,31 @@ public final class GPX implements Serializable {
 		 * The default GPX writer, with no indention and fraction digits
 		 * of {@link #MAXIMUM_FRACTION_DIGITS}.
 		 *
-		 * @see #of(String, int)
-		 * @see #of(String)
+		 * @see #of(Indent, int)
+		 * @see #of(Indent)
 		 *
 		 * @since 3.0
 		 */
 		public static final Writer DEFAULT =
-			new Writer(null, MAXIMUM_FRACTION_DIGITS);
+			new Writer(Indent.NULL, MAXIMUM_FRACTION_DIGITS);
 
-		private final String _indent;
+		private final Indent _indent;
 		private final int _maximumFractionDigits;
 
-		private Writer(final String indent, final int maximumFractionDigits) {
-			_indent = indent;
+		private Writer(final Indent indent, final int maximumFractionDigits) {
+			_indent = requireNonNull(indent);
 			_maximumFractionDigits = maximumFractionDigits;
 		}
 
 		/**
-		 * Return the indentation string this GPX writer is using. If the
-		 * indentation string is {@link Optional#empty()}, the GPX file consists
-		 * of one line.
+		 * Return the indentation string this GPX writer is using.
+		 *
+		 * @since 3.0
 		 *
 		 * @return the indentation string
 		 */
-		public Optional<String> getIndent() {
-			return Optional.ofNullable(_indent);
+		public Indent indent() {
+			return _indent;
 		}
 
 		/**
@@ -1359,7 +1385,7 @@ public final class GPX implements Serializable {
 		 * @return the maximum number of digits allowed in the fraction portion
 		 * 		   of the written numbers
 		 */
-		public int getMaximumFractionDigits() {
+		public int maximumFractionDigits() {
 			return _maximumFractionDigits;
 		}
 
@@ -1397,9 +1423,9 @@ public final class GPX implements Serializable {
 					.xmlOutputFactory()
 					.createXMLStreamWriter(result);
 
-				final XMLStreamWriterAdapter output = _indent == null
+				final XMLStreamWriterAdapter output = _indent.value() == null
 					? new XMLStreamWriterAdapter(writer)
-					: new IndentingXMLStreamWriter(writer, _indent);
+					: new IndentingXMLStreamWriter(writer, _indent.value());
 
 				try (output) {
 					final var format = NumberFormat.getNumberInstance(ENGLISH);
@@ -1541,7 +1567,7 @@ public final class GPX implements Serializable {
 		 *     </tbody>
 		 * </table>
 		 *
-		 * @see #of(String)
+		 * @see #of(Indent)
 		 * @see #DEFAULT
 		 *
 		 * @since 3.0
@@ -1551,7 +1577,7 @@ public final class GPX implements Serializable {
 		 *        fraction portion of a number
 		 * @return a new GPX writer
 		 */
-		public static Writer of(final String indent, final int maximumFractionDigits) {
+		public static Writer of(final Indent indent, final int maximumFractionDigits) {
 			return new Writer(indent, maximumFractionDigits);
 		}
 
@@ -1560,7 +1586,7 @@ public final class GPX implements Serializable {
 		 * <em>maximum fraction digits</em> of
 		 * {@link Writer#MAXIMUM_FRACTION_DIGITS}.
 		 *
-		 * @see #of(String, int)
+		 * @see #of(Indent, int)
 		 * @see #DEFAULT
 		 *
 		 * @since 3.0
@@ -1568,7 +1594,7 @@ public final class GPX implements Serializable {
 		 * @param indent the element indentation
 		 * @return a new GPX writer
 		 */
-		public static Writer of(final String indent) {
+		public static Writer of(final Indent indent) {
 			return new Writer(indent, MAXIMUM_FRACTION_DIGITS);
 		}
 

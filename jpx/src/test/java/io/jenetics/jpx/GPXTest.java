@@ -58,6 +58,7 @@ import org.w3c.dom.Document;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
+import io.jenetics.jpx.GPX.Writer.Indent;
 import io.jenetics.jpx.Length.Unit;
 
 /**
@@ -120,7 +121,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.newDocument();
 
 		// The GPX data are written to the empty `doc` object.
-		GPX.Writer.of(null, 20).write(gpx, new DOMResult(doc));
+		GPX.Writer.of(Indent.NULL, 20).write(gpx, new DOMResult(doc));
 
 		final var xmlString = XML.toString(doc);
 		final var gpx2 = GPX.Reader.DEFAULT.fromString(xmlString);
@@ -138,7 +139,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.newDocument();
 
 		// The GPX data are written to the empty `doc` object.
-		GPX.Writer.of(null, 20).write(gpx, new DOMResult(doc));
+		GPX.Writer.of(Indent.NULL, 20).write(gpx, new DOMResult(doc));
 
 		//final var gpx2 = GPX.Reader.DEFAULT.read(new DOMSource(doc));
 		//assertThat(gpx2).isEqualTo(gpx);
@@ -158,13 +159,13 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.version(Version.V10)
 			.build();
 
-		GPX.Writer.of("    ").write(gpx, System.out);
+		GPX.Writer.of(new Indent("    ")).write(gpx, System.out);
 	}
 
 	@Test(invocationCount = 5)
 	public void toStringFromString() {
 		final GPX expected = nextGPX(new Random());
-		final String string = GPX.Writer.of("  ", 25).toString(expected);
+		final String string = GPX.Writer.of(new Indent("    "), 25).toString(expected);
 		//System.out.println(string);
 		final GPX actual = GPX.Reader.DEFAULT.fromString(string);
 
@@ -454,7 +455,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.Writer.of("    ", 20).write(gpx, bout);
+		GPX.Writer.of(new Indent("    "), 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.Reader.DEFAULT.read(bin);
@@ -468,7 +469,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.Writer.of(null, 20).write(gpx, bout);
+		GPX.Writer.of(Indent.NULL, 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.Reader.DEFAULT.read(bin);
@@ -486,7 +487,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			final GPX gpx1 = GPX.Reader.DEFAULT.read(in);
 
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
-			GPX.Writer.of("    ").write(gpx1, out);
+			GPX.Writer.of(new Indent("    ")).write(gpx1, out);
 			final GPX gpx2 = GPX.Reader.DEFAULT.read(new ByteArrayInputStream(out.toByteArray()));
 
 			Assert.assertEquals(gpx1, gpx2);
@@ -534,7 +535,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			try {
 				Assert.assertEquals(read, gpx);
 			} catch (AssertionError e) {
-				GPX.Writer.of("    ")
+				GPX.Writer.of(new Indent("    "))
 					.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)));
 			}
 
@@ -750,7 +751,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		for (int i = 0; i < 15; ++i) {
 			final GPX gpx = nextGPX(random);
 
-			GPX.Writer.of("    ").write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)));
+			GPX.Writer.of(new Indent("    ")).write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try (OutputStream fout = new FileOutputStream(new File(baseDir, format("gpx_%d.obj", i)));
 				 ObjectOutputStream oout = new ObjectOutputStream(fout))
 			{
@@ -896,8 +897,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 
 		final var out = new ByteArrayOutputStream();
-		GPX.Writer.of("    ").write(gpx, out);
-		//GPX.writer("    ").write(gpx, System.out);
+		GPX.Writer.of(new Indent("    ")).write(gpx, out);
+		//GPX.writer(new Indent("    ")).write(gpx, System.out);
 		assertThat(out.toString()).doesNotContain("-3.1E-4");
 	}
 
