@@ -139,7 +139,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.newDocument();
 
 		// The GPX data are written to the empty `doc` object.
-		GPX.Writer.of(Indent.NULL, 20).write(gpx, new DOMResult(doc));
+		GPX.Writer
+			.of(Indent.NULL, 20)
+			.write(gpx, new DOMResult(doc));
 
 		//final var gpx2 = GPX.Reader.DEFAULT.read(new DOMSource(doc));
 		//assertThat(gpx2).isEqualTo(gpx);
@@ -149,7 +151,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.transform(new DOMSource(doc), new StreamResult(out));
 
 		final String xml = out.toString();
-		final GPX gpx2 = GPX.Reader.DEFAULT.fromString(out.toString());
+		final GPX gpx2 = GPX.Reader.DEFAULT.fromString(xml);
 		assertThat(gpx2).isEqualTo(gpx);
 	}
 
