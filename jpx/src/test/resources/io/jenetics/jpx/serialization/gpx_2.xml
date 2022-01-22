@@ -1,3675 +1,591 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="creator_82" xmlns="http://www.topografix.com/GPX/1/1">
-    <wpt lat="49.52126592083184" lon="16.748577002696056">
-        <time>2021-08-08T06:48:24Z</time>
-        <desc>description_70</desc>
-        <src>source_95</src>
-        <link href="http://link_3">
-            <type>type_42</type>
+<gpx version="1.1" creator="creator_8" xmlns="http://www.topografix.com/GPX/1/1">
+    <metadata>
+        <desc>description_90</desc>
+        <author>
+            <name>name_3</name>
+        </author>
+        <copyright author="author_45">
+            <year>858</year>
+        </copyright>
+        <link href="http://link_43">
+            <text>text_40</text>
+            <type>type_80</type>
         </link>
-        <link href="http://link_47">
-            <text>text_46</text>
-        </link>
-        <link href="http://link_59">
-            <type>type_54</type>
-        </link>
-        <link href="http://link_76">
-            <type>type_72</type>
-        </link>
-        <link href="http://link_77">
-            <text>text_8</text>
-        </link>
-        <link href="http://link_98"></link>
-        <link href="http://link_86"></link>
-        <link href="http://link_82">
-            <type>type_30</type>
-        </link>
-        <link href="http://link_44">
-            <text>text_36</text>
-            <type>type_15</type>
-        </link>
-        <link href="http://link_79">
-            <text>text_20</text>
-        </link>
-        <link href="http://link_81"></link>
-        <link href="http://link_47"></link>
-        <link href="http://link_27">
-            <type>type_79</type>
-        </link>
-        <link href="http://link_80">
-            <type>type_2</type>
-        </link>
-        <link href="http://link_94">
-            <type>type_34</type>
-        </link>
-        <fix>3d</fix>
-        <sat>13</sat>
-        <ageofdgpsdata>487</ageofdgpsdata>
-    </wpt>
-    <wpt lat="48.65105585633901" lon="17.323382800793333">
-        <speed>8.939418929209664</speed>
-        <magvar>9.693724529947328</magvar>
-        <geoidheight>451.0</geoidheight>
-        <name>name_63</name>
-        <link href="http://link_84">
-            <text>text_64</text>
-            <type>type_77</type>
-        </link>
-        <link href="http://link_63">
-            <text>text_96</text>
-        </link>
-        <link href="http://link_74">
-            <text>text_6</text>
-        </link>
-        <link href="http://link_88">
-            <text>text_98</text>
-        </link>
-        <link href="http://link_67"></link>
-        <link href="http://link_22">
-            <text>text_46</text>
-            <type>type_81</type>
-        </link>
-        <link href="http://link_57">
-            <text>text_49</text>
-        </link>
-        <link href="http://link_1">
-            <type>type_72</type>
-        </link>
-        <link href="http://link_1">
-            <text>text_2</text>
-        </link>
-        <link href="http://link_50"></link>
+        <link href="http://link_0"></link>
         <link href="http://link_4">
-            <text>text_90</text>
-            <type>type_15</type>
+            <type>type_63</type>
         </link>
-        <link href="http://link_33">
-            <text>text_77</text>
-        </link>
-        <link href="http://link_35">
-            <text>text_17</text>
-        </link>
-        <link href="http://link_42"></link>
-        <sym>symbol_39</sym>
-        <sat>13</sat>
-        <hdop>2.8235822897905045</hdop>
-        <vdop>2.1778167301507394</vdop>
-        <pdop>2.8590983541889496</pdop>
-        <dgpsid>35</dgpsid>
-    </wpt>
-    <wpt lat="48.21496759698757" lon="16.967684903531662">
-        <speed>45.577826216991845</speed>
-        <time>2021-07-23T18:46:41Z</time>
-        <cmt>comment_96</cmt>
-        <desc>description_93</desc>
-        <src>source_61</src>
-        <link href="http://link_73">
-            <text>text_86</text>
+        <link href="http://link_23">
+            <text>text_58</text>
             <type>type_81</type>
         </link>
-        <link href="http://link_16">
-            <text>text_58</text>
-        </link>
-        <link href="http://link_79">
-            <text>text_52</text>
-        </link>
-        <link href="http://link_88"></link>
-        <link href="http://link_89">
-            <text>text_33</text>
-        </link>
-        <link href="http://link_59">
+        <link href="http://link_71"></link>
+        <link href="http://link_65"></link>
+        <link href="http://link_45">
             <type>type_45</type>
         </link>
-        <link href="http://link_54">
-            <text>text_92</text>
+        <link href="http://link_7">
+            <text>text_10</text>
         </link>
-        <link href="http://link_72">
-            <type>type_96</type>
-        </link>
-        <link href="http://link_69">
+        <link href="http://link_0"></link>
+        <link href="http://link_94"></link>
+        <link href="http://link_97">
             <type>type_78</type>
         </link>
+        <link href="http://link_18"></link>
+        <link href="http://link_33">
+            <type>type_41</type>
+        </link>
+        <link href="http://link_87">
+            <text>text_19</text>
+            <type>type_70</type>
+        </link>
+        <link href="http://link_81">
+            <type>type_72</type>
+        </link>
+        <link href="http://link_48">
+            <type>type_7</type>
+        </link>
+        <link href="http://link_65">
+            <type>type_13</type>
+        </link>
         <link href="http://link_27">
-            <text>text_27</text>
-            <type>type_4</type>
+            <type>type_91</type>
         </link>
-        <link href="http://link_72"></link>
-        <link href="http://link_14">
-            <type>type_19</type>
+        <keywords>keywords_66</keywords>
+        <bounds minlat="73" minlon="35" maxlat="62" maxlon="78"></bounds>
+    </metadata>
+    <wpt lat="49.43989" lon="17.911487">
+        <speed>39.139125</speed>
+        <magvar>2.684133</magvar>
+        <cmt>comment_17</cmt>
+        <desc>description_72</desc>
+        <src>source_56</src>
+        <link href="http://link_3">
+            <text>text_35</text>
         </link>
-        <sym>symbol_61</sym>
-        <fix>2d</fix>
-        <hdop>2.7437818564596164</hdop>
-        <pdop>2.266385339089353</pdop>
-        <dgpsid>16</dgpsid>
-    </wpt>
-    <wpt lat="48.78227052365365" lon="16.138116024426694">
-        <ele>596.0</ele>
-        <speed>6.7518658046156865</speed>
-        <magvar>1.0823565088405251</magvar>
-        <geoidheight>785.0</geoidheight>
-        <name>name_24</name>
-        <cmt>comment_56</cmt>
-        <desc>description_35</desc>
+        <link href="http://link_76">
+            <type>type_63</type>
+        </link>
         <link href="http://link_99">
+            <type>type_63</type>
+        </link>
+        <link href="http://link_19">
+            <type>type_89</type>
+        </link>
+        <link href="http://link_93">
+            <type>type_25</type>
+        </link>
+        <link href="http://link_53">
+            <text>text_4</text>
+            <type>type_70</type>
+        </link>
+        <link href="http://link_22">
+            <type>type_80</type>
+        </link>
+        <link href="http://link_58">
+            <type>type_45</type>
+        </link>
+        <link href="http://link_30">
+            <text>text_64</text>
+            <type>type_62</type>
+        </link>
+        <link href="http://link_94">
+            <text>text_10</text>
+        </link>
+        <link href="http://link_69">
+            <type>type_65</type>
+        </link>
+        <link href="http://link_28">
+            <text>text_80</text>
+        </link>
+        <link href="http://link_55">
+            <text>text_76</text>
+            <type>type_76</type>
+        </link>
+        <link href="http://link_54">
+            <text>text_57</text>
+        </link>
+        <link href="http://link_60">
+            <text>text_93</text>
+            <type>type_60</type>
+        </link>
+        <link href="http://link_79">
+            <text>text_68</text>
+            <type>type_11</type>
+        </link>
+        <link href="http://link_24">
+            <text>text_42</text>
+        </link>
+        <link href="http://link_8">
+            <text>text_5</text>
+            <type>type_72</type>
+        </link>
+        <link href="http://link_63"></link>
+        <fix>dgps</fix>
+        <hdop>2.966204</hdop>
+        <vdop>2.899574</vdop>
+        <pdop>2.67488</pdop>
+        <ageofdgpsdata>476</ageofdgpsdata>
+    </wpt>
+    <wpt lat="48.135003" lon="16.346272">
+        <ele>804</ele>
+        <speed>79.364684</speed>
+        <time>1970-01-25T01:32:38.637Z</time>
+        <magvar>5.571278</magvar>
+        <geoidheight>406</geoidheight>
+        <name>name_66</name>
+        <desc>description_37</desc>
+        <src>source_89</src>
+        <link href="http://link_74">
+            <text>text_46</text>
+            <type>type_23</type>
+        </link>
+        <link href="http://link_16">
+            <type>type_7</type>
+        </link>
+        <link href="http://link_45">
+            <type>type_86</type>
+        </link>
+        <link href="http://link_15">
+            <text>text_70</text>
+            <type>type_32</type>
+        </link>
+        <link href="http://link_26"></link>
+        <link href="http://link_22">
+            <text>text_47</text>
+            <type>type_48</type>
+        </link>
+        <sym>symbol_55</sym>
+        <type>type_91</type>
+        <pdop>2.927094</pdop>
+        <ageofdgpsdata>684</ageofdgpsdata>
+    </wpt>
+    <wpt lat="49.188937" lon="17.360633">
+        <speed>24.65635</speed>
+        <magvar>1.914579</magvar>
+        <geoidheight>48</geoidheight>
+        <cmt>comment_6</cmt>
+        <link href="http://link_67">
+            <type>type_83</type>
+        </link>
+        <link href="http://link_35">
+            <text>text_49</text>
+        </link>
+        <link href="http://link_88"></link>
+        <link href="http://link_18">
+            <type>type_97</type>
+        </link>
+        <link href="http://link_94">
+            <type>type_71</type>
+        </link>
+        <link href="http://link_52"></link>
+        <link href="http://link_85"></link>
+        <link href="http://link_86">
+            <text>text_81</text>
+            <type>type_57</type>
+        </link>
+        <link href="http://link_1">
+            <text>text_54</text>
+        </link>
+        <sat>55</sat>
+        <hdop>2.542537</hdop>
+        <pdop>2.469188</pdop>
+        <dgpsid>43</dgpsid>
+    </wpt>
+    <wpt lat="48.098486" lon="17.256662">
+        <ele>656</ele>
+        <time>1970-01-06T08:14:01.412Z</time>
+        <geoidheight>261</geoidheight>
+        <name>name_60</name>
+        <cmt>comment_22</cmt>
+        <link href="http://link_60">
+            <type>type_72</type>
+        </link>
+        <link href="http://link_94">
+            <text>text_49</text>
+        </link>
+        <link href="http://link_95">
+            <type>type_83</type>
+        </link>
+        <link href="http://link_43">
+            <text>text_17</text>
+        </link>
+        <link href="http://link_70">
+            <text>text_80</text>
+        </link>
+        <link href="http://link_59">
+            <text>text_77</text>
+        </link>
+        <link href="http://link_50">
+            <text>text_17</text>
+        </link>
+        <link href="http://link_75">
+            <text>text_50</text>
+            <type>type_99</type>
+        </link>
+        <link href="http://link_54"></link>
+        <link href="http://link_0">
+            <type>type_31</type>
+        </link>
+        <link href="http://link_28">
+            <type>type_33</type>
+        </link>
+    </wpt>
+    <wpt lat="48.202274" lon="16.656209">
+        <speed>14.352539</speed>
+        <desc>description_89</desc>
+        <link href="http://link_49">
+            <text>text_80</text>
+        </link>
+        <link href="http://link_39">
+            <text>text_6</text>
+        </link>
+        <link href="http://link_1">
+            <text>text_25</text>
+            <type>type_76</type>
+        </link>
+        <sym>symbol_98</sym>
+        <fix>3d</fix>
+        <sat>68</sat>
+        <hdop>2.194347</hdop>
+        <ageofdgpsdata>542</ageofdgpsdata>
+    </wpt>
+    <wpt lat="48.773577" lon="16.944822">
+        <time>1970-01-06T04:46:11.733Z</time>
+        <magvar>7.193988</magvar>
+        <name>name_84</name>
+        <desc>description_23</desc>
+        <src>source_27</src>
+        <link href="http://link_68">
+            <type>type_91</type>
+        </link>
+        <link href="http://link_1">
+            <text>text_72</text>
+        </link>
+        <link href="http://link_66">
+            <text>text_58</text>
+            <type>type_91</type>
+        </link>
+        <link href="http://link_55">
+            <type>type_75</type>
+        </link>
+        <link href="http://link_60">
+            <text>text_30</text>
+        </link>
+        <link href="http://link_34">
+            <type>type_71</type>
+        </link>
+        <link href="http://link_79">
+            <text>text_65</text>
+            <type>type_27</type>
+        </link>
+        <link href="http://link_49">
+            <text>text_84</text>
+            <type>type_51</type>
+        </link>
+        <link href="http://link_27">
             <text>text_93</text>
         </link>
+        <link href="http://link_6">
+            <type>type_8</type>
+        </link>
+        <link href="http://link_2">
+            <type>type_48</type>
+        </link>
+        <link href="http://link_25">
+            <type>type_28</type>
+        </link>
+        <link href="http://link_74"></link>
+        <link href="http://link_78"></link>
+        <link href="http://link_24"></link>
+        <link href="http://link_97">
+            <type>type_58</type>
+        </link>
+        <link href="http://link_37">
+            <text>text_80</text>
+        </link>
+        <type>type_6</type>
+        <fix>2d</fix>
+        <hdop>2.05586</hdop>
+        <ageofdgpsdata>675</ageofdgpsdata>
+    </wpt>
+    <wpt lat="49.751447" lon="17.458041">
+        <ele>110</ele>
+        <time>1970-01-04T15:17:57.01Z</time>
+        <magvar>0.294505</magvar>
+        <desc>description_29</desc>
+        <link href="http://link_92">
+            <text>text_43</text>
+            <type>type_4</type>
+        </link>
+        <link href="http://link_34">
+            <text>text_1</text>
+        </link>
+        <link href="http://link_38">
+            <text>text_62</text>
+            <type>type_68</type>
+        </link>
+        <link href="http://link_11">
+            <text>text_71</text>
+            <type>type_48</type>
+        </link>
+        <link href="http://link_77">
+            <text>text_21</text>
+            <type>type_70</type>
+        </link>
+        <link href="http://link_94">
+            <text>text_34</text>
+        </link>
+        <sym>symbol_40</sym>
+        <sat>70</sat>
+        <vdop>2.677934</vdop>
+        <pdop>2.585843</pdop>
+        <dgpsid>89</dgpsid>
+    </wpt>
+    <wpt lat="49.003882" lon="17.410767">
+        <name>name_17</name>
+        <cmt>comment_63</cmt>
+        <desc>description_46</desc>
         <link href="http://link_43">
             <text>text_31</text>
         </link>
-        <link href="http://link_76">
-            <text>text_71</text>
+        <link href="http://link_9"></link>
+        <link href="http://link_19"></link>
+        <link href="http://link_11">
+            <text>text_13</text>
         </link>
-        <link href="http://link_96">
-            <type>type_31</type>
-        </link>
-        <link href="http://link_15">
-            <text>text_8</text>
-            <type>type_43</type>
-        </link>
-        <link href="http://link_63">
-            <text>text_44</text>
-            <type>type_71</type>
-        </link>
-        <link href="http://link_10">
-            <text>text_8</text>
-            <type>type_90</type>
-        </link>
-        <link href="http://link_62">
-            <text>text_63</text>
-        </link>
-        <link href="http://link_81">
-            <type>type_68</type>
-        </link>
-        <link href="http://link_2">
-            <type>type_69</type>
-        </link>
-        <link href="http://link_98">
-            <type>type_35</type>
-        </link>
-        <link href="http://link_54">
-            <type>type_13</type>
-        </link>
-        <fix>pps</fix>
-        <hdop>2.060415295784029</hdop>
-        <ageofdgpsdata>378</ageofdgpsdata>
-    </wpt>
-    <wpt lat="49.23998238200715" lon="17.00588334910648">
-        <magvar>9.210686737961995</magvar>
-        <link href="http://link_9">
-            <type>type_83</type>
-        </link>
-        <link href="http://link_58">
-            <text>text_34</text>
-        </link>
-        <link href="http://link_23">
-            <type>type_80</type>
-        </link>
-        <link href="http://link_23"></link>
-        <link href="http://link_48"></link>
-        <link href="http://link_81">
-            <text>text_66</text>
-            <type>type_73</type>
-        </link>
-        <link href="http://link_75">
-            <type>type_28</type>
-        </link>
-        <link href="http://link_94"></link>
-        <link href="http://link_18">
-            <type>type_32</type>
-        </link>
-        <link href="http://link_53">
-            <text>text_98</text>
-        </link>
-        <link href="http://link_39">
-            <text>text_39</text>
-            <type>type_8</type>
-        </link>
-        <sym>symbol_96</sym>
-        <fix>dgps</fix>
-        <sat>36</sat>
-        <hdop>2.6394991999244404</hdop>
-        <vdop>2.998883834329141</vdop>
-    </wpt>
-    <wpt lat="48.30409126601725" lon="16.96819677569583">
-        <ele>928.0</ele>
-        <time>2017-04-21T06:35:37Z</time>
-        <magvar>7.9438813987755506</magvar>
-        <name>name_49</name>
-        <cmt>comment_2</cmt>
-        <desc>description_12</desc>
-        <src>source_82</src>
-        <link href="http://link_82">
-            <text>text_68</text>
-            <type>type_45</type>
-        </link>
-        <link href="http://link_83">
-            <type>type_36</type>
-        </link>
-        <link href="http://link_12">
-            <type>type_80</type>
-        </link>
-        <link href="http://link_12">
-            <type>type_63</type>
-        </link>
-        <link href="http://link_3">
-            <text>text_1</text>
-        </link>
-        <link href="http://link_67">
-            <text>text_99</text>
-        </link>
-        <link href="http://link_20">
-            <type>type_79</type>
-        </link>
-        <link href="http://link_25">
-            <type>type_40</type>
-        </link>
+        <link href="http://link_7"></link>
         <link href="http://link_41">
-            <type>type_32</type>
-        </link>
-        <link href="http://link_45">
-            <text>text_15</text>
-        </link>
-        <link href="http://link_19">
-            <type>type_55</type>
-        </link>
-        <link href="http://link_71">
-            <text>text_82</text>
-            <type>type_86</type>
-        </link>
-        <link href="http://link_35">
-            <type>type_40</type>
-        </link>
-        <link href="http://link_5"></link>
-        <link href="http://link_96">
-            <text>text_89</text>
-        </link>
-        <link href="http://link_56">
-            <text>text_74</text>
-            <type>type_35</type>
-        </link>
-        <link href="http://link_16">
-            <type>type_70</type>
-        </link>
-        <link href="http://link_15">
-            <type>type_78</type>
-        </link>
-        <type>type_2</type>
-        <hdop>2.9724792430843876</hdop>
-        <dgpsid>54</dgpsid>
-    </wpt>
-    <wpt lat="49.061085434671426" lon="16.40737161708199">
-        <speed>7.645366416499366</speed>
-        <magvar>8.855497494507379</magvar>
-        <geoidheight>251.0</geoidheight>
-        <name>name_1</name>
-        <cmt>comment_7</cmt>
-        <desc>description_52</desc>
-        <src>source_59</src>
-        <link href="http://link_89">
             <text>text_17</text>
-            <type>type_45</type>
         </link>
-        <link href="http://link_22">
-            <type>type_41</type>
-        </link>
-        <link href="http://link_26"></link>
-        <link href="http://link_14">
-            <text>text_83</text>
-        </link>
-        <sym>symbol_2</sym>
-        <type>type_49</type>
-        <fix>dgps</fix>
-        <hdop>2.35646966585793</hdop>
-        <vdop>2.7456475592004903</vdop>
-        <ageofdgpsdata>850</ageofdgpsdata>
-        <dgpsid>34</dgpsid>
-    </wpt>
-    <wpt lat="49.456785475678885" lon="17.993711662615105">
-        <speed>45.4502959751961</speed>
-        <time>1997-07-15T08:34:17Z</time>
-        <geoidheight>70.0</geoidheight>
-        <name>name_88</name>
-        <cmt>comment_96</cmt>
-        <desc>description_15</desc>
         <link href="http://link_8">
-            <text>text_39</text>
-        </link>
-        <link href="http://link_10"></link>
-        <link href="http://link_49">
-            <type>type_53</type>
-        </link>
-        <link href="http://link_38"></link>
-        <link href="http://link_24">
-            <type>type_80</type>
-        </link>
-        <link href="http://link_69"></link>
-        <link href="http://link_30">
-            <text>text_57</text>
-            <type>type_14</type>
-        </link>
-        <link href="http://link_27">
-            <text>text_81</text>
-            <type>type_19</type>
-        </link>
-        <link href="http://link_34">
-            <text>text_85</text>
-        </link>
-        <link href="http://link_58">
-            <text>text_70</text>
-            <type>type_32</type>
-        </link>
-        <link href="http://link_96"></link>
-        <link href="http://link_48">
-            <text>text_62</text>
-            <type>type_17</type>
-        </link>
-        <link href="http://link_20">
-            <text>text_79</text>
-        </link>
-        <link href="http://link_6">
-            <text>text_48</text>
-        </link>
-        <link href="http://link_86">
-            <type>type_5</type>
-        </link>
-        <link href="http://link_50">
-            <text>text_89</text>
-            <type>type_81</type>
-        </link>
-        <link href="http://link_12">
-            <type>type_47</type>
-        </link>
-        <link href="http://link_46">
-            <text>text_84</text>
-        </link>
-        <sym>symbol_74</sym>
-        <fix>pps</fix>
-        <hdop>2.3590349056972677</hdop>
-        <vdop>2.8678572819642247</vdop>
-        <pdop>2.151393183779974</pdop>
-        <ageofdgpsdata>498</ageofdgpsdata>
-    </wpt>
-    <wpt lat="48.18878890017664" lon="16.725958586958946">
-        <time>2018-04-14T02:55:20Z</time>
-        <geoidheight>142.0</geoidheight>
-        <name>name_20</name>
-        <desc>description_84</desc>
-        <src>source_53</src>
-        <link href="http://link_46">
-            <text>text_12</text>
-        </link>
-        <link href="http://link_53">
-            <type>type_24</type>
-        </link>
-        <link href="http://link_5">
-            <text>text_88</text>
-            <type>type_64</type>
-        </link>
-        <link href="http://link_42"></link>
-        <link href="http://link_83">
             <text>text_52</text>
-            <type>type_65</type>
-        </link>
-        <link href="http://link_11">
-            <text>text_56</text>
-        </link>
-        <link href="http://link_37"></link>
-        <link href="http://link_30">
-            <text>text_96</text>
-            <type>type_82</type>
-        </link>
-        <link href="http://link_78"></link>
-        <link href="http://link_48">
-            <text>text_75</text>
-        </link>
-        <link href="http://link_30">
-            <type>type_75</type>
-        </link>
-        <type>type_47</type>
-        <sat>16</sat>
-        <vdop>2.724532977736931</vdop>
-        <dgpsid>16</dgpsid>
-    </wpt>
-    <wpt lat="48.13448534378606" lon="16.243642757413767">
-        <magvar>3.0531333749476697</magvar>
-        <geoidheight>49.0</geoidheight>
-        <link href="http://link_11">
-            <text>text_56</text>
-            <type>type_22</type>
-        </link>
-        <link href="http://link_94"></link>
-        <link href="http://link_28"></link>
-        <link href="http://link_34"></link>
-        <link href="http://link_36"></link>
-        <link href="http://link_2">
-            <text>text_58</text>
-        </link>
-        <link href="http://link_30">
-            <type>type_87</type>
-        </link>
-        <link href="http://link_1">
-            <type>type_10</type>
-        </link>
-        <link href="http://link_81">
-            <text>text_22</text>
-        </link>
-        <link href="http://link_62">
-            <text>text_92</text>
-            <type>type_94</type>
-        </link>
-        <link href="http://link_66"></link>
-        <link href="http://link_10">
-            <type>type_58</type>
-        </link>
-        <link href="http://link_36">
-            <text>text_94</text>
-            <type>type_0</type>
-        </link>
-        <link href="http://link_57">
-            <text>text_69</text>
-        </link>
-        <link href="http://link_91"></link>
-        <link href="http://link_14">
-            <text>text_72</text>
-        </link>
-        <type>type_40</type>
-        <vdop>2.1460169291547397</vdop>
-        <pdop>2.741689206387634</pdop>
-    </wpt>
-    <wpt lat="48.658472381851325" lon="16.91256940353736">
-        <ele>487.0</ele>
-        <speed>85.38447986023351</speed>
-        <time>2019-12-01T03:56:21Z</time>
-        <magvar>2.666265000647736</magvar>
-        <name>name_68</name>
-        <cmt>comment_61</cmt>
-        <desc>description_18</desc>
-        <link href="http://link_36"></link>
-        <link href="http://link_48"></link>
-        <link href="http://link_56">
-            <text>text_75</text>
         </link>
         <link href="http://link_70">
-            <text>text_16</text>
-            <type>type_47</type>
-        </link>
-        <link href="http://link_88"></link>
-        <link href="http://link_69">
-            <type>type_56</type>
-        </link>
-        <link href="http://link_61"></link>
-        <link href="http://link_12">
-            <text>text_22</text>
-            <type>type_56</type>
-        </link>
-        <link href="http://link_34">
-            <text>text_75</text>
-            <type>type_58</type>
-        </link>
-        <link href="http://link_52">
-            <text>text_95</text>
-        </link>
-        <link href="http://link_10"></link>
-        <link href="http://link_24">
-            <type>type_30</type>
-        </link>
-        <link href="http://link_45"></link>
-        <link href="http://link_37">
-            <text>text_27</text>
-        </link>
-        <link href="http://link_40">
-            <text>text_98</text>
-        </link>
-        <link href="http://link_22">
-            <type>type_31</type>
-        </link>
-        <link href="http://link_68"></link>
-        <link href="http://link_54">
-            <type>type_20</type>
-        </link>
-        <sym>symbol_58</sym>
-        <type>type_78</type>
-        <hdop>2.6660783013148373</hdop>
-    </wpt>
-    <wpt lat="49.48785128542103" lon="17.131301885573148">
-        <speed>96.63624364056457</speed>
-        <time>1983-04-25T18:46:29Z</time>
-        <name>name_43</name>
-        <desc>description_59</desc>
-        <src>source_59</src>
-        <link href="http://link_65">
-            <text>text_23</text>
-            <type>type_63</type>
-        </link>
-        <link href="http://link_97"></link>
-        <link href="http://link_96">
-            <type>type_73</type>
-        </link>
-        <link href="http://link_37">
-            <type>type_3</type>
-        </link>
-        <link href="http://link_37">
-            <text>text_71</text>
-        </link>
-        <link href="http://link_86"></link>
-        <link href="http://link_92">
-            <text>text_94</text>
-            <type>type_13</type>
-        </link>
-        <link href="http://link_5">
-            <text>text_9</text>
-            <type>type_65</type>
-        </link>
-        <link href="http://link_53">
-            <text>text_92</text>
-            <type>type_73</type>
-        </link>
-        <link href="http://link_19">
-            <type>type_74</type>
-        </link>
-        <link href="http://link_40">
-            <text>text_96</text>
-            <type>type_76</type>
-        </link>
-        <link href="http://link_74">
-            <type>type_86</type>
-        </link>
-        <link href="http://link_75"></link>
-        <type>type_57</type>
-        <fix>none</fix>
-        <sat>59</sat>
-        <hdop>2.782815269229868</hdop>
-        <vdop>2.369836045619544</vdop>
-        <ageofdgpsdata>270</ageofdgpsdata>
-        <dgpsid>38</dgpsid>
-    </wpt>
-    <wpt lat="49.99564134745881" lon="16.84039910409389">
-        <ele>657.0</ele>
-        <geoidheight>928.0</geoidheight>
-        <desc>description_24</desc>
-        <src>source_26</src>
-        <link href="http://link_53">
-            <text>text_57</text>
-        </link>
-        <link href="http://link_64">
-            <text>text_9</text>
-        </link>
-        <link href="http://link_64">
-            <text>text_11</text>
-            <type>type_69</type>
-        </link>
-        <link href="http://link_22">
-            <text>text_16</text>
-        </link>
-        <link href="http://link_72">
+            <text>text_12</text>
             <type>type_81</type>
-        </link>
-        <link href="http://link_92">
-            <text>text_64</text>
-        </link>
-        <link href="http://link_97">
-            <text>text_70</text>
-            <type>type_87</type>
-        </link>
-        <link href="http://link_18">
-            <type>type_3</type>
-        </link>
-        <link href="http://link_30">
-            <type>type_81</type>
-        </link>
-        <link href="http://link_74">
-            <text>text_68</text>
-            <type>type_66</type>
-        </link>
-        <link href="http://link_64">
-            <type>type_46</type>
-        </link>
-        <type>type_52</type>
-        <fix>pps</fix>
-        <vdop>2.946633300980575</vdop>
-        <pdop>2.188543417861099</pdop>
-        <ageofdgpsdata>252</ageofdgpsdata>
-    </wpt>
-    <wpt lat="48.943335519662966" lon="17.60213425953297">
-        <ele>727.0</ele>
-        <speed>61.22209178520775</speed>
-        <time>1990-05-28T09:41:07Z</time>
-        <name>name_20</name>
-        <link href="http://link_83">
-            <type>type_25</type>
-        </link>
-        <link href="http://link_92">
-            <text>text_55</text>
-            <type>type_80</type>
-        </link>
-        <link href="http://link_12"></link>
-        <link href="http://link_53">
-            <text>text_11</text>
-            <type>type_9</type>
-        </link>
-        <sym>symbol_28</sym>
-        <type>type_11</type>
-        <sat>43</sat>
-    </wpt>
-    <wpt lat="49.933402661733155" lon="17.101325577106707">
-        <ele>774.0</ele>
-        <magvar>6.500473646903613</magvar>
-        <desc>description_43</desc>
-        <link href="http://link_57"></link>
-        <link href="http://link_78">
-            <text>text_60</text>
-        </link>
-        <link href="http://link_11"></link>
-        <link href="http://link_29">
-            <text>text_74</text>
-        </link>
-        <link href="http://link_18">
-            <text>text_58</text>
-        </link>
-        <fix>none</fix>
-        <sat>57</sat>
-        <pdop>2.236181326695773</pdop>
-        <ageofdgpsdata>116</ageofdgpsdata>
-    </wpt>
-    <wpt lat="49.72381072655112" lon="17.903246570209536">
-        <speed>84.08381194069324</speed>
-        <time>1973-04-21T03:32:20Z</time>
-        <magvar>3.912075567967487</magvar>
-        <name>name_90</name>
-        <cmt>comment_20</cmt>
-        <desc>description_1</desc>
-        <link href="http://link_23">
-            <text>text_4</text>
-        </link>
-        <link href="http://link_35"></link>
-        <link href="http://link_81">
-            <text>text_82</text>
-            <type>type_10</type>
-        </link>
-        <link href="http://link_3">
-            <type>type_35</type>
-        </link>
-        <link href="http://link_44">
-            <text>text_67</text>
-        </link>
-        <sym>symbol_0</sym>
-        <type>type_89</type>
-        <fix>pps</fix>
-        <sat>37</sat>
-        <vdop>2.258072764609575</vdop>
-        <pdop>2.852555508739012</pdop>
-        <ageofdgpsdata>441</ageofdgpsdata>
-    </wpt>
-    <wpt lat="49.517532088440255" lon="16.455027913560862">
-        <speed>13.860187699602678</speed>
-        <magvar>3.362815395542904</magvar>
-        <name>name_10</name>
-        <desc>description_54</desc>
-        <type>type_95</type>
-        <fix>pps</fix>
-        <sat>2</sat>
-        <hdop>2.342590739449175</hdop>
-        <ageofdgpsdata>660</ageofdgpsdata>
-    </wpt>
-    <rte>
-        <cmt>comment_77</cmt>
-        <desc>description_33</desc>
-        <src>source_3</src>
-        <link href="http://link_33">
-            <text>text_13</text>
-            <type>type_50</type>
-        </link>
-        <link href="http://link_7">
-            <text>text_18</text>
-        </link>
-        <link href="http://link_83">
-            <text>text_63</text>
-            <type>type_51</type>
-        </link>
-        <link href="http://link_69">
-            <type>type_96</type>
-        </link>
-        <link href="http://link_77">
-            <text>text_39</text>
-        </link>
-        <link href="http://link_89">
-            <text>text_61</text>
-            <type>type_18</type>
-        </link>
-        <number>2</number>
-        <rtept lat="49.246358807786024" lon="16.706008403647004">
-            <speed>56.38512891722933</speed>
-            <magvar>1.137269471671396</magvar>
-            <geoidheight>257.0</geoidheight>
-            <link href="http://link_39">
-                <text>text_65</text>
-                <type>type_41</type>
-            </link>
-            <link href="http://link_23">
-                <text>text_30</text>
-            </link>
-            <link href="http://link_42">
-                <text>text_82</text>
-            </link>
-            <link href="http://link_16"></link>
-            <link href="http://link_56">
-                <text>text_8</text>
-                <type>type_69</type>
-            </link>
-            <link href="http://link_98">
-                <type>type_20</type>
-            </link>
-            <link href="http://link_73"></link>
-            <link href="http://link_48">
-                <text>text_9</text>
-            </link>
-            <link href="http://link_0"></link>
-            <link href="http://link_6">
-                <text>text_29</text>
-                <type>type_99</type>
-            </link>
-            <link href="http://link_28">
-                <text>text_60</text>
-            </link>
-            <link href="http://link_63"></link>
-            <link href="http://link_46"></link>
-            <link href="http://link_35"></link>
-            <link href="http://link_65">
-                <text>text_47</text>
-            </link>
-            <link href="http://link_47">
-                <text>text_48</text>
-            </link>
-            <sym>symbol_72</sym>
-            <fix>none</fix>
-            <hdop>2.028824502786497</hdop>
-            <vdop>2.0349572919123307</vdop>
-            <pdop>2.1503045936817915</pdop>
-            <ageofdgpsdata>7</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.7232161149409" lon="16.554599952458116">
-            <ele>860.0</ele>
-            <time>1981-09-17T03:08:16Z</time>
-            <geoidheight>588.0</geoidheight>
-            <desc>description_41</desc>
-            <link href="http://link_16">
-                <type>type_93</type>
-            </link>
-            <link href="http://link_82"></link>
-            <link href="http://link_29">
-                <type>type_67</type>
-            </link>
-            <link href="http://link_13">
-                <text>text_52</text>
-            </link>
-            <link href="http://link_17">
-                <text>text_3</text>
-                <type>type_67</type>
-            </link>
-            <link href="http://link_55"></link>
-            <link href="http://link_54"></link>
-            <link href="http://link_12"></link>
-            <link href="http://link_27">
-                <type>type_5</type>
-            </link>
-            <link href="http://link_78">
-                <text>text_32</text>
-            </link>
-            <link href="http://link_79">
-                <text>text_28</text>
-            </link>
-            <sym>symbol_40</sym>
-            <type>type_81</type>
-            <fix>pps</fix>
-            <vdop>2.051648197146201</vdop>
-            <dgpsid>50</dgpsid>
-        </rtept>
-        <rtept lat="48.215508762873796" lon="16.667307331045066">
-            <geoidheight>194.0</geoidheight>
-            <cmt>comment_28</cmt>
-            <link href="http://link_16">
-                <text>text_22</text>
-            </link>
-            <link href="http://link_24"></link>
-            <link href="http://link_85">
-                <type>type_7</type>
-            </link>
-            <link href="http://link_25">
-                <text>text_85</text>
-            </link>
-            <link href="http://link_92"></link>
-            <link href="http://link_69"></link>
-            <link href="http://link_30">
-                <text>text_94</text>
-            </link>
-            <link href="http://link_19">
-                <text>text_45</text>
-                <type>type_36</type>
-            </link>
-            <link href="http://link_38">
-                <text>text_51</text>
-                <type>type_44</type>
-            </link>
-            <link href="http://link_28"></link>
-            <link href="http://link_20">
-                <text>text_88</text>
-                <type>type_79</type>
-            </link>
-            <link href="http://link_60"></link>
-            <link href="http://link_93"></link>
-            <link href="http://link_52">
-                <type>type_54</type>
-            </link>
-            <link href="http://link_14">
-                <text>text_65</text>
-                <type>type_51</type>
-            </link>
-            <sym>symbol_80</sym>
-            <fix>pps</fix>
-            <sat>13</sat>
-            <hdop>2.61780088590225</hdop>
-            <vdop>2.0949105886789225</vdop>
-            <pdop>2.198185224784605</pdop>
-            <ageofdgpsdata>492</ageofdgpsdata>
-            <dgpsid>24</dgpsid>
-        </rtept>
-        <rtept lat="49.92369988966749" lon="16.36639791213362">
-            <ele>897.0</ele>
-            <speed>54.22637332735775</speed>
-            <magvar>0.24507383489976942</magvar>
-            <desc>description_65</desc>
-            <src>source_33</src>
-            <link href="http://link_69">
-                <text>text_98</text>
-            </link>
-            <link href="http://link_23">
-                <type>type_59</type>
-            </link>
-            <link href="http://link_11">
-                <text>text_91</text>
-                <type>type_51</type>
-            </link>
-            <link href="http://link_43">
-                <text>text_95</text>
-                <type>type_24</type>
-            </link>
-            <link href="http://link_41">
-                <text>text_68</text>
-            </link>
-            <link href="http://link_36">
-                <type>type_61</type>
-            </link>
-            <link href="http://link_35">
-                <text>text_74</text>
-                <type>type_59</type>
-            </link>
-            <link href="http://link_93">
-                <text>text_93</text>
-            </link>
-            <type>type_22</type>
-            <fix>pps</fix>
-            <pdop>2.169459388403861</pdop>
-            <ageofdgpsdata>308</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.15077659375729" lon="16.991798827249067">
-            <ele>65.0</ele>
-            <geoidheight>52.0</geoidheight>
-            <name>name_61</name>
-            <desc>description_67</desc>
-            <src>source_12</src>
-            <link href="http://link_77">
-                <type>type_83</type>
-            </link>
-            <link href="http://link_46">
-                <type>type_26</type>
-            </link>
-            <link href="http://link_87">
-                <text>text_70</text>
-                <type>type_70</type>
-            </link>
-            <link href="http://link_82">
-                <text>text_3</text>
-                <type>type_30</type>
-            </link>
-            <link href="http://link_56">
-                <text>text_89</text>
-                <type>type_93</type>
-            </link>
-            <link href="http://link_62">
-                <text>text_21</text>
-                <type>type_34</type>
-            </link>
-            <link href="http://link_26"></link>
-            <link href="http://link_90">
-                <type>type_22</type>
-            </link>
-            <link href="http://link_55"></link>
-            <link href="http://link_88">
-                <type>type_44</type>
-            </link>
-            <link href="http://link_30"></link>
-            <link href="http://link_41"></link>
-            <link href="http://link_57">
-                <text>text_9</text>
-            </link>
-            <link href="http://link_1">
-                <text>text_62</text>
-                <type>type_41</type>
-            </link>
-            <link href="http://link_30"></link>
-            <link href="http://link_30">
-                <text>text_83</text>
-                <type>type_88</type>
-            </link>
-            <link href="http://link_83">
-                <text>text_25</text>
-                <type>type_85</type>
-            </link>
-            <link href="http://link_73">
-                <type>type_35</type>
-            </link>
-            <link href="http://link_80">
-                <text>text_47</text>
-            </link>
-            <sym>symbol_56</sym>
-            <type>type_57</type>
-            <fix>3d</fix>
-            <sat>34</sat>
-            <ageofdgpsdata>124</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.990209605013064" lon="17.025122012767135">
-            <ele>425.0</ele>
-            <speed>31.53268775346012</speed>
-            <time>1994-11-03T02:40:01Z</time>
-            <geoidheight>602.0</geoidheight>
-            <desc>description_95</desc>
-            <src>source_33</src>
-            <link href="http://link_41">
-                <type>type_46</type>
-            </link>
-            <link href="http://link_29"></link>
-            <link href="http://link_32">
-                <text>text_30</text>
-                <type>type_29</type>
-            </link>
-            <link href="http://link_64"></link>
-            <link href="http://link_97">
-                <type>type_24</type>
-            </link>
-            <link href="http://link_92"></link>
-            <link href="http://link_91">
-                <text>text_82</text>
-                <type>type_40</type>
-            </link>
-            <link href="http://link_59">
-                <text>text_23</text>
-                <type>type_94</type>
-            </link>
-            <link href="http://link_36">
-                <type>type_4</type>
-            </link>
-            <link href="http://link_84"></link>
-            <link href="http://link_10">
-                <text>text_56</text>
-                <type>type_75</type>
-            </link>
-            <link href="http://link_39">
-                <type>type_3</type>
-            </link>
-            <link href="http://link_24">
-                <type>type_37</type>
-            </link>
-            <link href="http://link_74">
-                <text>text_83</text>
-            </link>
-            <link href="http://link_34">
-                <text>text_28</text>
-            </link>
-            <type>type_43</type>
-            <fix>pps</fix>
-            <vdop>2.826407737400393</vdop>
-            <pdop>2.479238082810129</pdop>
-            <dgpsid>16</dgpsid>
-        </rtept>
-        <rtept lat="49.066850420507095" lon="17.86119383564617">
-            <ele>308.0</ele>
-            <magvar>5.339023395182655</magvar>
-            <name>name_4</name>
-            <cmt>comment_77</cmt>
-            <desc>description_47</desc>
-            <src>source_73</src>
-            <link href="http://link_78">
-                <text>text_39</text>
-                <type>type_34</type>
-            </link>
-            <link href="http://link_29">
-                <text>text_64</text>
-            </link>
-            <link href="http://link_23"></link>
-            <link href="http://link_86">
-                <type>type_82</type>
-            </link>
-            <link href="http://link_71"></link>
-            <link href="http://link_18">
-                <type>type_60</type>
-            </link>
-            <link href="http://link_70">
-                <text>text_60</text>
-            </link>
-            <link href="http://link_61">
-                <text>text_52</text>
-                <type>type_88</type>
-            </link>
-            <link href="http://link_5"></link>
-            <link href="http://link_70">
-                <text>text_70</text>
-                <type>type_12</type>
-            </link>
-            <link href="http://link_78">
-                <text>text_84</text>
-            </link>
-            <fix>none</fix>
-            <sat>64</sat>
-            <hdop>2.6295487585517203</hdop>
-            <ageofdgpsdata>205</ageofdgpsdata>
-        </rtept>
-    </rte>
-    <rte>
-        <name>name_50</name>
-        <desc>description_90</desc>
-        <link href="http://link_17">
-            <text>text_51</text>
-        </link>
-        <link href="http://link_5"></link>
-        <rtept lat="49.99982494810735" lon="17.25286936114658">
-            <ele>651.0</ele>
-            <name>name_80</name>
-            <cmt>comment_90</cmt>
-            <src>source_95</src>
-            <link href="http://link_79">
-                <text>text_47</text>
-            </link>
-            <link href="http://link_8"></link>
-            <link href="http://link_95">
-                <type>type_81</type>
-            </link>
-            <link href="http://link_16">
-                <type>type_82</type>
-            </link>
-            <link href="http://link_2">
-                <text>text_78</text>
-                <type>type_43</type>
-            </link>
-            <link href="http://link_47">
-                <text>text_63</text>
-            </link>
-            <link href="http://link_11"></link>
-            <link href="http://link_29">
-                <text>text_43</text>
-            </link>
-            <link href="http://link_74">
-                <text>text_69</text>
-            </link>
-            <link href="http://link_90">
-                <text>text_73</text>
-                <type>type_96</type>
-            </link>
-            <link href="http://link_12">
-                <text>text_6</text>
-                <type>type_9</type>
-            </link>
-            <link href="http://link_46">
-                <text>text_38</text>
-                <type>type_99</type>
-            </link>
-            <link href="http://link_94">
-                <type>type_12</type>
-            </link>
-            <link href="http://link_38">
-                <text>text_62</text>
-            </link>
-            <link href="http://link_12">
-                <text>text_46</text>
-            </link>
-            <link href="http://link_6">
-                <type>type_28</type>
-            </link>
-            <link href="http://link_21">
-                <text>text_50</text>
-            </link>
-            <link href="http://link_32">
-                <text>text_64</text>
-                <type>type_2</type>
-            </link>
-            <link href="http://link_10">
-                <type>type_9</type>
-            </link>
-            <sym>symbol_18</sym>
-            <fix>3d</fix>
-            <ageofdgpsdata>209</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.957913390880954" lon="16.33838920632335">
-            <cmt>comment_98</cmt>
-            <desc>description_22</desc>
-            <link href="http://link_94">
-                <text>text_90</text>
-                <type>type_25</type>
-            </link>
-            <link href="http://link_32"></link>
-            <link href="http://link_31">
-                <type>type_10</type>
-            </link>
-            <link href="http://link_67">
-                <text>text_51</text>
-            </link>
-            <link href="http://link_53">
-                <text>text_13</text>
-            </link>
-            <link href="http://link_5"></link>
-            <link href="http://link_3">
-                <text>text_53</text>
-            </link>
-            <link href="http://link_56">
-                <text>text_66</text>
-                <type>type_90</type>
-            </link>
-            <link href="http://link_38">
-                <text>text_87</text>
-            </link>
-            <link href="http://link_49">
-                <text>text_40</text>
-                <type>type_47</type>
-            </link>
-            <link href="http://link_6">
-                <type>type_36</type>
-            </link>
-            <link href="http://link_85">
-                <type>type_63</type>
-            </link>
-            <type>type_24</type>
-            <fix>2d</fix>
-            <hdop>2.6077420892208965</hdop>
-            <ageofdgpsdata>506</ageofdgpsdata>
-            <dgpsid>30</dgpsid>
-        </rtept>
-        <rtept lat="49.81561359065292" lon="16.808563434237787">
-            <magvar>9.83931742989313</magvar>
-            <cmt>comment_3</cmt>
-            <link href="http://link_23">
-                <text>text_21</text>
-                <type>type_86</type>
-            </link>
-            <link href="http://link_91"></link>
-            <link href="http://link_37">
-                <text>text_82</text>
-                <type>type_56</type>
-            </link>
-            <link href="http://link_19"></link>
-            <link href="http://link_33"></link>
-            <link href="http://link_32">
-                <type>type_16</type>
-            </link>
-            <link href="http://link_31"></link>
-            <link href="http://link_59">
-                <text>text_6</text>
-                <type>type_14</type>
-            </link>
-            <link href="http://link_77">
-                <text>text_56</text>
-                <type>type_86</type>
-            </link>
-            <sym>symbol_60</sym>
-            <type>type_3</type>
-            <fix>2d</fix>
-            <hdop>2.1220671780369464</hdop>
-            <dgpsid>61</dgpsid>
-        </rtept>
-        <rtept lat="48.434716351737094" lon="17.11099023970086">
-            <ele>955.0</ele>
-            <time>1994-01-12T15:04:58Z</time>
-            <magvar>0.648516938447895</magvar>
-            <cmt>comment_0</cmt>
-            <desc>description_62</desc>
-            <src>source_76</src>
-            <link href="http://link_70">
-                <text>text_36</text>
-            </link>
-            <link href="http://link_72">
-                <text>text_41</text>
-                <type>type_71</type>
-            </link>
-            <link href="http://link_50">
-                <text>text_12</text>
-                <type>type_80</type>
-            </link>
-            <link href="http://link_99">
-                <text>text_13</text>
-            </link>
-            <link href="http://link_5">
-                <text>text_2</text>
-            </link>
-            <vdop>2.1753807937908887</vdop>
-            <dgpsid>5</dgpsid>
-        </rtept>
-        <rtept lat="48.63422306631266" lon="16.458781829651105">
-            <ele>20.0</ele>
-            <time>1999-04-17T05:26:35Z</time>
-            <geoidheight>683.0</geoidheight>
-            <name>name_97</name>
-            <cmt>comment_34</cmt>
-            <desc>description_85</desc>
-            <src>source_78</src>
-            <link href="http://link_7">
-                <text>text_49</text>
-            </link>
-            <link href="http://link_71">
-                <text>text_22</text>
-            </link>
-            <link href="http://link_43">
-                <text>text_67</text>
-            </link>
-            <link href="http://link_44"></link>
-            <link href="http://link_85"></link>
-            <link href="http://link_26">
-                <text>text_64</text>
-                <type>type_5</type>
-            </link>
-            <link href="http://link_66">
-                <text>text_1</text>
-            </link>
-            <sym>symbol_8</sym>
-            <type>type_82</type>
-            <fix>3d</fix>
-            <sat>20</sat>
-            <hdop>2.407024880689463</hdop>
-            <vdop>2.059945344411684</vdop>
-            <pdop>2.519059879367466</pdop>
-            <dgpsid>81</dgpsid>
-        </rtept>
-        <rtept lat="49.3195751278654" lon="17.671686694074733">
-            <time>1978-08-01T17:58:45Z</time>
-            <magvar>1.2680210749932819</magvar>
-            <geoidheight>402.0</geoidheight>
-            <cmt>comment_7</cmt>
-            <desc>description_7</desc>
-            <src>source_67</src>
-            <link href="http://link_79">
-                <text>text_35</text>
-                <type>type_12</type>
-            </link>
-            <link href="http://link_19"></link>
-            <type>type_14</type>
-            <fix>2d</fix>
-            <hdop>2.968918458920784</hdop>
-            <pdop>2.8559896268851577</pdop>
-        </rtept>
-        <rtept lat="49.05616776459289" lon="17.693126003990614">
-            <speed>61.327829513296905</speed>
-            <src>source_25</src>
-            <link href="http://link_55"></link>
-            <link href="http://link_55">
-                <text>text_35</text>
-                <type>type_57</type>
-            </link>
-            <link href="http://link_7">
-                <text>text_89</text>
-            </link>
-            <link href="http://link_72"></link>
-            <link href="http://link_29"></link>
-            <link href="http://link_49">
-                <text>text_4</text>
-                <type>type_85</type>
-            </link>
-            <link href="http://link_67">
-                <text>text_35</text>
-            </link>
-            <link href="http://link_87">
-                <type>type_88</type>
-            </link>
-            <link href="http://link_1">
-                <text>text_61</text>
-                <type>type_13</type>
-            </link>
-            <link href="http://link_93">
-                <text>text_70</text>
-            </link>
-            <link href="http://link_62">
-                <type>type_28</type>
-            </link>
-            <link href="http://link_78">
-                <text>text_97</text>
-            </link>
-            <link href="http://link_17">
-                <type>type_61</type>
-            </link>
-            <link href="http://link_3">
-                <type>type_8</type>
-            </link>
-            <link href="http://link_37">
-                <text>text_13</text>
-            </link>
-            <link href="http://link_74">
-                <text>text_86</text>
-                <type>type_27</type>
-            </link>
-            <link href="http://link_90">
-                <text>text_64</text>
-            </link>
-            <link href="http://link_25">
-                <text>text_41</text>
-                <type>type_95</type>
-            </link>
-            <type>type_31</type>
-            <fix>dgps</fix>
-            <sat>72</sat>
-            <hdop>2.819989116540787</hdop>
-        </rtept>
-        <rtept lat="49.65329957433883" lon="17.56783878664942">
-            <ele>230.0</ele>
-            <speed>15.86175583329863</speed>
-            <time>2020-04-10T09:48:21Z</time>
-            <magvar>6.464527905191949</magvar>
-            <geoidheight>689.0</geoidheight>
-            <desc>description_81</desc>
-            <src>source_95</src>
-            <link href="http://link_39"></link>
-            <link href="http://link_97">
-                <type>type_11</type>
-            </link>
-            <link href="http://link_96"></link>
-            <link href="http://link_4"></link>
-            <link href="http://link_20"></link>
-            <link href="http://link_19">
-                <text>text_6</text>
-                <type>type_6</type>
-            </link>
-            <link href="http://link_29">
-                <type>type_84</type>
-            </link>
-            <link href="http://link_19">
-                <text>text_97</text>
-            </link>
-            <link href="http://link_96">
-                <type>type_28</type>
-            </link>
-            <link href="http://link_11">
-                <text>text_9</text>
-            </link>
-            <link href="http://link_61">
-                <type>type_23</type>
-            </link>
-            <link href="http://link_21">
-                <text>text_87</text>
-            </link>
-            <link href="http://link_94">
-                <text>text_82</text>
-            </link>
-            <link href="http://link_79">
-                <type>type_21</type>
-            </link>
-            <link href="http://link_10">
-                <text>text_23</text>
-                <type>type_0</type>
-            </link>
-            <link href="http://link_21">
-                <type>type_42</type>
-            </link>
-            <link href="http://link_56"></link>
-            <link href="http://link_52">
-                <text>text_1</text>
-                <type>type_62</type>
-            </link>
-            <type>type_43</type>
-            <hdop>2.7102937271563428</hdop>
-            <vdop>2.443218919881203</vdop>
-            <dgpsid>41</dgpsid>
-        </rtept>
-        <rtept lat="49.933085285315165" lon="17.82069270005031">
-            <time>2009-06-04T10:52:32Z</time>
-            <name>name_61</name>
-            <desc>description_12</desc>
-            <src>source_87</src>
-            <link href="http://link_54">
-                <text>text_87</text>
-            </link>
-            <link href="http://link_37"></link>
-            <link href="http://link_60">
-                <type>type_91</type>
-            </link>
-            <link href="http://link_19">
-                <text>text_21</text>
-            </link>
-            <link href="http://link_76">
-                <text>text_78</text>
-                <type>type_49</type>
-            </link>
-            <link href="http://link_20">
-                <text>text_31</text>
-            </link>
-            <link href="http://link_62">
-                <type>type_33</type>
-            </link>
-            <sat>66</sat>
-            <vdop>2.2080935722344046</vdop>
-            <pdop>2.752673352460781</pdop>
-            <ageofdgpsdata>935</ageofdgpsdata>
-            <dgpsid>35</dgpsid>
-        </rtept>
-        <rtept lat="49.59541155028891" lon="17.496806257785252">
-            <ele>508.0</ele>
-            <cmt>comment_10</cmt>
-            <desc>description_12</desc>
-            <link href="http://link_91">
-                <text>text_52</text>
-                <type>type_87</type>
-            </link>
-            <link href="http://link_72"></link>
-            <link href="http://link_60"></link>
-            <link href="http://link_35">
-                <text>text_63</text>
-                <type>type_35</type>
-            </link>
-            <link href="http://link_73">
-                <text>text_47</text>
-                <type>type_7</type>
-            </link>
-            <link href="http://link_99">
-                <text>text_72</text>
-                <type>type_61</type>
-            </link>
-            <link href="http://link_76">
-                <text>text_74</text>
-                <type>type_13</type>
-            </link>
-            <link href="http://link_91">
-                <type>type_74</type>
-            </link>
-            <link href="http://link_65">
-                <text>text_52</text>
-                <type>type_18</type>
-            </link>
-            <link href="http://link_23">
-                <text>text_9</text>
-                <type>type_45</type>
-            </link>
-            <link href="http://link_95">
-                <text>text_29</text>
-                <type>type_53</type>
-            </link>
-            <link href="http://link_17">
-                <text>text_93</text>
-                <type>type_32</type>
-            </link>
-            <sym>symbol_99</sym>
-            <type>type_84</type>
-            <sat>96</sat>
-            <pdop>2.56267549636434</pdop>
-            <dgpsid>41</dgpsid>
-        </rtept>
-        <rtept lat="48.86697132618555" lon="16.117125128071546">
-            <magvar>1.4369922542013291</magvar>
-            <src>source_30</src>
-            <link href="http://link_13">
-                <type>type_69</type>
-            </link>
-            <link href="http://link_83">
-                <text>text_43</text>
-            </link>
-            <link href="http://link_59">
-                <text>text_68</text>
-                <type>type_39</type>
-            </link>
-            <link href="http://link_65"></link>
-            <link href="http://link_30">
-                <text>text_0</text>
-                <type>type_94</type>
-            </link>
-            <link href="http://link_51">
-                <text>text_89</text>
-                <type>type_97</type>
-            </link>
-            <link href="http://link_54">
-                <type>type_81</type>
-            </link>
-            <link href="http://link_4">
-                <type>type_64</type>
-            </link>
-            <link href="http://link_10">
-                <type>type_33</type>
-            </link>
-            <sym>symbol_41</sym>
-            <fix>pps</fix>
-            <sat>65</sat>
-            <hdop>2.3068243515422533</hdop>
-        </rtept>
-        <rtept lat="49.70221299631339" lon="16.122934502087684">
-            <ele>881.0</ele>
-            <magvar>4.15539263298771</magvar>
-            <geoidheight>116.0</geoidheight>
-            <link href="http://link_83">
-                <type>type_26</type>
-            </link>
-            <link href="http://link_73">
-                <text>text_84</text>
-                <type>type_60</type>
-            </link>
-            <link href="http://link_83"></link>
-            <link href="http://link_1">
-                <type>type_59</type>
-            </link>
-            <link href="http://link_65">
-                <text>text_55</text>
-            </link>
-            <type>type_99</type>
-            <sat>21</sat>
-            <vdop>2.840764088777428</vdop>
-            <ageofdgpsdata>75</ageofdgpsdata>
-            <dgpsid>64</dgpsid>
-        </rtept>
-        <rtept lat="49.98743478989132" lon="17.810538661082187">
-            <ele>397.0</ele>
-            <speed>81.23721744181125</speed>
-            <geoidheight>863.0</geoidheight>
-            <name>name_24</name>
-            <cmt>comment_76</cmt>
-            <desc>description_66</desc>
-            <src>source_99</src>
-            <link href="http://link_7">
-                <text>text_6</text>
-            </link>
-            <link href="http://link_16">
-                <text>text_49</text>
-                <type>type_30</type>
-            </link>
-            <link href="http://link_43">
-                <type>type_87</type>
-            </link>
-            <link href="http://link_98">
-                <text>text_83</text>
-                <type>type_17</type>
-            </link>
-            <link href="http://link_69">
-                <type>type_89</type>
-            </link>
-            <link href="http://link_19">
-                <type>type_31</type>
-            </link>
-            <link href="http://link_36"></link>
-            <link href="http://link_75"></link>
-            <fix>dgps</fix>
-            <hdop>2.39870076049664</hdop>
-            <vdop>2.8763243054917242</vdop>
-        </rtept>
-        <rtept lat="49.74277220363935" lon="17.59032264457587">
-            <ele>202.0</ele>
-            <speed>42.506302582756085</speed>
-            <time>1986-11-12T20:38:12Z</time>
-            <magvar>6.871894815375451</magvar>
-            <geoidheight>525.0</geoidheight>
-            <name>name_56</name>
-            <link href="http://link_62"></link>
-            <link href="http://link_39">
-                <type>type_47</type>
-            </link>
-            <link href="http://link_22"></link>
-            <link href="http://link_42"></link>
-            <link href="http://link_40">
-                <text>text_27</text>
-                <type>type_82</type>
-            </link>
-            <link href="http://link_18"></link>
-            <link href="http://link_55">
-                <text>text_3</text>
-                <type>type_60</type>
-            </link>
-            <link href="http://link_24">
-                <text>text_2</text>
-            </link>
-            <type>type_11</type>
-            <fix>pps</fix>
-            <sat>50</sat>
-            <pdop>2.007893850810748</pdop>
-            <ageofdgpsdata>309</ageofdgpsdata>
-        </rtept>
-        <rtept lat="49.372128206417635" lon="16.095458523172017">
-            <speed>48.656941110156026</speed>
-            <time>1988-04-17T11:13:11Z</time>
-            <geoidheight>946.0</geoidheight>
-            <cmt>comment_34</cmt>
-            <desc>description_93</desc>
-            <link href="http://link_44">
-                <text>text_26</text>
-                <type>type_79</type>
-            </link>
-            <link href="http://link_27">
-                <type>type_18</type>
-            </link>
-            <link href="http://link_74"></link>
-            <link href="http://link_55">
-                <text>text_63</text>
-                <type>type_47</type>
-            </link>
-            <link href="http://link_7">
-                <text>text_87</text>
-            </link>
-            <link href="http://link_94"></link>
-            <link href="http://link_53">
-                <type>type_50</type>
-            </link>
-            <link href="http://link_76">
-                <text>text_56</text>
-                <type>type_84</type>
-            </link>
-            <link href="http://link_20">
-                <text>text_58</text>
-                <type>type_95</type>
-            </link>
-            <link href="http://link_1"></link>
-            <link href="http://link_0">
-                <text>text_66</text>
-                <type>type_86</type>
-            </link>
-            <link href="http://link_28">
-                <text>text_16</text>
-            </link>
-            <link href="http://link_17">
-                <type>type_35</type>
-            </link>
-            <link href="http://link_36">
-                <text>text_99</text>
-            </link>
-            <sym>symbol_72</sym>
-            <sat>92</sat>
-            <hdop>2.4303131894125327</hdop>
-            <dgpsid>72</dgpsid>
-        </rtept>
-        <rtept lat="48.42404352200445" lon="16.05113632048127">
-            <desc>description_18</desc>
-            <link href="http://link_29">
-                <text>text_81</text>
-            </link>
-            <link href="http://link_84">
-                <type>type_28</type>
-            </link>
-            <link href="http://link_33">
-                <text>text_49</text>
-            </link>
-            <link href="http://link_37">
-                <text>text_99</text>
-                <type>type_96</type>
-            </link>
-            <link href="http://link_30"></link>
-            <link href="http://link_28">
-                <text>text_57</text>
-                <type>type_91</type>
-            </link>
-            <link href="http://link_16"></link>
-            <link href="http://link_49"></link>
-            <link href="http://link_31">
-                <text>text_37</text>
-            </link>
-            <link href="http://link_4">
-                <text>text_62</text>
-            </link>
-            <sym>symbol_4</sym>
-            <type>type_57</type>
-            <hdop>2.3398118129543652</hdop>
-            <pdop>2.966390214296562</pdop>
-            <ageofdgpsdata>385</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.87873922879692" lon="17.859773658220554">
-            <ele>371.0</ele>
-            <speed>41.35822940064979</speed>
-            <name>name_4</name>
-            <src>source_59</src>
-            <link href="http://link_66">
-                <type>type_72</type>
-            </link>
-            <link href="http://link_70">
-                <text>text_53</text>
-                <type>type_90</type>
-            </link>
-            <link href="http://link_18"></link>
-            <link href="http://link_70">
-                <text>text_89</text>
-                <type>type_85</type>
-            </link>
-            <link href="http://link_41"></link>
-            <type>type_52</type>
-            <fix>2d</fix>
-            <hdop>2.149295573258102</hdop>
-            <dgpsid>92</dgpsid>
-        </rtept>
-        <rtept lat="48.1570328551909" lon="17.409017603961786">
-            <speed>54.23282919877849</speed>
-            <time>2016-02-29T07:40:52Z</time>
-            <geoidheight>863.0</geoidheight>
-            <cmt>comment_47</cmt>
-            <desc>description_35</desc>
-            <src>source_54</src>
-            <sym>symbol_79</sym>
-            <sat>64</sat>
-            <vdop>2.386796302717102</vdop>
-            <pdop>2.2901611477038206</pdop>
-        </rtept>
-        <rtept lat="48.96562482856083" lon="16.394425432682493">
-            <ele>405.0</ele>
-            <speed>61.907179976447566</speed>
-            <time>1998-01-25T09:13:03Z</time>
-            <magvar>7.88215846401537</magvar>
-            <geoidheight>635.0</geoidheight>
-            <name>name_32</name>
-            <cmt>comment_3</cmt>
-            <src>source_15</src>
-            <link href="http://link_0">
-                <text>text_66</text>
-                <type>type_70</type>
-            </link>
-            <link href="http://link_54">
-                <text>text_57</text>
-                <type>type_40</type>
-            </link>
-            <link href="http://link_58"></link>
-            <link href="http://link_79">
-                <type>type_44</type>
-            </link>
-            <link href="http://link_67"></link>
-            <link href="http://link_98">
-                <text>text_43</text>
-                <type>type_19</type>
-            </link>
-            <link href="http://link_98">
-                <type>type_15</type>
-            </link>
-            <sym>symbol_36</sym>
-            <fix>3d</fix>
-            <hdop>2.270498223133979</hdop>
-            <ageofdgpsdata>614</ageofdgpsdata>
-            <dgpsid>7</dgpsid>
-        </rtept>
-    </rte>
-    <rte>
-        <name>name_71</name>
-        <link href="http://link_58">
-            <type>type_64</type>
-        </link>
-        <link href="http://link_14"></link>
-        <type>type_96</type>
-        <rtept lat="48.38278672338808" lon="16.689239253195513">
-            <speed>41.42856596326012</speed>
-            <time>1996-04-14T07:46:16Z</time>
-            <geoidheight>596.0</geoidheight>
-            <cmt>comment_18</cmt>
-            <src>source_38</src>
-            <link href="http://link_58"></link>
-            <link href="http://link_10">
-                <text>text_16</text>
-            </link>
-            <link href="http://link_95">
-                <text>text_2</text>
-                <type>type_2</type>
-            </link>
-            <link href="http://link_8">
-                <type>type_9</type>
-            </link>
-            <link href="http://link_47">
-                <text>text_18</text>
-                <type>type_25</type>
-            </link>
-            <link href="http://link_80">
-                <text>text_18</text>
-            </link>
-            <link href="http://link_82">
-                <type>type_49</type>
-            </link>
-            <link href="http://link_67">
-                <text>text_45</text>
-                <type>type_24</type>
-            </link>
-            <link href="http://link_74"></link>
-            <link href="http://link_44"></link>
-            <fix>3d</fix>
-            <sat>61</sat>
-            <vdop>2.0974464961099826</vdop>
-            <pdop>2.2557921440926556</pdop>
-            <ageofdgpsdata>722</ageofdgpsdata>
-            <dgpsid>63</dgpsid>
-        </rtept>
-    </rte>
-    <rte>
-        <src>source_92</src>
-        <link href="http://link_44">
-            <text>text_45</text>
-        </link>
-        <link href="http://link_86">
-            <type>type_44</type>
-        </link>
-        <link href="http://link_76"></link>
-        <link href="http://link_71"></link>
-        <link href="http://link_32">
-            <text>text_95</text>
-            <type>type_32</type>
-        </link>
-        <link href="http://link_33"></link>
-        <link href="http://link_24">
-            <type>type_27</type>
         </link>
         <link href="http://link_27"></link>
-        <link href="http://link_26">
-            <text>text_63</text>
-            <type>type_41</type>
+        <type>type_58</type>
+        <hdop>2.813491</hdop>
+        <vdop>2.101233</vdop>
+        <pdop>2.943154</pdop>
+        <ageofdgpsdata>482</ageofdgpsdata>
+        <dgpsid>25</dgpsid>
+    </wpt>
+    <wpt lat="48.485269" lon="17.593356">
+        <ele>997</ele>
+        <speed>37.789727</speed>
+        <magvar>7.672933</magvar>
+        <geoidheight>210</geoidheight>
+        <cmt>comment_53</cmt>
+        <src>source_62</src>
+        <link href="http://link_28">
+            <type>type_74</type>
         </link>
-        <link href="http://link_61">
-            <text>text_49</text>
-            <type>type_91</type>
-        </link>
-        <link href="http://link_5">
-            <text>text_10</text>
-        </link>
-        <link href="http://link_80">
-            <text>text_38</text>
-            <type>type_48</type>
-        </link>
-        <link href="http://link_5">
-            <type>type_68</type>
-        </link>
-        <link href="http://link_11"></link>
-        <link href="http://link_97"></link>
-        <link href="http://link_30">
-            <text>text_12</text>
-            <type>type_94</type>
-        </link>
-        <link href="http://link_73">
-            <text>text_81</text>
-            <type>type_86</type>
-        </link>
-        <link href="http://link_38">
-            <text>text_17</text>
-            <type>type_50</type>
-        </link>
-        <link href="http://link_40">
-            <text>text_97</text>
-        </link>
-        <rtept lat="48.44082600649153" lon="17.514920686546294">
-            <time>1982-08-02T06:36:30Z</time>
-            <magvar>1.3222728064095157</magvar>
-            <geoidheight>529.0</geoidheight>
-            <cmt>comment_82</cmt>
-            <src>source_14</src>
-            <link href="http://link_71">
-                <type>type_62</type>
-            </link>
-            <link href="http://link_72">
-                <text>text_0</text>
-                <type>type_77</type>
-            </link>
-            <link href="http://link_56">
-                <text>text_28</text>
-            </link>
-            <link href="http://link_56"></link>
-            <link href="http://link_33"></link>
-            <link href="http://link_92">
-                <text>text_5</text>
-                <type>type_12</type>
-            </link>
-            <link href="http://link_25"></link>
-            <link href="http://link_92">
-                <text>text_90</text>
-            </link>
-            <link href="http://link_17"></link>
-            <link href="http://link_6"></link>
-            <link href="http://link_15"></link>
-            <link href="http://link_61">
-                <text>text_23</text>
-                <type>type_11</type>
-            </link>
-            <link href="http://link_36">
-                <text>text_42</text>
-            </link>
-            <sym>symbol_33</sym>
-            <sat>73</sat>
-            <vdop>2.3756282570182288</vdop>
-            <dgpsid>39</dgpsid>
-        </rtept>
-        <rtept lat="48.75790458666996" lon="17.0749107871204">
-            <magvar>3.0752886474402787</magvar>
-            <geoidheight>748.0</geoidheight>
-            <cmt>comment_97</cmt>
-            <desc>description_12</desc>
-            <src>source_7</src>
-            <sym>symbol_1</sym>
-            <fix>3d</fix>
-            <sat>84</sat>
-            <hdop>2.2920849289651857</hdop>
-            <ageofdgpsdata>804</ageofdgpsdata>
-        </rtept>
-        <rtept lat="49.0604991119886" lon="17.514190809574657">
-            <time>2008-01-04T01:32:17Z</time>
-            <geoidheight>411.0</geoidheight>
-            <name>name_15</name>
-            <cmt>comment_64</cmt>
-            <src>source_17</src>
-            <link href="http://link_61"></link>
-            <link href="http://link_49"></link>
-            <link href="http://link_82">
-                <type>type_61</type>
-            </link>
-            <link href="http://link_53">
-                <text>text_73</text>
-            </link>
-            <link href="http://link_2">
-                <text>text_83</text>
-                <type>type_77</type>
-            </link>
-            <link href="http://link_71">
-                <text>text_40</text>
-            </link>
-            <link href="http://link_8"></link>
-            <link href="http://link_68">
-                <text>text_59</text>
-                <type>type_96</type>
-            </link>
-            <link href="http://link_97"></link>
-            <link href="http://link_36">
-                <type>type_73</type>
-            </link>
-            <type>type_99</type>
-            <sat>15</sat>
-            <vdop>2.6303721009816945</vdop>
-            <pdop>2.6208494381988023</pdop>
-        </rtept>
-        <rtept lat="49.68232365197392" lon="17.852722129920757">
-            <ele>295.0</ele>
-            <speed>23.897726001491904</speed>
-            <name>name_88</name>
-            <src>source_96</src>
-            <link href="http://link_47"></link>
-            <link href="http://link_96">
-                <type>type_43</type>
-            </link>
-            <link href="http://link_72">
-                <text>text_56</text>
-            </link>
-            <hdop>2.3991362827878873</hdop>
-            <pdop>2.3931340384944377</pdop>
-        </rtept>
-        <rtept lat="49.267937393328864" lon="17.83008720382055">
-            <geoidheight>508.0</geoidheight>
-            <name>name_51</name>
-            <cmt>comment_35</cmt>
-            <desc>description_99</desc>
-            <link href="http://link_78">
-                <text>text_89</text>
-                <type>type_96</type>
-            </link>
-            <link href="http://link_27">
-                <text>text_28</text>
-                <type>type_66</type>
-            </link>
-            <link href="http://link_54"></link>
-            <type>type_4</type>
-            <fix>pps</fix>
-            <pdop>2.7607714177614975</pdop>
-            <ageofdgpsdata>509</ageofdgpsdata>
-            <dgpsid>38</dgpsid>
-        </rtept>
-        <rtept lat="49.057038472010994" lon="16.377582936336434">
-            <src>source_95</src>
-            <link href="http://link_82">
-                <text>text_67</text>
-            </link>
-            <link href="http://link_8">
-                <type>type_90</type>
-            </link>
-            <link href="http://link_16">
-                <type>type_5</type>
-            </link>
-            <link href="http://link_31"></link>
-            <sym>symbol_43</sym>
-            <fix>none</fix>
-            <sat>11</sat>
-            <pdop>2.9732383705311687</pdop>
-            <ageofdgpsdata>176</ageofdgpsdata>
-        </rtept>
-        <rtept lat="49.660897774504484" lon="16.837788107665766">
-            <ele>902.0</ele>
-            <time>1982-04-28T20:03:18Z</time>
-            <magvar>1.869658780235054</magvar>
-            <name>name_60</name>
-            <src>source_77</src>
-            <link href="http://link_19"></link>
-            <link href="http://link_49">
-                <text>text_82</text>
-                <type>type_85</type>
-            </link>
-            <link href="http://link_74">
-                <text>text_32</text>
-            </link>
-            <link href="http://link_2">
-                <text>text_25</text>
-            </link>
-            <link href="http://link_46">
-                <text>text_51</text>
-                <type>type_30</type>
-            </link>
-            <link href="http://link_4">
-                <text>text_76</text>
-            </link>
-            <link href="http://link_82">
-                <text>text_65</text>
-                <type>type_1</type>
-            </link>
-            <link href="http://link_52">
-                <text>text_75</text>
-                <type>type_15</type>
-            </link>
-            <link href="http://link_22">
-                <type>type_37</type>
-            </link>
-            <link href="http://link_29">
-                <text>text_68</text>
-            </link>
-            <link href="http://link_26"></link>
-            <link href="http://link_46">
-                <text>text_59</text>
-                <type>type_31</type>
-            </link>
-            <type>type_70</type>
-            <fix>pps</fix>
-            <sat>97</sat>
-            <vdop>2.6914188384334268</vdop>
-            <pdop>2.710613848941868</pdop>
-            <dgpsid>23</dgpsid>
-        </rtept>
-        <rtept lat="49.80378360615137" lon="17.041732448644254">
-            <speed>63.45398725136513</speed>
-            <cmt>comment_27</cmt>
-            <link href="http://link_33">
-                <text>text_68</text>
-                <type>type_32</type>
-            </link>
-            <link href="http://link_50">
-                <type>type_37</type>
-            </link>
-            <link href="http://link_29">
-                <type>type_50</type>
-            </link>
-            <link href="http://link_83">
-                <text>text_24</text>
-            </link>
-            <link href="http://link_36"></link>
-            <link href="http://link_67">
-                <type>type_64</type>
-            </link>
-            <link href="http://link_74"></link>
-            <link href="http://link_17">
-                <text>text_66</text>
-                <type>type_84</type>
-            </link>
-            <link href="http://link_18">
-                <text>text_14</text>
-                <type>type_71</type>
-            </link>
-            <link href="http://link_93">
-                <type>type_26</type>
-            </link>
-            <link href="http://link_2">
-                <text>text_35</text>
-            </link>
-            <link href="http://link_11"></link>
-            <link href="http://link_94"></link>
-            <fix>pps</fix>
-            <sat>40</sat>
-            <pdop>2.205748643004543</pdop>
-            <ageofdgpsdata>945</ageofdgpsdata>
-        </rtept>
-        <rtept lat="49.2460966349412" lon="17.892598168276017">
-            <ele>598.0</ele>
-            <speed>85.45629337660637</speed>
-            <geoidheight>546.0</geoidheight>
-            <cmt>comment_8</cmt>
-            <src>source_45</src>
-            <link href="http://link_88">
-                <text>text_13</text>
-                <type>type_4</type>
-            </link>
-            <link href="http://link_72">
-                <text>text_78</text>
-                <type>type_78</type>
-            </link>
-            <link href="http://link_20"></link>
-            <link href="http://link_96">
-                <text>text_41</text>
-                <type>type_72</type>
-            </link>
-            <link href="http://link_41">
-                <type>type_8</type>
-            </link>
-            <link href="http://link_62">
-                <text>text_3</text>
-            </link>
-            <link href="http://link_76">
-                <text>text_88</text>
-                <type>type_77</type>
-            </link>
-            <link href="http://link_10">
-                <type>type_47</type>
-            </link>
-            <link href="http://link_93"></link>
-            <link href="http://link_63">
-                <type>type_58</type>
-            </link>
-            <link href="http://link_85">
-                <text>text_45</text>
-            </link>
-            <link href="http://link_24">
-                <text>text_57</text>
-            </link>
-            <link href="http://link_79">
-                <text>text_54</text>
-            </link>
-            <link href="http://link_43">
-                <text>text_55</text>
-            </link>
-            <sat>30</sat>
-            <hdop>2.5391987895734616</hdop>
-            <pdop>2.1096162617007868</pdop>
-            <dgpsid>46</dgpsid>
-        </rtept>
-        <rtept lat="49.167881970360774" lon="17.17965302652302">
-            <speed>34.10056794398065</speed>
-            <src>source_91</src>
-            <link href="http://link_7"></link>
-            <link href="http://link_59">
-                <text>text_68</text>
-            </link>
-            <link href="http://link_2"></link>
-            <link href="http://link_62"></link>
-            <sym>symbol_32</sym>
-            <type>type_80</type>
-            <sat>36</sat>
-            <hdop>2.0642698655525296</hdop>
-            <vdop>2.0915924527558287</vdop>
-            <pdop>2.7017085625202033</pdop>
-        </rtept>
-        <rtept lat="49.401902236766524" lon="17.855995107820508">
-            <ele>620.0</ele>
-            <time>2035-08-01T06:11:55Z</time>
-            <src>source_18</src>
-            <link href="http://link_9"></link>
-            <link href="http://link_62"></link>
-            <link href="http://link_72">
-                <text>text_49</text>
-                <type>type_38</type>
-            </link>
-            <sym>symbol_41</sym>
-            <type>type_81</type>
-            <sat>19</sat>
-            <pdop>2.0913162771055993</pdop>
-            <dgpsid>62</dgpsid>
-        </rtept>
-        <rtept lat="49.315909794620445" lon="16.82008194405533">
-            <ele>804.0</ele>
-            <magvar>3.9739116972890876</magvar>
-            <geoidheight>681.0</geoidheight>
-            <name>name_67</name>
-            <src>source_20</src>
-            <link href="http://link_22"></link>
-            <link href="http://link_64">
-                <text>text_53</text>
-                <type>type_29</type>
-            </link>
-            <link href="http://link_50">
-                <type>type_35</type>
-            </link>
-            <link href="http://link_52">
-                <type>type_39</type>
-            </link>
-            <link href="http://link_61">
-                <type>type_53</type>
-            </link>
-            <link href="http://link_14">
-                <type>type_92</type>
-            </link>
-            <link href="http://link_33">
-                <type>type_92</type>
-            </link>
-            <link href="http://link_63">
-                <type>type_39</type>
-            </link>
-            <sym>symbol_29</sym>
-            <type>type_64</type>
-            <fix>none</fix>
-            <sat>65</sat>
-            <hdop>2.54382659727631</hdop>
-            <dgpsid>36</dgpsid>
-        </rtept>
-        <rtept lat="48.10384443060303" lon="16.725720049201126">
-            <ele>491.0</ele>
-            <speed>17.64699796016749</speed>
-            <geoidheight>97.0</geoidheight>
-            <src>source_3</src>
-            <link href="http://link_12">
-                <text>text_99</text>
-            </link>
-            <link href="http://link_40">
-                <text>text_50</text>
-            </link>
-            <link href="http://link_0">
-                <text>text_82</text>
-            </link>
-            <link href="http://link_86">
-                <text>text_16</text>
-            </link>
-            <link href="http://link_53"></link>
-            <link href="http://link_84">
-                <text>text_66</text>
-            </link>
-            <link href="http://link_84"></link>
-            <link href="http://link_69">
-                <text>text_71</text>
-                <type>type_68</type>
-            </link>
-            <link href="http://link_0">
-                <type>type_88</type>
-            </link>
-            <link href="http://link_88">
-                <text>text_18</text>
-            </link>
-            <link href="http://link_19">
-                <text>text_0</text>
-                <type>type_17</type>
-            </link>
-            <sym>symbol_22</sym>
-            <sat>64</sat>
-            <hdop>2.2539491499729905</hdop>
-            <vdop>2.8808141350763368</vdop>
-            <pdop>2.582523727089035</pdop>
-            <dgpsid>9</dgpsid>
-        </rtept>
-        <rtept lat="48.97133584050967" lon="17.617144225899935">
-            <ele>74.0</ele>
-            <speed>18.65757324228513</speed>
-            <geoidheight>662.0</geoidheight>
-            <name>name_76</name>
-            <cmt>comment_4</cmt>
-            <desc>description_55</desc>
-            <src>source_3</src>
-            <link href="http://link_71">
-                <type>type_50</type>
-            </link>
-            <link href="http://link_87">
-                <type>type_87</type>
-            </link>
-            <link href="http://link_47">
-                <type>type_65</type>
-            </link>
-            <link href="http://link_91"></link>
-            <link href="http://link_93"></link>
-            <link href="http://link_40">
-                <text>text_33</text>
-            </link>
-            <link href="http://link_66">
-                <text>text_56</text>
-                <type>type_9</type>
-            </link>
-            <link href="http://link_62">
-                <text>text_11</text>
-            </link>
-            <link href="http://link_81">
-                <text>text_62</text>
-                <type>type_31</type>
-            </link>
-            <link href="http://link_19">
-                <text>text_27</text>
-                <type>type_59</type>
-            </link>
-            <link href="http://link_50">
-                <type>type_39</type>
-            </link>
-            <sym>symbol_87</sym>
-            <type>type_51</type>
-            <fix>none</fix>
-            <sat>67</sat>
-            <hdop>2.1076004499838277</hdop>
-            <vdop>2.834850982674469</vdop>
-            <pdop>2.668783212980637</pdop>
-        </rtept>
-        <rtept lat="48.31289854997761" lon="17.896084701737156">
-            <cmt>comment_3</cmt>
-            <link href="http://link_37">
-                <text>text_85</text>
-                <type>type_48</type>
-            </link>
-            <link href="http://link_78">
-                <type>type_26</type>
-            </link>
-            <link href="http://link_59">
-                <text>text_34</text>
-                <type>type_50</type>
-            </link>
-            <link href="http://link_96">
-                <type>type_90</type>
-            </link>
-            <link href="http://link_85">
-                <type>type_8</type>
-            </link>
-            <link href="http://link_52">
-                <type>type_68</type>
-            </link>
-            <link href="http://link_23">
-                <type>type_71</type>
-            </link>
-            <link href="http://link_3">
-                <text>text_62</text>
-                <type>type_38</type>
-            </link>
-            <link href="http://link_23"></link>
-            <link href="http://link_92">
-                <type>type_18</type>
-            </link>
-            <link href="http://link_55">
-                <text>text_12</text>
-            </link>
-            <link href="http://link_92"></link>
-            <link href="http://link_70">
-                <text>text_33</text>
-            </link>
-            <link href="http://link_63">
-                <text>text_29</text>
-                <type>type_84</type>
-            </link>
-            <link href="http://link_80">
-                <type>type_73</type>
-            </link>
-            <link href="http://link_2"></link>
-            <link href="http://link_45">
-                <text>text_3</text>
-                <type>type_28</type>
-            </link>
-            <link href="http://link_64">
-                <text>text_6</text>
-                <type>type_67</type>
-            </link>
-            <sat>25</sat>
-            <pdop>2.25105422623761</pdop>
-            <ageofdgpsdata>581</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.586247990726285" lon="16.13146154968008">
-            <ele>383.0</ele>
-            <time>1978-06-06T10:01:09Z</time>
-            <magvar>4.631863475255619</magvar>
-            <cmt>comment_65</cmt>
-            <desc>description_41</desc>
-            <link href="http://link_21"></link>
-            <link href="http://link_1">
-                <text>text_74</text>
-                <type>type_10</type>
-            </link>
-            <link href="http://link_14">
-                <type>type_90</type>
-            </link>
-            <link href="http://link_2">
-                <text>text_74</text>
-                <type>type_36</type>
-            </link>
-            <link href="http://link_74">
-                <type>type_16</type>
-            </link>
-            <link href="http://link_47">
-                <text>text_55</text>
-            </link>
-            <link href="http://link_48">
-                <type>type_14</type>
-            </link>
-            <link href="http://link_47">
-                <text>text_10</text>
-            </link>
-            <link href="http://link_70"></link>
-            <link href="http://link_62">
-                <text>text_68</text>
-                <type>type_0</type>
-            </link>
-            <link href="http://link_96">
-                <text>text_16</text>
-            </link>
-            <link href="http://link_88">
-                <type>type_53</type>
-            </link>
-            <link href="http://link_55"></link>
-            <link href="http://link_81">
-                <text>text_55</text>
-            </link>
-            <link href="http://link_6">
-                <text>text_32</text>
-            </link>
-            <link href="http://link_32"></link>
-            <link href="http://link_35">
-                <text>text_37</text>
-            </link>
-            <link href="http://link_43"></link>
-            <link href="http://link_77">
-                <text>text_75</text>
-            </link>
-            <type>type_34</type>
-            <fix>none</fix>
-            <vdop>2.760565891956513</vdop>
-            <pdop>2.661774352485236</pdop>
-            <ageofdgpsdata>439</ageofdgpsdata>
-        </rtept>
-        <rtept lat="49.604366214669696" lon="16.929662732836853">
-            <speed>78.43686631795956</speed>
-            <time>1972-04-06T04:22:16Z</time>
-            <magvar>2.58294487214362</magvar>
-            <geoidheight>959.0</geoidheight>
-            <cmt>comment_60</cmt>
-            <src>source_50</src>
-            <link href="http://link_76">
-                <type>type_47</type>
-            </link>
-            <link href="http://link_36">
-                <type>type_91</type>
-            </link>
-            <link href="http://link_60">
-                <text>text_95</text>
-                <type>type_91</type>
-            </link>
-            <link href="http://link_8">
-                <type>type_14</type>
-            </link>
-            <link href="http://link_99">
-                <text>text_79</text>
-            </link>
-            <link href="http://link_97">
-                <text>text_89</text>
-            </link>
-            <link href="http://link_24">
-                <text>text_89</text>
-                <type>type_22</type>
-            </link>
-            <sym>symbol_26</sym>
-            <fix>3d</fix>
-            <sat>62</sat>
-            <hdop>2.1390989330481216</hdop>
-            <vdop>2.0290378024474016</vdop>
-            <ageofdgpsdata>769</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.98315163799224" lon="16.653216854867054">
-            <ele>11.0</ele>
-            <speed>55.0180898129652</speed>
-            <time>2001-08-11T03:11:04Z</time>
-            <magvar>8.44333817884819</magvar>
-            <geoidheight>463.0</geoidheight>
-            <cmt>comment_79</cmt>
-            <desc>description_81</desc>
-            <src>source_0</src>
-            <link href="http://link_86"></link>
-            <link href="http://link_42">
-                <text>text_73</text>
-                <type>type_66</type>
-            </link>
-            <link href="http://link_37">
-                <type>type_61</type>
-            </link>
-            <link href="http://link_37"></link>
-            <link href="http://link_36">
-                <type>type_17</type>
-            </link>
-            <fix>pps</fix>
-            <sat>81</sat>
-            <hdop>2.4907902622038387</hdop>
-            <vdop>2.8636152994104602</vdop>
-            <ageofdgpsdata>773</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.11796219734268" lon="16.51816309708687">
-            <ele>386.0</ele>
-            <speed>88.62266699580978</speed>
-            <time>2031-04-07T21:35:39Z</time>
-            <magvar>8.092937213982339</magvar>
-            <type>type_50</type>
-            <fix>pps</fix>
-            <pdop>2.916122429392127</pdop>
-            <dgpsid>14</dgpsid>
-        </rtept>
-    </rte>
-    <rte>
-        <cmt>comment_44</cmt>
-        <src>source_32</src>
-        <link href="http://link_44">
-            <text>text_50</text>
-        </link>
-        <link href="http://link_71">
-            <text>text_71</text>
-            <type>type_42</type>
-        </link>
-        <link href="http://link_20">
-            <type>type_17</type>
-        </link>
-        <link href="http://link_5"></link>
-        <link href="http://link_58"></link>
-        <link href="http://link_79"></link>
-        <link href="http://link_32">
-            <type>type_24</type>
-        </link>
-        <link href="http://link_88"></link>
-        <link href="http://link_1">
+        <link href="http://link_28">
             <text>text_9</text>
         </link>
-        <link href="http://link_3"></link>
-        <link href="http://link_65">
-            <text>text_34</text>
-            <type>type_44</type>
+        <link href="http://link_72">
+            <text>text_6</text>
         </link>
-        <link href="http://link_19">
-            <text>text_16</text>
+        <link href="http://link_15">
+            <text>text_88</text>
         </link>
         <link href="http://link_82">
-            <type>type_37</type>
+            <text>text_31</text>
+            <type>type_90</type>
         </link>
-        <link href="http://link_57">
-            <type>type_67</type>
+        <link href="http://link_11">
+            <text>text_26</text>
+            <type>type_35</type>
         </link>
-        <link href="http://link_30">
+        <sym>symbol_40</sym>
+        <type>type_21</type>
+        <pdop>2.063377</pdop>
+    </wpt>
+    <wpt lat="49.364155" lon="17.041759">
+        <magvar>5.491683</magvar>
+        <geoidheight>737</geoidheight>
+        <cmt>comment_7</cmt>
+        <link href="http://link_89">
+            <type>type_38</type>
+        </link>
+        <link href="http://link_98">
+            <text>text_77</text>
             <type>type_39</type>
         </link>
-        <rtept lat="49.604503720841564" lon="16.567802174892314">
-            <ele>706.0</ele>
-            <geoidheight>747.0</geoidheight>
-            <cmt>comment_44</cmt>
-            <link href="http://link_41">
-                <text>text_59</text>
-            </link>
-            <link href="http://link_11"></link>
-            <link href="http://link_54">
-                <text>text_10</text>
-                <type>type_1</type>
-            </link>
-            <link href="http://link_12">
-                <text>text_58</text>
-                <type>type_93</type>
-            </link>
-            <link href="http://link_56">
-                <text>text_28</text>
-                <type>type_69</type>
-            </link>
-            <sym>symbol_59</sym>
-            <type>type_59</type>
-            <pdop>2.4155776788764154</pdop>
-            <ageofdgpsdata>894</ageofdgpsdata>
-            <dgpsid>61</dgpsid>
-        </rtept>
-        <rtept lat="48.95648183459261" lon="16.63757446783419">
-            <geoidheight>273.0</geoidheight>
-            <desc>description_62</desc>
-            <src>source_34</src>
-            <link href="http://link_29"></link>
-            <link href="http://link_79">
-                <type>type_11</type>
-            </link>
-            <link href="http://link_14"></link>
-            <link href="http://link_75">
-                <type>type_18</type>
-            </link>
-            <link href="http://link_59"></link>
-            <link href="http://link_55"></link>
-            <link href="http://link_27"></link>
-            <link href="http://link_35">
-                <type>type_37</type>
-            </link>
-            <link href="http://link_54">
-                <type>type_74</type>
-            </link>
-            <link href="http://link_24"></link>
-            <link href="http://link_94">
-                <text>text_84</text>
-                <type>type_20</type>
-            </link>
-            <link href="http://link_50">
-                <text>text_58</text>
-            </link>
-            <sym>symbol_73</sym>
-            <hdop>2.0976810345978576</hdop>
-            <vdop>2.8400894371959877</vdop>
-            <ageofdgpsdata>143</ageofdgpsdata>
-            <dgpsid>89</dgpsid>
-        </rtept>
-        <rtept lat="48.47660184922136" lon="17.764853689807385">
-            <magvar>0.32007782035274324</magvar>
-            <geoidheight>592.0</geoidheight>
-            <cmt>comment_78</cmt>
-            <desc>description_92</desc>
-            <link href="http://link_29">
-                <text>text_25</text>
-                <type>type_18</type>
-            </link>
-            <link href="http://link_53">
-                <type>type_17</type>
-            </link>
-            <link href="http://link_90">
-                <text>text_47</text>
-                <type>type_88</type>
-            </link>
-            <link href="http://link_8">
-                <text>text_37</text>
-            </link>
-            <link href="http://link_59"></link>
-            <link href="http://link_26">
-                <text>text_78</text>
-            </link>
-            <link href="http://link_27"></link>
-            <link href="http://link_27">
-                <text>text_13</text>
-            </link>
-            <link href="http://link_36">
-                <text>text_38</text>
-                <type>type_39</type>
-            </link>
-            <link href="http://link_93">
-                <text>text_96</text>
-                <type>type_36</type>
-            </link>
-            <link href="http://link_71"></link>
-            <link href="http://link_79">
-                <text>text_5</text>
-                <type>type_96</type>
-            </link>
-            <link href="http://link_41">
-                <text>text_83</text>
-                <type>type_45</type>
-            </link>
-            <link href="http://link_45">
-                <text>text_9</text>
-                <type>type_55</type>
-            </link>
-            <link href="http://link_84">
-                <type>type_4</type>
-            </link>
-            <fix>none</fix>
-            <sat>15</sat>
-            <hdop>2.87297765546344</hdop>
-            <vdop>2.8326026036470804</vdop>
-            <pdop>2.963873183851052</pdop>
-            <ageofdgpsdata>846</ageofdgpsdata>
-            <dgpsid>95</dgpsid>
-        </rtept>
-    </rte>
-    <rte>
-        <src>source_72</src>
-        <link href="http://link_1">
-            <type>type_33</type>
+        <link href="http://link_19">
+            <text>text_38</text>
+            <type>type_68</type>
         </link>
-        <link href="http://link_63">
-            <type>type_50</type>
+        <link href="http://link_49">
+            <text>text_15</text>
+            <type>type_70</type>
         </link>
-        <link href="http://link_85">
-            <type>type_67</type>
+        <link href="http://link_97"></link>
+        <link href="http://link_92">
+            <type>type_48</type>
         </link>
-        <link href="http://link_7">
-            <text>text_74</text>
+        <link href="http://link_75">
+            <text>text_37</text>
+            <type>type_64</type>
         </link>
-        <link href="http://link_27">
-            <text>text_50</text>
+        <sym>symbol_28</sym>
+        <fix>3d</fix>
+        <hdop>2.695613</hdop>
+        <dgpsid>0</dgpsid>
+    </wpt>
+    <wpt lat="49.060061" lon="17.63932">
+        <speed>1.742173</speed>
+        <time>1970-01-14T06:42:48.286Z</time>
+        <magvar>9.347569</magvar>
+        <name>name_16</name>
+        <cmt>comment_68</cmt>
+        <link href="http://link_23">
+            <text>text_36</text>
+            <type>type_42</type>
         </link>
-        <link href="http://link_70">
-            <text>text_23</text>
-        </link>
-        <link href="http://link_69"></link>
-        <link href="http://link_30">
-            <type>type_18</type>
-        </link>
-        <link href="http://link_92"></link>
-        <link href="http://link_29">
-            <text>text_3</text>
-        </link>
-        <link href="http://link_21">
-            <text>text_8</text>
-        </link>
-        <link href="http://link_8"></link>
-        <link href="http://link_71">
-            <type>type_28</type>
-        </link>
-        <link href="http://link_7">
-            <text>text_45</text>
-        </link>
-        <link href="http://link_54"></link>
-        <type>type_16</type>
-        <rtept lat="48.93321297137386" lon="17.557058567105877">
-            <geoidheight>103.0</geoidheight>
-            <name>name_18</name>
-            <desc>description_39</desc>
-            <link href="http://link_40">
-                <text>text_18</text>
-                <type>type_95</type>
-            </link>
-            <link href="http://link_44">
-                <text>text_3</text>
-            </link>
-            <link href="http://link_96">
-                <type>type_3</type>
-            </link>
-            <link href="http://link_17">
-                <text>text_10</text>
-                <type>type_91</type>
-            </link>
-            <link href="http://link_76"></link>
-            <link href="http://link_64"></link>
-            <link href="http://link_75">
-                <text>text_4</text>
-            </link>
-            <link href="http://link_43">
-                <text>text_51</text>
-                <type>type_57</type>
-            </link>
-            <link href="http://link_98"></link>
-            <link href="http://link_99">
-                <text>text_50</text>
-            </link>
-            <link href="http://link_5">
-                <text>text_97</text>
-            </link>
-            <link href="http://link_16">
-                <text>text_64</text>
-                <type>type_63</type>
-            </link>
-            <sym>symbol_64</sym>
-            <type>type_50</type>
-            <fix>dgps</fix>
-            <sat>52</sat>
-            <hdop>2.6904086208425304</hdop>
-            <vdop>2.8659536341625422</vdop>
-        </rtept>
-        <rtept lat="48.06611282040806" lon="17.994078307949113">
-            <ele>989.0</ele>
-            <magvar>3.961382980512531</magvar>
-            <geoidheight>542.0</geoidheight>
-            <name>name_52</name>
-            <desc>description_91</desc>
-            <link href="http://link_96">
-                <type>type_43</type>
-            </link>
-            <link href="http://link_72">
-                <type>type_83</type>
-            </link>
-            <link href="http://link_27">
-                <type>type_32</type>
-            </link>
-            <link href="http://link_18">
-                <type>type_24</type>
-            </link>
-            <link href="http://link_85"></link>
-            <link href="http://link_50">
-                <text>text_28</text>
-                <type>type_16</type>
-            </link>
-            <link href="http://link_36">
-                <text>text_72</text>
-            </link>
-            <link href="http://link_54">
-                <type>type_64</type>
-            </link>
-            <link href="http://link_30">
-                <text>text_66</text>
-            </link>
-            <link href="http://link_7">
-                <text>text_14</text>
-                <type>type_99</type>
-            </link>
-            <link href="http://link_26">
-                <text>text_64</text>
-                <type>type_90</type>
-            </link>
-            <link href="http://link_18">
-                <text>text_4</text>
-                <type>type_97</type>
-            </link>
-            <link href="http://link_66"></link>
-            <link href="http://link_92"></link>
-            <link href="http://link_56">
-                <text>text_89</text>
-                <type>type_76</type>
-            </link>
-            <link href="http://link_57"></link>
-            <sym>symbol_40</sym>
-            <fix>pps</fix>
-            <hdop>2.0947052580487107</hdop>
-            <pdop>2.008359219265364</pdop>
-            <ageofdgpsdata>811</ageofdgpsdata>
-            <dgpsid>30</dgpsid>
-        </rtept>
-        <rtept lat="49.048679236911234" lon="17.820539632681093">
-            <ele>801.0</ele>
-            <speed>32.730700647089336</speed>
-            <time>1982-04-14T12:42:20Z</time>
-            <magvar>1.9943985672474407</magvar>
-            <src>source_59</src>
-            <link href="http://link_0">
-                <type>type_30</type>
-            </link>
-            <link href="http://link_74">
-                <type>type_22</type>
-            </link>
-            <link href="http://link_33">
-                <type>type_92</type>
-            </link>
-            <link href="http://link_77">
-                <type>type_70</type>
-            </link>
-            <link href="http://link_24">
-                <type>type_62</type>
-            </link>
-            <link href="http://link_79"></link>
-            <link href="http://link_77">
-                <text>text_6</text>
-            </link>
-            <link href="http://link_75"></link>
-            <link href="http://link_97">
-                <text>text_53</text>
-                <type>type_97</type>
-            </link>
-            <type>type_49</type>
-            <sat>12</sat>
-            <vdop>2.2818302942038677</vdop>
-            <ageofdgpsdata>108</ageofdgpsdata>
-            <dgpsid>95</dgpsid>
-        </rtept>
-        <rtept lat="49.959181376258925" lon="16.75632386519414">
-            <speed>59.399759291899144</speed>
-            <time>2022-10-16T08:31:06Z</time>
-            <geoidheight>96.0</geoidheight>
-            <name>name_38</name>
-            <desc>description_20</desc>
-            <src>source_23</src>
-            <link href="http://link_43"></link>
-            <type>type_71</type>
-        </rtept>
-        <rtept lat="48.89037355986655" lon="16.743507261187645">
-            <ele>551.0</ele>
-            <speed>67.70095218478355</speed>
-            <geoidheight>948.0</geoidheight>
-            <name>name_71</name>
-            <src>source_4</src>
-            <link href="http://link_34">
-                <text>text_93</text>
-                <type>type_16</type>
-            </link>
-            <link href="http://link_38"></link>
-            <link href="http://link_10">
-                <text>text_31</text>
-                <type>type_29</type>
-            </link>
-            <link href="http://link_66">
-                <text>text_90</text>
-            </link>
-            <link href="http://link_41">
-                <text>text_12</text>
-            </link>
-            <sat>2</sat>
-            <hdop>2.597713746191154</hdop>
-            <vdop>2.3476577705992936</vdop>
-            <pdop>2.202426688232044</pdop>
-            <dgpsid>45</dgpsid>
-        </rtept>
-        <rtept lat="49.20166667189511" lon="16.40129739869727">
-            <ele>889.0</ele>
-            <speed>63.14765881391229</speed>
-            <magvar>6.166137020424624</magvar>
-            <name>name_17</name>
-            <desc>description_68</desc>
-            <link href="http://link_29">
-                <text>text_10</text>
-                <type>type_46</type>
-            </link>
-            <link href="http://link_80">
-                <text>text_9</text>
-                <type>type_1</type>
-            </link>
-            <link href="http://link_28">
-                <text>text_94</text>
-            </link>
-            <link href="http://link_68">
-                <text>text_63</text>
-            </link>
-            <link href="http://link_56">
-                <text>text_48</text>
-            </link>
-            <link href="http://link_77">
-                <text>text_67</text>
-                <type>type_41</type>
-            </link>
-            <link href="http://link_2"></link>
-            <link href="http://link_62">
-                <type>type_18</type>
-            </link>
-            <link href="http://link_71">
-                <text>text_25</text>
-            </link>
-            <link href="http://link_17">
-                <text>text_31</text>
-            </link>
-            <link href="http://link_89"></link>
-            <link href="http://link_95">
-                <type>type_72</type>
-            </link>
-            <link href="http://link_25"></link>
-            <link href="http://link_3">
-                <text>text_36</text>
-            </link>
-            <sym>symbol_66</sym>
-            <type>type_28</type>
-            <fix>pps</fix>
-            <hdop>2.9448735663630474</hdop>
-            <ageofdgpsdata>874</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.380445928555154" lon="16.966556856545964">
-            <ele>600.0</ele>
-            <speed>43.59398142855373</speed>
-            <time>2031-11-02T02:37:38Z</time>
-            <magvar>1.2355927589051618</magvar>
-            <cmt>comment_19</cmt>
-            <desc>description_24</desc>
-            <src>source_62</src>
-            <link href="http://link_1">
-                <text>text_46</text>
-            </link>
-            <link href="http://link_93">
-                <text>text_30</text>
-                <type>type_56</type>
-            </link>
-            <link href="http://link_65">
-                <text>text_24</text>
-                <type>type_36</type>
-            </link>
-            <link href="http://link_45">
-                <text>text_41</text>
-                <type>type_27</type>
-            </link>
-            <link href="http://link_4">
-                <text>text_53</text>
-            </link>
-            <link href="http://link_38">
-                <text>text_84</text>
-            </link>
-            <link href="http://link_32">
-                <text>text_49</text>
-                <type>type_21</type>
-            </link>
-            <link href="http://link_7"></link>
-            <link href="http://link_18"></link>
-            <link href="http://link_79">
-                <text>text_9</text>
-            </link>
-            <link href="http://link_63">
-                <text>text_69</text>
-                <type>type_56</type>
-            </link>
-            <link href="http://link_46">
-                <text>text_1</text>
-                <type>type_25</type>
-            </link>
-            <link href="http://link_1">
-                <text>text_5</text>
-            </link>
-            <link href="http://link_49">
-                <type>type_50</type>
-            </link>
-            <link href="http://link_4">
-                <text>text_82</text>
-                <type>type_68</type>
-            </link>
-            <fix>2d</fix>
-            <sat>6</sat>
-            <vdop>2.8652916856241033</vdop>
-            <ageofdgpsdata>455</ageofdgpsdata>
-            <dgpsid>99</dgpsid>
-        </rtept>
-        <rtept lat="48.13301042873164" lon="16.042360466695477">
-            <time>1984-08-03T11:22:48Z</time>
-            <magvar>0.1873885813649856</magvar>
-            <cmt>comment_21</cmt>
-            <link href="http://link_84">
-                <type>type_67</type>
-            </link>
-            <link href="http://link_31"></link>
-            <link href="http://link_71">
-                <type>type_38</type>
-            </link>
-            <sym>symbol_28</sym>
-            <type>type_46</type>
-            <fix>dgps</fix>
-            <pdop>2.5681458349231816</pdop>
-            <ageofdgpsdata>50</ageofdgpsdata>
-            <dgpsid>59</dgpsid>
-        </rtept>
-        <rtept lat="49.209897758436846" lon="16.996269235351985">
-            <time>2017-09-03T21:00:17Z</time>
-            <name>name_37</name>
-            <cmt>comment_86</cmt>
-            <desc>description_43</desc>
-            <link href="http://link_36"></link>
-            <link href="http://link_33">
-                <text>text_69</text>
-            </link>
-            <link href="http://link_51"></link>
-            <link href="http://link_84">
-                <text>text_31</text>
-                <type>type_33</type>
-            </link>
-            <link href="http://link_81">
-                <type>type_8</type>
-            </link>
-            <link href="http://link_90">
-                <type>type_3</type>
-            </link>
-            <link href="http://link_54">
-                <text>text_65</text>
-            </link>
-            <link href="http://link_42">
-                <text>text_37</text>
-            </link>
-            <link href="http://link_12">
-                <type>type_25</type>
-            </link>
-            <link href="http://link_99">
-                <text>text_57</text>
-                <type>type_90</type>
-            </link>
-            <link href="http://link_94">
-                <text>text_61</text>
-            </link>
-            <link href="http://link_21">
-                <text>text_57</text>
-            </link>
-            <link href="http://link_92">
-                <text>text_86</text>
-                <type>type_24</type>
-            </link>
-            <type>type_39</type>
-            <sat>44</sat>
-            <vdop>2.7561409000285053</vdop>
-            <ageofdgpsdata>480</ageofdgpsdata>
-            <dgpsid>40</dgpsid>
-        </rtept>
-        <rtept lat="48.434376206074084" lon="17.17679878959401">
-            <ele>597.0</ele>
-            <speed>39.75316926492193</speed>
-            <name>name_26</name>
-            <link href="http://link_92">
-                <text>text_22</text>
-            </link>
-            <link href="http://link_26"></link>
-            <link href="http://link_27">
-                <text>text_86</text>
-            </link>
-            <link href="http://link_64">
-                <type>type_55</type>
-            </link>
-            <sym>symbol_6</sym>
-            <vdop>2.563987958362632</vdop>
-            <pdop>2.4220956581798996</pdop>
-        </rtept>
-        <rtept lat="49.75514071084182" lon="17.337616584685417">
-            <magvar>9.12938833190792</magvar>
-            <geoidheight>965.0</geoidheight>
-            <name>name_37</name>
-            <cmt>comment_48</cmt>
-            <desc>description_22</desc>
-            <src>source_55</src>
-            <link href="http://link_60">
-                <text>text_48</text>
-                <type>type_83</type>
-            </link>
-            <link href="http://link_37">
-                <type>type_20</type>
-            </link>
-            <link href="http://link_88">
-                <text>text_1</text>
-                <type>type_77</type>
-            </link>
-            <link href="http://link_53">
-                <type>type_95</type>
-            </link>
-            <link href="http://link_73"></link>
-            <link href="http://link_15">
-                <type>type_52</type>
-            </link>
-            <link href="http://link_61"></link>
-            <link href="http://link_14">
-                <type>type_71</type>
-            </link>
-            <link href="http://link_87"></link>
-            <link href="http://link_85">
-                <text>text_52</text>
-                <type>type_93</type>
-            </link>
-            <link href="http://link_12">
-                <text>text_53</text>
-                <type>type_37</type>
-            </link>
-            <link href="http://link_75">
-                <type>type_19</type>
-            </link>
-            <sym>symbol_97</sym>
-            <type>type_4</type>
-            <sat>56</sat>
-            <dgpsid>42</dgpsid>
-        </rtept>
-        <rtept lat="49.777345323188335" lon="17.740544429706496">
-            <speed>59.13229557118429</speed>
-            <magvar>4.590250044773222</magvar>
-            <name>name_82</name>
-            <cmt>comment_15</cmt>
-            <desc>description_48</desc>
-            <link href="http://link_42">
-                <type>type_17</type>
-            </link>
-            <link href="http://link_11"></link>
-            <link href="http://link_51">
-                <type>type_62</type>
-            </link>
-            <link href="http://link_88">
-                <text>text_22</text>
-            </link>
-            <link href="http://link_14"></link>
-            <link href="http://link_23">
-                <type>type_1</type>
-            </link>
-            <link href="http://link_64">
-                <text>text_67</text>
-            </link>
-            <link href="http://link_14">
-                <text>text_63</text>
-            </link>
-            <link href="http://link_52">
-                <text>text_94</text>
-            </link>
-            <link href="http://link_5"></link>
-            <sym>symbol_76</sym>
+        <link href="http://link_59">
             <type>type_81</type>
-            <fix>2d</fix>
-            <sat>86</sat>
-            <vdop>2.041791309144986</vdop>
-            <pdop>2.210227997729215</pdop>
-            <ageofdgpsdata>205</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.19493568192855" lon="16.08243860376255">
-            <speed>6.929425906783459</speed>
-            <time>1981-11-30T17:13:57Z</time>
-            <cmt>comment_87</cmt>
-            <desc>description_71</desc>
-            <src>source_40</src>
-            <link href="http://link_53">
-                <text>text_76</text>
-                <type>type_36</type>
-            </link>
-            <link href="http://link_76">
-                <text>text_81</text>
-            </link>
-            <link href="http://link_7">
-                <type>type_47</type>
-            </link>
-            <link href="http://link_24">
-                <type>type_90</type>
-            </link>
-            <link href="http://link_41">
-                <text>text_93</text>
-                <type>type_58</type>
-            </link>
-            <link href="http://link_89">
-                <text>text_37</text>
-            </link>
-            <link href="http://link_38">
-                <text>text_61</text>
-            </link>
-            <link href="http://link_95">
-                <text>text_77</text>
-            </link>
-            <link href="http://link_89">
-                <text>text_51</text>
-            </link>
-            <link href="http://link_52">
-                <text>text_7</text>
-                <type>type_68</type>
-            </link>
-            <link href="http://link_5">
-                <text>text_49</text>
-            </link>
-            <link href="http://link_61">
-                <type>type_1</type>
-            </link>
-            <link href="http://link_77"></link>
-            <link href="http://link_83"></link>
-            <sym>symbol_76</sym>
-            <sat>17</sat>
-            <hdop>2.7699219813708</hdop>
-            <vdop>2.208748478138535</vdop>
-            <ageofdgpsdata>807</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.01280963071908" lon="16.65913715456281">
-            <geoidheight>714.0</geoidheight>
-            <link href="http://link_84">
-                <type>type_74</type>
-            </link>
-            <link href="http://link_82">
-                <text>text_4</text>
-            </link>
-            <link href="http://link_96"></link>
-            <link href="http://link_10">
-                <text>text_19</text>
-                <type>type_40</type>
-            </link>
-            <link href="http://link_27">
-                <text>text_47</text>
-            </link>
-            <link href="http://link_20">
-                <type>type_9</type>
-            </link>
-            <link href="http://link_83">
-                <type>type_30</type>
-            </link>
-            <link href="http://link_45">
-                <type>type_89</type>
-            </link>
-            <link href="http://link_32">
-                <type>type_14</type>
-            </link>
-            <link href="http://link_30">
-                <type>type_3</type>
-            </link>
-            <link href="http://link_27"></link>
-            <link href="http://link_55"></link>
-            <link href="http://link_44">
-                <text>text_64</text>
-                <type>type_11</type>
-            </link>
-            <type>type_7</type>
-            <sat>36</sat>
-            <hdop>2.662612271664994</hdop>
-            <pdop>2.4234688873220085</pdop>
-            <ageofdgpsdata>852</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.77505305037008" lon="16.307951680615794">
-            <ele>67.0</ele>
-            <time>1997-09-13T01:05:39Z</time>
-            <magvar>3.0455433803713783</magvar>
-            <geoidheight>348.0</geoidheight>
-            <link href="http://link_89">
-                <type>type_7</type>
-            </link>
-            <link href="http://link_62">
-                <text>text_52</text>
-            </link>
-            <link href="http://link_40">
-                <text>text_81</text>
-            </link>
-            <type>type_10</type>
-            <fix>2d</fix>
-            <sat>78</sat>
-            <hdop>2.4049009384494258</hdop>
-            <vdop>2.622198928508608</vdop>
-            <pdop>2.209686561039581</pdop>
-            <ageofdgpsdata>631</ageofdgpsdata>
-            <dgpsid>94</dgpsid>
-        </rtept>
-        <rtept lat="48.079528067506956" lon="16.69938824461396">
-            <speed>79.03569634906665</speed>
-            <time>1985-05-24T06:01:15Z</time>
-            <geoidheight>47.0</geoidheight>
-            <name>name_43</name>
-            <cmt>comment_82</cmt>
-            <src>source_25</src>
-            <link href="http://link_19">
-                <type>type_15</type>
-            </link>
-            <link href="http://link_54">
-                <text>text_93</text>
-            </link>
-            <link href="http://link_39">
-                <text>text_46</text>
-                <type>type_98</type>
-            </link>
-            <link href="http://link_70"></link>
-            <link href="http://link_82">
-                <text>text_24</text>
-            </link>
-            <link href="http://link_49">
-                <text>text_27</text>
-                <type>type_40</type>
-            </link>
-            <link href="http://link_60">
-                <type>type_33</type>
-            </link>
-            <link href="http://link_89">
-                <text>text_4</text>
-            </link>
-            <link href="http://link_23"></link>
-            <link href="http://link_3">
-                <type>type_3</type>
-            </link>
-            <link href="http://link_59">
-                <type>type_99</type>
-            </link>
-            <fix>2d</fix>
-            <sat>13</sat>
-            <hdop>2.3153647962307216</hdop>
-            <pdop>2.9231998715094045</pdop>
-            <ageofdgpsdata>437</ageofdgpsdata>
-        </rtept>
-        <rtept lat="48.80324671992188" lon="16.653821304515017">
-            <ele>303.0</ele>
-            <time>1978-09-03T06:10:45Z</time>
-            <magvar>6.675647702814791</magvar>
-            <name>name_47</name>
-            <cmt>comment_29</cmt>
-            <src>source_39</src>
-            <link href="http://link_24"></link>
-            <link href="http://link_37"></link>
-            <link href="http://link_89">
-                <text>text_64</text>
-                <type>type_86</type>
-            </link>
-            <link href="http://link_48">
-                <text>text_68</text>
-                <type>type_21</type>
-            </link>
-            <link href="http://link_8">
-                <type>type_76</type>
-            </link>
-            <link href="http://link_53">
-                <text>text_35</text>
-                <type>type_82</type>
-            </link>
-            <type>type_61</type>
-            <dgpsid>85</dgpsid>
-        </rtept>
-        <rtept lat="48.36849861440573" lon="17.470031421263666">
-            <ele>502.0</ele>
-            <speed>33.697758586706975</speed>
-            <magvar>2.465391317295315</magvar>
-            <geoidheight>406.0</geoidheight>
-            <name>name_28</name>
-            <cmt>comment_7</cmt>
-            <desc>description_10</desc>
-            <link href="http://link_10"></link>
-            <link href="http://link_64">
-                <text>text_8</text>
-            </link>
-            <link href="http://link_78"></link>
-            <link href="http://link_33"></link>
-            <link href="http://link_41">
-                <type>type_44</type>
-            </link>
-            <link href="http://link_48">
-                <type>type_26</type>
-            </link>
-            <link href="http://link_9"></link>
-            <link href="http://link_34"></link>
-            <link href="http://link_71">
-                <type>type_26</type>
-            </link>
-            <link href="http://link_75">
-                <type>type_90</type>
-            </link>
-            <sym>symbol_24</sym>
-            <type>type_37</type>
-            <fix>pps</fix>
-            <sat>1</sat>
-            <hdop>2.877441492351485</hdop>
-            <pdop>2.861458197729136</pdop>
-            <ageofdgpsdata>357</ageofdgpsdata>
-            <dgpsid>17</dgpsid>
-        </rtept>
-        <rtept lat="48.64880640400213" lon="16.643092104126477">
-            <magvar>8.079989127330627</magvar>
-            <geoidheight>611.0</geoidheight>
-            <cmt>comment_52</cmt>
-            <src>source_35</src>
-            <link href="http://link_45">
-                <type>type_88</type>
-            </link>
-            <link href="http://link_87"></link>
-            <link href="http://link_45">
-                <text>text_93</text>
-                <type>type_18</type>
-            </link>
-            <link href="http://link_50">
-                <text>text_98</text>
-            </link>
-            <link href="http://link_91"></link>
-            <link href="http://link_3">
-                <text>text_38</text>
-                <type>type_72</type>
-            </link>
-            <link href="http://link_35">
-                <type>type_58</type>
-            </link>
-            <link href="http://link_5">
-                <type>type_55</type>
-            </link>
-            <link href="http://link_94">
-                <text>text_82</text>
-                <type>type_42</type>
-            </link>
-            <link href="http://link_69">
-                <type>type_10</type>
-            </link>
-            <link href="http://link_61">
-                <text>text_8</text>
-                <type>type_29</type>
-            </link>
-            <link href="http://link_33">
-                <text>text_29</text>
-                <type>type_89</type>
-            </link>
-            <link href="http://link_22"></link>
-            <link href="http://link_41">
-                <type>type_32</type>
-            </link>
-            <link href="http://link_89">
-                <text>text_35</text>
-                <type>type_9</type>
-            </link>
-            <link href="http://link_83">
-                <text>text_13</text>
-                <type>type_31</type>
-            </link>
-            <link href="http://link_34">
-                <type>type_55</type>
-            </link>
-            <link href="http://link_51">
-                <text>text_26</text>
-            </link>
-            <link href="http://link_36">
-                <type>type_30</type>
-            </link>
-            <sym>symbol_74</sym>
-            <type>type_95</type>
-            <fix>3d</fix>
-            <hdop>2.2353087988931275</hdop>
-            <vdop>2.98378569699081</vdop>
-            <pdop>2.6386314059680887</pdop>
-            <ageofdgpsdata>332</ageofdgpsdata>
-            <dgpsid>58</dgpsid>
-        </rtept>
-    </rte>
-    <rte>
-        <name>name_18</name>
-        <cmt>comment_25</cmt>
-        <src>source_55</src>
-        <link href="http://link_99">
+        </link>
+        <link href="http://link_3">
             <type>type_6</type>
         </link>
-        <link href="http://link_73">
-            <type>type_43</type>
+        <link href="http://link_35">
+            <text>text_87</text>
+            <type>type_1</type>
+        </link>
+        <link href="http://link_35"></link>
+        <link href="http://link_54">
+            <type>type_17</type>
+        </link>
+        <link href="http://link_32">
+            <text>text_75</text>
+            <type>type_41</type>
+        </link>
+        <link href="http://link_21">
+            <text>text_99</text>
+        </link>
+        <link href="http://link_93">
+            <text>text_40</text>
+        </link>
+        <link href="http://link_99">
+            <text>text_14</text>
+            <type>type_11</type>
+        </link>
+        <sym>symbol_45</sym>
+        <fix>none</fix>
+        <sat>50</sat>
+        <hdop>2.134911</hdop>
+        <vdop>2.572237</vdop>
+        <ageofdgpsdata>539</ageofdgpsdata>
+    </wpt>
+    <wpt lat="49.374003" lon="16.859235">
+        <ele>776</ele>
+        <name>name_15</name>
+        <src>source_46</src>
+        <link href="http://link_19">
+            <text>text_20</text>
         </link>
         <link href="http://link_76">
-            <type>type_54</type>
+            <text>text_76</text>
+            <type>type_51</type>
         </link>
-        <link href="http://link_78"></link>
-        <link href="http://link_9">
-            <text>text_15</text>
+        <link href="http://link_57">
+            <text>text_47</text>
         </link>
-        <link href="http://link_89">
-            <text>text_71</text>
-            <type>type_95</type>
+        <link href="http://link_43"></link>
+        <link href="http://link_57">
+            <text>text_19</text>
         </link>
-        <link href="http://link_24">
+        <link href="http://link_13"></link>
+        <link href="http://link_45">
+            <text>text_88</text>
+        </link>
+        <link href="http://link_70">
+            <text>text_72</text>
+        </link>
+        <link href="http://link_22">
+            <text>text_37</text>
+        </link>
+        <link href="http://link_10">
+            <text>text_20</text>
+        </link>
+        <fix>pps</fix>
+        <sat>84</sat>
+        <vdop>2.167538</vdop>
+        <pdop>2.037946</pdop>
+        <ageofdgpsdata>263</ageofdgpsdata>
+    </wpt>
+    <wpt lat="49.091025" lon="17.362124">
+        <ele>381</ele>
+        <speed>71.363993</speed>
+        <magvar>9.701601</magvar>
+        <name>name_18</name>
+        <cmt>comment_57</cmt>
+        <link href="http://link_93">
+            <type>type_88</type>
+        </link>
+        <link href="http://link_11"></link>
+        <link href="http://link_71">
+            <text>text_10</text>
+            <type>type_48</type>
+        </link>
+        <link href="http://link_6">
+            <type>type_51</type>
+        </link>
+        <link href="http://link_7">
+            <text>text_98</text>
+            <type>type_63</type>
+        </link>
+        <link href="http://link_42">
+            <text>text_19</text>
+            <type>type_35</type>
+        </link>
+        <link href="http://link_87">
+            <type>type_1</type>
+        </link>
+        <type>type_93</type>
+        <hdop>2.906648</hdop>
+        <ageofdgpsdata>595</ageofdgpsdata>
+    </wpt>
+    <wpt lat="48.592086" lon="17.76702">
+        <time>1970-01-22T07:48:22.436Z</time>
+        <name>name_71</name>
+        <cmt>comment_98</cmt>
+        <src>source_78</src>
+        <link href="http://link_71">
             <text>text_32</text>
+            <type>type_50</type>
         </link>
-        <number>3</number>
-        <rtept lat="48.25258464147563" lon="16.302647206478543">
-            <magvar>6.476939017481688</magvar>
-            <geoidheight>353.0</geoidheight>
-            <name>name_11</name>
-            <cmt>comment_48</cmt>
-            <link href="http://link_42"></link>
-            <link href="http://link_89">
-                <text>text_89</text>
-                <type>type_1</type>
-            </link>
-            <link href="http://link_85">
-                <type>type_41</type>
-            </link>
-            <link href="http://link_33">
-                <type>type_66</type>
-            </link>
-            <link href="http://link_31">
-                <text>text_48</text>
-            </link>
-            <link href="http://link_68">
-                <text>text_77</text>
-            </link>
-            <link href="http://link_8">
-                <type>type_8</type>
-            </link>
-            <link href="http://link_36">
-                <text>text_96</text>
-            </link>
-            <link href="http://link_35">
-                <type>type_35</type>
-            </link>
-            <link href="http://link_43">
-                <text>text_45</text>
-                <type>type_7</type>
-            </link>
-            <link href="http://link_48">
-                <text>text_41</text>
-            </link>
-            <link href="http://link_42"></link>
-            <link href="http://link_27"></link>
-            <link href="http://link_45"></link>
-            <link href="http://link_10">
-                <type>type_98</type>
-            </link>
-            <type>type_67</type>
-            <hdop>2.8805662662695894</hdop>
-            <vdop>2.1989658545551944</vdop>
-        </rtept>
-        <rtept lat="48.67057880596753" lon="16.804906456020145">
-            <ele>67.0</ele>
-            <speed>27.272300353774337</speed>
-            <name>name_39</name>
-            <cmt>comment_49</cmt>
-            <src>source_69</src>
-            <link href="http://link_77">
-                <text>text_84</text>
-                <type>type_35</type>
-            </link>
-            <link href="http://link_50">
-                <text>text_42</text>
-            </link>
-            <link href="http://link_98">
-                <text>text_56</text>
-                <type>type_30</type>
-            </link>
-            <fix>none</fix>
-            <sat>88</sat>
-            <vdop>2.3226033707753455</vdop>
-        </rtept>
-        <rtept lat="48.77942346274335" lon="16.670418783817766">
-            <speed>5.602485012925529</speed>
-            <geoidheight>257.0</geoidheight>
-            <name>name_42</name>
-            <cmt>comment_54</cmt>
-            <link href="http://link_41">
-                <text>text_11</text>
-                <type>type_89</type>
-            </link>
-            <link href="http://link_54">
-                <type>type_98</type>
-            </link>
-            <link href="http://link_93">
-                <type>type_13</type>
-            </link>
-            <link href="http://link_18">
-                <text>text_54</text>
-            </link>
-            <link href="http://link_65">
-                <text>text_25</text>
-            </link>
-            <link href="http://link_36"></link>
-            <link href="http://link_39">
-                <type>type_79</type>
-            </link>
-            <link href="http://link_90"></link>
-            <link href="http://link_15">
-                <type>type_19</type>
-            </link>
-            <link href="http://link_39">
-                <type>type_53</type>
-            </link>
-            <link href="http://link_61">
-                <text>text_11</text>
-            </link>
-            <link href="http://link_18">
-                <text>text_80</text>
-                <type>type_1</type>
-            </link>
-            <link href="http://link_75">
-                <text>text_4</text>
-            </link>
-            <link href="http://link_16"></link>
-            <sym>symbol_74</sym>
-            <sat>46</sat>
-            <vdop>2.253512665794562</vdop>
-            <pdop>2.919928940966045</pdop>
-            <dgpsid>67</dgpsid>
-        </rtept>
-        <rtept lat="49.908311529604546" lon="16.133268665848686">
-            <src>source_64</src>
-            <link href="http://link_30">
-                <text>text_33</text>
-            </link>
-            <link href="http://link_30"></link>
-            <link href="http://link_18"></link>
-            <link href="http://link_79"></link>
-            <link href="http://link_16">
-                <type>type_43</type>
-            </link>
-            <link href="http://link_69">
-                <text>text_24</text>
-                <type>type_37</type>
-            </link>
-            <link href="http://link_36">
-                <type>type_76</type>
-            </link>
-            <sym>symbol_56</sym>
-            <sat>95</sat>
-            <pdop>2.997708748768163</pdop>
-        </rtept>
-    </rte>
-    <extensions xmlns="http://www.topografix.com/GPX/1/1">
-        <gpxdata:lap xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0">
-            <gpxdata:index>1</gpxdata:index>
-            <gpxdata:startPoint lat="51.219983" lon="6.765224"></gpxdata:startPoint>
-            <gpxdata:endPoint lat="51.220137" lon="6.765098"></gpxdata:endPoint>
-            <gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>
-            <gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>
-            <gpxdata:calories>1</gpxdata:calories>
-            <gpxdata:distance>0.5881348</gpxdata:distance>
-            <gpxdata:summary kind="avg" name="AverageHeartRateBpm">163</gpxdata:summary>
-            <gpxdata:trigger kind="manual"></gpxdata:trigger>
-            <gpxdata:intensity>active</gpxdata:intensity>
-        </gpxdata:lap>
-    </extensions>
+        <link href="http://link_12">
+            <text>text_48</text>
+            <type>type_3</type>
+        </link>
+        <link href="http://link_26">
+            <text>text_11</text>
+        </link>
+        <link href="http://link_7">
+            <text>text_93</text>
+            <type>type_30</type>
+        </link>
+        <link href="http://link_37">
+            <text>text_22</text>
+            <type>type_63</type>
+        </link>
+        <link href="http://link_82"></link>
+        <link href="http://link_77"></link>
+        <link href="http://link_0">
+            <text>text_54</text>
+            <type>type_7</type>
+        </link>
+        <type>type_32</type>
+        <sat>23</sat>
+        <pdop>2.345121</pdop>
+        <ageofdgpsdata>555</ageofdgpsdata>
+        <dgpsid>75</dgpsid>
+    </wpt>
 </gpx>

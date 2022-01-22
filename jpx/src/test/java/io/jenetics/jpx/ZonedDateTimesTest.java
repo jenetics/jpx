@@ -36,9 +36,9 @@ import org.testng.annotations.Test;
 public class ZonedDateTimesTest {
 
 	public static Instant nextZonedDataTime(final Random random) {
-		final int seconds = Math.abs(random.nextInt());
+		final long millis = Math.abs(random.nextInt());
 
-		return Instant.ofEpochSecond(seconds);
+		return Instant.ofEpochMilli(millis);
 	}
 
 	@Test
