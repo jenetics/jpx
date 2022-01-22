@@ -120,8 +120,13 @@ public final class Length
 		 */
 		public double convert(final double length, final Unit sourceUnit) {
 			requireNonNull(sourceUnit);
-			final double meters = length*sourceUnit._factor;
-			return meters/_factor;
+
+			if (this == sourceUnit) {
+				return length;
+			} else {
+				final double meters = length*sourceUnit._factor;
+				return meters/_factor;
+			}
 		}
 	}
 
