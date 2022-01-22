@@ -23,53 +23,28 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 2.0
+ * @version !__version__!
  * @since 1.2
  */
-final class ZonedDateTimes {
+final class Instants {
 
-	private ZonedDateTimes() {
+	private Instants() {
 	}
 
-	static void write(final ZonedDateTime time, final DataOutput out)
+	static void write(final Instant time, final DataOutput out)
 		throws IOException
 	{
-		IO.writeLong(time.toEpochSecond(), out);
-		writeZoneOffset(time.getOffset(), out);
+		IO.writeLong(time.toEpochMilli(), out);
 	}
 
-	private static
-	void writeZoneOffset(final ZoneOffset os, final DataOutput out)
-		throws IOException
-	{
-		final int offsetSecs = os.getTotalSeconds();
-		int offsetByte = offsetSecs%900 == 0 ? offsetSecs/900 : 127;
-		out.writeByte(offsetByte);
-		if (offsetByte == 127) {
-			IO.writeInt(offsetSecs, out);
-		}
-	}
-
-	static ZonedDateTime read(final DataInput in) throws IOException {
+	static Instant read(final DataInput in) throws IOException {
 		final long seconds = IO.readLong(in);
-		final ZoneOffset offset = readZoneOffset(in);
-		return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds), offset);
-	}
-
-	private static ZoneOffset readZoneOffset(final DataInput in)
-		throws IOException
-	{
-		int offsetByte = in.readByte();
-		return offsetByte == 127
-			? ZoneOffset.ofTotalSeconds(IO.readInt(in))
-			: ZoneOffset.ofTotalSeconds(offsetByte*900);
+		return Instant.ofEpochMilli(seconds);
 	}
 
 	/**
@@ -77,24 +52,24 @@ final class ZonedDateTimes {
 	 * code of its {@link Instant}, truncated to seconds, is returned. The
 	 * argument may be {@code null}.
 	 *
-	 * @param a the date time, for which the hash code is calculated
+	 * @param a the instant, for which the hash code is calculated
 	 * @return the <em>truncated</em> hash code
 	 */
-	static int hashCode(final ZonedDateTime a) {
-		return Objects.hashCode(toInstant(a));
+	static int hashCode(final Instant a) {
+		return Objects.hashCode(truncate(a));
 	}
 
-	private static Instant toInstant(final ZonedDateTime zdt) {
-		return zdt != null
-			? zdt.toInstant().truncatedTo(ChronoUnit.SECONDS)
+	private static Instant truncate(final Instant instant) {
+		return instant != null
+			? instant.truncatedTo(ChronoUnit.MILLIS)
 			: null;
 	}
 
 	/**
 	 * Tests if the given date times represents the same point on the time-line.
-	 * The used resolution for comparision is <em>seconds</em>. If two
-	 * {@link ZonedDateTime} objects are equal to its seconds, they are treated
-	 * as equal, even if the milli-second part is different. The argument may be
+	 * The used resolution for comparison is <em>seconds</em>. If two
+	 * {@link Instant} objects are equal to its seconds, they are treated
+	 * as equal, even if the millisecond part is different. The argument may be
 	 * {@code null}.
 	 *
 	 * @param a the first date time
@@ -102,8 +77,8 @@ final class ZonedDateTimes {
 	 * @return {@code true} if the two date times represents the same point on
 	 *         the time-line, {@code false} otherwise
 	 */
-	static boolean equals(final ZonedDateTime a, final ZonedDateTime b) {
-		return Objects.equals(toInstant(a), toInstant(b));
+	static boolean equals(final Instant a, final Instant b) {
+		return Objects.equals(truncate(a), truncate(b));
 	}
 
 }
