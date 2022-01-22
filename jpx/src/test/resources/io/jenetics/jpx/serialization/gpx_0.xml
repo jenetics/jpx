@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gpx version="1.1" creator="creator_82" xmlns="http://www.topografix.com/GPX/1/1">
-    <wpt lat="48.999727" lon="17.961665">
-        <speed>60.880037</speed>
+    <wpt lat="48.99972746546016" lon="17.96166506865001">
+        <speed>60.880037037851686</speed>
         <time>1970-01-19T18:31:50.39Z</time>
-        <magvar>5.492986</magvar>
+        <magvar>5.492985802300052</magvar>
         <cmt>comment_20</cmt>
         <src>source_16</src>
         <link href="http://link_37"></link>
         <link href="http://link_78"></link>
-        <pdop>2.874391</pdop>
+        <pdop>2.8743910443467886</pdop>
         <ageofdgpsdata>834</ageofdgpsdata>
     </wpt>
-    <wpt lat="49.891744" lon="17.576484">
+    <wpt lat="49.89174434874009" lon="17.576483683773766">
         <ele>14</ele>
-        <speed>46.168195</speed>
+        <speed>46.1681947326973</speed>
         <cmt>comment_54</cmt>
         <link href="http://link_98">
             <text>text_17</text>
@@ -53,9 +53,9 @@
         <fix>pps</fix>
         <ageofdgpsdata>688</ageofdgpsdata>
     </wpt>
-    <wpt lat="48.623564" lon="16.047443">
+    <wpt lat="48.62356394302494" lon="16.047442568061964">
         <ele>132</ele>
-        <speed>15.459058</speed>
+        <speed>15.459058190622265</speed>
         <time>1970-01-08T01:37:14.143Z</time>
         <geoidheight>318</geoidheight>
         <name>name_36</name>
@@ -102,14 +102,14 @@
         <sym>symbol_39</sym>
         <type>type_88</type>
         <fix>2d</fix>
-        <pdop>2.16072</pdop>
+        <pdop>2.160719576226168</pdop>
         <ageofdgpsdata>897</ageofdgpsdata>
         <dgpsid>95</dgpsid>
     </wpt>
-    <wpt lat="49.267674" lon="17.399348">
+    <wpt lat="49.26767358486611" lon="17.39934804093629">
         <ele>422</ele>
         <time>1970-01-16T08:41:32.034Z</time>
-        <magvar>2.070578</magvar>
+        <magvar>2.070577911505642</magvar>
         <name>name_61</name>
         <link href="http://link_58"></link>
         <link href="http://link_31">
@@ -153,13 +153,13 @@
         </link>
         <fix>dgps</fix>
         <sat>50</sat>
-        <hdop>2.62481</hdop>
-        <vdop>2.953473</vdop>
+        <hdop>2.6248095287566566</hdop>
+        <vdop>2.9534726942627976</vdop>
     </wpt>
-    <wpt lat="48.362601" lon="16.089713">
+    <wpt lat="48.36260132477708" lon="16.089712765608404">
         <ele>660</ele>
-        <speed>98.632431</speed>
-        <magvar>6.094176</magvar>
+        <speed>98.63243067977902</speed>
+        <magvar>6.0941760947251735</magvar>
         <name>name_70</name>
         <cmt>comment_81</cmt>
         <link href="http://link_58"></link>
@@ -174,10 +174,10 @@
             <type>type_72</type>
         </link>
         <type>type_65</type>
-        <vdop>2.106007</vdop>
-        <pdop>2.312548</pdop>
+        <vdop>2.1060070815696195</vdop>
+        <pdop>2.312547873886617</pdop>
     </wpt>
-    <wpt lat="49.771114" lon="17.244602">
+    <wpt lat="49.77111441734518" lon="17.24460215637148">
         <time>1970-01-10T22:20:01.185Z</time>
         <cmt>comment_24</cmt>
         <desc>description_79</desc>
@@ -228,10 +228,10 @@
             <type>type_88</type>
         </link>
         <sat>96</sat>
-        <vdop>2.416562</vdop>
+        <vdop>2.416561817251443</vdop>
     </wpt>
-    <wpt lat="49.955954" lon="16.430519">
-        <speed>92.297239</speed>
+    <wpt lat="49.955953900394064" lon="16.43051931737456">
+        <speed>92.29723930042114</speed>
         <time>1970-01-10T00:46:54.218Z</time>
         <geoidheight>822</geoidheight>
         <name>name_36</name>
@@ -292,11 +292,11 @@
         <sym>symbol_89</sym>
         <type>type_44</type>
         <sat>80</sat>
-        <vdop>2.132721</vdop>
+        <vdop>2.1327214881128005</vdop>
         <ageofdgpsdata>831</ageofdgpsdata>
         <dgpsid>84</dgpsid>
     </wpt>
-    <wpt lat="48.48204" lon="17.426946">
+    <wpt lat="48.482039928590005" lon="17.426946212473034">
         <ele>93</ele>
         <time>1970-01-15T00:03:45.888Z</time>
         <geoidheight>288</geoidheight>
@@ -342,13 +342,13 @@
             <type>type_25</type>
         </link>
         <fix>pps</fix>
-        <hdop>2.333794</hdop>
-        <vdop>2.320652</vdop>
+        <hdop>2.3337937075803246</hdop>
+        <vdop>2.32065202185493</vdop>
         <dgpsid>50</dgpsid>
     </wpt>
-    <wpt lat="48.477209" lon="16.184678">
+    <wpt lat="48.47720914521016" lon="16.184677947861605">
         <time>1970-01-15T07:01:22.568Z</time>
-        <magvar>4.272608</magvar>
+        <magvar>4.27260818100807</magvar>
         <cmt>comment_9</cmt>
         <link href="http://link_35">
             <text>text_51</text>
@@ -384,8 +384,8 @@
         <link href="http://link_42"></link>
         <sym>symbol_73</sym>
         <type>type_67</type>
-        <vdop>2.862243</vdop>
-        <pdop>2.374998</pdop>
+        <vdop>2.862243406441817</vdop>
+        <pdop>2.3749983800504144</pdop>
         <dgpsid>38</dgpsid>
     </wpt>
     <rte>
@@ -407,9 +407,9 @@
         </link>
         <link href="http://link_93"></link>
         <link href="http://link_77"></link>
-        <rtept lat="49.350618" lon="17.277762">
+        <rtept lat="49.350617695236394" lon="17.2777622300991">
             <ele>678</ele>
-            <magvar>5.514037</magvar>
+            <magvar>5.51403684607259</magvar>
             <geoidheight>12</geoidheight>
             <name>name_51</name>
             <cmt>comment_69</cmt>
@@ -455,12 +455,12 @@
             </link>
             <fix>none</fix>
             <sat>21</sat>
-            <hdop>2.675989</hdop>
+            <hdop>2.675989341768205</hdop>
             <ageofdgpsdata>657</ageofdgpsdata>
         </rtept>
-        <rtept lat="48.542408" lon="16.300079">
+        <rtept lat="48.54240842152204" lon="16.30007891169473">
             <time>1970-01-20T07:36:52.768Z</time>
-            <magvar>5.338748</magvar>
+            <magvar>5.338747917644091</magvar>
             <geoidheight>330</geoidheight>
             <link href="http://link_32"></link>
             <link href="http://link_42">
@@ -509,13 +509,13 @@
             </link>
             <sym>symbol_57</sym>
             <type>type_1</type>
-            <hdop>2.685469</hdop>
-            <pdop>2.135447</pdop>
+            <hdop>2.6854692340850095</hdop>
+            <pdop>2.1354472579502133</pdop>
             <dgpsid>84</dgpsid>
         </rtept>
-        <rtept lat="48.742677" lon="17.198114">
+        <rtept lat="48.74267651934275" lon="17.198114249761517">
             <ele>758</ele>
-            <speed>37.079675</speed>
+            <speed>37.07967537491976</speed>
             <geoidheight>389</geoidheight>
             <cmt>comment_2</cmt>
             <link href="http://link_93">
@@ -528,13 +528,13 @@
             </link>
             <fix>2d</fix>
             <sat>90</sat>
-            <hdop>2.295171</hdop>
-            <pdop>2.827951</pdop>
+            <hdop>2.295170742692715</hdop>
+            <pdop>2.827950783395702</pdop>
             <ageofdgpsdata>650</ageofdgpsdata>
             <dgpsid>91</dgpsid>
         </rtept>
-        <rtept lat="48.015148" lon="16.058802">
-            <magvar>3.213779</magvar>
+        <rtept lat="48.015147526213404" lon="16.058802233641817">
+            <magvar>3.213779200018286</magvar>
             <name>name_28</name>
             <cmt>comment_88</cmt>
             <desc>description_78</desc>
@@ -595,14 +595,14 @@
                 <type>type_30</type>
             </link>
             <link href="http://link_66"></link>
-            <hdop>2.227033</hdop>
-            <pdop>2.215148</pdop>
+            <hdop>2.227032732366239</hdop>
+            <pdop>2.2151478315039146</pdop>
             <ageofdgpsdata>990</ageofdgpsdata>
             <dgpsid>11</dgpsid>
         </rtept>
-        <rtept lat="48.247843" lon="16.985054">
+        <rtept lat="48.247843457192644" lon="16.985053768099856">
             <ele>175</ele>
-            <magvar>2.252827</magvar>
+            <magvar>2.2528270637653836</magvar>
             <geoidheight>96</geoidheight>
             <name>name_48</name>
             <cmt>comment_61</cmt>
@@ -654,11 +654,11 @@
                 <type>type_60</type>
             </link>
             <link href="http://link_88"></link>
-            <hdop>2.313512</hdop>
-            <vdop>2.287558</vdop>
+            <hdop>2.313511732082735</hdop>
+            <vdop>2.2875582517690916</vdop>
             <dgpsid>70</dgpsid>
         </rtept>
-        <rtept lat="48.03299" lon="16.957231">
+        <rtept lat="48.03298978305253" lon="16.95723138290834">
             <ele>262</ele>
             <time>1970-01-04T22:01:15.979Z</time>
             <geoidheight>967</geoidheight>
@@ -716,10 +716,10 @@
             <type>type_20</type>
             <fix>none</fix>
             <sat>76</sat>
-            <hdop>2.185477</hdop>
+            <hdop>2.1854765627701545</hdop>
         </rtept>
-        <rtept lat="49.86546" lon="17.42286">
-            <speed>6.726851</speed>
+        <rtept lat="49.865459525551564" lon="17.422859768298117">
+            <speed>6.726850629958214</speed>
             <name>name_47</name>
             <src>source_73</src>
             <link href="http://link_9">
@@ -778,14 +778,14 @@
             <sym>symbol_11</sym>
             <type>type_99</type>
             <fix>none</fix>
-            <vdop>2.00203</vdop>
+            <vdop>2.0020301017409325</vdop>
             <ageofdgpsdata>237</ageofdgpsdata>
         </rtept>
-        <rtept lat="49.669114" lon="17.443842">
+        <rtept lat="49.669114376532285" lon="17.4438417788422">
             <ele>537</ele>
-            <speed>54.115756</speed>
+            <speed>54.115755981401</speed>
             <time>1970-01-21T19:43:55.483Z</time>
-            <magvar>3.025614</magvar>
+            <magvar>3.0256135778063795</magvar>
             <cmt>comment_42</cmt>
             <src>source_96</src>
             <link href="http://link_89">
@@ -819,12 +819,12 @@
             <link href="http://link_94"></link>
             <link href="http://link_62"></link>
             <sat>46</sat>
-            <hdop>2.303259</hdop>
-            <pdop>2.206774</pdop>
+            <hdop>2.3032589261963254</hdop>
+            <pdop>2.2067738308447336</pdop>
             <dgpsid>70</dgpsid>
         </rtept>
-        <rtept lat="49.6685" lon="16.188999">
-            <magvar>6.203829</magvar>
+        <rtept lat="49.66850031734748" lon="16.188998576415987">
+            <magvar>6.2038289849967665</magvar>
             <geoidheight>7</geoidheight>
             <name>name_72</name>
             <cmt>comment_88</cmt>
@@ -837,10 +837,10 @@
             </link>
             <type>type_33</type>
             <fix>none</fix>
-            <vdop>2.086893</vdop>
-            <pdop>2.564608</pdop>
+            <vdop>2.0868925051308245</vdop>
+            <pdop>2.564608268065315</pdop>
         </rtept>
-        <rtept lat="48.950323" lon="16.187527">
+        <rtept lat="48.95032275380849" lon="16.1875267491027">
             <ele>838</ele>
             <time>1970-01-10T08:51:18.199Z</time>
             <geoidheight>760</geoidheight>
@@ -900,9 +900,9 @@
             <sym>symbol_34</sym>
             <fix>pps</fix>
         </rtept>
-        <rtept lat="48.841637" lon="17.554303">
+        <rtept lat="48.84163663079207" lon="17.55430309327894">
             <time>1970-01-25T00:44:49.961Z</time>
-            <magvar>7.283965</magvar>
+            <magvar>7.2839652656347855</magvar>
             <name>name_19</name>
             <cmt>comment_83</cmt>
             <desc>description_1</desc>
@@ -958,13 +958,13 @@
             </link>
             <fix>none</fix>
             <sat>80</sat>
-            <vdop>2.81104</vdop>
-            <pdop>2.629348</pdop>
+            <vdop>2.8110401631809476</vdop>
+            <pdop>2.629348194636102</pdop>
             <ageofdgpsdata>847</ageofdgpsdata>
             <dgpsid>57</dgpsid>
         </rtept>
-        <rtept lat="49.020802" lon="16.371761">
-            <magvar>7.386924</magvar>
+        <rtept lat="49.02080237848085" lon="16.37176136822124">
+            <magvar>7.386923518232651</magvar>
             <desc>description_15</desc>
             <link href="http://link_16"></link>
             <link href="http://link_94">
@@ -1004,12 +1004,12 @@
             <type>type_3</type>
             <fix>3d</fix>
             <sat>40</sat>
-            <vdop>2.633905</vdop>
-            <pdop>2.862441</pdop>
+            <vdop>2.6339052012800073</vdop>
+            <pdop>2.8624410132033127</pdop>
             <ageofdgpsdata>478</ageofdgpsdata>
         </rtept>
-        <rtept lat="48.47679" lon="17.264213">
-            <magvar>6.241851</magvar>
+        <rtept lat="48.47678997958089" lon="17.264213085741318">
+            <magvar>6.241850649323332</magvar>
             <geoidheight>996</geoidheight>
             <name>name_60</name>
             <desc>description_96</desc>
@@ -1033,12 +1033,12 @@
             <sym>symbol_24</sym>
             <type>type_12</type>
             <sat>55</sat>
-            <vdop>2.313261</vdop>
+            <vdop>2.3132610977471817</vdop>
         </rtept>
-        <rtept lat="49.825326" lon="17.39052">
+        <rtept lat="49.825325753172116" lon="17.390520279868515">
             <ele>425</ele>
-            <speed>65.847443</speed>
-            <magvar>7.465298</magvar>
+            <speed>65.84744336518283</speed>
+            <magvar>7.465298192723387</magvar>
             <name>name_33</name>
             <cmt>comment_66</cmt>
             <src>source_42</src>
@@ -1092,13 +1092,13 @@
             </link>
             <type>type_34</type>
             <fix>dgps</fix>
-            <hdop>2.045795</hdop>
+            <hdop>2.045795011197603</hdop>
             <dgpsid>51</dgpsid>
         </rtept>
-        <rtept lat="49.256241" lon="17.561481">
-            <speed>3.118708</speed>
+        <rtept lat="49.25624115388224" lon="17.561480681071043">
+            <speed>3.118708077605725</speed>
             <time>1970-01-09T02:39:49.342Z</time>
-            <magvar>4.005826</magvar>
+            <magvar>4.005825847816727</magvar>
             <name>name_11</name>
             <desc>description_7</desc>
             <src>source_22</src>
@@ -1120,7 +1120,7 @@
             <sym>symbol_62</sym>
             <type>type_86</type>
             <sat>2</sat>
-            <vdop>2.993343</vdop>
+            <vdop>2.9933432847303942</vdop>
         </rtept>
     </rte>
     <rte>
@@ -1164,9 +1164,9 @@
         <link href="http://link_87">
             <text>text_30</text>
         </link>
-        <rtept lat="48.388698" lon="17.402054">
+        <rtept lat="48.38869838576979" lon="17.402054051267328">
             <time>1970-01-17T20:28:17.972Z</time>
-            <magvar>9.142178</magvar>
+            <magvar>9.142177535583219</magvar>
             <cmt>comment_89</cmt>
             <desc>description_61</desc>
             <link href="http://link_67">
@@ -1209,13 +1209,13 @@
             </link>
             <type>type_17</type>
             <fix>none</fix>
-            <pdop>2.637193</pdop>
+            <pdop>2.6371926830577666</pdop>
             <ageofdgpsdata>566</ageofdgpsdata>
             <dgpsid>64</dgpsid>
         </rtept>
-        <rtept lat="48.600471" lon="16.192798">
+        <rtept lat="48.600470589533614" lon="16.19279815815875">
             <ele>3</ele>
-            <speed>27.490346</speed>
+            <speed>27.490346309440728</speed>
             <time>1970-01-05T07:38:50.043Z</time>
             <name>name_60</name>
             <desc>description_57</desc>
@@ -1254,12 +1254,12 @@
             <type>type_9</type>
             <fix>3d</fix>
             <sat>95</sat>
-            <hdop>2.95356</hdop>
-            <vdop>2.280385</vdop>
+            <hdop>2.953559630927002</hdop>
+            <vdop>2.2803852928452484</vdop>
             <dgpsid>68</dgpsid>
         </rtept>
-        <rtept lat="48.730461" lon="17.576268">
-            <speed>52.987484</speed>
+        <rtept lat="48.73046134422951" lon="17.576267787843484">
+            <speed>52.9874844915154</speed>
             <time>1970-01-25T01:46:31.578Z</time>
             <geoidheight>479</geoidheight>
             <desc>description_79</desc>
@@ -1303,14 +1303,14 @@
             <type>type_0</type>
             <fix>2d</fix>
             <sat>95</sat>
-            <hdop>2.304384</hdop>
-            <pdop>2.506443</pdop>
+            <hdop>2.304383720071546</hdop>
+            <pdop>2.5064432837118957</pdop>
             <ageofdgpsdata>383</ageofdgpsdata>
         </rtept>
-        <rtept lat="49.416861" lon="17.984308">
+        <rtept lat="49.416861128327405" lon="17.984307617216942">
             <ele>326</ele>
-            <speed>34.707372</speed>
-            <magvar>7.873456</magvar>
+            <speed>34.70737216068495</speed>
+            <magvar>7.873456489627138</magvar>
             <cmt>comment_35</cmt>
             <desc>description_7</desc>
             <src>source_95</src>
@@ -1327,11 +1327,11 @@
             </link>
             <sym>symbol_84</sym>
             <sat>75</sat>
-            <hdop>2.317747</hdop>
+            <hdop>2.3177467969190566</hdop>
             <ageofdgpsdata>970</ageofdgpsdata>
             <dgpsid>79</dgpsid>
         </rtept>
-        <rtept lat="49.218347" lon="16.155277">
+        <rtept lat="49.2183469030757" lon="16.15527719220629">
             <time>1970-01-20T20:29:12.014Z</time>
             <name>name_99</name>
             <desc>description_72</desc>
@@ -1359,10 +1359,10 @@
             <sym>symbol_43</sym>
             <dgpsid>58</dgpsid>
         </rtept>
-        <rtept lat="48.217199" lon="17.242455">
+        <rtept lat="48.217199397235" lon="17.24245532735821">
             <ele>736</ele>
             <time>1970-01-22T13:55:05.756Z</time>
-            <magvar>2.618512</magvar>
+            <magvar>2.6185117832758973</magvar>
             <geoidheight>291</geoidheight>
             <name>name_87</name>
             <cmt>comment_16</cmt>
@@ -1370,10 +1370,10 @@
             <src>source_47</src>
             <type>type_59</type>
             <sat>20</sat>
-            <hdop>2.075677</hdop>
-            <vdop>2.799317</vdop>
+            <hdop>2.0756766691049573</hdop>
+            <vdop>2.799317213341913</vdop>
         </rtept>
-        <rtept lat="48.707691" lon="16.662437">
+        <rtept lat="48.70769074066476" lon="16.66243683210977">
             <time>1970-01-22T02:27:34.214Z</time>
             <geoidheight>328</geoidheight>
             <cmt>comment_2</cmt>
@@ -1425,9 +1425,9 @@
             <text>text_44</text>
             <type>type_88</type>
         </link>
-        <rtept lat="49.722307" lon="16.443384">
+        <rtept lat="49.72230732498559" lon="16.443383693447167">
             <time>1970-01-10T09:10:18.107Z</time>
-            <magvar>6.48463</magvar>
+            <magvar>6.484629592954397</magvar>
             <geoidheight>293</geoidheight>
             <cmt>comment_32</cmt>
             <desc>description_18</desc>
@@ -1473,13 +1473,13 @@
             <type>type_60</type>
             <fix>3d</fix>
             <sat>80</sat>
-            <pdop>2.416474</pdop>
+            <pdop>2.416473813386652</pdop>
             <dgpsid>67</dgpsid>
         </rtept>
-        <rtept lat="48.374173" lon="17.7041">
-            <speed>93.42273</speed>
+        <rtept lat="48.37417278655775" lon="17.70409984631761">
+            <speed>93.42272952549733</speed>
             <time>1970-01-19T11:41:16.246Z</time>
-            <magvar>4.219974</magvar>
+            <magvar>4.21997380955545</magvar>
             <geoidheight>637</geoidheight>
             <cmt>comment_55</cmt>
             <desc>description_42</desc>
@@ -1532,11 +1532,11 @@
             <link href="http://link_18">
                 <text>text_80</text>
             </link>
-            <hdop>2.572981</hdop>
-            <vdop>2.429411</vdop>
+            <hdop>2.572981371152314</hdop>
+            <vdop>2.4294112755624195</vdop>
             <dgpsid>70</dgpsid>
         </rtept>
-        <rtept lat="48.216148" lon="16.290991">
+        <rtept lat="48.21614822141139" lon="16.290991417248513">
             <geoidheight>470</geoidheight>
             <cmt>comment_35</cmt>
             <src>source_85</src>
@@ -1592,10 +1592,10 @@
                 <type>type_7</type>
             </link>
             <fix>dgps</fix>
-            <pdop>2.539716</pdop>
+            <pdop>2.539716245198483</pdop>
             <dgpsid>96</dgpsid>
         </rtept>
-        <rtept lat="49.364294" lon="17.372595">
+        <rtept lat="49.36429418055834" lon="17.372595283049513">
             <ele>610</ele>
             <geoidheight>559</geoidheight>
             <cmt>comment_46</cmt>
@@ -1613,13 +1613,13 @@
             </link>
             <sym>symbol_65</sym>
             <fix>none</fix>
-            <pdop>2.287305</pdop>
+            <pdop>2.2873047243063107</pdop>
             <dgpsid>78</dgpsid>
         </rtept>
-        <rtept lat="48.162475" lon="17.363495">
+        <rtept lat="48.162474868694005" lon="17.36349531508241">
             <ele>82</ele>
-            <speed>89.387209</speed>
-            <magvar>2.630477</magvar>
+            <speed>89.38720908414324</speed>
+            <magvar>2.630477344493288</magvar>
             <name>name_17</name>
             <src>source_41</src>
             <link href="http://link_66"></link>
@@ -1673,8 +1673,8 @@
             </link>
             <sym>symbol_76</sym>
             <type>type_56</type>
-            <vdop>2.251129</vdop>
-            <pdop>2.300556</pdop>
+            <vdop>2.251129106906189</vdop>
+            <pdop>2.300555878142518</pdop>
             <dgpsid>87</dgpsid>
         </rtept>
     </rte>
@@ -1731,7 +1731,7 @@
         </link>
         <link href="http://link_53"></link>
         <type>type_49</type>
-        <rtept lat="48.321376" lon="17.059541">
+        <rtept lat="48.32137614748824" lon="17.059540993490625">
             <geoidheight>593</geoidheight>
             <desc>description_73</desc>
             <link href="http://link_66">
@@ -1756,13 +1756,13 @@
             </link>
             <sym>symbol_41</sym>
             <sat>94</sat>
-            <vdop>2.877436</vdop>
+            <vdop>2.8774356320664674</vdop>
             <ageofdgpsdata>921</ageofdgpsdata>
             <dgpsid>45</dgpsid>
         </rtept>
-        <rtept lat="48.481794" lon="16.720907">
+        <rtept lat="48.481793949377945" lon="16.72090703129129">
             <time>1970-01-24T18:57:35.639Z</time>
-            <magvar>3.14127</magvar>
+            <magvar>3.141269641026796</magvar>
             <geoidheight>645</geoidheight>
             <name>name_3</name>
             <link href="http://link_11">
@@ -1800,11 +1800,11 @@
                 <type>type_92</type>
             </link>
             <type>type_28</type>
-            <pdop>2.825147</pdop>
+            <pdop>2.825147361229597</pdop>
         </rtept>
-        <rtept lat="48.788343" lon="17.32015">
+        <rtept lat="48.78834317337533" lon="17.32015003453398">
             <ele>89</ele>
-            <magvar>2.039777</magvar>
+            <magvar>2.039776971930034</magvar>
             <geoidheight>364</geoidheight>
             <name>name_69</name>
             <cmt>comment_93</cmt>
@@ -1830,12 +1830,12 @@
             <sym>symbol_33</sym>
             <type>type_14</type>
             <fix>2d</fix>
-            <pdop>2.409162</pdop>
+            <pdop>2.4091624903219024</pdop>
             <dgpsid>8</dgpsid>
         </rtept>
-        <rtept lat="48.818854" lon="17.287505">
+        <rtept lat="48.818853554538975" lon="17.287505261389345">
             <ele>527</ele>
-            <speed>36.179278</speed>
+            <speed>36.17927813960781</speed>
             <time>1970-01-08T00:24:42.536Z</time>
             <name>name_25</name>
             <cmt>comment_22</cmt>
@@ -1884,11 +1884,11 @@
             <type>type_50</type>
             <fix>dgps</fix>
             <sat>52</sat>
-            <pdop>2.424793</pdop>
+            <pdop>2.4247927212916167</pdop>
             <ageofdgpsdata>568</ageofdgpsdata>
             <dgpsid>21</dgpsid>
         </rtept>
-        <rtept lat="49.070002" lon="17.651429">
+        <rtept lat="49.07000186474359" lon="17.651429467120177">
             <ele>629</ele>
             <time>1970-01-17T16:35:40.912Z</time>
             <geoidheight>716</geoidheight>
@@ -1898,9 +1898,9 @@
             <sym>symbol_30</sym>
             <type>type_88</type>
             <fix>2d</fix>
-            <hdop>2.638745</hdop>
-            <vdop>2.184034</vdop>
-            <pdop>2.510604</pdop>
+            <hdop>2.6387446471057836</hdop>
+            <vdop>2.184034155065042</vdop>
+            <pdop>2.5106043545662358</pdop>
             <dgpsid>7</dgpsid>
         </rtept>
     </rte>

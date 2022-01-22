@@ -1345,7 +1345,7 @@ public final class GPX implements Serializable {
 		/**
 		 * The default value for the <em>maximum fraction digits</em>.
 		 */
-		public static final int MAXIMUM_FRACTION_DIGITS = 6;
+		public static final int MAXIMUM_FRACTION_DIGITS = 8;
 
 		/**
 		 * The default GPX writer, with no indention and fraction digits

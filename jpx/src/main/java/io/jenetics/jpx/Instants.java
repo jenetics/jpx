@@ -43,13 +43,12 @@ final class Instants {
 	}
 
 	static Instant read(final DataInput in) throws IOException {
-		final long seconds = IO.readLong(in);
-		return Instant.ofEpochMilli(seconds);
+		return Instant.ofEpochMilli(IO.readLong(in));
 	}
 
 	/**
 	 * Return the hash code of the given date time object. Actually the hash
-	 * code of its {@link Instant}, truncated to seconds, is returned. The
+	 * code of its {@link Instant}, truncated to milliseconds, is returned. The
 	 * argument may be {@code null}.
 	 *
 	 * @param a the instant, for which the hash code is calculated

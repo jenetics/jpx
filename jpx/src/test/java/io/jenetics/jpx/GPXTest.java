@@ -37,9 +37,7 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -525,6 +523,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		for (int i = 0; i < 15; ++i) {
 			final GPX gpx = nextGPX(random);
 
+			/*
 			final var fout = Files.newOutputStream(
 				Paths.get(baseDir, format("gpx_%d.obj", i)),
 				StandardOpenOption.TRUNCATE_EXISTING
@@ -532,8 +531,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			try (fout; var oout = new ObjectOutputStream(fout)) {
 				oout.writeObject(gpx);
 			}
-			final var writer = GPX.Writer.of(new Indent("    "));
+			final var writer = GPX.Writer.of(new Indent("    "), 50);
 			writer.write(gpx, (Paths.get(baseDir, format("gpx_%d.xml", i))));
+			 */
 
 			final GPX read = GPX.read(Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try {
