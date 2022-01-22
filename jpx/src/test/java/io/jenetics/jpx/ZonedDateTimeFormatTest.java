@@ -22,7 +22,6 @@ package io.jenetics.jpx;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
