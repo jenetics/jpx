@@ -30,19 +30,19 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class ZonedDateTimeFormatTest {
+public class TimeFormatTest {
 
 	@Test(dataProvider = "validExamples")
 	public void parseExample(final String example) {
-		final ZonedDateTimeFormat format = ZonedDateTimeFormat
+		final TimeFormat format = TimeFormat
 			.findFormat(example);
 
 		assertThat(format).isNotNull();
 
 		final Instant zdt = format.formatParse(example);
-		final String zdts = ZonedDateTimeFormat.format(zdt);
+		final String zdts = TimeFormat.format(zdt);
 		Assert.assertEquals(
-			ZonedDateTimeFormat
+			TimeFormat
 				.parseOptional(zdts)
 				.orElse(Instant.MIN),
 			zdt

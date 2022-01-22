@@ -40,7 +40,7 @@ import java.util.stream.Stream;
  * @version 3.0
  * @since 1.0
  */
-enum ZonedDateTimeFormat {
+enum TimeFormat {
 
 	// http://books.xmlschemata.org/relaxng/ch19-77049.html
 
@@ -71,7 +71,7 @@ enum ZonedDateTimeFormat {
 	private final DateTimeFormatter _formatter;
 	private final Pattern[] _patterns;
 
-	ZonedDateTimeFormat(final DateTimeFormatter formatter, final String... patterns) {
+	TimeFormat(final DateTimeFormatter formatter, final String... patterns) {
 		_formatter = requireNonNull(formatter);
 		_patterns = Stream.of(patterns)
 			.map(Pattern::compile)
@@ -126,7 +126,7 @@ enum ZonedDateTimeFormat {
 	 * @return the formatter which fits to the given {@code time} string, or
 	 *         {@code Optional.empty()} of no formatter is found
 	 */
-	static ZonedDateTimeFormat findFormat(final String time) {
+	static TimeFormat findFormat(final String time) {
 		if (ISO_DATE_TIME_UTC.matches(time)) {
 			return ISO_DATE_TIME_UTC;
 		} else if (ISO_DATE_TIME_OFFSET.matches(time)) {

@@ -21,7 +21,7 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.hash;
 import static io.jenetics.jpx.Lists.copyOf;
-import static io.jenetics.jpx.ZonedDateTimeFormat.format;
+import static io.jenetics.jpx.TimeFormat.format;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -792,7 +792,7 @@ public final class Metadata implements Serializable {
 		Person.reader("author"),
 		Copyright.READER,
 		XMLReader.elems(Link.READER),
-		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
+		XMLReader.elem("time").map(TimeFormat::parse),
 		XMLReader.elem("keywords"),
 		Bounds.READER,
 		XMLReader.doc("extensions")

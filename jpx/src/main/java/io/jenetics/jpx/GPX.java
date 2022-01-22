@@ -1835,7 +1835,7 @@ public final class GPX implements Serializable {
 	private static String time(final GPX gpx) {
 		return gpx.getMetadata()
 			.flatMap(Metadata::getTime)
-			.map(ZonedDateTimeFormat::format)
+			.map(TimeFormat::format)
 			.orElse(null);
 	}
 
@@ -1884,7 +1884,7 @@ public final class GPX implements Serializable {
 		.v10(XMLReader.elem("email"))
 		.v10(XMLReader.elem("url"))
 		.v10(XMLReader.elem("urlname"))
-		.v10(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
+		.v10(XMLReader.elem("time").map(TimeFormat::parse))
 		.v10(XMLReader.elem("keywords"))
 		.v10(Bounds.READER)
 		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt")))
