@@ -22,7 +22,7 @@ package io.jenetics.jpx.format;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -98,7 +98,7 @@ public final class Location {
 	public Optional<Point> toPoint() {
 		return latitude().flatMap(lat ->
 			longitude().map(lon ->
-				WayPoint.of(lat, lon, _elevation, (ZonedDateTime)null)
+				WayPoint.of(lat, lon, _elevation, (Instant)null)
 			)
 		);
 	}

@@ -47,7 +47,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -1337,15 +1337,25 @@ public final class GPX implements Serializable {
 			public static final Indent NONE = new Indent("");
 
 			/**
-			 * Default indentation with 4 spaces.
+			 * Indentation with 4 spaces.
 			 */
-			public static final Indent DEFAULT = new Indent("    ");
+			public static final Indent SPACES_4 = new Indent("    ");
+
+			/**
+			 * Indentation with 2 spaces.
+			 */
+			public static final Indent SPACES_2 = new Indent("  ");
+
+			/**
+			 * Indentation with tabs.
+			 */
+			public static final Indent TABS = new Indent("\t");
 		}
 
 		/**
 		 * The default value for the <em>maximum fraction digits</em>.
 		 */
-		public static final int MAXIMUM_FRACTION_DIGITS = 6;
+		public static final int MAXIMUM_FRACTION_DIGITS = 8;
 
 		/**
 		 * The default GPX writer, with no indention and fraction digits
@@ -1835,7 +1845,7 @@ public final class GPX implements Serializable {
 	private static String time(final GPX gpx) {
 		return gpx.getMetadata()
 			.flatMap(Metadata::getTime)
-			.map(ZonedDateTimeFormat::format)
+			.map(TimeFormat::format)
 			.orElse(null);
 	}
 
@@ -1884,7 +1894,7 @@ public final class GPX implements Serializable {
 		.v10(XMLReader.elem("email"))
 		.v10(XMLReader.elem("url"))
 		.v10(XMLReader.elem("urlname"))
-		.v10(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
+		.v10(XMLReader.elem("time").map(TimeFormat::parse))
 		.v10(XMLReader.elem("keywords"))
 		.v10(Bounds.READER)
 		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt")))
@@ -1943,7 +1953,7 @@ public final class GPX implements Serializable {
 				),
 				null,
 				null,
-				(ZonedDateTime)v[8],
+				(Instant)v[8],
 				(String)v[9],
 				(Bounds)v[10]
 			),

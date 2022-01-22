@@ -19,10 +19,9 @@
  */
 package io.jenetics.jpx;
 
-import static java.time.ZoneOffset.UTC;
 import static java.util.Objects.hash;
 import static io.jenetics.jpx.Lists.copyOf;
-import static io.jenetics.jpx.ZonedDateTimeFormat.format;
+import static io.jenetics.jpx.TimeFormat.format;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -32,8 +31,6 @@ import java.io.ObjectInputStream;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +53,7 @@ import org.w3c.dom.Document;
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 2.0
+ * @version !__version__!
  * @since 1.0
  */
 public final class Metadata implements Serializable {
@@ -69,7 +66,7 @@ public final class Metadata implements Serializable {
 	private final Person _author;
 	private final Copyright _copyright;
 	private final List<Link> _links;
-	private final ZonedDateTime _time;
+	private final Instant _time;
 	private final String _keywords;
 	private final Bounds _bounds;
 	private final Document _extensions;
@@ -96,7 +93,7 @@ public final class Metadata implements Serializable {
 		final Person author,
 		final Copyright copyright,
 		final List<Link> links,
-		final ZonedDateTime time,
+		final Instant time,
 		final String keywords,
 		final Bounds bounds,
 		final Document extensions
@@ -163,7 +160,7 @@ public final class Metadata implements Serializable {
 	 *
 	 * @return the creation date of the file
 	 */
-	public Optional<ZonedDateTime> getTime() {
+	public Optional<Instant> getTime() {
 		return Optional.ofNullable(_time);
 	}
 
@@ -265,7 +262,7 @@ public final class Metadata implements Serializable {
 			_author,
 			_copyright,
 			Lists.hashCode(_links),
-			ZonedDateTimes.hashCode(_time),
+			Instants.hashCode(_time),
 			_keywords,
 			_bounds
 		);
@@ -280,7 +277,7 @@ public final class Metadata implements Serializable {
 			Objects.equals(meta._author, _author) &&
 			Objects.equals(meta._copyright, _copyright) &&
 			Lists.equals(meta._links, _links) &&
-			ZonedDateTimes.equals(meta._time, _time) &&
+			Instants.equals(meta._time, _time) &&
 			Objects.equals(meta._keywords, _keywords) &&
 			Objects.equals(meta._bounds, _bounds);
 	}
@@ -302,7 +299,7 @@ public final class Metadata implements Serializable {
 		private Person _author;
 		private Copyright _copyright;
 		private final List<Link> _links = new ArrayList<>();
-		private ZonedDateTime _time;
+		private Instant _time;
 		private String _keywords;
 		private Bounds _bounds;
 		private Document _extensions;
@@ -484,7 +481,7 @@ public final class Metadata implements Serializable {
 		 * @param time the time of the metadata
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder time(final ZonedDateTime time) {
+		public Builder time(final Instant time) {
 			_time = time;
 			return this;
 		}
@@ -492,51 +489,12 @@ public final class Metadata implements Serializable {
 		/**
 		 * Set the time of the metadata.
 		 *
-		 * @param instant the instant to create the metadata time from
-		 * @param zone the time-zone
-		 * @return {@code this} {@code Builder} for method chaining
-		 */
-		public Builder time(final Instant instant, final ZoneId zone) {
-			_time = instant != null
-				? ZonedDateTime.ofInstant(instant, zone != null ? zone : UTC)
-				: null;
-			return this;
-		}
-
-		/**
-		 * Set the time of the metadata.
-		 *
 		 * @param millis the instant to create the metadata time from
-		 * @param zone the time-zone
-		 * @return {@code this} {@code Builder} for method chaining
-		 */
-		public Builder time(final long millis, final ZoneId zone) {
-			_time = ZonedDateTime.ofInstant(
-				Instant.ofEpochMilli(millis),
-				zone != null ? zone : UTC
-			);
-			return this;
-		}
-
-		/**
-		 * Set the time of the metadata. The zone is set to UTC.
-		 *
-		 * @param instant the instant to create the metadata time from
-		 * @return {@code this} {@code Builder} for method chaining
-		 */
-		public Builder time(final Instant instant) {
-			return time(instant, null);
-		}
-
-		/**
-		 * Set the time of the metadata.
-		 *
-		 * @param millis the instant to create the metadata time
-		 *        from
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder time(final long millis) {
-			return time(Instant.ofEpochMilli(millis));
+			_time = Instant.ofEpochMilli(millis);
+			return this;
 		}
 
 		/**
@@ -546,7 +504,7 @@ public final class Metadata implements Serializable {
 		 *
 		 * @return the currently set time
 		 */
-		public Optional<ZonedDateTime> time() {
+		public Optional<Instant> time() {
 			return Optional.ofNullable(_time);
 		}
 
@@ -634,7 +592,7 @@ public final class Metadata implements Serializable {
 		 *         state
 		 */
 		public Metadata build() {
-			return of(
+			return new Metadata(
 				_name,
 				_description,
 				_author,
@@ -689,7 +647,7 @@ public final class Metadata implements Serializable {
 		final Person author,
 		final Copyright copyright,
 		final List<Link> links,
-		final ZonedDateTime time,
+		final Instant time,
 		final String keywords,
 		final Bounds bounds,
 		final Document extensions
@@ -731,7 +689,7 @@ public final class Metadata implements Serializable {
 		final Person author,
 		final Copyright copyright,
 		final List<Link> links,
-		final ZonedDateTime time,
+		final Instant time,
 		final String keywords,
 		final Bounds bounds
 	) {
@@ -771,7 +729,7 @@ public final class Metadata implements Serializable {
 		IO.writeNullable(_author, Person::write, out);
 		IO.writeNullable(_copyright, Copyright::write, out);
 		IO.writes(_links, Link::write, out);
-		IO.writeNullable(_time, ZonedDateTimes::write, out);
+		IO.writeNullable(_time, Instants::write, out);
 		IO.writeNullableString(_keywords, out);
 		IO.writeNullable(_bounds, Bounds::write, out);
 		IO.writeNullable(_extensions, IO::write, out);
@@ -784,7 +742,7 @@ public final class Metadata implements Serializable {
 			IO.readNullable(Person::read, in),
 			IO.readNullable(Copyright::read, in),
 			IO.reads(Link::read, in),
-			IO.readNullable(ZonedDateTimes::read, in),
+			IO.readNullable(Instants::read, in),
 			IO.readNullableString(in),
 			IO.readNullable(Bounds::read, in),
 			IO.readNullable(IO::readDoc, in)
@@ -820,7 +778,7 @@ public final class Metadata implements Serializable {
 				(Person)v[2],
 				(Copyright)v[3],
 				(List<Link>)v[4],
-				(ZonedDateTime)v[5],
+				(Instant)v[5],
 				(String)v[6],
 				(Bounds)v[7],
 				XML.extensions((Document)v[8])
@@ -834,7 +792,7 @@ public final class Metadata implements Serializable {
 		Person.reader("author"),
 		Copyright.READER,
 		XMLReader.elems(Link.READER),
-		XMLReader.elem("time").map(ZonedDateTimeFormat::parse),
+		XMLReader.elem("time").map(TimeFormat::parse),
 		XMLReader.elem("keywords"),
 		Bounds.READER,
 		XMLReader.doc("extensions")

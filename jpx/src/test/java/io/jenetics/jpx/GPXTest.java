@@ -314,7 +314,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 		Assert.assertEquals(
 			point.getTime(),
-			Optional.of(ZonedDateTimeFormat.parse("2009-05-19T04:00:30Z"))
+			Optional.of(TimeFormat.parse("2009-05-19T04:00:30Z"))
 		);
 		Assert.assertEquals(
 			point.getFix(),
@@ -523,13 +523,17 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		for (int i = 0; i < 15; ++i) {
 			final GPX gpx = nextGPX(random);
 
-//			final var fout = Files.newOutputStream(
-//				Paths.get(baseDir, format("gpx_%d.obj", i)),
-//				StandardOpenOption.TRUNCATE_EXISTING
-//			);
-//			try (fout; var oout = new ObjectOutputStream(fout)) {
-//				oout.writeObject(gpx);
-//			}
+			/*
+			final var fout = Files.newOutputStream(
+				Paths.get(baseDir, format("gpx_%d.obj", i)),
+				StandardOpenOption.TRUNCATE_EXISTING
+			);
+			try (fout; var oout = new ObjectOutputStream(fout)) {
+				oout.writeObject(gpx);
+			}
+			final var writer = GPX.Writer.of(new Indent("    "), 50);
+			writer.write(gpx, (Paths.get(baseDir, format("gpx_%d.xml", i))));
+			 */
 
 			final GPX read = GPX.read(Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try {
@@ -577,7 +581,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -597,7 +601,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -615,7 +619,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -633,7 +637,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -651,7 +655,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
