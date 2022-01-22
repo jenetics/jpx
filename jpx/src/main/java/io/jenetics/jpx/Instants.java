@@ -28,7 +28,7 @@ import java.util.Objects;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 3.0
  * @since 1.2
  */
 final class Instants {
