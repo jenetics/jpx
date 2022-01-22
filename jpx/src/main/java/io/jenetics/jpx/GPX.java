@@ -1337,9 +1337,19 @@ public final class GPX implements Serializable {
 			public static final Indent NONE = new Indent("");
 
 			/**
-			 * Default indentation with 4 spaces.
+			 * Indentation with 4 spaces.
 			 */
-			public static final Indent DEFAULT = new Indent("    ");
+			public static final Indent SPACES_4 = new Indent("    ");
+
+			/**
+			 * Indentation with 2 spaces.
+			 */
+			public static final Indent SPACES_2 = new Indent("  ");
+
+			/**
+			 * Indentation with tabs.
+			 */
+			public static final Indent TABS = new Indent("\t");
 		}
 
 		/**
