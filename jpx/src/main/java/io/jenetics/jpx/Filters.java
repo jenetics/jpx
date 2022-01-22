@@ -19,11 +19,10 @@
  */
 package io.jenetics.jpx;
 
+import static java.time.ZoneOffset.UTC;
 import static java.util.stream.Collectors.groupingBy;
-import static java.util.stream.Collectors.toUnmodifiableList;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -219,7 +218,7 @@ public final class Filters {
 	) {
 		final Map<LocalDate, List<WayPoint>> parts = points
 			.collect(groupingBy(wp -> wp.getTime()
-				.map(ZonedDateTime::toLocalDate)
+				.map(i -> LocalDate.ofInstant(i, UTC))
 				.orElse(LocalDate.MIN)));
 
 		return parts.entrySet().stream()

@@ -25,8 +25,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.time.Instant;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Random;
 
 import org.testng.Assert;
@@ -37,16 +35,10 @@ import org.testng.annotations.Test;
  */
 public class ZonedDateTimesTest {
 
-	private static final int MIN_OFFSET = ZoneOffset.MIN.getTotalSeconds();
-	private static final int MAX_OFFSET = ZoneOffset.MAX.getTotalSeconds();
-
-	public static ZonedDateTime nextZonedDataTime(final Random random) {
+	public static Instant nextZonedDataTime(final Random random) {
 		final int seconds = Math.abs(random.nextInt());
-		final ZoneOffset offset = ZoneOffset.ofTotalSeconds(
-			random.nextInt(MAX_OFFSET - MIN_OFFSET) + MIN_OFFSET
-		);
 
-		return ZonedDateTime.ofInstant(Instant.ofEpochSecond(seconds), offset);
+		return Instant.ofEpochSecond(seconds);
 	}
 
 	@Test
@@ -54,17 +46,17 @@ public class ZonedDateTimesTest {
 		final Random random = new Random();
 
 		for (int i = 0; i < 1000; ++i) {
-			final ZonedDateTime zdt = nextZonedDataTime(random);
+			final Instant instant = nextZonedDataTime(random);
 
 			final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			final DataOutputStream dout = new DataOutputStream(bout);
 
-			ZonedDateTimes.write(zdt, dout);
+			Instants.write(instant, dout);
 
 			final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 			final DataInputStream din = new DataInputStream(bin);
-			final ZonedDateTime read = ZonedDateTimes.read(din);
-			Assert.assertEquals(read, zdt);
+			final Instant read = Instants.read(din);
+			Assert.assertEquals(read, instant);
 		}
 	}
 

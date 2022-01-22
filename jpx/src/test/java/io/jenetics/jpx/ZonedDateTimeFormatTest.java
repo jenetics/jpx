@@ -40,14 +40,13 @@ public class ZonedDateTimeFormatTest {
 
 		assertThat(format).isNotNull();
 
-		final ZonedDateTime zdt = format.formatParse(example);
+		final Instant zdt = format.formatParse(example);
 		final String zdts = ZonedDateTimeFormat.format(zdt);
 		Assert.assertEquals(
 			ZonedDateTimeFormat
 				.parseOptional(zdts)
-				.map(ZonedDateTime::toInstant)
 				.orElse(Instant.MIN),
-			zdt.toInstant()
+			zdt
 		);
 	}
 

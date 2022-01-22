@@ -47,7 +47,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -1943,7 +1943,7 @@ public final class GPX implements Serializable {
 				),
 				null,
 				null,
-				(ZonedDateTime)v[8],
+				(Instant)v[8],
 				(String)v[9],
 				(Bounds)v[10]
 			),
