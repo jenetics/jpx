@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import org.w3c.dom.Document;
+
 /**
  * <em>JPX</em> is a library for creating, reading and writing
  * <a href="https://en.wikipedia.org/wiki/Global_Positioning_System">GPS</a>
@@ -143,6 +145,19 @@
  *         </trkseg>
  *     </trk>
  * </gpx>
+ * }</pre>
+ *
+ * <b>Converting a GPX object to an XML {@link Document}</b>
+ * <pre>{@code
+ * final GPX gpx = ...;
+ *
+ * final Document doc = XMLProvider.provider()
+ *     .documentBuilderFactory()
+ *     .newDocumentBuilder()
+ *     .newDocument();
+ *
+ * // The GPX data are written to the empty `doc` object.
+ * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
  * }</pre>
  */
 module io.jenetics.jpx {

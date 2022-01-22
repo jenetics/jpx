@@ -117,6 +117,20 @@ The extensions are available via a `org.w3c.dom.Document` object, with an `exten
 final Optional<Document> extensions = gpx.getExtensions();
 ```
 
+### Converting a `GPX` object into an `org.xmlDocument`
+
+```java
+final GPX gpx = ...;
+
+final Document doc = XMLProvider.provider()
+    .documentBuilderFactory()
+    .newDocumentBuilder()
+    .newDocument();
+
+// The GPX data are written to the empty `doc` object.
+GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+```
+
 ### Reading GPX 1.0 and writing GPX 1.1
 
 By default, JPX is reading and writing the GPX files in version 1.1. But it is possible to read and write GPX files in version 1.0 as well.

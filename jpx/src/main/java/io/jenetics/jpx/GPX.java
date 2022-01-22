@@ -193,6 +193,19 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  * </gpx>
  * }</pre>
  *
+ * <b>Converting a GPX object to an XML {@link Document}</b>
+ * <pre>{@code
+ * final GPX gpx = ...;
+ *
+ * final Document doc = XMLProvider.provider()
+ *     .documentBuilderFactory()
+ *     .newDocumentBuilder()
+ *     .newDocument();
+ *
+ * // The GPX data are written to the empty `doc` object.
+ * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+ * }</pre>
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 2.0
  * @since 1.0
