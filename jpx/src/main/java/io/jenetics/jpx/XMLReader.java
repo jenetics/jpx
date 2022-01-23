@@ -449,10 +449,6 @@ final class ListReader<T> extends XMLReader<List<T>> {
 		return element != null ? List.of(element) : List.of();
 	}
 
-	XMLReader<? extends T> reader() {
-		return _adoptee;
-	}
-
 }
 
 /**
