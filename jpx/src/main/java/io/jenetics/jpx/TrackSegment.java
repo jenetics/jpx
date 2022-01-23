@@ -216,7 +216,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addPoint(final WayPoint point) {
 			_points.add(requireNonNull(point));
-
 			return this;
 		}
 
