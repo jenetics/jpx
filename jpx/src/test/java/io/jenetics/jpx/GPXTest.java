@@ -510,6 +510,13 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.verify();
 	}
 
+	@Test(invocationCount = 10)
+	public void writeToByteArray() {
+		final GPX gpx = nextGPX(new Random());
+		final byte[] bytes = GPX.Writer.DEFAULT.toByteArray(gpx);
+
+		assertThat(GPX.Reader.DEFAULT.formByteArray(bytes)).isEqualTo(gpx);
+	}
 
 	@Test(invocationCount = 5)
 	public void serialize() throws IOException, ClassNotFoundException {

@@ -30,7 +30,9 @@ import static io.jenetics.jpx.Lists.copyTo;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1263,6 +1265,8 @@ public final class GPX implements Serializable {
 		/**
 		 * Create a GPX object from the given GPX-XML string.
 		 *
+		 * @see GPX.Writer#toString(GPX)
+		 *
 		 * @param xml the GPX XML string
 		 * @return the GPX object created from the given XML string
 		 * @throws IllegalArgumentException if the given {@code xml} is not a
@@ -1282,6 +1286,47 @@ public final class GPX implements Serializable {
 			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
+		}
+
+		/**
+		 * Create a GPX object from the given {@code byte[]} array.
+		 *
+		 * @see GPX.Writer#toByteArray(GPX)
+		 *
+		 * @param bytes the GPX {@code byte[]} array
+		 * @param offset the offset in the buffer of the first byte to read.
+		 * @param length the maximum number of bytes to read from the buffer.
+		 * @return the GPX object created from the given {@code byte[]} array
+		 * @throws IllegalArgumentException if the given {@code byte[]} array
+		 *         doesn't represent a valid GPX object
+		 * @throws NullPointerException if the given {@code bytes} is {@code null}
+		 */
+		public GPX formByteArray(
+			final byte[] bytes,
+			final int offset,
+			final int length
+		) {
+			final var in = new ByteArrayInputStream(bytes, offset,  length);
+			try (var din = new DataInputStream(in)) {
+				return GPX.read(din);
+			} catch (IOException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+		/**
+		 * Create a GPX object from the given {@code byte[]} array.
+		 *
+		 * @see GPX.Writer#toByteArray(GPX)
+		 *
+		 * @param bytes the GPX {@code byte[]} array
+		 * @return the GPX object created from the given {@code byte[]} array
+		 * @throws IllegalArgumentException if the given {@code byte[]} array
+		 *         doesn't represent a valid GPX object
+		 * @throws NullPointerException if the given {@code bytes} is {@code null}
+		 */
+		public GPX formByteArray(final byte[] bytes) {
+			return formByteArray(bytes, 0, bytes.length);
 		}
 
 		/* *********************************************************************
@@ -1532,6 +1577,8 @@ public final class GPX implements Serializable {
 		/**
 		 * Create an XML string representation of the given {@code gpx} object.
 		 *
+		 * @see GPX.Reader#fromString(String)
+		 *
 		 * @param gpx the GPX object to convert to a string
 		 * @return the XML string representation of the given {@code gpx} object
 		 * @throws NullPointerException if the given GPX object is {@code null}
@@ -1544,6 +1591,29 @@ public final class GPX implements Serializable {
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
+		}
+
+		/**
+		 * Converts the given {@code gpx} object into a {@code byte[]} array.
+		 * This method can be used for short term storage of GPX objects.
+		 *
+		 * @since 3.0
+		 *
+		 * @see GPX.Reader#formByteArray(byte[])
+		 *
+		 * @param gpx the GPX object to convert to a {@code byte[]} array
+		 * @return the binary representation of the given {@code gpx} object
+		 * @throws NullPointerException if the given GPX object is {@code null}
+		 */
+		public byte[] toByteArray(final GPX gpx) {
+			final var out = new ByteArrayOutputStream();
+			try (var dout = new DataOutputStream(out)) {
+				gpx.write(dout);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+
+			return out.toByteArray();
 		}
 
 		/* *********************************************************************
@@ -1766,7 +1836,6 @@ public final class GPX implements Serializable {
 			null
 		);
 	}
-
 
 
 	/* *************************************************************************

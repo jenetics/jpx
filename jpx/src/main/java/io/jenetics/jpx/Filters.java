@@ -125,9 +125,9 @@ public final class Filters {
 		return tracks.isEmpty()
 			? List.of()
 			: List.of(
-					tracks.get(0).toBuilder()
-						.segments(List.of(TrackSegment.of(points)))
-						.build()
+				tracks.get(0).toBuilder()
+					.segments(List.of(TrackSegment.of(points)))
+					.build()
 				);
 	}
 
