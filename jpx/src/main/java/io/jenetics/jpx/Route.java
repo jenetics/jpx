@@ -605,7 +605,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @param point the way-point builder
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
+		public Builder addPoint(final Consumer<? super WayPoint.Builder> point) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
 			return addPoint(builder.build());

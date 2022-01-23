@@ -613,7 +613,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder addSegment(final Consumer<TrackSegment.Builder> segment) {
+		public Builder addSegment(final Consumer<? super TrackSegment.Builder> segment) {
 			final TrackSegment.Builder builder = TrackSegment.builder();
 			segment.accept(builder);
 			return addSegment(builder.build());

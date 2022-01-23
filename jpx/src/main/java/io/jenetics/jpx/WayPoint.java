@@ -1482,12 +1482,12 @@ public final class WayPoint implements Point, Serializable {
 		final Latitude latitude,
 		final Longitude longitude
 	) {
-		return of(
+		return new WayPoint(
 			latitude,
 			longitude,
 			null,
 			null,
-			(Instant)null,
+			null,
 			null,
 			null,
 			null,
@@ -1543,7 +1543,7 @@ public final class WayPoint implements Point, Serializable {
 		final Longitude longitude,
 		final Instant time
 	) {
-		return of(
+		return new WayPoint(
 			latitude,
 			longitude,
 			null,
@@ -1607,7 +1607,7 @@ public final class WayPoint implements Point, Serializable {
 		final Length elevation,
 		final Instant time
 	) {
-		return of(
+		return new WayPoint(
 			latitude,
 			longitude,
 			elevation,
@@ -1729,7 +1729,7 @@ public final class WayPoint implements Point, Serializable {
 		final DGPSStation dgpsID,
 		final Degrees course
 	) {
-		return of(
+		return new WayPoint(
 			latitude,
 			longitude,
 			elevation,

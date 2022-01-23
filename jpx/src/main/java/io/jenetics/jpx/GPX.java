@@ -582,7 +582,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder metadata(final Consumer<Metadata.Builder> metadata) {
+		public Builder metadata(final Consumer<? super Metadata.Builder> metadata) {
 			final Metadata.Builder builder = Metadata.builder();
 			metadata.accept(builder);
 
@@ -644,7 +644,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder addWayPoint(final Consumer<WayPoint.Builder> wayPoint) {
+		public Builder addWayPoint(final Consumer<? super WayPoint.Builder> wayPoint) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			wayPoint.accept(builder);
 			return addWayPoint(builder.build());
@@ -700,7 +700,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder addRoute(final Consumer<Route.Builder> route) {
+		public Builder addRoute(final Consumer<? super Route.Builder> route) {
 			final Route.Builder builder = Route.builder();
 			route.accept(builder);
 			return addRoute(builder.build());
@@ -758,7 +758,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder addTrack(final Consumer<Track.Builder> track) {
+		public Builder addTrack(final Consumer<? super Track.Builder> track) {
 			final Track.Builder builder = Track.builder();
 			track.accept(builder);
 			return addTrack(builder.build());
