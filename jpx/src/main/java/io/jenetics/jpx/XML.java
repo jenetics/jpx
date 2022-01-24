@@ -160,7 +160,7 @@ final class XML {
 
 			final DOMSource source = new DOMSource(doc);
 			final DOMResult result = new DOMResult();
-			transformer.transform(source,result);
+			transformer.transform(source, result);
 			return (Document)result.getNode();
 		} catch (TransformerException e) {
 			throw (DOMException)

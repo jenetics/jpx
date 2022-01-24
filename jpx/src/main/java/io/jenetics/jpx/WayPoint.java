@@ -444,7 +444,7 @@ public final class WayPoint implements Point, Serializable {
 			_longitude,
 			_elevation,
 			_speed,
-			Instants.hashCode(_time),
+			Objects.hashCode(_time),
 			_magneticVariation,
 			_geoidHeight,
 			_name,
@@ -473,7 +473,7 @@ public final class WayPoint implements Point, Serializable {
 			Objects.equals(wp._longitude, _longitude) &&
 			Objects.equals(wp._elevation, _elevation) &&
 			Objects.equals(wp._speed, _speed) &&
-			Instants.equals(wp._time, _time) &&
+			Objects.equals(wp._time, _time) &&
 			Objects.equals(wp._magneticVariation, _magneticVariation) &&
 			Objects.equals(wp._geoidHeight, _geoidHeight) &&
 			Objects.equals(wp._name, _name) &&

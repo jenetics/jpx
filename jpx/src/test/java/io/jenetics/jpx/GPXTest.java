@@ -550,6 +550,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			} catch (AssertionError e) {
 				GPX.Writer.of(new Indent("    "))
 					.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)));
+				throw e;
 			}
 
 

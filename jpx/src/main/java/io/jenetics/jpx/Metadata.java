@@ -262,7 +262,7 @@ public final class Metadata implements Serializable {
 			_author,
 			_copyright,
 			Lists.hashCode(_links),
-			Instants.hashCode(_time),
+			Objects.hashCode(_time),
 			_keywords,
 			_bounds
 		);
@@ -277,7 +277,7 @@ public final class Metadata implements Serializable {
 			Objects.equals(meta._author, _author) &&
 			Objects.equals(meta._copyright, _copyright) &&
 			Lists.equals(meta._links, _links) &&
-			Instants.equals(meta._time, _time) &&
+			Objects.equals(meta._time, _time) &&
 			Objects.equals(meta._keywords, _keywords) &&
 			Objects.equals(meta._bounds, _bounds);
 	}
