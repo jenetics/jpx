@@ -21,7 +21,6 @@ package io.jenetics.jpx.geom;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.testng.Assert;
