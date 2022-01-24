@@ -300,7 +300,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 					.map(WayPoint.class::cast)
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -315,7 +314,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 					.flatMap(wp -> mapper.apply(wp).stream())
 					.toList()
 			);
-
 			return this;
 		}
 

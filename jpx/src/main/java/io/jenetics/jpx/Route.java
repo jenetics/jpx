@@ -624,7 +624,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		@Override
 		public Builder filter(final Predicate<? super WayPoint> predicate) {
 			points(_points.stream().filter(predicate).toList());
-
 			return this;
 		}
 
@@ -638,7 +637,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 					.map(WayPoint.class::cast)
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -648,7 +646,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				? super WayPoint,
 				? extends List<WayPoint>> mapper
 		) {
-			points(_points.stream().flatMap(wp -> mapper.apply(wp).stream()).toList());
+			points(
+				_points.stream()
+					.flatMap(wp -> mapper.apply(wp).stream())
+					.toList()
+			);
 			return this;
 		}
 
