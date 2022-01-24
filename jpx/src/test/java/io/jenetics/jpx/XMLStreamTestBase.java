@@ -65,7 +65,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	public static <T> List<T> nextObjects(final Supplier<T> supplier, final Random random) {
 		return Stream.generate(supplier)
 			.limit(random.nextInt(20))
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Test(invocationCount = 10)

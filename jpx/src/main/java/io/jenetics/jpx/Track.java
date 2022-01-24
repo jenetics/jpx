@@ -632,12 +632,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 		@Override
 		public Builder filter(final Predicate<? super TrackSegment> predicate) {
-			segments(
-				_segments.stream()
-					.filter(predicate)
-					.collect(Collectors.toList())
-			);
-
+			segments(_segments.stream().filter(predicate).toList());
 			return this;
 		}
 

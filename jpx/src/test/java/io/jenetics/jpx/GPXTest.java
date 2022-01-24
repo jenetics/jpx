@@ -571,7 +571,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.flatMap(TrackSegment::points)
 			.filter(wp -> wp.getCourse().isPresent())
 			.map(wp -> wp.getCourse().orElseThrow())
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(
 			courses,
@@ -813,7 +813,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final List<WayPoint> points = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(points.size(), 26);
 	}

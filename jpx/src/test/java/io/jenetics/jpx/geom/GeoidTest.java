@@ -70,7 +70,7 @@ public class GeoidTest {
 		final List<WayPoint> points = Stream
 			.generate(() -> WayPointTest.nextWayPoint(random))
 			.limit(size)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(
 			pathLength(points),
@@ -98,7 +98,7 @@ public class GeoidTest {
 		final List<WayPoint> points = Stream
 			.generate(() -> WayPointTest.nextWayPoint(random))
 			.limit(size)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(
 			tourLength(points),

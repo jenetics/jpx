@@ -845,12 +845,7 @@ public final class GPX implements Serializable {
 				public Filter<WayPoint, Builder> filter(
 					final Predicate<? super WayPoint> predicate
 				) {
-					wayPoints(
-						_wayPoints.stream()
-							.filter(predicate)
-							.collect(Collectors.toList())
-					);
-
+					wayPoints(_wayPoints.stream().filter(predicate).toList());
 					return this;
 				}
 
