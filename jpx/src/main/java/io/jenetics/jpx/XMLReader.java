@@ -642,7 +642,7 @@ final class ElemReader<T> extends XMLReader<T> {
 									.map(ReaderResult::value)
 									.toArray()
 							);
-						} catch (IllegalArgumentException | NullPointerException e) {
+						} catch (IllegalArgumentException|NullPointerException e) {
 							if (!lenient) {
 								throw new XMLStreamException(format(
 									"Invalid value for '%s'.", name()), e
@@ -653,7 +653,6 @@ final class ElemReader<T> extends XMLReader<T> {
 						}
 					}
 				}
-
 			} while (hasNext);
 		}
 

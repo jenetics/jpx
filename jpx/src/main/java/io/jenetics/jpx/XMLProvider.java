@@ -39,8 +39,9 @@ import javax.xml.stream.XMLOutputFactory;
  */
 public abstract class XMLProvider {
 
+	private static final Object LOCK = new Object(){};
+
 	private static volatile XMLProvider INSTANCE;
-	private static final Object lock = new Object(){};
 
 	protected XMLProvider() {
 	}
@@ -82,7 +83,7 @@ public abstract class XMLProvider {
 	 */
 	public static XMLProvider provider() {
 		if (INSTANCE == null) {
-			synchronized (lock) {
+			synchronized (LOCK) {
 				if (INSTANCE == null) {
 					loadInstance();
 				}
@@ -96,7 +97,7 @@ public abstract class XMLProvider {
 	 */
 	protected static void clear() {
 		if (INSTANCE != null) {
-			synchronized (lock) {
+			synchronized (LOCK) {
 				if (INSTANCE != null) {
 					INSTANCE = null;
 				}
