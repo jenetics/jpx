@@ -70,8 +70,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
-import io.jenetics.jpx.GPX.Reader.Mode;
-
 /**
  * GPX documents contain a metadata header, followed by way-points, routes, and
  * tracks. You can add your own elements to the extensions section of the GPX
@@ -1413,11 +1411,11 @@ public final class GPX implements Serializable {
 		/**
 		 * The default value for the <em>maximum fraction digits</em>.
 		 */
-		public static final int MAXIMUM_FRACTION_DIGITS = 8;
+		public static final int DEFAULT_FRACTION_DIGITS = 8;
 
 		/**
 		 * The default GPX writer, with no indention and fraction digits
-		 * of {@link #MAXIMUM_FRACTION_DIGITS}.
+		 * of {@link #DEFAULT_FRACTION_DIGITS}.
 		 *
 		 * @see #of(Indent, int)
 		 * @see #of(Indent)
@@ -1425,7 +1423,7 @@ public final class GPX implements Serializable {
 		 * @since 3.0
 		 */
 		public static final Writer DEFAULT =
-			new Writer(Indent.NULL, MAXIMUM_FRACTION_DIGITS);
+			new Writer(Indent.SPACES_4, DEFAULT_FRACTION_DIGITS);
 
 		private final Indent _indent;
 		private final int _maximumFractionDigits;
@@ -1677,7 +1675,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Return a new GPX writer with the given {@code indent} and with
 		 * <em>maximum fraction digits</em> of
-		 * {@link Writer#MAXIMUM_FRACTION_DIGITS}.
+		 * {@link Writer#DEFAULT_FRACTION_DIGITS}.
 		 *
 		 * @see #of(Indent, int)
 		 * @see #DEFAULT
@@ -1688,7 +1686,7 @@ public final class GPX implements Serializable {
 		 * @return a new GPX writer
 		 */
 		public static Writer of(final Indent indent) {
-			return new Writer(indent, MAXIMUM_FRACTION_DIGITS);
+			return new Writer(indent, DEFAULT_FRACTION_DIGITS);
 		}
 
 	}
@@ -2054,6 +2052,10 @@ public final class GPX implements Serializable {
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code path}.
+	 * This method is a shortcut for
+	 * <pre>{@code
+	 * GPX.Writer.DEFAULT.write(gpx, path);
+	 * }</pre>
 	 *
 	 * @see Writer
 	 *
@@ -2070,6 +2072,10 @@ public final class GPX implements Serializable {
 
 	/**
 	 * Read an GPX object from the given {@code input} stream.
+	 * This method is a shortcut for
+	 * <pre>{@code
+	 * GPX.Reader.DEFAULT.read(path);
+	 * }</pre>
 	 *
 	 * @see Reader
 	 *
@@ -2080,7 +2086,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return Reader.of(Version.V11, Mode.STRICT).read(path);
+		return Reader.DEFAULT.read(path);
 	}
 
 }
