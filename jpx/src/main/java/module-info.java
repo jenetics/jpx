@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import org.w3c.dom.Document;
-
 /**
  * <em>JPX</em> is a library for creating, reading and writing
  * <a href="https://en.wikipedia.org/wiki/Global_Positioning_System">GPS</a>
@@ -147,7 +145,7 @@ import org.w3c.dom.Document;
  * </gpx>
  * }</pre>
  *
- * <b>Converting a GPX object to an XML {@link Document}</b>
+ * <b>Converting a GPX object to an XML {@link org.w3c.dom.Document}</b>
  * <pre>{@code
  * final GPX gpx = ...;
  *
