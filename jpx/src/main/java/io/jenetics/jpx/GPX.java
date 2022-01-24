@@ -1299,7 +1299,7 @@ public final class GPX implements Serializable {
 		 *         doesn't represent a valid GPX object
 		 * @throws NullPointerException if the given {@code bytes} is {@code null}
 		 */
-		public GPX formByteArray(
+		GPX formByteArray(
 			final byte[] bytes,
 			final int offset,
 			final int length
@@ -1323,7 +1323,7 @@ public final class GPX implements Serializable {
 		 *         doesn't represent a valid GPX object
 		 * @throws NullPointerException if the given {@code bytes} is {@code null}
 		 */
-		public GPX formByteArray(final byte[] bytes) {
+		GPX formByteArray(final byte[] bytes) {
 			return formByteArray(bytes, 0, bytes.length);
 		}
 
@@ -1395,17 +1395,17 @@ public final class GPX implements Serializable {
 			/**
 			 * Indentation with 4 spaces.
 			 */
-			public static final Indent SPACES_4 = new Indent("    ");
+			public static final Indent SPACE4 = new Indent("    ");
 
 			/**
 			 * Indentation with 2 spaces.
 			 */
-			public static final Indent SPACES_2 = new Indent("  ");
+			public static final Indent SPACE2 = new Indent("  ");
 
 			/**
 			 * Indentation with tabs.
 			 */
-			public static final Indent TABS = new Indent("\t");
+			public static final Indent TAB1 = new Indent("\t");
 		}
 
 		/**
@@ -1423,7 +1423,7 @@ public final class GPX implements Serializable {
 		 * @since 3.0
 		 */
 		public static final Writer DEFAULT =
-			new Writer(Indent.SPACES_4, DEFAULT_FRACTION_DIGITS);
+			new Writer(Indent.SPACE4, DEFAULT_FRACTION_DIGITS);
 
 		private final Indent _indent;
 		private final int _maximumFractionDigits;
@@ -1603,7 +1603,7 @@ public final class GPX implements Serializable {
 		 * @return the binary representation of the given {@code gpx} object
 		 * @throws NullPointerException if the given GPX object is {@code null}
 		 */
-		public byte[] toByteArray(final GPX gpx) {
+		byte[] toByteArray(final GPX gpx) {
 			final var out = new ByteArrayOutputStream();
 			try (var dout = new DataOutputStream(out)) {
 				gpx.write(dout);

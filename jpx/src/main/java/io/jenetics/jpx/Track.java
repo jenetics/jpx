@@ -588,7 +588,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 */
 		public Builder addSegment(final TrackSegment segment) {
 			_segments.add(requireNonNull(segment));
-
 			return this;
 		}
 
@@ -652,7 +651,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 					.map(TrackSegment.class::cast)
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -667,7 +665,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 					.flatMap(segment -> mapper.apply(segment).stream())
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -678,7 +675,6 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 				? extends List<TrackSegment>> mapper
 		) {
 			segments(mapper.apply(_segments));
-
 			return this;
 		}
 
