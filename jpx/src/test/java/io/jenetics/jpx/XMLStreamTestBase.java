@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLOutputFactory;
@@ -65,7 +64,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	public static <T> List<T> nextObjects(final Supplier<T> supplier, final Random random) {
 		return Stream.generate(supplier)
 			.limit(random.nextInt(20))
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Test(invocationCount = 10)
@@ -97,6 +96,22 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		final T expected = params.supplier.get();
 		final byte[] marshaled = toBytes(expected, params.writer);
 		final T actual = fromBytes(marshaled, params.reader);
+
+		/*
+		if (!Objects.equals(actual, expected)) {
+			//System.out.println(new String(marshaled));
+			//System.out.println();
+			//System.out.println(new String(toBytes(actual, params.writer)));
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/actual.xml"),
+				toBytes(actual, params.writer)
+			);
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/expected.xml"),
+				toBytes(expected, params.writer)
+			);
+		}
+		 */
 
 		assertEquals(actual, expected);
 	}

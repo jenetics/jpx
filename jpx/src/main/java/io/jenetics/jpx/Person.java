@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -39,6 +40,7 @@ import java.util.Optional;
  */
 public final class Person implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _name;
@@ -115,10 +117,10 @@ public final class Person implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Person &&
-			Objects.equals(((Person)obj)._name, _name) &&
-			Objects.equals(((Person)obj)._email, _email) &&
-			Objects.equals(((Person)obj)._link, _link);
+			obj instanceof Person person &&
+			Objects.equals(person._name, _name) &&
+			Objects.equals(person._email, _email) &&
+			Objects.equals(person._link, _link);
 	}
 
 	@Override
@@ -177,10 +179,12 @@ public final class Person implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.PERSON, this);
+		return new SerialProxy(SerialProxy.PERSON, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

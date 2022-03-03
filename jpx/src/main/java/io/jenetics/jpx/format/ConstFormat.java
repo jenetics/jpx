@@ -95,7 +95,7 @@ final class ConstFormat implements Format {
 		}
 
 		return quoted
-			? "'" + out.toString() + "'"
+			? "'" + out + "'"
 			: out.toString();
 	}
 

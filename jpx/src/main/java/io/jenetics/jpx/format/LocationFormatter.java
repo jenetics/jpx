@@ -403,8 +403,9 @@ public final class LocationFormatter {
 	public String format(final Location location) {
 		requireNonNull(location);
 		return _formats.stream()
-			.map(format -> format.format(location)
-							.orElseThrow(() -> toError(location)))
+			.map(format -> format
+				.format(location)
+				.orElseThrow(() -> toError(location)))
 			.collect(Collectors.joining());
 	}
 
@@ -649,49 +650,49 @@ public final class LocationFormatter {
 			Elevation E = null;
 
 			for (var format : _formats) {
-				if (format instanceof LatitudeDegree) {
+				if (format instanceof LatitudeDegree ld) {
 					if (D == null) {
-						D = (LatitudeDegree)format;
+						D = ld;
 					} else {
 						throw iae("Only one 'D' pattern allowed.");
 					}
-				} else if (format instanceof LatitudeMinute) {
+				} else if (format instanceof LatitudeMinute lm) {
 					if (M == null) {
-						M = (LatitudeMinute)format;
+						M = lm;
 					} else {
 						throw iae("Only one 'M' pattern allowed.");
 					}
-				} else if (format instanceof LatitudeSecond) {
+				} else if (format instanceof LatitudeSecond ls) {
 					if (S == null) {
-						S = (LatitudeSecond)format;
+						S = ls;
 					} else {
 						throw iae("Only one 'S' pattern allowed.");
 					}
 				} else if (format instanceof LatitudeNS && X==null) {
 					X = (LatitudeNS)format;
-				} else if (format instanceof LongitudeDegree) {
+				} else if (format instanceof LongitudeDegree ld) {
 					if (d == null) {
-						d = (LongitudeDegree)format;
+						d = ld;
 					} else {
 						throw iae("Only one 'd' pattern allowed.");
 					}
-				} else if (format instanceof LongitudeMinute) {
+				} else if (format instanceof LongitudeMinute lm) {
 					if (m == null) {
-						m = (LongitudeMinute)format;
+						m = lm;
 					} else {
 						throw iae("Only one 'm' pattern allowed.");
 					}
-				} else if (format instanceof LongitudeSecond) {
+				} else if (format instanceof LongitudeSecond ls) {
 					if (s == null) {
-						s = (LongitudeSecond)format;
+						s = ls;
 					} else {
 						throw iae("Only one 's' pattern allowed.");
 					}
-				} else if (format instanceof LongitudeEW && x == null) {
-					x = (LongitudeEW) format;
-				} else if (format instanceof Elevation){
+				} else if (format instanceof LongitudeEW lew && x == null) {
+					x = lew;
+				} else if (format instanceof Elevation ele) {
 					if (E == null) {
-						E = (Elevation)format;
+						E = ele;
 					} else {
 						throw iae("Only one 'E' pattern allowed.");
 					}
@@ -714,7 +715,7 @@ public final class LocationFormatter {
 
 			// If D has fractional, no M or S
 			if (D != null &&
-				0 < D._numberFormat.getMinimumFractionDigits()
+				0 < D.getMinimumFractionDigits()
 				&& M != null)
 			{
 				throw iae("If 'D' has fraction, no 'M' or 'S' allowed.");
@@ -722,7 +723,7 @@ public final class LocationFormatter {
 
 			// If M has fractional, no S
 			if (M != null &&
-				0 < M._numberFormat.getMinimumFractionDigits() &&
+				0 < M.getMinimumFractionDigits() &&
 				S != null)
 			{
 				throw iae("If 'M' has fraction, no 'S' allowed.");
@@ -744,7 +745,7 @@ public final class LocationFormatter {
 
 			// If d has fractional, no m or s
 			if (d != null &&
-				0 < d._numberFormat.getMinimumFractionDigits() &&
+				0 < d.getMinimumFractionDigits() &&
 				m != null)
 			{
 				throw iae("If 'd' has fraction, no 'm' or 's' allowed.");
@@ -752,7 +753,7 @@ public final class LocationFormatter {
 
 			// If m has fractional, no s.
 			if (m != null &&
-				0 < m._numberFormat.getMinimumFractionDigits() &&
+				0 < m.getMinimumFractionDigits() &&
 				s != null)
 			{
 				throw iae("If 'm' has fraction, no 's' allowed.");
@@ -789,36 +790,32 @@ public final class LocationFormatter {
 			requireNonNull(pattern);
 
 			// The formats we've collected and that are not yet added to
-			// _formats. They may be added to _formats directly or be bundled
+			// formats. They may be added to _formats directly or be bundled
 			// into an Optional first.
 			final List<Format> formats = new ArrayList<>();
 
 			boolean optional = false; // Inside [ ] ?
-			int signs = 0; // How many unprocessed '+' ?
-			boolean quote = false; // last was ' ?
+			int signs = 0;            // How many unprocessed '+' ?
+			boolean quote = false;    // last was ' ?
 
 			final var tokens = new Tokens(tokenize(pattern));
 			while (tokens.hasNext()) {
 				var token = tokens.next();
 				switch (token) {
-					case "X": {
+					case "X" -> {
 						List<Format> fs = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) fs.add(Plus.INSTANCE);
 						signs = 0;
 						fs.add(LatitudeNS.INSTANCE);
-						break;
 					}
-					case "x": {
+					case "x" -> {
 						List<Format> fs = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i) fs.add(Plus.INSTANCE);
 						signs = 0;
 						fs.add(LongitudeEW.INSTANCE);
-						break;
 					}
-					case "+":
-						++signs;
-						break;
-					case "[": {
+					case "+" -> ++signs;
+					case "[" -> {
 						if (optional) {
 							throw iae("No nesting '[' (optional) allowed.");
 						}
@@ -827,9 +824,8 @@ public final class LocationFormatter {
 						}
 						signs = 0;
 						optional = true;
-						break;
 					}
-					case "]": {
+					case "]" -> {
 						if (!optional) {
 							throw iae("Missing open '[' bracket.");
 						}
@@ -842,9 +838,8 @@ public final class LocationFormatter {
 						optional = false;
 						_formats.add(OptionalFormat.of(formats));
 						formats.clear();
-						break;
 					}
-					case "'": {
+					case "'" -> {
 						List<Format> fs = optional ? formats : _formats;
 						for (int i = 0; i < signs; ++i)
 							fs.add(Plus.INSTANCE);
@@ -865,9 +860,8 @@ public final class LocationFormatter {
 						} else {
 							quote = true;
 						}
-						break;
 					}
-					default: {
+					default -> {
 						List<Format> fs = optional ? formats : _formats;
 						if (!quote) {
 							final var field = Field.ofPattern(token);
@@ -890,7 +884,6 @@ public final class LocationFormatter {
 							}
 						}
 						signs = 0;
-						break;
 					}
 				}
 			}
@@ -918,6 +911,7 @@ public final class LocationFormatter {
 			char pc = '\0';
 			for (int i = 0; i < pattern.length(); ++i) {
 				final char c = pattern.charAt(i);
+
 				switch (c) {
 					case '\'':
 						quote = !quote;
@@ -927,11 +921,7 @@ public final class LocationFormatter {
 						}
 						tokens.add(Character.toString(c));
 						break;
-					case 'x':
-					case 'X':
-					case '+':
-					case '[':
-					case ']':
+					case 'x', 'X', '+', '[', ']':
 						if (quote) {
 							token.append(c);
 						} else {
@@ -942,16 +932,7 @@ public final class LocationFormatter {
 							tokens.add(Character.toString(c));
 						}
 						break;
-					case 'L':
-					case 'D':
-					case 'M':
-					case 'S':
-					case 'l':
-					case 'd':
-					case 'm':
-					case 's':
-					case 'E':
-					case 'H':
+					case 'L', 'D', 'M', 'S', 'l', 'd', 'm', 's', 'E', 'H':
 						if (c != pc &&
 							pc != '\0' &&
 							pc != '.' &&
@@ -965,8 +946,7 @@ public final class LocationFormatter {
 						}
 						token.append(c);
 						break;
-					case ',':
-					case '.':
+					case ',', '.':
 						token.append(c);
 						break;
 					default:

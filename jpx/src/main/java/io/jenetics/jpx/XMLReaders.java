@@ -61,7 +61,6 @@ final class XMLReaders{
 		return this;
 	}
 
-	@SuppressWarnings("unchecked")
 	XMLReader<?>[] readers(final Version version) {
 		return IntStream.range(0, _versions.size())
 			.filter(i -> _versions.get(i) == null || _versions.get(i) == version)

@@ -46,18 +46,20 @@ enum LongitudeEW implements Format {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		int i = pos.getIndex();
-		char c = in.charAt(i);
-
-		if ( c == 'E'){
-			pos.setIndex(i+1);
-			builder.setLongitudeSign(+1);
-		} else if(c == 'W'){
-			pos.setIndex(i+1);
-			builder.setLongitudeSign(-1);
-		} else {
-			pos.setErrorIndex(i);
-			throw new ParseException("Not found E/W", in, i);
+		final int i = pos.getIndex();
+		switch (in.charAt(i)) {
+			case 'E' -> {
+				pos.setIndex(i + 1);
+				builder.setLongitudeSign(+1);
+			}
+			case 'W' -> {
+				pos.setIndex(i + 1);
+				builder.setLongitudeSign(-1);
+			}
+			default -> {
+				pos.setErrorIndex(i);
+				throw new ParseException("Not found E/W", in, i);
+			}
 		}
 	}
 

@@ -47,17 +47,20 @@ enum LatitudeNS implements Format {
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		int i = pos.getIndex();
-		char c = in.charAt(i);
-		if (c == 'N'){
-			pos.setIndex(i+1);
-			builder.setLatitudeSign(+1);
-		} else if (c == 'S'){
-			pos.setIndex(i+1);
-			builder.setLatitudeSign(-1);
-		} else {
-			pos.setErrorIndex(i);
-			throw new ParseException("Not found N/S", in, i);
+		final int i = pos.getIndex();
+		switch (in.charAt(i)) {
+			case 'N' -> {
+				pos.setIndex(i + 1);
+				builder.setLatitudeSign(+1);
+			}
+			case 'S' -> {
+				pos.setIndex(i + 1);
+				builder.setLatitudeSign(-1);
+			}
+			default -> {
+				pos.setErrorIndex(i);
+				throw new ParseException("Not found N/S", in, i);
+			}
 		}
 	}
 

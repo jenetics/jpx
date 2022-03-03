@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 
 import io.jenetics.jpx.geom.Geoid;
@@ -29,7 +28,7 @@ import io.jenetics.jpx.geom.Geoid;
  * A geographic point with optional elevation and time.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.6
+ * @version 3.0
  * @since 1.0
  */
 public interface Point {
@@ -60,31 +59,10 @@ public interface Point {
 	/**
 	 * Creation/modification timestamp for the point.
 	 *
-	 * @see #getInstant()
-	 *
 	 * @return creation/modification timestamp for the point
 	 */
-	default Optional<ZonedDateTime> getTime() {
+	default Optional<Instant> getTime() {
 		return Optional.empty();
-	}
-
-	/**
-	 * Creation/modification instant of the given point.
-	 *
-	 * @implNote
-	 * The default implementation of this method forwards the call to the
-	 * {@link #getTime()} method. If you want to override this method, do it via
-	 * the {@link #getTime()}. Otherwise you have to re-implement this method as
-	 * well.
-	 *
-	 * @since 1.6
-	 *
-	 * @see #getTime()
-	 *
-	 * @return creation/modification instant for the point
-	 */
-	default Optional<Instant> getInstant() {
-		return getTime().map(t -> t.toOffsetDateTime().toInstant());
 	}
 
 	/**

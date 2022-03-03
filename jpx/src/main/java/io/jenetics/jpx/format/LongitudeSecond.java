@@ -30,20 +30,16 @@ import io.jenetics.jpx.Longitude;
 final class LongitudeSecond extends Field {
 
 	LongitudeSecond(final String pattern) {
-		super(pattern);
+		super(pattern, 's');
 	}
 
 	@Override
-	char type() {
-		return 's';
-	}
-
-	@Override public void parse(
+	public void parse(
 		final CharSequence in,
 		final ParsePosition pos,
 		final LocationBuilder builder
 	) {
-		double d = parseDouble(in, pos);
+		double d = parse(in, pos);
 		builder.addLongitudeSecond(d);
 	}
 
@@ -52,7 +48,7 @@ final class LongitudeSecond extends Field {
 		return loc.longitude()
 			.map(Longitude::toDegrees)
 			.map(Field::toSeconds)
-			.map(d -> _numberFormat.format(d));
+			.map(this::format);
 	}
 
 }

@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -140,8 +139,12 @@ abstract class XMLReader<T> {
 					return mapper.apply(XMLReader.this.read(xml, lenient));
 				} catch (RuntimeException e) {
 					if (!lenient) {
-						throw new XMLStreamException(format(
-							"Invalid value for '%s'.", _name), e
+						throw new XMLStreamException(
+							format(
+								"Invalid value for '%s': %s",
+								_name, e.getMessage()
+							),
+							e
 						);
 					} else {
 						return null;
@@ -446,10 +449,6 @@ final class ListReader<T> extends XMLReader<List<T>> {
 		return element != null ? List.of(element) : List.of();
 	}
 
-	XMLReader<? extends T> reader() {
-		return _adoptee;
-	}
-
 }
 
 /**
@@ -588,7 +587,7 @@ final class ElemReader<T> extends XMLReader<T> {
 
 		final List<ReaderResult> results = _children.stream()
 			.map(ReaderResult::of)
-			.collect(Collectors.toList());
+			.toList();
 
 		final ReaderResult text = _textReaderIndex.length == 1
 			? results.get(_textReaderIndex[0])
@@ -607,10 +606,8 @@ final class ElemReader<T> extends XMLReader<T> {
 			boolean hasNext = false;
 			do {
 				switch (xml.getEventType()) {
-					case COMMENT:
-						consumeComment(xml);
-						break;
-					case START_ELEMENT:
+					case COMMENT -> consumeComment(xml);
+					case START_ELEMENT -> {
 						final String localName = xml.getLocalName();
 						Integer index = _readerIndexMapping.get(localName);
 
@@ -629,20 +626,16 @@ final class ElemReader<T> extends XMLReader<T> {
 							throwUnexpectedElement(xml, lenient, result);
 							hasNext = xml.safeNext();
 						}
-
-						break;
-					case CHARACTERS:
-					case CDATA:
+					}
+					case CHARACTERS, CDATA -> {
 						if (text != null) {
 							throwUnexpectedElement(xml, lenient, text);
 						} else {
 							xml.next();
 						}
 						hasNext = true;
-
-						break;
-					case END_ELEMENT:
-					case END_DOCUMENT:
+					}
+					case END_ELEMENT, END_DOCUMENT -> {
 						try {
 							return _creator.apply(
 								results.stream()
@@ -658,8 +651,8 @@ final class ElemReader<T> extends XMLReader<T> {
 								return null;
 							}
 						}
+					}
 				}
-
 			} while (hasNext);
 		}
 
@@ -793,8 +786,8 @@ final class ListResult implements ReaderResult {
 
 	@Override
 	public void put(final Object value) {
-		if (value instanceof List<?>) {
-			_value.addAll((List<?>)value);
+		if (value instanceof List<?> list) {
+			_value.addAll(list);
 		} else {
 			_value.add(value);
 		}

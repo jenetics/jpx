@@ -21,7 +21,6 @@ package io.jenetics.jpx.geom;
 
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.testng.Assert;
@@ -70,7 +69,7 @@ public class GeoidTest {
 		final List<WayPoint> points = Stream
 			.generate(() -> WayPointTest.nextWayPoint(random))
 			.limit(size)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(
 			pathLength(points),
@@ -98,7 +97,7 @@ public class GeoidTest {
 		final List<WayPoint> points = Stream
 			.generate(() -> WayPointTest.nextWayPoint(random))
 			.limit(size)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(
 			tourLength(points),

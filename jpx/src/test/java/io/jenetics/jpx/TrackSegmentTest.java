@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.testng.Assert;
@@ -54,7 +53,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		return new Params<>(
 			() -> nextTrackSegment(random),
 			TrackSegment.xmlReader(version),
-			TrackSegment.xmlWriter(version)
+			TrackSegment.xmlWriter(version, Formats::format)
 		);
 	}
 
@@ -77,7 +76,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(gpx.getTracks().size(), 1);
@@ -93,7 +92,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		final TrackSegment segment = TrackSegment.of(
 			IntStream.range(0, 90)
 				.mapToObj(i -> WayPoint.builder().build(i, i))
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		final TrackSegment filtered = segment.toBuilder()
@@ -114,7 +113,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		final TrackSegment segment = TrackSegment.of(
 			IntStream.range(0, 50)
 				.mapToObj(i -> WayPoint.builder().build(i, i))
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		final TrackSegment mapped = segment.toBuilder()
@@ -136,7 +135,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		final TrackSegment segment = TrackSegment.of(
 			IntStream.range(0, 25)
 				.mapToObj(i -> WayPoint.builder().build(i, i))
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		final TrackSegment mapped = segment.toBuilder()
@@ -158,7 +157,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		final TrackSegment segment = TrackSegment.of(
 			IntStream.range(0, 25)
 				.mapToObj(i -> WayPoint.builder().build(i, i))
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		final TrackSegment mapped = segment.toBuilder()
@@ -176,7 +175,7 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 		final TrackSegment object = TrackSegment.of(
 			IntStream.range(0, 25)
 				.mapToObj(i -> WayPoint.builder().build(i, i))
-				.collect(Collectors.toList())
+				.toList()
 		);
 
 		Assert.assertEquals(

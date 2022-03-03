@@ -116,7 +116,7 @@ final class XML {
 		}
 	}
 
-	private static String toString(final Node source) {
+	static String toString(final Node source) {
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			copy(source, out);
@@ -160,7 +160,7 @@ final class XML {
 
 			final DOMSource source = new DOMSource(doc);
 			final DOMResult result = new DOMResult();
-			transformer.transform(source,result);
+			transformer.transform(source, result);
 			return (Document)result.getNode();
 		} catch (TransformerException e) {
 			throw (DOMException)

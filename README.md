@@ -4,14 +4,14 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.jenetics/jpx/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22)
 [![Javadoc](https://www.javadoc.io/badge/io.jenetics/jpx.svg)](http://www.javadoc.io/doc/io.jenetics/jpx)
 
-**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java 8 [Stream](http://docs.oracle.com/javase/8/docs/api/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
+**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java [Stream](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
 
 Beside the basic functionality of reading and writing GPX files, the library also allows to manipulate the read GPX object in a functional way.
 
 
 ## Dependencies
 
-No external dependencies are needed by the _JPX_ library. It only needs **Java 11** to compile and run.
+No external dependencies are needed by the _JPX_ library. It only needs **Java 17** to compile and run.
 
 
 ## Building JPX
@@ -38,9 +38,9 @@ For  building the JPX library you have to check out the master branch from Githu
 final GPX gpx = GPX.builder()
     .addTrack(track -> track
         .addSegment(segment -> segment
-            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
-            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
-            .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
+        .addPoint(p -> p.lat(48.20100).lon(16.31651).ele(283))
+        .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
+        .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
     .build();
 ```
 
@@ -53,23 +53,21 @@ GPX.write(gpx, "track.gpx");
 *GPX output*
 
 ```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="JPX - Java GPX library" xmlns="http://www.topografix.com/GPX/1/1">
+<gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" xmlns="http://www.topografix.com/GPX/1/1">
     <trk>
         <trkseg>
-            <trkpt lat="48.2081743" lon="16.3738189">
-                <ele>160.0</ele>
+            <trkpt lat="48.201" lon="16.31651">
+                <ele>283</ele>
             </trkpt>
-            <trkpt lat="48.2081743" lon="16.3738189">
-                <ele>161.0</ele>
+            <trkpt lat="48.20112" lon="16.31639">
+                <ele>278</ele>
             </trkpt>
-            <trkpt lat="48.2081743" lon="16.3738189">
-                <ele>162.0</ele>
+            <trkpt lat="48.20126" lon="16.31601">
+                <ele>274</ele>
             </trkpt>
         </trkseg>
     </trk>
 </gpx>
-
 ```
 
 ### Reading GPX object from file
@@ -88,9 +86,9 @@ GPX.read("gpx.xml").tracks()
 *Console output*
 
 ```bash
-$ [lat=48.2081743, lon=48.2081743, ele=160]
-$ [lat=48.2081743, lon=48.2081743, ele=161]
-$ [lat=48.2081743, lon=48.2081743, ele=162]
+$ [lat=48.201, lon=16.31651, ele=283]
+$ [lat=48.20112, lon=16.31639, ele=278]
+$ [lat=48.20126, lon=16.31601, ele=274]
 
 ```
 
@@ -119,6 +117,20 @@ The extensions are available via a `org.w3c.dom.Document` object, with an `exten
 final Optional<Document> extensions = gpx.getExtensions();
 ```
 
+### Converting a `GPX` object into an `org.w3c.dom.Document`
+
+```java
+final GPX gpx = ...;
+
+final Document doc = XMLProvider.provider()
+    .documentBuilderFactory()
+    .newDocumentBuilder()
+    .newDocument();
+
+// The GPX data are written to the empty `doc` object.
+GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+```
+
 ### Reading GPX 1.0 and writing GPX 1.1
 
 By default, JPX is reading and writing the GPX files in version 1.1. But it is possible to read and write GPX files in version 1.0 as well.
@@ -129,8 +141,8 @@ final GPX gpx10 = GPX.reader(GPX.Version.V10).read("track-v10.gpx");
 
 // Changing GPX version to 1.1.
 final GPX gpx11 = gpx10.toBuilder()
-	.version(GPX.Version.V11)
-	.build();
+    .version(GPX.Version.V11)
+    .build();
 
 // Writing GPX to file.
 GPX.write(gpx11, "track-v11.gpx");
@@ -200,7 +212,7 @@ final Length length = gpx.tracks()
 #### Filtering
 
 The following example filters empty tracks and track-segments from an existing `GPX` object.
-	
+    
 ```java
 final GPX gpx = GPX.read("track.gpx");
 
@@ -302,7 +314,7 @@ org.acme.NonValidatingDocumentBuilder
 
 The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
-    Copyright 2016-2021 Franz Wilhelmstötter
+    Copyright 2016-2022 Franz Wilhelmstötter
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -318,13 +330,27 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### [2.3.0](https://github.com/jenetics/jpx/releases/tag/v2.3.0)
-
-_Mainentance release_
-
-### [2.2.0](https://github.com/jenetics/jpx/releases/tag/v2.2.0)
+### [3.0.0](https://github.com/jenetics/jpx/releases/tag/v3.0.0)
 
 #### Improvements
 
-* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709) location strings (thanks to [bunkenburg](https://github.com/bunkenburg)). This also contains fixes in the ISO 6709 location formatter.
-* [#140](https://github.com/jenetics/jpx/issues/140): Add `WayPoint` factory methods taking `Instant`.
+* [#125](https://github.com/jenetics/jpx/issues/125): **Breaking change** - Use `Instant` instead of `ZonedDateTime` for `Point.time` property.
+* [#148](https://github.com/jenetics/jpx/issues/148): **Breaking change** - Update to Java17.
+* [#155](https://github.com/jenetics/jpx/issues/155): Improved `GPX.Reader` and `GPX.Writer` classes.
+* [#158](https://github.com/jenetics/jpx/issues/158): Add XML `Document` reader/writer methods.
+```java
+final GPX gpx = ...;
+
+final Document doc = XMLProvider.provider()
+    .documentBuilderFactory()
+    .newDocumentBuilder()
+    .newDocument();
+
+// The GPX data are written to the empty `doc` object.
+GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+```
+
+#### Bugs
+
+* [#151](https://github.com/jenetics/jpx/issues/151): `Double`'s being written as exponents in GPX file.
+* [#152](https://github.com/jenetics/jpx/issues/152): `LocationFormatter::parse` method is not thread-safe.

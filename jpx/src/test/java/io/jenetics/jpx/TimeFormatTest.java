@@ -19,9 +19,9 @@
  */
 package io.jenetics.jpx;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.time.Instant;
-import java.time.ZonedDateTime;
-import java.util.NoSuchElementException;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -30,22 +30,22 @@ import org.testng.annotations.Test;
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
-public class ZonedDateTimeFormatTest {
+public class TimeFormatTest {
 
 	@Test(dataProvider = "validExamples")
 	public void parseExample(final String example) {
-		final ZonedDateTimeFormat format = ZonedDateTimeFormat
-			.findFormat(example)
-			.orElseThrow(NoSuchElementException::new);
+		final TimeFormat format = TimeFormat
+			.findFormat(example);
 
-		final ZonedDateTime zdt = format.formatParse(example);
-		final String zdts = ZonedDateTimeFormat.format(zdt);
+		assertThat(format).isNotNull();
+
+		final Instant zdt = format.formatParse(example);
+		final String zdts = TimeFormat.format(zdt);
 		Assert.assertEquals(
-			ZonedDateTimeFormat
+			TimeFormat
 				.parseOptional(zdts)
-				.map(ZonedDateTime::toInstant)
 				.orElse(Instant.MIN),
-			zdt.toInstant()
+			zdt
 		);
 	}
 

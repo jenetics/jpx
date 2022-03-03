@@ -31,7 +31,7 @@ plugins {
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "7.3"
+	version = "7.4"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -52,7 +52,6 @@ allprojects {
 
 	configurations.all {
 		resolutionStrategy.failOnVersionConflict()
-		resolutionStrategy.force(*Libs.All)
 	}
 }
 
@@ -69,8 +68,8 @@ gradle.projectsEvaluated {
 
 		plugins.withType<JavaPlugin> {
 			configure<JavaPluginExtension> {
-				sourceCompatibility = JavaVersion.VERSION_11
-				targetCompatibility = JavaVersion.VERSION_11
+				sourceCompatibility = JavaVersion.VERSION_17
+				targetCompatibility = JavaVersion.VERSION_17
 			}
 
 			configure<JavaPluginExtension> {
@@ -130,7 +129,7 @@ fun setupTestReporting(project: Project) {
 	project.apply(plugin = "jacoco")
 
 	project.configure<JacocoPluginExtension> {
-		toolVersion = "0.8.6"
+		toolVersion = "0.8.7"
 	}
 
 	project.tasks {
@@ -157,6 +156,7 @@ fun setupTestReporting(project: Project) {
 fun setupJavadoc(project: Project) {
 	project.tasks.withType<Javadoc> {
 		val doclet = options as StandardJavadocDocletOptions
+		doclet.addBooleanOption("Xdoclint:accessibility,html,reference,syntax", true)
 
 		exclude("**/internal/**")
 
@@ -166,7 +166,7 @@ fun setupJavadoc(project: Project) {
 		doclet.charSet = "UTF-8"
 		doclet.linkSource(true)
 		doclet.linksOffline(
-			"https://docs.oracle.com/en/java/javase/11/docs/api",
+			"https://docs.oracle.com/en/java/javase/17/docs/api/",
 			"${project.rootDir}/buildSrc/resources/javadoc/java.se"
 		)
 		doclet.windowTitle = "JPX ${project.version}"
@@ -228,21 +228,27 @@ fun setupJavadoc(project: Project) {
  * The Java compiler XLint flags.
  */
 fun xlint(): String {
-	// See https://docs.oracle.com/javase/9/tools/javac.htm#JSWOR627
+	// See https://docs.oracle.com/en/java/javase/17/docs/specs/man/javac.html#extra-options
 	return listOf(
+		"auxiliaryclass",
 		"cast",
 		"classfile",
-		"deprecation",
 		"dep-ann",
+		"deprecation",
 		"divzero",
 		"empty",
+		"exports",
 		"finally",
+		"module",
+		"opens",
 		"overrides",
 		"rawtypes",
+		"removal",
 		"serial",
 		"static",
 		"try",
-		"unchecked"
+		"unchecked",
+		"varargs"
 	).joinToString(separator = ",")
 }
 
@@ -292,7 +298,7 @@ fun setupPublishing(project: Project) {
 					name.set(JPX.ID)
 					description.set(project.description)
 					url.set(JPX.URL)
-					inceptionYear.set("2019")
+					inceptionYear.set("2016")
 
 					licenses {
 						license {

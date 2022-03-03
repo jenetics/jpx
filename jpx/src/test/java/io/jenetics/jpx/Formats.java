@@ -17,25 +17,27 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx;
+
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
- * @version 2.1
  */
-plugins {
-	`java-library`
-	idea
-	`maven-publish`
-}
+final class Formats {
 
-description = "JPX - Java GPX (GPS) Library"
+	private static final NumberFormat FORMAT =
+		NumberFormat.getNumberInstance(Locale.ENGLISH);
+	static {
+		FORMAT.setMaximumFractionDigits(20);
+	}
 
-extra["moduleName"] = "io.jenetics.jpx"
+	private Formats() {
+	}
 
-dependencies {
-	testImplementation(libs.assertj)
-	testImplementation(libs.equalsverifier)
-	testImplementation(libs.prngine)
-	testImplementation(libs.testng)
+	static String format(final Number value) {
+		return value != null ? FORMAT.format(value) : null;
+	}
+
 }

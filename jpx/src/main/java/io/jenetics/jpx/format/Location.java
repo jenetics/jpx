@@ -22,7 +22,6 @@ package io.jenetics.jpx.format;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 
-import java.time.ZonedDateTime;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -56,8 +55,6 @@ public final class Location {
 		_longitude = longitude;
 		_elevation = elevation;
 	}
-
-
 
 	/**
 	 * Return the <em>latitude</em> of {@code this} location.
@@ -100,7 +97,7 @@ public final class Location {
 	public Optional<Point> toPoint() {
 		return latitude().flatMap(lat ->
 			longitude().map(lon ->
-				WayPoint.of(lat, lon, _elevation, (ZonedDateTime)null)
+				WayPoint.of(lat, lon, _elevation, null)
 			)
 		);
 	}
@@ -113,10 +110,10 @@ public final class Location {
 	@Override
 	public boolean equals(final Object other) {
 		return other == this ||
-			other instanceof Location &&
-			Objects.equals(_latitude, ((Location)other)._latitude) &&
-			Objects.equals(_longitude, ((Location)other)._longitude) &&
-			Objects.equals(_elevation, ((Location)other)._elevation);
+			other instanceof Location loc &&
+			Objects.equals(_latitude, loc._latitude) &&
+			Objects.equals(_longitude, loc._longitude) &&
+			Objects.equals(_elevation, loc._elevation);
 	}
 
 	@Override
