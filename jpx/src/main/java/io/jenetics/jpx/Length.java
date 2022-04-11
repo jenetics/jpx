@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 
 import java.io.DataInput;
@@ -29,6 +30,8 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 /**
  * Extent of something along its greatest dimension or the extent of space
@@ -220,11 +223,17 @@ public final class Length
 	}
 
 	static Length parse(final String value) {
-		final String length = Strings.trim(value);
+		final Double length = parseDouble(value);
+		return Length.of(length, Unit.METER);
+	}
 
-		return length != null
-			? Length.of(Double.parseDouble(length), Unit.METER)
-			: null;
+	private static Double parseDouble(final String value) {
+		NumberFormat formatter = NumberFormat.getNumberInstance(ENGLISH);
+		try {
+			return formatter.parse(Strings.trim(value)).doubleValue();
+		} catch (ParseException e) {
+			throw new NumberFormatException("Unable to parse " + value);
+		}
 	}
 
 	/* *************************************************************************

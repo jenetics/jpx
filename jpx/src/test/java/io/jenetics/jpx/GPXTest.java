@@ -23,6 +23,7 @@ import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static io.jenetics.jpx.ListsTest.revert;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
@@ -152,6 +153,19 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final String xml = out.toString();
 		final GPX gpx2 = GPX.Reader.DEFAULT.fromString(xml);
 		assertThat(gpx2).isEqualTo(gpx);
+	}
+
+	@Test
+	public void writeThenReadDocument() {
+		GPX gpx = GPX.builder()
+			.addWayPoint(wp ->
+				wp.ele(1234.5).build(1.2, 3.4)
+			)
+			.build();
+		String gpxString = GPX.Writer.DEFAULT.toString(gpx);
+		assertThatNoException().isThrownBy(() -> {
+			GPX.Reader.DEFAULT.fromString(gpxString);
+		});
 	}
 
 	//@Test
