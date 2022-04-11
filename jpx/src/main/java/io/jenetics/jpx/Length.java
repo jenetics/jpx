@@ -224,15 +224,21 @@ public final class Length
 
 	static Length parse(final String value) {
 		final Double length = parseDouble(value);
-		return Length.of(length, Unit.METER);
+		return length !=  null ? Length.of(length, Unit.METER) : null;
 	}
 
 	private static Double parseDouble(final String value) {
-		NumberFormat formatter = NumberFormat.getNumberInstance(ENGLISH);
-		try {
-			return formatter.parse(Strings.trim(value)).doubleValue();
-		} catch (ParseException e) {
-			throw new NumberFormatException("Unable to parse " + value);
+		final String length = Strings.trim(value);
+
+		if (length != null) {
+			NumberFormat formatter = NumberFormat.getNumberInstance(ENGLISH);
+			try {
+				return formatter.parse(length).doubleValue();
+			} catch (ParseException e) {
+				throw new NumberFormatException("Unable to parse " + value);
+			}
+		} else {
+			return null;
 		}
 	}
 
