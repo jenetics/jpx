@@ -936,7 +936,8 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			    <wpt lat="1.2" lon="3.4">
 			        <ele>1234.5</ele>
 			    </wpt>
-			</gpx>""");
+			</gpx>"""
+		);
 
 		final var gpx2 = GPX.Reader.DEFAULT.fromString(string);
 		assertThat(gpx2).isEqualTo(gpx);
