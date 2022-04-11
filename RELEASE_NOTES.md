@@ -1,5 +1,11 @@
 ## Release notes
 
+### [3.0.1](https://github.com/jenetics/jpx/releases/tag/v3.0.1)
+
+#### Bugs
+
+* [#162](https://github.com/jenetics/jpx/issues/162): Elevation serialization for values > 1000m is incompatible with deserialization.
+
 ### [3.0.0](https://github.com/jenetics/jpx/releases/tag/v3.0.0)
 
 #### Improvements
