@@ -1490,6 +1490,7 @@ public final class GPX implements Serializable {
 				try (output) {
 					final var format = NumberFormat.getNumberInstance(ENGLISH);
 					format.setMaximumFractionDigits(_maximumFractionDigits);
+					format.setGroupingUsed(false);
 					final Function<Number, String> formatter = value ->
 						value != null ? format.format(value) : null;
 
