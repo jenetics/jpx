@@ -22,8 +22,8 @@ package io.jenetics.jpx;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static io.jenetics.jpx.ListsTest.revert;
 import static org.assertj.core.api.Assertions.assertThatNoException;
+import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
