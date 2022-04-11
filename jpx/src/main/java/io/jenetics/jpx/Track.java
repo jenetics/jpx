@@ -868,19 +868,22 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	}
 
 	// Define the needed readers for the different versions.
-	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.elem("name"))
-		.v00(XMLReader.elem("cmt"))
-		.v00(XMLReader.elem("desc"))
-		.v00(XMLReader.elem("src"))
-		.v11(XMLReader.elems(Link.READER))
-		.v10(XMLReader.elem("url").map(Format::parseURI))
-		.v10(XMLReader.elem("urlname"))
-		.v00(XMLReader.elem("number").map(UInt::parse))
-		.v00(XMLReader.elem("type"))
-		.v00(XMLReader.doc("extensions"))
-		.v10(XMLReader.elems(TrackSegment.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11)));
+	private static XMLReaders
+	readers(final Function<? super String, Length> lengthParser) {
+		return new XMLReaders()
+			.v00(XMLReader.elem("name"))
+			.v00(XMLReader.elem("cmt"))
+			.v00(XMLReader.elem("desc"))
+			.v00(XMLReader.elem("src"))
+			.v11(XMLReader.elems(Link.READER))
+			.v10(XMLReader.elem("url").map(Format::parseURI))
+			.v10(XMLReader.elem("urlname"))
+			.v00(XMLReader.elem("number").map(UInt::parse))
+			.v00(XMLReader.elem("type"))
+			.v00(XMLReader.doc("extensions"))
+			.v10(XMLReader.elems(TrackSegment.xmlReader(Version.V10, lengthParser)))
+			.v11(XMLReader.elems(TrackSegment.xmlReader(Version.V11, lengthParser)));
+	}
 
 	static XMLWriter<Track> xmlWriter(
 		final Version version,
@@ -889,11 +892,14 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		return XMLWriter.elem("trk", writers(formatter).writers(version));
 	}
 
-	static XMLReader<Track> xmlReader(final Version version) {
+	static XMLReader<Track> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(
 			version == Version.V10 ? Track::toTrackV10 : Track::toTrackV11,
 			"trk",
-			READERS.readers(version)
+			readers(lengthParser).readers(version)
 		);
 	}
 

@@ -20,15 +20,18 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
@@ -49,9 +52,13 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 
 	@Override
 	protected Params<Track> params(final Version version, final Random random) {
+		final var format = NumberFormat.getNumberInstance(ENGLISH);
+		final Function<String, Length> lengthParser = string ->
+			Length.parse(string, format);
+
 		return new Params<>(
 			() -> nextTrack(random),
-			Track.xmlReader(version),
+			Track.xmlReader(version, lengthParser),
 			Track.xmlWriter(version, Formats::format)
 		);
 	}

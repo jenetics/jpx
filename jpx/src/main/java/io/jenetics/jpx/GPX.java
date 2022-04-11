@@ -1173,7 +1173,11 @@ public final class GPX implements Serializable {
 					if (input.hasNext()) {
 						input.next();
 
-						return GPX.xmlReader(_version)
+						final var format = NumberFormat.getNumberInstance(ENGLISH);
+						final Function<String, Length> lengthParser = string ->
+							Length.parse(string, format);
+
+						return GPX.xmlReader(_version, lengthParser)
 							.read(input, _mode == Mode.LENIENT);
 					} else {
 						throw new InvalidObjectException("No 'gpx' element found.");
@@ -1490,6 +1494,7 @@ public final class GPX implements Serializable {
 				try (output) {
 					final var format = NumberFormat.getNumberInstance(ENGLISH);
 					format.setMaximumFractionDigits(_maximumFractionDigits);
+					format.setGroupingUsed(false);
 					final Function<Number, String> formatter = value ->
 						value != null ? format.format(value) : null;
 
@@ -1958,26 +1963,29 @@ public final class GPX implements Serializable {
 
 
 	// Define the needed readers for the different versions.
-	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.attr("version").map(Version::of))
-		.v00(XMLReader.attr("creator"))
-		.v11(Metadata.READER)
-		.v10(XMLReader.elem("name"))
-		.v10(XMLReader.elem("desc"))
-		.v10(XMLReader.elem("author"))
-		.v10(XMLReader.elem("email"))
-		.v10(XMLReader.elem("url"))
-		.v10(XMLReader.elem("urlname"))
-		.v10(XMLReader.elem("time").map(TimeFormat::parse))
-		.v10(XMLReader.elem("keywords"))
-		.v10(Bounds.READER)
-		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt")))
-		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "wpt")))
-		.v10(XMLReader.elems(Route.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(Route.xmlReader(Version.V11)))
-		.v10(XMLReader.elems(Track.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(Track.xmlReader(Version.V11)))
-		.v00(XMLReader.doc("extensions"));
+	private static XMLReaders
+	readers(final Function<? super String, Length> lengthParser) {
+		return new XMLReaders()
+			.v00(XMLReader.attr("version").map(Version::of))
+			.v00(XMLReader.attr("creator"))
+			.v11(Metadata.READER)
+			.v10(XMLReader.elem("name"))
+			.v10(XMLReader.elem("desc"))
+			.v10(XMLReader.elem("author"))
+			.v10(XMLReader.elem("email"))
+			.v10(XMLReader.elem("url"))
+			.v10(XMLReader.elem("urlname"))
+			.v10(XMLReader.elem("time").map(TimeFormat::parse))
+			.v10(XMLReader.elem("keywords"))
+			.v10(Bounds.READER)
+			.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt", lengthParser)))
+			.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "wpt", lengthParser)))
+			.v10(XMLReader.elems(Route.xmlReader(Version.V10, lengthParser)))
+			.v11(XMLReader.elems(Route.xmlReader(Version.V11, lengthParser)))
+			.v10(XMLReader.elems(Track.xmlReader(Version.V10, lengthParser)))
+			.v11(XMLReader.elems(Track.xmlReader(Version.V11, lengthParser)))
+			.v00(XMLReader.doc("extensions"));
+	}
 
 
 	static XMLWriter<GPX> xmlWriter(
@@ -1987,11 +1995,14 @@ public final class GPX implements Serializable {
 		return XMLWriter.elem("gpx", writers(formatter).writers(version));
 	}
 
-	static XMLReader<GPX> xmlReader(final Version version) {
+	static XMLReader<GPX> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(
 			version == Version.V10 ? GPX::toGPXv10 : GPX::toGPXv11,
 			"gpx",
-			READERS.readers(version)
+			readers(lengthParser).readers(version)
 		);
 	}
 

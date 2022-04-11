@@ -1987,32 +1987,35 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	// Define the needed readers for the different versions.
-	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.attr("lat").map(Latitude::parse))
-		.v00(XMLReader.attr("lon").map(Longitude::parse))
-		.v00(XMLReader.elem("ele").map(Length::parse))
-		.v00(XMLReader.elem("speed").map(Speed::parse))
-		.v00(XMLReader.elem("time").map(TimeFormat::parse))
-		.v00(XMLReader.elem("magvar").map(Degrees::parse))
-		.v00(XMLReader.elem("geoidheight").map(Length::parse))
-		.v00(XMLReader.elem("name"))
-		.v00(XMLReader.elem("cmt"))
-		.v00(XMLReader.elem("desc"))
-		.v00(XMLReader.elem("src"))
-		.v11(XMLReader.elems(Link.READER))
-		.v10(XMLReader.elem("url").map(Format::parseURI))
-		.v10(XMLReader.elem("urlname"))
-		.v00(XMLReader.elem("sym"))
-		.v00(XMLReader.elem("type"))
-		.v00(XMLReader.elem("fix").map(Fix::parse))
-		.v00(XMLReader.elem("sat").map(UInt::parse))
-		.v00(XMLReader.elem("hdop").map(Format::parseDouble))
-		.v00(XMLReader.elem("vdop").map(Format::parseDouble))
-		.v00(XMLReader.elem("pdop").map(Format::parseDouble))
-		.v00(XMLReader.elem("ageofdgpsdata").map(Format::parseDuration))
-		.v00(XMLReader.elem("dgpsid").map(DGPSStation::parse))
-		.v10(XMLReader.elem("course").map(Degrees::parse))
-		.v00(XMLReader.doc("extensions"));
+	private static XMLReaders
+	readers(final Function<? super String, Length> lengthParser) {
+		return new XMLReaders()
+			.v00(XMLReader.attr("lat").map(Latitude::parse))
+			.v00(XMLReader.attr("lon").map(Longitude::parse))
+			.v00(XMLReader.elem("ele").map(lengthParser))
+			.v00(XMLReader.elem("speed").map(Speed::parse))
+			.v00(XMLReader.elem("time").map(TimeFormat::parse))
+			.v00(XMLReader.elem("magvar").map(Degrees::parse))
+			.v00(XMLReader.elem("geoidheight").map(lengthParser))
+			.v00(XMLReader.elem("name"))
+			.v00(XMLReader.elem("cmt"))
+			.v00(XMLReader.elem("desc"))
+			.v00(XMLReader.elem("src"))
+			.v11(XMLReader.elems(Link.READER))
+			.v10(XMLReader.elem("url").map(Format::parseURI))
+			.v10(XMLReader.elem("urlname"))
+			.v00(XMLReader.elem("sym"))
+			.v00(XMLReader.elem("type"))
+			.v00(XMLReader.elem("fix").map(Fix::parse))
+			.v00(XMLReader.elem("sat").map(UInt::parse))
+			.v00(XMLReader.elem("hdop").map(Format::parseDouble))
+			.v00(XMLReader.elem("vdop").map(Format::parseDouble))
+			.v00(XMLReader.elem("pdop").map(Format::parseDouble))
+			.v00(XMLReader.elem("ageofdgpsdata").map(Format::parseDuration))
+			.v00(XMLReader.elem("dgpsid").map(DGPSStation::parse))
+			.v10(XMLReader.elem("course").map(Degrees::parse))
+			.v00(XMLReader.doc("extensions"));
+	}
 
 	static XMLWriter<WayPoint> xmlWriter(
 		final Version version,
@@ -2023,13 +2026,17 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<WayPoint> xmlReader(final Version version, final String name) {
+	static XMLReader<WayPoint> xmlReader(
+		final Version version,
+		final String name,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(
 			version == Version.V10
 				? WayPoint::toWayPointV10
 				: WayPoint::toWayPointV11,
 			name,
-			READERS.readers(version)
+			readers(lengthParser).readers(version)
 		);
 	}
 

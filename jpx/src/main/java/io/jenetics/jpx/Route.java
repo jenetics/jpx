@@ -891,19 +891,22 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 
 	// Define the needed readers for the different versions.
-	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.elem("name"))
-		.v00(XMLReader.elem("cmt"))
-		.v00(XMLReader.elem("desc"))
-		.v00(XMLReader.elem("src"))
-		.v11(XMLReader.elems(Link.READER))
-		.v10(XMLReader.elem("url").map(Format::parseURI))
-		.v10(XMLReader.elem("urlname"))
-		.v00(XMLReader.elem("number").map(UInt::parse))
-		.v00(XMLReader.elem("type"))
-		.v00(XMLReader.doc("extensions"))
-		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept")))
-		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")));
+	private static XMLReaders
+	readers(final Function<? super String, Length> lengthParser) {
+		return new XMLReaders()
+			.v00(XMLReader.elem("name"))
+			.v00(XMLReader.elem("cmt"))
+			.v00(XMLReader.elem("desc"))
+			.v00(XMLReader.elem("src"))
+			.v11(XMLReader.elems(Link.READER))
+			.v10(XMLReader.elem("url").map(Format::parseURI))
+			.v10(XMLReader.elem("urlname"))
+			.v00(XMLReader.elem("number").map(UInt::parse))
+			.v00(XMLReader.elem("type"))
+			.v00(XMLReader.doc("extensions"))
+			.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept", lengthParser)))
+			.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept", lengthParser)));
+	}
 
 	static XMLWriter<Route> xmlWriter(
 		final Version version,
@@ -912,11 +915,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		return XMLWriter.elem("rte", writers(formatter).writers(version));
 	}
 
-	static XMLReader<Route> xmlReader(final Version version) {
+	static XMLReader<Route> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(
 			version == Version.V10 ? Route::toRouteV10 : Route::toRouteV11,
 			"rte",
-			READERS.readers(version)
+			readers(lengthParser).readers(version)
 		);
 	}
 

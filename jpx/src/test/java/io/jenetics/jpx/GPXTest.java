@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static io.jenetics.jpx.ListsTest.revert;
 
@@ -38,10 +39,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import javax.xml.stream.XMLStreamException;
@@ -72,9 +75,13 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Override
 	protected Params<GPX> params(final Version version, final Random random) {
+		final var format = NumberFormat.getNumberInstance(ENGLISH);
+		final Function<String, Length> lengthParser = string ->
+			Length.parse(string, format);
+
 		return new Params<>(
 			() -> nextGPX(random),
-			GPX.xmlReader(version),
+			GPX.xmlReader(version, lengthParser),
 			GPX.xmlWriter(version, Formats::format)
 		);
 	}
@@ -913,6 +920,27 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		GPX.Writer.of(new Indent("    ")).write(gpx, out);
 		//GPX.writer(new Indent("    ")).write(gpx, System.out);
 		assertThat(out.toString()).doesNotContain("-3.1E-4");
+	}
+
+	@Test
+	public void issue162_NumberFormattingParsing() {
+		final var gpx = GPX.builder()
+			.addWayPoint(wp -> wp.ele(1234.5).build(1.2, 3.4))
+			.build();
+
+		final var string = GPX.Writer.DEFAULT.toString(gpx);
+		assertThat(string).isEqualTo("""
+			<?xml version="1.0" encoding="UTF-8"?>
+			<gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" \
+			xmlns="http://www.topografix.com/GPX/1/1">
+			    <wpt lat="1.2" lon="3.4">
+			        <ele>1234.5</ele>
+			    </wpt>
+			</gpx>"""
+		);
+
+		final var gpx2 = GPX.Reader.DEFAULT.fromString(string);
+		assertThat(gpx2).isEqualTo(gpx);
 	}
 
 }
