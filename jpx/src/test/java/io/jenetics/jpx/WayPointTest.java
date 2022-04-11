@@ -20,16 +20,19 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 import static io.jenetics.jpx.ZonedDateTimesTest.nextZonedDataTime;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.random.RandomGenerator;
 
@@ -52,9 +55,13 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 
 	@Override
 	protected Params<WayPoint> params(final Version version, final Random random) {
+		final var format = NumberFormat.getNumberInstance(ENGLISH);
+		final Function<String, Length> lengthParser = string ->
+			Length.parse(string, format);
+
 		return new Params<>(
 			() -> nextWayPoint(random),
-			WayPoint.xmlReader(version, "wpt"),
+			WayPoint.xmlReader(version, "wpt", lengthParser),
 			WayPoint.xmlWriter(version, "wpt", Formats::format)
 		);
 	}

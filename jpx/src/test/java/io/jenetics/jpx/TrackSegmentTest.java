@@ -19,16 +19,19 @@
  */
 package io.jenetics.jpx;
 
+import static java.util.Locale.ENGLISH;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -50,9 +53,13 @@ public class TrackSegmentTest extends XMLStreamTestBase<TrackSegment> {
 
 	@Override
 	protected Params<TrackSegment> params(final Version version, final Random random) {
+		final var format = NumberFormat.getNumberInstance(ENGLISH);
+		final Function<String, Length> lengthParser = string ->
+			Length.parse(string, format);
+
 		return new Params<>(
 			() -> nextTrackSegment(random),
-			TrackSegment.xmlReader(version),
+			TrackSegment.xmlReader(version, lengthParser),
 			TrackSegment.xmlWriter(version, Formats::format)
 		);
 	}

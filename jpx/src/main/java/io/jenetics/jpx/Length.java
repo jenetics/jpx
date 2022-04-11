@@ -20,7 +20,6 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Locale.ENGLISH;
 import static java.util.Objects.requireNonNull;
 
 import java.io.DataInput;
@@ -222,18 +221,20 @@ public final class Length
 		return new Length(Unit.METER.convert(length, unit));
 	}
 
-	static Length parse(final String value) {
-		final Double length = parseDouble(value);
+	static Length parse(final String value, final NumberFormat format) {
+		final Double length = parseDouble(value, format);
 		return length !=  null ? Length.of(length, Unit.METER) : null;
 	}
 
-	private static Double parseDouble(final String value) {
+	private static Double parseDouble(
+		final String value,
+		final NumberFormat format
+	) {
 		final String length = Strings.trim(value);
 
 		if (length != null) {
-			NumberFormat formatter = NumberFormat.getNumberInstance(ENGLISH);
 			try {
-				return formatter.parse(length).doubleValue();
+				return format.parse(length).doubleValue();
 			} catch (ParseException e) {
 				throw new NumberFormatException("Unable to parse " + value);
 			}
