@@ -1,9 +1,9 @@
 package io.jenetics.jpx.tool;
 
 import static java.lang.String.format;
+import static java.time.ZoneOffset.UTC;
 
 import java.time.Duration;
-import java.time.OffsetDateTime;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -81,14 +81,14 @@ public final class Tracks {
 	private static String trackCmt(final List<TrackSegment> segments) {
 		final List<WayPoint> points = segments.stream()
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.toList();
 
-		final OffsetDateTime start = points.get(0).getTime()
-			.map(ZonedDateTime::toOffsetDateTime)
+		final ZonedDateTime start = points.get(0).getTime()
+			.map(i -> ZonedDateTime.ofInstant(i, UTC))
 			.orElseThrow();
 
-		final OffsetDateTime end = points.get(points.size() - 1).getTime()
-			.map(ZonedDateTime::toOffsetDateTime)
+		final ZonedDateTime end = points.get(points.size() - 1).getTime()
+			.map(i -> ZonedDateTime.ofInstant(i, UTC))
 			.orElseThrow();
 
 		return format(

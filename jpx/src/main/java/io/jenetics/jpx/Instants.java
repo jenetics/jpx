@@ -17,34 +17,34 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.time.Instant;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
- * @version 2.1
+ * @version 3.0
+ * @since 1.2
  */
-pluginManagement {
-	repositories {
-		mavenLocal()
-		gradlePluginPortal()
+final class Instants {
+
+	private Instants() {
 	}
-}
 
-dependencyResolutionManagement {
-	versionCatalogs {
-		create("libs") {
-			library("assertj", "org.assertj:assertj-core:3.20.2")
-			library("commons-math", "org.apache.commons:commons-math3:3.6.1")
-			library("equalsverifier", "nl.jqno.equalsverifier:equalsverifier:3.7.2")
-			library("guava", "com.google.guava:guava:31.0.1-jre")
-			library("prngine", "io.jenetics:prngine:2.0.0")
-			library("rxjava", "io.reactivex.rxjava2:rxjava:2.2.21")
-			library("testng", "org.testng:testng:7.4.0")
-		}
+	static void write(final Instant time, final DataOutput out)
+		throws IOException
+	{
+		IO.writeLong(time.getEpochSecond(), out);
+		IO.writeInt(time.getNano(), out);
 	}
+
+	static Instant read(final DataInput in) throws IOException {
+		final var seconds = IO.readLong(in);
+		final var nanos = IO.readInt(in);
+		return Instant.ofEpochSecond(seconds, nanos);
+	}
+
 }
-
-rootProject.name = "jpx"
-
-// The JPX projects.
-include("jpx")

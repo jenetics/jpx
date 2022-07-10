@@ -19,19 +19,12 @@
  */
 package io.jenetics.jpx;
 
-import static java.time.ZoneOffset.UTC;
-import static java.util.stream.Collectors.toList;
 import static io.jenetics.jpx.GPXTest.nextGPX;
 import static io.jenetics.jpx.TrackTest.nextTrack;
-import static io.jenetics.jpx.WayPointTest.nextWayPoint;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.ZonedDateTime;
-import java.util.List;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -105,26 +98,6 @@ public class FiltersTest {
 			.sum();
 
 		Assert.assertEquals(segments, 1);
-	}
-
-	public void splitByDay() {
-		final Random random = new Random(1);
-		final ZonedDateTime time = ZonedDateTime.of(2017, 1, 1, 0, 0, 0, 0, UTC);
-
-		final AtomicInteger count = new AtomicInteger();
-		final List<WayPoint> points = Stream.generate(() -> nextWayPoint(random))
-			.limit(100)
-			.map(wp -> wp.toBuilder()
-				.time(time.plusHours(count.incrementAndGet()))
-				.build())
-			.collect(toList());
-
-		for (TrackSegment list : Filters.splitByDay(TrackSegment.of(points))) {
-			System.out.println("------------------------");
-			for (WayPoint point : list) {
-				System.out.println(point.getTime() + ": " + point);
-			}
-		}
 	}
 
 	@Test

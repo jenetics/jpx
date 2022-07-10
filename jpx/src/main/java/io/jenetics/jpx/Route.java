@@ -42,7 +42,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
@@ -605,7 +604,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @param point the way-point builder
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
+		public Builder addPoint(final Consumer<? super WayPoint.Builder> point) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
 			return addPoint(builder.build());
@@ -624,12 +623,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 		@Override
 		public Builder filter(final Predicate<? super WayPoint> predicate) {
-			points(
-				_points.stream()
-					.filter(predicate)
-					.collect(Collectors.toList())
-			);
-
+			points(_points.stream().filter(predicate).toList());
 			return this;
 		}
 
@@ -643,7 +637,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 					.map(WayPoint.class::cast)
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -658,7 +651,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 					.flatMap(wp -> mapper.apply(wp).stream())
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -899,19 +891,22 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 
 	// Define the needed readers for the different versions.
-	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.elem("name"))
-		.v00(XMLReader.elem("cmt"))
-		.v00(XMLReader.elem("desc"))
-		.v00(XMLReader.elem("src"))
-		.v11(XMLReader.elems(Link.READER))
-		.v10(XMLReader.elem("url").map(Format::parseURI))
-		.v10(XMLReader.elem("urlname"))
-		.v00(XMLReader.elem("number").map(UInt::parse))
-		.v00(XMLReader.elem("type"))
-		.v00(XMLReader.doc("extensions"))
-		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept")))
-		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")));
+	private static XMLReaders
+	readers(final Function<? super String, Length> lengthParser) {
+		return new XMLReaders()
+			.v00(XMLReader.elem("name"))
+			.v00(XMLReader.elem("cmt"))
+			.v00(XMLReader.elem("desc"))
+			.v00(XMLReader.elem("src"))
+			.v11(XMLReader.elems(Link.READER))
+			.v10(XMLReader.elem("url").map(Format::parseURI))
+			.v10(XMLReader.elem("urlname"))
+			.v00(XMLReader.elem("number").map(UInt::parse))
+			.v00(XMLReader.elem("type"))
+			.v00(XMLReader.doc("extensions"))
+			.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept", lengthParser)))
+			.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept", lengthParser)));
+	}
 
 	static XMLWriter<Route> xmlWriter(
 		final Version version,
@@ -920,11 +915,14 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		return XMLWriter.elem("rte", writers(formatter).writers(version));
 	}
 
-	static XMLReader<Route> xmlReader(final Version version) {
+	static XMLReader<Route> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(
 			version == Version.V10 ? Route::toRouteV10 : Route::toRouteV11,
 			"rte",
-			READERS.readers(version)
+			readers(lengthParser).readers(version)
 		);
 	}
 

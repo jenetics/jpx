@@ -40,13 +40,14 @@ final class Lists {
 	private Lists() {
 	}
 
-	static <T> List<T> copyOf(final List<T> list) {
-		return list == null
-			? List.of()
-			: List.copyOf(list);
+	static <T> List<T> copyOf(final List<? extends T> list) {
+		return list == null ? List.of() : List.copyOf(list);
 	}
 
-	static <T> void copyTo(final List<T> source, final List<T> target) {
+	static <T> void copyTo(
+		final List<? extends T> source,
+		final List<? super T> target
+	) {
 		requireNonNull(target);
 		if (source != null) {
 			source.forEach(Objects::requireNonNull);

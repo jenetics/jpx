@@ -29,6 +29,8 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.Serial;
 import java.io.Serializable;
+import java.text.NumberFormat;
+import java.text.ParseException;
 
 /**
  * Extent of something along its greatest dimension or the extent of space
@@ -120,8 +122,13 @@ public final class Length
 		 */
 		public double convert(final double length, final Unit sourceUnit) {
 			requireNonNull(sourceUnit);
-			final double meters = length*sourceUnit._factor;
-			return meters/_factor;
+
+			if (this == sourceUnit) {
+				return length;
+			} else {
+				final double meters = length*sourceUnit._factor;
+				return meters/_factor;
+			}
 		}
 	}
 
@@ -214,12 +221,26 @@ public final class Length
 		return new Length(Unit.METER.convert(length, unit));
 	}
 
-	static Length parse(final String value) {
+	static Length parse(final String value, final NumberFormat format) {
+		final Double length = parseDouble(value, format);
+		return length !=  null ? Length.of(length, Unit.METER) : null;
+	}
+
+	private static Double parseDouble(
+		final String value,
+		final NumberFormat format
+	) {
 		final String length = Strings.trim(value);
 
-		return length != null
-			? Length.of(Double.parseDouble(length), Unit.METER)
-			: null;
+		if (length != null) {
+			try {
+				return format.parse(length).doubleValue();
+			} catch (ParseException e) {
+				throw new NumberFormatException("Unable to parse " + value);
+			}
+		} else {
+			return null;
+		}
 	}
 
 	/* *************************************************************************

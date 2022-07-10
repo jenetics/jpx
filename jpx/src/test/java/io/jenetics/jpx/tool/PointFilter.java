@@ -2,6 +2,7 @@ package io.jenetics.jpx.tool;
 
 import static java.util.Objects.requireNonNull;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,7 +17,7 @@ import io.jenetics.jpx.WayPoint;
 final class PointFilter implements Predicate<WayPoint> {
 
 	public static Predicate<WayPoint>
-	time(final ZonedDateTime min, final ZonedDateTime max) {
+	time(final Instant min, final Instant max) {
 		return predicate(min, max, WayPoint::getTime);
 	}
 
@@ -41,8 +42,8 @@ final class PointFilter implements Predicate<WayPoint> {
 
 	static final Predicate<WayPoint> FAULTY_POINTS =
 	time(
-		ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()),
-		ZonedDateTime.now())
+		ZonedDateTime.of(2000, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault()).toInstant(),
+		Instant.now())
 	.and(
 		speed(
 			Speed.of(0, Speed.Unit.METERS_PER_SECOND),
@@ -61,14 +62,14 @@ final class PointFilter implements Predicate<WayPoint> {
 		);
 	 */
 
-	private final ZonedDateTime _minTime;
-	private final ZonedDateTime _maxTime;
+	private final Instant _minTime;
+	private final Instant _maxTime;
 	private final double _maxElevation;
 	private final double _maxSpeed;
 
 	PointFilter(
-		final ZonedDateTime minTime,
-		final ZonedDateTime maxTime,
+		final Instant minTime,
+		final Instant maxTime,
 		final double maxElevation,
 		final double maxSpeed
 	) {
@@ -88,8 +89,10 @@ final class PointFilter implements Predicate<WayPoint> {
 			.map(Length::doubleValue)
 			.orElse(0.0);
 
-		final ZonedDateTime time = wp.getTime()
-			.orElse(ZonedDateTime.of(LocalDateTime.MAX, ZoneId.systemDefault()));
+		final Instant time = wp.getTime()
+			.orElse(ZonedDateTime.of(
+				LocalDateTime.MAX,
+				ZoneId.systemDefault()).toInstant());
 
 		return speed >= 0 && speed < _maxSpeed &&
 			ele > 0 && ele < _maxElevation &&

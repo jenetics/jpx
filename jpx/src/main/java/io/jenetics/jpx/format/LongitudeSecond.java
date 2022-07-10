@@ -33,7 +33,8 @@ final class LongitudeSecond extends Field {
 		super(pattern, 's');
 	}
 
-	@Override public void parse(
+	@Override
+	public void parse(
 		final CharSequence in,
 		final ParsePosition pos,
 		final LocationBuilder builder

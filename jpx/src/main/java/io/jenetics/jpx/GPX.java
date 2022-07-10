@@ -30,7 +30,9 @@ import static io.jenetics.jpx.Lists.copyTo;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInput;
+import java.io.DataInputStream;
 import java.io.DataOutput;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,7 +49,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -55,7 +57,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.stream.XMLStreamException;
@@ -67,8 +68,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
-
-import io.jenetics.jpx.GPX.Reader.Mode;
 
 /**
  * GPX documents contain a metadata header, followed by way-points, routes, and
@@ -90,8 +89,8 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *
  * <b>Writing a GPX file</b>
  * <pre>{@code
- * final var indent = "    ";
- * GPX.writer(indent).write(gpx, Path.of("points.gpx"));
+ * final var indent = new GPX.Writer.Indent("    ");
+ * GPX.Writer.of(indent).write(gpx, Path.of("points.gpx"));
  * }</pre>
  *
  * This will produce the following output.
@@ -120,8 +119,7 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *
  * <b>Reading erroneous GPX files</b>
  * <pre>{@code
- * final boolean lenient = true;
- * final GPX gpx = GPX.read("track.xml", lenient);
+ * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
  * }</pre>
  *
  * This allows to read otherwise invalid GPX files, like
@@ -192,6 +190,19 @@ import io.jenetics.jpx.GPX.Reader.Mode;
  *         </trkseg>
  *     </trk>
  * </gpx>
+ * }</pre>
+ *
+ * <b>Converting a GPX object to an XML {@link Document}</b>
+ * <pre>{@code
+ * final GPX gpx = ...;
+ *
+ * final Document doc = XMLProvider.provider()
+ *     .documentBuilderFactory()
+ *     .newDocumentBuilder()
+ *     .newDocument();
+ *
+ * // The GPX data are written to the empty `doc` object.
+ * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
  * }</pre>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -570,7 +581,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder metadata(final Consumer<Metadata.Builder> metadata) {
+		public Builder metadata(final Consumer<? super Metadata.Builder> metadata) {
 			final Metadata.Builder builder = Metadata.builder();
 			metadata.accept(builder);
 
@@ -632,7 +643,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder addWayPoint(final Consumer<WayPoint.Builder> wayPoint) {
+		public Builder addWayPoint(final Consumer<? super WayPoint.Builder> wayPoint) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			wayPoint.accept(builder);
 			return addWayPoint(builder.build());
@@ -688,7 +699,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder addRoute(final Consumer<Route.Builder> route) {
+		public Builder addRoute(final Consumer<? super Route.Builder> route) {
 			final Route.Builder builder = Route.builder();
 			route.accept(builder);
 			return addRoute(builder.build());
@@ -746,7 +757,7 @@ public final class GPX implements Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given argument is {@code null}
 		 */
-		public Builder addTrack(final Consumer<Track.Builder> track) {
+		public Builder addTrack(final Consumer<? super Track.Builder> track) {
 			final Track.Builder builder = Track.builder();
 			track.accept(builder);
 			return addTrack(builder.build());
@@ -833,12 +844,7 @@ public final class GPX implements Serializable {
 				public Filter<WayPoint, Builder> filter(
 					final Predicate<? super WayPoint> predicate
 				) {
-					wayPoints(
-						_wayPoints.stream()
-							.filter(predicate)
-							.collect(Collectors.toList())
-					);
-
+					wayPoints(_wayPoints.stream().filter(predicate).toList());
 					return this;
 				}
 
@@ -1126,7 +1132,7 @@ public final class GPX implements Serializable {
 		 *
 		 * @return the GPX version of {@code this} reader
 		 */
-		public Version getVersion() {
+		public Version version() {
 			return _version;
 		}
 
@@ -1135,7 +1141,7 @@ public final class GPX implements Serializable {
 		 *
 		 * @return the current reader mode
 		 */
-		public Mode getMode() {
+		public Mode mode() {
 			return _mode;
 		}
 
@@ -1167,7 +1173,11 @@ public final class GPX implements Serializable {
 					if (input.hasNext()) {
 						input.next();
 
-						return GPX.xmlReader(_version)
+						final var format = NumberFormat.getNumberInstance(ENGLISH);
+						final Function<String, Length> lengthParser = string ->
+							Length.parse(string, format);
+
+						return GPX.xmlReader(_version, lengthParser)
 							.read(input, _mode == Mode.LENIENT);
 					} else {
 						throw new InvalidObjectException("No 'gpx' element found.");
@@ -1251,6 +1261,8 @@ public final class GPX implements Serializable {
 		/**
 		 * Create a GPX object from the given GPX-XML string.
 		 *
+		 * @see GPX.Writer#toString(GPX)
+		 *
 		 * @param xml the GPX XML string
 		 * @return the GPX object created from the given XML string
 		 * @throws IllegalArgumentException if the given {@code xml} is not a
@@ -1270,6 +1282,47 @@ public final class GPX implements Serializable {
 			} catch (IOException e) {
 				throw new IllegalArgumentException(e);
 			}
+		}
+
+		/**
+		 * Create a GPX object from the given {@code byte[]} array.
+		 *
+		 * @see GPX.Writer#toByteArray(GPX)
+		 *
+		 * @param bytes the GPX {@code byte[]} array
+		 * @param offset the offset in the buffer of the first byte to read.
+		 * @param length the maximum number of bytes to read from the buffer.
+		 * @return the GPX object created from the given {@code byte[]} array
+		 * @throws IllegalArgumentException if the given {@code byte[]} array
+		 *         doesn't represent a valid GPX object
+		 * @throws NullPointerException if the given {@code bytes} is {@code null}
+		 */
+		GPX formByteArray(
+			final byte[] bytes,
+			final int offset,
+			final int length
+		) {
+			final var in = new ByteArrayInputStream(bytes, offset,  length);
+			try (var din = new DataInputStream(in)) {
+				return GPX.read(din);
+			} catch (IOException e) {
+				throw new IllegalArgumentException(e);
+			}
+		}
+
+		/**
+		 * Create a GPX object from the given {@code byte[]} array.
+		 *
+		 * @see GPX.Writer#toByteArray(GPX)
+		 *
+		 * @param bytes the GPX {@code byte[]} array
+		 * @return the GPX object created from the given {@code byte[]} array
+		 * @throws IllegalArgumentException if the given {@code byte[]} array
+		 *         doesn't represent a valid GPX object
+		 * @throws NullPointerException if the given {@code bytes} is {@code null}
+		 */
+		GPX formByteArray(final byte[] bytes) {
+			return formByteArray(bytes, 0, bytes.length);
 		}
 
 		/* *********************************************************************
@@ -1317,39 +1370,76 @@ public final class GPX implements Serializable {
 	public static final class Writer {
 
 		/**
+		 * Represents the indentation value, the writer is using. An indentation
+		 * string of {@code null} means that the GPX data is written as one XML
+		 * line. An empty string adds line feeds, but with no indentation.
+		 *
+		 * @since 3.0
+		 *
+		 * @param value the indentation value
+		 */
+		public record Indent(String value) {
+			/**
+			 * This indentation lets the {@link Writer} write the GPX data into
+			 * one XML line.
+			 */
+			public static final Indent NULL = new Indent(null);
+
+			/**
+			 * No indentation, but with new-lines.
+			 */
+			public static final Indent NONE = new Indent("");
+
+			/**
+			 * Indentation with 4 spaces.
+			 */
+			public static final Indent SPACE4 = new Indent("    ");
+
+			/**
+			 * Indentation with 2 spaces.
+			 */
+			public static final Indent SPACE2 = new Indent("  ");
+
+			/**
+			 * Indentation with tabs.
+			 */
+			public static final Indent TAB1 = new Indent("\t");
+		}
+
+		/**
 		 * The default value for the <em>maximum fraction digits</em>.
 		 */
-		public static final int MAXIMUM_FRACTION_DIGITS = 6;
+		public static final int DEFAULT_FRACTION_DIGITS = 8;
 
 		/**
 		 * The default GPX writer, with no indention and fraction digits
-		 * of {@link #MAXIMUM_FRACTION_DIGITS}.
+		 * of {@link #DEFAULT_FRACTION_DIGITS}.
 		 *
-		 * @see #of(String, int)
-		 * @see #of(String)
+		 * @see #of(Indent, int)
+		 * @see #of(Indent)
 		 *
 		 * @since 3.0
 		 */
 		public static final Writer DEFAULT =
-			new Writer(null, MAXIMUM_FRACTION_DIGITS);
+			new Writer(Indent.SPACE4, DEFAULT_FRACTION_DIGITS);
 
-		private final String _indent;
+		private final Indent _indent;
 		private final int _maximumFractionDigits;
 
-		private Writer(final String indent, final int maximumFractionDigits) {
-			_indent = indent;
+		private Writer(final Indent indent, final int maximumFractionDigits) {
+			_indent = requireNonNull(indent);
 			_maximumFractionDigits = maximumFractionDigits;
 		}
 
 		/**
-		 * Return the indentation string this GPX writer is using. If the
-		 * indentation string is {@link Optional#empty()}, the GPX file consists
-		 * of one line.
+		 * Return the indentation string this GPX writer is using.
+		 *
+		 * @since 3.0
 		 *
 		 * @return the indentation string
 		 */
-		public Optional<String> getIndent() {
-			return Optional.ofNullable(_indent);
+		public Indent indent() {
+			return _indent;
 		}
 
 		/**
@@ -1359,7 +1449,7 @@ public final class GPX implements Serializable {
 		 * @return the maximum number of digits allowed in the fraction portion
 		 * 		   of the written numbers
 		 */
-		public int getMaximumFractionDigits() {
+		public int maximumFractionDigits() {
 			return _maximumFractionDigits;
 		}
 
@@ -1397,13 +1487,14 @@ public final class GPX implements Serializable {
 					.xmlOutputFactory()
 					.createXMLStreamWriter(result);
 
-				final XMLStreamWriterAdapter output = _indent == null
+				final XMLStreamWriterAdapter output = _indent.value() == null
 					? new XMLStreamWriterAdapter(writer)
-					: new IndentingXMLStreamWriter(writer, _indent);
+					: new IndentingXMLStreamWriter(writer, _indent.value());
 
 				try (output) {
 					final var format = NumberFormat.getNumberInstance(ENGLISH);
 					format.setMaximumFractionDigits(_maximumFractionDigits);
+					format.setGroupingUsed(false);
 					final Function<Number, String> formatter = value ->
 						value != null ? format.format(value) : null;
 
@@ -1483,6 +1574,8 @@ public final class GPX implements Serializable {
 		/**
 		 * Create an XML string representation of the given {@code gpx} object.
 		 *
+		 * @see GPX.Reader#fromString(String)
+		 *
 		 * @param gpx the GPX object to convert to a string
 		 * @return the XML string representation of the given {@code gpx} object
 		 * @throws NullPointerException if the given GPX object is {@code null}
@@ -1495,6 +1588,29 @@ public final class GPX implements Serializable {
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
+		}
+
+		/**
+		 * Converts the given {@code gpx} object into a {@code byte[]} array.
+		 * This method can be used for short term storage of GPX objects.
+		 *
+		 * @since 3.0
+		 *
+		 * @see GPX.Reader#formByteArray(byte[])
+		 *
+		 * @param gpx the GPX object to convert to a {@code byte[]} array
+		 * @return the binary representation of the given {@code gpx} object
+		 * @throws NullPointerException if the given GPX object is {@code null}
+		 */
+		byte[] toByteArray(final GPX gpx) {
+			final var out = new ByteArrayOutputStream();
+			try (var dout = new DataOutputStream(out)) {
+				gpx.write(dout);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+
+			return out.toByteArray();
 		}
 
 		/* *********************************************************************
@@ -1541,7 +1657,7 @@ public final class GPX implements Serializable {
 		 *     </tbody>
 		 * </table>
 		 *
-		 * @see #of(String)
+		 * @see #of(Indent)
 		 * @see #DEFAULT
 		 *
 		 * @since 3.0
@@ -1551,16 +1667,16 @@ public final class GPX implements Serializable {
 		 *        fraction portion of a number
 		 * @return a new GPX writer
 		 */
-		public static Writer of(final String indent, final int maximumFractionDigits) {
+		public static Writer of(final Indent indent, final int maximumFractionDigits) {
 			return new Writer(indent, maximumFractionDigits);
 		}
 
 		/**
 		 * Return a new GPX writer with the given {@code indent} and with
 		 * <em>maximum fraction digits</em> of
-		 * {@link Writer#MAXIMUM_FRACTION_DIGITS}.
+		 * {@link Writer#DEFAULT_FRACTION_DIGITS}.
 		 *
-		 * @see #of(String, int)
+		 * @see #of(Indent, int)
 		 * @see #DEFAULT
 		 *
 		 * @since 3.0
@@ -1568,8 +1684,8 @@ public final class GPX implements Serializable {
 		 * @param indent the element indentation
 		 * @return a new GPX writer
 		 */
-		public static Writer of(final String indent) {
-			return new Writer(indent, MAXIMUM_FRACTION_DIGITS);
+		public static Writer of(final Indent indent) {
+			return new Writer(indent, DEFAULT_FRACTION_DIGITS);
 		}
 
 	}
@@ -1719,7 +1835,6 @@ public final class GPX implements Serializable {
 	}
 
 
-
 	/* *************************************************************************
 	 *  Java object serialization
 	 * ************************************************************************/
@@ -1809,7 +1924,7 @@ public final class GPX implements Serializable {
 	private static String time(final GPX gpx) {
 		return gpx.getMetadata()
 			.flatMap(Metadata::getTime)
-			.map(ZonedDateTimeFormat::format)
+			.map(TimeFormat::format)
 			.orElse(null);
 	}
 
@@ -1848,26 +1963,29 @@ public final class GPX implements Serializable {
 
 
 	// Define the needed readers for the different versions.
-	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.attr("version").map(Version::of))
-		.v00(XMLReader.attr("creator"))
-		.v11(Metadata.READER)
-		.v10(XMLReader.elem("name"))
-		.v10(XMLReader.elem("desc"))
-		.v10(XMLReader.elem("author"))
-		.v10(XMLReader.elem("email"))
-		.v10(XMLReader.elem("url"))
-		.v10(XMLReader.elem("urlname"))
-		.v10(XMLReader.elem("time").map(ZonedDateTimeFormat::parse))
-		.v10(XMLReader.elem("keywords"))
-		.v10(Bounds.READER)
-		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt")))
-		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "wpt")))
-		.v10(XMLReader.elems(Route.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(Route.xmlReader(Version.V11)))
-		.v10(XMLReader.elems(Track.xmlReader(Version.V10)))
-		.v11(XMLReader.elems(Track.xmlReader(Version.V11)))
-		.v00(XMLReader.doc("extensions"));
+	private static XMLReaders
+	readers(final Function<? super String, Length> lengthParser) {
+		return new XMLReaders()
+			.v00(XMLReader.attr("version").map(Version::of))
+			.v00(XMLReader.attr("creator"))
+			.v11(Metadata.READER)
+			.v10(XMLReader.elem("name"))
+			.v10(XMLReader.elem("desc"))
+			.v10(XMLReader.elem("author"))
+			.v10(XMLReader.elem("email"))
+			.v10(XMLReader.elem("url"))
+			.v10(XMLReader.elem("urlname"))
+			.v10(XMLReader.elem("time").map(TimeFormat::parse))
+			.v10(XMLReader.elem("keywords"))
+			.v10(Bounds.READER)
+			.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "wpt", lengthParser)))
+			.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "wpt", lengthParser)))
+			.v10(XMLReader.elems(Route.xmlReader(Version.V10, lengthParser)))
+			.v11(XMLReader.elems(Route.xmlReader(Version.V11, lengthParser)))
+			.v10(XMLReader.elems(Track.xmlReader(Version.V10, lengthParser)))
+			.v11(XMLReader.elems(Track.xmlReader(Version.V11, lengthParser)))
+			.v00(XMLReader.doc("extensions"));
+	}
 
 
 	static XMLWriter<GPX> xmlWriter(
@@ -1877,11 +1995,14 @@ public final class GPX implements Serializable {
 		return XMLWriter.elem("gpx", writers(formatter).writers(version));
 	}
 
-	static XMLReader<GPX> xmlReader(final Version version) {
+	static XMLReader<GPX> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(
 			version == Version.V10 ? GPX::toGPXv10 : GPX::toGPXv11,
 			"gpx",
-			READERS.readers(version)
+			readers(lengthParser).readers(version)
 		);
 	}
 
@@ -1917,7 +2038,7 @@ public final class GPX implements Serializable {
 				),
 				null,
 				null,
-				(ZonedDateTime)v[8],
+				(Instant)v[8],
 				(String)v[9],
 				(Bounds)v[10]
 			),
@@ -1936,6 +2057,10 @@ public final class GPX implements Serializable {
 	/**
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code path}.
+	 * This method is a shortcut for
+	 * <pre>{@code
+	 * GPX.Writer.DEFAULT.write(gpx, path);
+	 * }</pre>
 	 *
 	 * @see Writer
 	 *
@@ -1952,6 +2077,10 @@ public final class GPX implements Serializable {
 
 	/**
 	 * Read an GPX object from the given {@code input} stream.
+	 * This method is a shortcut for
+	 * <pre>{@code
+	 * GPX.Reader.DEFAULT.read(path);
+	 * }</pre>
 	 *
 	 * @see Reader
 	 *
@@ -1962,7 +2091,7 @@ public final class GPX implements Serializable {
 	 *         {@code null}
 	 */
 	public static GPX read(final Path path) throws IOException {
-		return Reader.of(Version.V11, Mode.STRICT).read(path);
+		return Reader.DEFAULT.read(path);
 	}
 
 }

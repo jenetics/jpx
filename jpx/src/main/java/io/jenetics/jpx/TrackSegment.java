@@ -216,7 +216,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addPoint(final WayPoint point) {
 			_points.add(requireNonNull(point));
-
 			return this;
 		}
 
@@ -236,7 +235,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given {@code href} is {@code null}
 		 */
-		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
+		public Builder addPoint(final Consumer<? super WayPoint.Builder> point) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
 			return addPoint(builder.build());
@@ -301,7 +300,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 					.map(WayPoint.class::cast)
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -316,7 +314,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 					.flatMap(wp -> mapper.apply(wp).stream())
 					.toList()
 			);
-
 			return this;
 		}
 
@@ -436,13 +433,16 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	}
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<TrackSegment> xmlReader(final Version version) {
+	static XMLReader<TrackSegment> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(a -> new TrackSegment(
 				(List<WayPoint>)a[0],
 				XML.extensions((Document)a[1])
 			),
 			"trkseg",
-			XMLReader.elems(WayPoint.xmlReader(version,"trkpt")),
+			XMLReader.elems(WayPoint.xmlReader(version,"trkpt", lengthParser)),
 			XMLReader.doc("extensions")
 		);
 	}

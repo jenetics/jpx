@@ -1,5 +1,36 @@
 ## Release notes
 
+### [3.0.1](https://github.com/jenetics/jpx/releases/tag/v3.0.1)
+
+#### Bugs
+
+* [#162](https://github.com/jenetics/jpx/issues/162): Elevation serialization for values > 1000m is incompatible with deserialization.
+
+### [3.0.0](https://github.com/jenetics/jpx/releases/tag/v3.0.0)
+
+#### Improvements
+
+* [#125](https://github.com/jenetics/jpx/issues/125): **Breaking change** - Use `Instant` instead of `ZonedDateTime` for `Point.time` property.
+* [#148](https://github.com/jenetics/jpx/issues/148): **Breaking change** - Update to Java17.
+* [#155](https://github.com/jenetics/jpx/issues/155): Improved `GPX.Reader` and `GPX.Writer` classes.
+* [#158](https://github.com/jenetics/jpx/issues/158): Add XML `Document` reader/writer methods.
+```java
+final GPX gpx = ...;
+
+final Document doc = XMLProvider.provider()
+    .documentBuilderFactory()
+    .newDocumentBuilder()
+    .newDocument();
+
+// The GPX data are written to the empty `doc` object.
+GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+```
+
+#### Bugs
+
+* [#151](https://github.com/jenetics/jpx/issues/151): `Double`'s being written as exponents in GPX file.
+* [#152](https://github.com/jenetics/jpx/issues/152): `LocationFormatter::parse` method is not thread-safe.
+
 ### [2.2.0](https://github.com/jenetics/jpx/releases/tag/v2.2.0)
 
 #### Improvements

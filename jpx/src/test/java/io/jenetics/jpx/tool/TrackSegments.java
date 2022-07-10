@@ -3,7 +3,7 @@ package io.jenetics.jpx.tool;
 import static java.lang.String.format;
 
 import java.time.Duration;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
@@ -61,18 +61,18 @@ public final class TrackSegments {
 	) {
 		final List<WayPoint> wps = points.stream()
 			.filter(wp -> wp.getTime().isPresent())
-			.collect(Collectors.toList());
+			.toList();
 
 		if (wps.size() < minSegmentSize) {
 			return List.of();
 		}
 
 		final List<TrackSegment> segments = new ArrayList<>();
-		ZonedDateTime last = wps.get(0).getTime().orElseThrow();
+		Instant last = wps.get(0).getTime().orElseThrow();
 		TrackSegment.Builder segment = TrackSegment.builder();
 
 		for (final WayPoint point : wps) {
-			final ZonedDateTime zdt = point.getTime().orElseThrow();
+			final Instant zdt = point.getTime().orElseThrow();
 
 			if (last.plusNanos(gap.toNanos()).isAfter(zdt)) {
 				segment.addPoint(point);

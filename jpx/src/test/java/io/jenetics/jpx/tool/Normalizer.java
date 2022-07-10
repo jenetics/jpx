@@ -1,5 +1,7 @@
 package io.jenetics.jpx.tool;
 
+import static java.time.ZoneId.systemDefault;
+import static java.time.ZoneOffset.UTC;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.groupingBy;
 import static io.jenetics.jpx.Bounds.toBounds;
@@ -16,11 +18,9 @@ import java.nio.file.attribute.BasicFileAttributeView;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,7 @@ import io.jenetics.jpx.Bounds;
 import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.Email;
 import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.GPX.Writer.Indent;
 import io.jenetics.jpx.Metadata;
 import io.jenetics.jpx.Person;
 import io.jenetics.jpx.Track;
@@ -46,7 +47,7 @@ public class Normalizer {
 	Collector<WayPoint, ?, Map<LocalDate, List<WayPoint>>>
 	TRACK_GROUPS = groupingBy(
 		p -> p.getTime()
-			.map(ZonedDateTime::toLocalDate)
+			.map(i -> LocalDate.ofInstant(i, UTC))
 			.orElse(LocalDate.MIN)
 	);
 
@@ -90,13 +91,13 @@ public class Normalizer {
 		throws IOException
 	{
 		for (GPX gpx : gpxs) {
-			final ZonedDateTime time = gpx.getMetadata()
+			final Instant time = gpx.getMetadata()
 				.flatMap(Metadata::getTime)
-				.orElse(ZonedDateTime.of(LocalDateTime.MAX, ZoneId.systemDefault()));
+				.orElse(Instant.MAX);
 
 			final Path file = Paths.get(
 				dir.toString(),
-				String.valueOf(time.getYear()),
+				String.valueOf(LocalDate.ofInstant(time, UTC).getYear()),
 				fileName(gpx)
 			);
 			if (!Files.exists(file.getParent())) {
@@ -105,8 +106,8 @@ public class Normalizer {
 
 			System.out.println("Writing " + file);
 
-			GPX.Writer.of("    ").write(gpx, file);
-			setFileTime(file, time.toLocalDateTime());
+			GPX.Writer.of(new Indent("    ")).write(gpx, file);
+			setFileTime(file, LocalDateTime.ofInstant(time, systemDefault()));
 			//writeNative(file, gpx);
 		}
 	}
@@ -129,7 +130,7 @@ public class Normalizer {
 			BasicFileAttributeView.class
 		);
 		final FileTime ft = FileTime.fromMillis(
-			time.toInstant(ZoneOffset.UTC).toEpochMilli()
+			time.toInstant(UTC).toEpochMilli()
 		);
 		attr.setTimes(ft, ft, ft);
 	}
@@ -163,12 +164,12 @@ public class Normalizer {
 	}
 
 	private static GPX normalizeMetadata(final GPX gpx) {
-		final ZonedDateTime time = gpx.tracks()
+		final Instant time = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.flatMap(wp -> wp.getTime().stream())
 			.min(Comparator.naturalOrder())
-			.orElse(ZonedDateTime.now());
+			.orElse(Instant.now());
 
 		final Person author = Person.of(
 			"Franz Wilhelmstötter",
@@ -177,7 +178,7 @@ public class Normalizer {
 
 		final Copyright copyright = Copyright.of(
 			"Franz Wilhelmstötter",
-			time.getYear()
+			LocalDate.ofInstant(time, UTC).getYear()
 		);
 
 		final Bounds bounds = gpx.tracks()
@@ -185,7 +186,7 @@ public class Normalizer {
 			.flatMap(TrackSegment::points)
 			.collect(toBounds());
 
-		final String name = time.toLocalDate() + ".gpx";
+		final String name = LocalDate.ofInstant(time, UTC) + ".gpx";
 
 		return gpx.toBuilder()
 			.version(GPX.Version.V11)
@@ -201,7 +202,7 @@ public class Normalizer {
 	private static String fileName(final GPX gpx)  {
 		return gpx.getMetadata()
 			.flatMap(Metadata::getTime)
-			.map(ZonedDateTime::toLocalDate)
+			.map(i -> LocalDate.ofInstant(i, UTC))
 			.map(Objects::toString)
 			.orElse("" + System.currentTimeMillis()) + ".gpx";
 	}

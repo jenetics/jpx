@@ -42,8 +42,8 @@
  *
  * <b>Writing a GPX file</b>
  * <pre>{@code
- * final var indent = "    ";
- * GPX.writer(indent).write(gpx, Path.of("points.gpx"));
+ * final var indent = new GPX.Writer.Indent("    ");
+ * GPX.Writer.of(indent).write(gpx, Path.of("points.gpx"));
  * }</pre>
  *
  * This will produce the following output.
@@ -72,8 +72,7 @@
  *
  * <b>Reading erroneous GPX files</b>
  * <pre>{@code
- * final boolean lenient = true;
- * final GPX gpx = GPX.read("track.xml", lenient);
+ * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
  * }</pre>
  *
  * This allows to read otherwise invalid GPX files, like
@@ -144,6 +143,19 @@
  *         </trkseg>
  *     </trk>
  * </gpx>
+ * }</pre>
+ *
+ * <b>Converting a GPX object to an XML {@link org.w3c.dom.Document}</b>
+ * <pre>{@code
+ * final GPX gpx = ...;
+ *
+ * final Document doc = XMLProvider.provider()
+ *     .documentBuilderFactory()
+ *     .newDocumentBuilder()
+ *     .newDocument();
+ *
+ * // The GPX data are written to the empty `doc` object.
+ * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
  * }</pre>
  */
 module io.jenetics.jpx {

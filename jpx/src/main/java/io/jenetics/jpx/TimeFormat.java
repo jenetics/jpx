@@ -23,6 +23,7 @@ import static java.time.ZoneOffset.UTC;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import static java.util.Objects.requireNonNull;
 
+import java.time.Instant;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
@@ -39,7 +40,7 @@ import java.util.stream.Stream;
  * @version 3.0
  * @since 1.0
  */
-enum ZonedDateTimeFormat {
+enum TimeFormat {
 
 	// http://books.xmlschemata.org/relaxng/ch19-77049.html
 
@@ -70,7 +71,7 @@ enum ZonedDateTimeFormat {
 	private final DateTimeFormatter _formatter;
 	private final Pattern[] _patterns;
 
-	ZonedDateTimeFormat(final DateTimeFormatter formatter, final String... patterns) {
+	TimeFormat(final DateTimeFormatter formatter, final String... patterns) {
 		_formatter = requireNonNull(formatter);
 		_patterns = Stream.of(patterns)
 			.map(Pattern::compile)
@@ -93,8 +94,10 @@ enum ZonedDateTimeFormat {
 	 * @return the parsed zoned date time
 	 *  @throws DateTimeParseException if the text cannot be parsed
 	 */
-	public ZonedDateTime formatParse(final String time) {
-		return time != null ? ZonedDateTime.parse(time, _formatter) : null;
+	public Instant formatParse(final String time) {
+		return time != null
+			? ZonedDateTime.parse(time, _formatter).toInstant()
+			: null;
 	}
 
 	/**
@@ -103,11 +106,11 @@ enum ZonedDateTimeFormat {
 	 * @param time the {@code ZonedDateTime} to format
 	 * @return the time string of the given zoned date time
 	 */
-	public static String format(final ZonedDateTime time) {
+	public static String format(final Instant time) {
 		return time != null ? FORMATTER.format(time) : null;
 	}
 
-	static Optional<ZonedDateTime> parseOptional(final String time) {
+	static Optional<Instant> parseOptional(final String time) {
 		final var format = findFormat(time);
 		if (format != null) {
 			return Optional.of(format.formatParse(time));
@@ -123,7 +126,7 @@ enum ZonedDateTimeFormat {
 	 * @return the formatter which fits to the given {@code time} string, or
 	 *         {@code Optional.empty()} of no formatter is found
 	 */
-	static ZonedDateTimeFormat findFormat(final String time) {
+	static TimeFormat findFormat(final String time) {
 		if (ISO_DATE_TIME_UTC.matches(time)) {
 			return ISO_DATE_TIME_UTC;
 		} else if (ISO_DATE_TIME_OFFSET.matches(time)) {
@@ -139,7 +142,7 @@ enum ZonedDateTimeFormat {
 	 * @param value the string to parse
 	 * @return the parsed object
 	 */
-	static ZonedDateTime parse(final String value) {
+	static Instant parse(final String value) {
 		final String time = Strings.trim(value);
 
 		if (time != null) {
