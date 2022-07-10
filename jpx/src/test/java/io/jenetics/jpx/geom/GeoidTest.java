@@ -22,9 +22,7 @@ package io.jenetics.jpx.geom;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.testng.Assert;
@@ -33,9 +31,8 @@ import org.testng.annotations.Test;
 
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.GPX.Reader.Mode;
+import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Point;
-import io.jenetics.jpx.Speed;
-import io.jenetics.jpx.Speed.Unit;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
@@ -78,7 +75,7 @@ public class GeoidTest {
 		final List<WayPoint> points = Stream
 			.generate(() -> WayPointTest.nextWayPoint(random))
 			.limit(size)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(
 			pathLength(points),
@@ -106,7 +103,7 @@ public class GeoidTest {
 		final List<WayPoint> points = Stream
 			.generate(() -> WayPointTest.nextWayPoint(random))
 			.limit(size)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(
 			tourLength(points),
@@ -137,27 +134,29 @@ public class GeoidTest {
 
 	@Test(expectedExceptions = UnsupportedOperationException.class)
 	public void parallelPointStream() {
-		Stream.generate(() -> WayPointTest.nextWayPoint(new Random()))
+		Length length = Stream.generate(() -> WayPointTest.nextWayPoint(new Random()))
 			.limit(1000)
 			.parallel()
 			.collect(GEOID.toPathLength());
+
+		Assert.assertNotNull(length);
 	}
 
-	@Test
+	//@Test
 	public void speed() throws IOException  {
 		final String resource = "/io/jenetics/jpx/geom/Track_1.gpx";
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.reader(Mode.LENIENT).read(in);
+			gpx = GPX.Reader.of(Mode.LENIENT).read(in);
 		}
 
-		GPX.writer("    ").write(gpx, System.out);
+		GPX.Writer.of(new GPX.Writer.Indent("    ")).write(gpx, System.out);
 
 		final List<WayPoint> points = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.toList();
 
 		/*
 		Point p0 = points.get(0);

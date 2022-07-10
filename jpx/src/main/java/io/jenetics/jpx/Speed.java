@@ -27,6 +27,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -43,6 +44,7 @@ public final class Speed
 		Serializable
 {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	/**
@@ -78,7 +80,7 @@ public final class Speed
 		// The conversion factor to the base unit m/s.
 		private final double _factor;
 
-		private Unit(final double factor) {
+		Unit(final double factor) {
 			_factor = factor;
 		}
 
@@ -166,8 +168,8 @@ public final class Speed
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Speed &&
-			Double.compare(((Speed)obj)._value, _value) == 0;
+			obj instanceof Speed speed &&
+			Double.compare(speed._value, _value) == 0;
 	}
 
 	@Override
@@ -205,10 +207,12 @@ public final class Speed
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.SPEED, this);
+		return new SerialProxy(SerialProxy.SPEED, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

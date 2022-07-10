@@ -21,6 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Locale.ENGLISH;
+import static org.assertj.core.api.Assertions.assertThat;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -32,23 +34,27 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.file.Paths;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMResult;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -58,6 +64,7 @@ import org.w3c.dom.Element;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
+import io.jenetics.jpx.GPX.Writer.Indent;
 import io.jenetics.jpx.Length.Unit;
 
 /**
@@ -65,23 +72,31 @@ import io.jenetics.jpx.Length.Unit;
  */
 public class GPXTest extends XMLStreamTestBase<GPX> {
 
-@Test
-public void extensions() throws ParserConfigurationException {
-	final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-	final DocumentBuilder db = dbf.newDocumentBuilder();
-	final Document doc = db.newDocument();
+	@Test
+	public void extensions() throws ParserConfigurationException, IOException {
+		final var dbf = DocumentBuilderFactory.newInstance();
+		final var db = dbf.newDocumentBuilder();
+		final var doc = db.newDocument();
+		final var extensions = doc.createElement("extensions");
+		doc.appendChild(extensions);
 
-	GPX gpx = GPX.builder()
-		.extensions(doc)
-		.build();
-}
+		final var content = doc.createElement("content");
+		content.setTextContent("Some content");
+		extensions.appendChild(content);
+
+		GPX gpx = GPX.builder()
+			.extensions(doc)
+			.build();
+
+		GPX.Writer.DEFAULT.write(gpx, System.out);
+	}
 
 	@Test
 	public void foo1() throws ParserConfigurationException, IOException {
 		DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 		DocumentBuilder db = dbf.newDocumentBuilder();
 		Document doc = db.newDocument();
-		Element ext = doc.createElement("extesions");
+		Element ext = doc.createElement("extensions");
 		Element elem = doc.createElement( "property");
 		elem.setAttribute("name", "my_attribute");
 		elem.setTextContent("Some Attribute Value");
@@ -93,7 +108,7 @@ public void extensions() throws ParserConfigurationException {
 			.extensions(doc)
 			.build();
 
-		GPX.writer("    ").write(gpx, System.out);
+		GPX.Writer.of(new Indent("    ")).write(gpx, System.out);
 	}
 
 	@Override
@@ -103,10 +118,14 @@ public void extensions() throws ParserConfigurationException {
 
 	@Override
 	protected Params<GPX> params(final Version version, final Random random) {
+		final var format = NumberFormat.getNumberInstance(ENGLISH);
+		final Function<String, Length> lengthParser = string ->
+			Length.parse(string, format);
+
 		return new Params<>(
 			() -> nextGPX(random),
-			GPX.xmlReader(version),
-			GPX.xmlWriter(version)
+			GPX.xmlReader(version, lengthParser),
+			GPX.xmlWriter(version, Formats::format)
 		);
 	}
 
@@ -123,29 +142,66 @@ public void extensions() throws ParserConfigurationException {
 	}
 
 	static Document doc() {
-		return XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\">\n" +
-			"\t<gpxdata:lap xmlns:gpxdata=\"http://www.cluetrust.com/XML/GPXDATA/1/0\">\n" +
-			"\t\t<gpxdata:index>1</gpxdata:index>\n" +
-			"\t\t<gpxdata:startPoint lat=\"51.219983\" lon=\"6.765224\"/>\n" +
-			"\t\t<gpxdata:endPoint lat=\"51.220137\" lon=\"6.765098\" />\n" +
-			"\t\t<gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>\n" +
-			"\t\t<gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>\n" +
-			"\t\t<gpxdata:calories>1</gpxdata:calories>\n" +
-			"\t\t<gpxdata:distance>0.5881348</gpxdata:distance>\n" +
-			"\t\t<gpxdata:summary name=\"AverageHeartRateBpm\" kind=\"avg\">163</gpxdata:summary>\n" +
-			"\t\t<gpxdata:trigger kind=\"manual\" />\n" +
-			"\t\t<gpxdata:intensity>active</gpxdata:intensity>\n" +
-			"\t</gpxdata:lap>\n" +
-			"</extensions>");
+		return XML.parse("""
+			<extensions xmlns="http://www.topografix.com/GPX/1/1">
+			    <gpxdata:lap xmlns:gpxdata="http://www.cluetrust.com/XML/GPXDATA/1/0">
+			        <gpxdata:index>1</gpxdata:index>
+			        <gpxdata:startPoint lat="51.219983" lon="6.765224"/>
+			        <gpxdata:endPoint lat="51.220137" lon="6.765098" />
+			        <gpxdata:startTime>2009-06-19T10:13:04Z</gpxdata:startTime>
+			        <gpxdata:elapsedTime>4.6700000</gpxdata:elapsedTime>
+			        <gpxdata:calories>1</gpxdata:calories>
+			        <gpxdata:distance>0.5881348</gpxdata:distance>
+			        <gpxdata:summary name="AverageHeartRateBpm" kind="avg">163</gpxdata:summary>
+			        <gpxdata:trigger kind="manual" />
+			        <gpxdata:intensity>active</gpxdata:intensity>
+			    </gpxdata:lap>
+			</extensions>
+			""");
 	}
 
-	//@Test
-	public void foo() {
-		final Document doc1 = doc();
-		final Document doc2 = doc();
-		System.out.println(doc1.equals(doc2));
-		System.out.println(doc1.hashCode() + ":" + doc2.hashCode());
-		System.out.println(doc1.isEqualNode(doc2));
+	@Test
+	public void writeToDocument() throws Exception {
+		final var gpx = nextGPX(new Random());
+
+		final var doc = XMLProvider.provider()
+			.documentBuilderFactory()
+			.newDocumentBuilder()
+			.newDocument();
+
+		// The GPX data are written to the empty `doc` object.
+		GPX.Writer.of(Indent.NULL, 20).write(gpx, new DOMResult(doc));
+
+		final var xmlString = XML.toString(doc);
+		final var gpx2 = GPX.Reader.DEFAULT.fromString(xmlString);
+
+		assertThat(gpx2).isEqualTo(gpx);
+	}
+
+	@Test
+	public void readFromDocument() throws Exception {
+		final var gpx = nextGPX(new Random());
+
+		final var doc = XMLProvider.provider()
+			.documentBuilderFactory()
+			.newDocumentBuilder()
+			.newDocument();
+
+		// The GPX data are written to the empty `doc` object.
+		GPX.Writer
+			.of(Indent.NULL, 20)
+			.write(gpx, new DOMResult(doc));
+
+		//final var gpx2 = GPX.Reader.DEFAULT.read(new DOMSource(doc));
+		//assertThat(gpx2).isEqualTo(gpx);
+
+		final var out = new ByteArrayOutputStream();
+		TransformerFactory.newInstance().newTransformer()
+			.transform(new DOMSource(doc), new StreamResult(out));
+
+		final String xml = out.toString();
+		final GPX gpx2 = GPX.Reader.DEFAULT.fromString(xml);
+		assertThat(gpx2).isEqualTo(gpx);
 	}
 
 	//@Test
@@ -154,15 +210,15 @@ public void extensions() throws ParserConfigurationException {
 			.version(Version.V10)
 			.build();
 
-		GPX.writer("    ").write(gpx, System.out);
+		GPX.Writer.of(new Indent("    ")).write(gpx, System.out);
 	}
 
 	@Test(invocationCount = 5)
 	public void toStringFromString() {
 		final GPX expected = nextGPX(new Random());
-		final String string = GPX.writer("  ").toString(expected);
+		final String string = GPX.Writer.of(new Indent("    "), 25).toString(expected);
 		//System.out.println(string);
-		final GPX actual = GPX.reader().fromString(string);
+		final GPX actual = GPX.Reader.DEFAULT.fromString(string);
 
 		Assert.assertEquals(actual, expected);
 	}
@@ -172,7 +228,7 @@ public void extensions() throws ParserConfigurationException {
 		throws IOException
 	{
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx = GPX.read(in);
+			final GPX gpx = GPX.Reader.DEFAULT.read(in);
 			Assert.assertEquals(gpx, expected);
 		}
 	}
@@ -220,7 +276,7 @@ public void extensions() throws ParserConfigurationException {
 	@Test(dataProvider = "invalidGPXFiles", expectedExceptions = {IOException.class})
 	public void invalidGPX(final String resource) throws IOException {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
+			GPX.Reader.DEFAULT.read(in);
 		}
 	}
 
@@ -238,7 +294,7 @@ public void extensions() throws ParserConfigurationException {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		final String[] names = gpx.wayPoints()
@@ -253,7 +309,7 @@ public void extensions() throws ParserConfigurationException {
 	public void lenientRead() throws IOException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx = GPX.reader(Mode.LENIENT).read(in);
+			final GPX gpx = GPX.Reader.of(Mode.LENIENT).read(in);
 
 			Assert.assertTrue(gpx.getMetadata().isPresent());
 			Assert.assertFalse(gpx.getMetadata().get().getBounds().isPresent());
@@ -267,11 +323,11 @@ public void extensions() throws ParserConfigurationException {
 		}
 	}
 
-	@Test(expectedExceptions = {IOException.class})
-	public void strictRead() throws IOException {
+	@Test(expectedExceptions = {InvalidObjectException.class})
+	public void strictRead() throws IOException, InvalidObjectException {
 		final String resource = "/io/jenetics/jpx/invalid-latlon.xml";
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
+			GPX.Reader.DEFAULT.read(in);
 		}
 	}
 
@@ -280,7 +336,7 @@ public void extensions() throws ParserConfigurationException {
 		final String rsc = "/io/jenetics/jpx/Gpx-full-sample.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(rsc)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		final long length = gpx.tracks()
@@ -293,7 +349,7 @@ public void extensions() throws ParserConfigurationException {
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.findFirst()
-			.orElseThrow(NoSuchElementException::new);
+			.orElseThrow();
 
 		Assert.assertEquals(
 			point.getLatitude(),
@@ -309,7 +365,7 @@ public void extensions() throws ParserConfigurationException {
 		);
 		Assert.assertEquals(
 			point.getTime(),
-			Optional.of(ZonedDateTimeFormat.parse("2009-05-19T04:00:30Z"))
+			Optional.of(TimeFormat.parse("2009-05-19T04:00:30Z"))
 		);
 		Assert.assertEquals(
 			point.getFix(),
@@ -338,7 +394,7 @@ public void extensions() throws ParserConfigurationException {
 		final String rsc = "/io/jenetics/jpx/Austria.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(rsc)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(
@@ -438,9 +494,9 @@ public void extensions() throws ParserConfigurationException {
 			gpx.toBuilder().build(),
 			gpx
 		);
-		Assert.assertNotSame(
-			gpx.toBuilder().build(),
-			gpx
+		Assert.assertNotEquals(
+			System.identityHashCode(gpx.toBuilder().build()),
+			System.identityHashCode(gpx)
 		);
 	}
 
@@ -450,10 +506,10 @@ public void extensions() throws ParserConfigurationException {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.writer("    ").write(gpx, bout);
+		GPX.Writer.of(new Indent("    "), 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-		final GPX read = GPX.read(bin);
+		final GPX read = GPX.Reader.DEFAULT.read(bin);
 
 		Assert.assertEquals(read, gpx);
 	}
@@ -464,14 +520,14 @@ public void extensions() throws ParserConfigurationException {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.writer().write(gpx, bout);
+		GPX.Writer.of(Indent.NULL, 20).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-		final GPX read = GPX.read(bin);
+		final GPX read = GPX.Reader.DEFAULT.read(bin);
 
 
 		if (!read.equals(gpx)) {
-			System.out.println(new String(bout.toByteArray()));
+			System.out.println(bout);
 		}
 		Assert.assertEquals(read, gpx);
 	}
@@ -479,11 +535,11 @@ public void extensions() throws ParserConfigurationException {
 	@Test(dataProvider = "readWriteGPX")
 	public void readWrite(final String resource) throws IOException {
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			final GPX gpx1 = GPX.read(in);
+			final GPX gpx1 = GPX.Reader.DEFAULT.read(in);
 
 			final ByteArrayOutputStream out = new ByteArrayOutputStream();
-			GPX.writer("    ").write(gpx1, out);
-			final GPX gpx2 = GPX.read(new ByteArrayInputStream(out.toByteArray()));
+			GPX.Writer.of(new Indent("    ")).write(gpx1, out);
+			final GPX gpx2 = GPX.Reader.DEFAULT.read(new ByteArrayInputStream(out.toByteArray()));
 
 			Assert.assertEquals(gpx1, gpx2);
 		}
@@ -503,6 +559,13 @@ public void extensions() throws ParserConfigurationException {
 			.verify();
 	}
 
+	@Test(invocationCount = 10)
+	public void writeToByteArray() {
+		final GPX gpx = nextGPX(new Random());
+		final byte[] bytes = GPX.Writer.DEFAULT.toByteArray(gpx);
+
+		assertThat(GPX.Reader.DEFAULT.formByteArray(bytes)).isEqualTo(gpx);
+	}
 
 	@Test(invocationCount = 5)
 	public void serialize() throws IOException, ClassNotFoundException {
@@ -514,16 +577,29 @@ public void extensions() throws ParserConfigurationException {
 	public void compatibleSerialization() throws IOException, ClassNotFoundException {
 		final String baseDir = "src/test/resources/io/jenetics/jpx/serialization";
 
-		final Random random = new Random(123);
+		final var random = new Random(123);
 		for (int i = 0; i < 15; ++i) {
 			final GPX gpx = nextGPX(random);
+
+			/*
+			final var fout = Files.newOutputStream(
+				Paths.get(baseDir, format("gpx_%d.obj", i)),
+				StandardOpenOption.TRUNCATE_EXISTING
+			);
+			try (fout; var oout = new ObjectOutputStream(fout)) {
+				oout.writeObject(gpx);
+			}
+			final var writer = GPX.Writer.of(new Indent("    "), 50);
+			writer.write(gpx, (Paths.get(baseDir, format("gpx_%d.xml", i))));
+			 */
 
 			final GPX read = GPX.read(Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try {
 				Assert.assertEquals(read, gpx);
 			} catch (AssertionError e) {
-				GPX.writer("    ")
+				GPX.Writer.of(new Indent("    "))
 					.write(read, Paths.get(baseDir, format("gpx_%d(1).xml", i)));
+				throw e;
 			}
 
 
@@ -543,8 +619,8 @@ public void extensions() throws ParserConfigurationException {
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
 			.filter(wp -> wp.getCourse().isPresent())
-			.map(wp -> wp.getCourse().orElseThrow(IllegalArgumentException::new))
-			.collect(Collectors.toList());
+			.map(wp -> wp.getCourse().orElseThrow())
+			.toList();
 
 		Assert.assertEquals(
 			courses,
@@ -564,7 +640,7 @@ public void extensions() throws ParserConfigurationException {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -584,7 +660,7 @@ public void extensions() throws ParserConfigurationException {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -602,7 +678,7 @@ public void extensions() throws ParserConfigurationException {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -620,7 +696,7 @@ public void extensions() throws ParserConfigurationException {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -638,7 +714,7 @@ public void extensions() throws ParserConfigurationException {
 					"https://github.com/jenetics/jpx",
 					"Visit my New Hampshire hiking website!",
 					null)))
-			.time(ZonedDateTimeFormat.parse("2016-08-21T12:24:27Z"))
+			.time(TimeFormat.parse("2016-08-21T12:24:27Z"))
 			.keywords("Hiking, NH, Presidential Range")
 			.bounds(Bounds.of(42.1, 71.9, 42.4, 71.1))
 			.build();
@@ -658,14 +734,14 @@ public void extensions() throws ParserConfigurationException {
 	private GPX readV10(final String name) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.V10, Mode.STRICT).read(in);
+			return GPX.Reader.of(Version.V10, Mode.STRICT).read(in);
 		}
 	}
 
 	private GPX readV11(final String name, final Mode mode) throws IOException {
 		final String resource = "/io/jenetics/jpx/" + name;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			return GPX.reader(Version.V11, mode).read(in);
+			return GPX.Reader.of(Version.V11, mode).read(in);
 		}
 	}
 
@@ -682,7 +758,7 @@ public void extensions() throws ParserConfigurationException {
 		//GPX.writer("    ").write(gpx, System.out);
 		Assert.assertTrue(XML.equals(
 			expected.getDocumentElement(),
-			gpx.getExtensions().get().getDocumentElement()
+			gpx.getExtensions().orElseThrow().getDocumentElement()
 		));
 	}
 
@@ -712,7 +788,7 @@ public void extensions() throws ParserConfigurationException {
 
 		Assert.assertTrue(XML.equals(
 			XML.removeNS(extensions),
-			gpx.getExtensions().get()
+			gpx.getExtensions().orElseThrow()
 		));
 	}
 
@@ -738,7 +814,7 @@ public void extensions() throws ParserConfigurationException {
 		for (int i = 0; i < 15; ++i) {
 			final GPX gpx = nextGPX(random);
 
-			GPX.writer("    ").write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)));
+			GPX.Writer.of(new Indent("    ")).write(gpx, Paths.get(baseDir, format("gpx_%d.xml", i)));
 			try (OutputStream fout = new FileOutputStream(new File(baseDir, format("gpx_%d.obj", i)));
 				 ObjectOutputStream oout = new ObjectOutputStream(fout))
 			{
@@ -758,11 +834,11 @@ public void extensions() throws ParserConfigurationException {
 		final String resource = "/io/jenetics/jpx/ISSUE-49.gpx";
 
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			GPX.read(in);
-			Assert.assertFalse(true, "GXP.read must throw.");
+			GPX.Reader.DEFAULT.read(in);
+			Assert.fail("GXP.read must throw.");
 		} catch (IOException e) {
-			Assert.assertEquals(e.getCause().getClass(), XMLStreamException.class);
-			Assert.assertTrue(e.getMessage().contains("Unexpected element"));
+			Assert.assertEquals(e.getClass(), InvalidObjectException.class);
+			Assert.assertTrue(e.getMessage().toLowerCase().contains("invalid"));
 		}
 	}
 
@@ -772,7 +848,7 @@ public void extensions() throws ParserConfigurationException {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.reader(Mode.LENIENT).read(in);
+			gpx = GPX.Reader.of(Mode.LENIENT).read(in);
 		}
 
 		Assert.assertEquals(gpx.getWayPoints().size(), 1);
@@ -786,7 +862,7 @@ public void extensions() throws ParserConfigurationException {
 		final List<WayPoint> points = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.collect(Collectors.toList());
+			.toList();
 
 		Assert.assertEquals(points.size(), 26);
 	}
@@ -797,7 +873,7 @@ public void extensions() throws ParserConfigurationException {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertTrue(gpx.getMetadata().isPresent());
@@ -813,7 +889,7 @@ public void extensions() throws ParserConfigurationException {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 		Assert.assertEquals(
 			gpx.getTracks().get(0).getName().orElse(null),
@@ -827,7 +903,7 @@ public void extensions() throws ParserConfigurationException {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 		Assert.assertEquals(
 			gpx.getWayPoints().get(0).getName().orElse(null),
@@ -841,7 +917,7 @@ public void extensions() throws ParserConfigurationException {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		final long count = gpx.tracks()
@@ -853,9 +929,7 @@ public void extensions() throws ParserConfigurationException {
 		final long extensions = gpx.tracks()
 			.flatMap(Track::segments)
 			.flatMap(TrackSegment::points)
-			.flatMap(p -> p.getExtensions()
-				.map(Stream::of)
-				.orElse(Stream.empty()))
+			.flatMap(p -> p.getExtensions().stream())
 			.count();
 		Assert.assertEquals(extensions, 479L);
 	}
@@ -865,16 +939,51 @@ public void extensions() throws ParserConfigurationException {
 		String resource = "/io/jenetics/jpx/GPX-full.gpx";
 		final GPX expected;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			expected = GPX.read(in);
+			expected = GPX.Reader.DEFAULT.read(in);
 		}
 
 		resource = "/io/jenetics/jpx/ISSUE-86.gpx";
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(gpx, expected);
+	}
+
+	@Test
+	public void issue151_Formatting() throws IOException {
+		final var resource = "/io/jenetics/jpx/ISSUE-151.gpx";
+		final GPX gpx;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx = GPX.Reader.DEFAULT.read(in);
+		}
+
+		final var out = new ByteArrayOutputStream();
+		GPX.Writer.of(new Indent("    ")).write(gpx, out);
+		//GPX.writer(new Indent("    ")).write(gpx, System.out);
+		assertThat(out.toString()).doesNotContain("-3.1E-4");
+	}
+
+	@Test
+	public void issue162_NumberFormattingParsing() {
+		final var gpx = GPX.builder()
+			.addWayPoint(wp -> wp.ele(1234.5).build(1.2, 3.4))
+			.build();
+
+		final var string = GPX.Writer.DEFAULT.toString(gpx);
+		assertThat(string).isEqualTo("""
+			<?xml version="1.0" encoding="UTF-8"?>
+			<gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" \
+			xmlns="http://www.topografix.com/GPX/1/1">
+			    <wpt lat="1.2" lon="3.4">
+			        <ele>1234.5</ele>
+			    </wpt>
+			</gpx>"""
+		);
+
+		final var gpx2 = GPX.Reader.DEFAULT.fromString(string);
+		assertThat(gpx2).isEqualTo(gpx);
 	}
 
 }

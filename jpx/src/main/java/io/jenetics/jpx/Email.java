@@ -20,6 +20,7 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 
 import java.io.DataInput;
@@ -27,6 +28,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -40,6 +42,7 @@ import java.util.Objects;
  */
 public final class Email implements Comparable<Email>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _id;
@@ -97,18 +100,15 @@ public final class Email implements Comparable<Email>, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 37;
-		hash += 17*Objects.hashCode(_id) + 31;
-		hash += 17*Objects.hashCode(_domain) + 31;
-		return hash;
+		return hash(_id, _domain);
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Email &&
-			Objects.equals(((Email)obj)._id, _id) &&
-			Objects.equals(((Email)obj)._domain, _domain);
+			obj instanceof Email email &&
+			Objects.equals(email._id, _id) &&
+			Objects.equals(email._domain, _domain);
 	}
 
 	@Override
@@ -158,7 +158,7 @@ public final class Email implements Comparable<Email>, Serializable {
 
 		return new Email(
 			address.substring(0, index),
-			address.substring(index + 1, address.length())
+			address.substring(index + 1)
 		);
 	}
 
@@ -167,10 +167,12 @@ public final class Email implements Comparable<Email>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.EMAIL, this);
+		return new SerialProxy(SerialProxy.EMAIL, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

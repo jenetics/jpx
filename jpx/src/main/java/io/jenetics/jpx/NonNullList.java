@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Comparator;
@@ -40,6 +41,8 @@ import java.util.stream.Stream;
  * @since 1.1
  */
 final class NonNullList<E> implements List<E>, Serializable {
+
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private final List<E> _adoptee;
@@ -198,8 +201,7 @@ final class NonNullList<E> implements List<E>, Serializable {
 	}
 
 	@Override
-	public boolean addAll(final int index, final Collection<? extends E>
-		coll) {
+	public boolean addAll(final int index, final Collection<? extends E> coll) {
 		coll.forEach(Objects::requireNonNull);
 		return _adoptee.addAll(coll);
 	}

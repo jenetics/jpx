@@ -21,7 +21,6 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.Objects.requireNonNull;
 import static javax.xml.stream.XMLStreamConstants.CDATA;
 import static javax.xml.stream.XMLStreamConstants.CHARACTERS;
@@ -29,16 +28,14 @@ import static javax.xml.stream.XMLStreamConstants.COMMENT;
 import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 import static javax.xml.stream.XMLStreamConstants.END_ELEMENT;
 import static javax.xml.stream.XMLStreamConstants.START_ELEMENT;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -61,7 +58,7 @@ abstract class XMLReader<T> {
 	/**
 	 * Represents the XML element type.
 	 */
-	static enum Type {
+	enum Type {
 
 		/**
 		 * Denotes a element reader.
@@ -142,8 +139,12 @@ abstract class XMLReader<T> {
 					return mapper.apply(XMLReader.this.read(xml, lenient));
 				} catch (RuntimeException e) {
 					if (!lenient) {
-						throw new XMLStreamException(format(
-							"Invalid value for '%s'.", _name), e
+						throw new XMLStreamException(
+							format(
+								"Invalid value for '%s': %s",
+								_name, e.getMessage()
+							),
+							e
 						);
 					} else {
 						return null;
@@ -445,13 +446,7 @@ final class ListReader<T> extends XMLReader<List<T>> {
 	{
 		xml.require(START_ELEMENT, null, name());
 		final T element = _adoptee.read(xml, lenient);
-		return element != null
-			? Collections.singletonList(element)
-			: emptyList();
-	}
-
-	XMLReader<? extends T> reader() {
-		return _adoptee;
+		return element != null ? List.of(element) : List.of();
 	}
 
 }
@@ -470,7 +465,7 @@ final class IgnoreReader extends XMLReader<Object> {
 
 	IgnoreReader(final String name) {
 		super(name, Type.ELEM);
-		_reader = new ElemReader<>(name, o -> o, emptyList(), Type.ELEM);
+		_reader = new ElemReader<>(name, o -> o, List.of(), Type.ELEM);
 	}
 
 	@Override
@@ -592,7 +587,7 @@ final class ElemReader<T> extends XMLReader<T> {
 
 		final List<ReaderResult> results = _children.stream()
 			.map(ReaderResult::of)
-			.collect(Collectors.toList());
+			.toList();
 
 		final ReaderResult text = _textReaderIndex.length == 1
 			? results.get(_textReaderIndex[0])
@@ -611,10 +606,8 @@ final class ElemReader<T> extends XMLReader<T> {
 			boolean hasNext = false;
 			do {
 				switch (xml.getEventType()) {
-					case COMMENT:
-						consumeComment(xml);
-						break;
-					case START_ELEMENT:
+					case COMMENT -> consumeComment(xml);
+					case START_ELEMENT -> {
 						final String localName = xml.getLocalName();
 						Integer index = _readerIndexMapping.get(localName);
 
@@ -633,20 +626,16 @@ final class ElemReader<T> extends XMLReader<T> {
 							throwUnexpectedElement(xml, lenient, result);
 							hasNext = xml.safeNext();
 						}
-
-						break;
-					case CHARACTERS:
-					case CDATA:
+					}
+					case CHARACTERS, CDATA -> {
 						if (text != null) {
 							throwUnexpectedElement(xml, lenient, text);
 						} else {
 							xml.next();
 						}
 						hasNext = true;
-
-						break;
-					case END_ELEMENT:
-					case END_DOCUMENT:
+					}
+					case END_ELEMENT, END_DOCUMENT -> {
 						try {
 							return _creator.apply(
 								results.stream()
@@ -662,8 +651,8 @@ final class ElemReader<T> extends XMLReader<T> {
 								return null;
 							}
 						}
+					}
 				}
-
 			} while (hasNext);
 		}
 
@@ -797,8 +786,8 @@ final class ListResult implements ReaderResult {
 
 	@Override
 	public void put(final Object value) {
-		if (value instanceof List<?>) {
-			_value.addAll((List<?>)value);
+		if (value instanceof List<?> list) {
+			_value.addAll(list);
 		} else {
 			_value.add(value);
 		}
@@ -811,7 +800,7 @@ final class ListResult implements ReaderResult {
 
 	@Override
 	public List<Object> value() {
-		return immutable(_value);
+		return copyOf(_value);
 	}
 
 }

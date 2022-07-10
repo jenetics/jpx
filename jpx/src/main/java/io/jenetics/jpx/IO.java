@@ -19,7 +19,8 @@
  */
 package io.jenetics.jpx;
 
-import static io.jenetics.jpx.Lists.immutable;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static io.jenetics.jpx.Lists.copyOf;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -53,6 +53,7 @@ final class IO {
 	 *
 	 * @param <T> the object type
 	 */
+	@FunctionalInterface
 	interface Writer<T> {
 		void write(final T value, final DataOutput out) throws IOException;
 	}
@@ -62,33 +63,9 @@ final class IO {
 	 *
 	 * @param <T> the object type
 	 */
+	@FunctionalInterface
 	interface Reader<T> {
 		T read(final DataInput in) throws IOException;
-	}
-
-	/**
-	 * Write the given, possible {@code null}, {@code value} to the data output
-	 * using the given {@code writer}. The value is only written if it is non
-	 * {@code null}.
-	 *
-	 * @param value the, possible {@code null}, value to write
-	 * @param writer the object writer
-	 * @param out the data output
-	 * @param <T> the object type
-	 * @throws NullPointerException if the {@code writer} or data output is
-	 *         {@code null}
-	 * @throws IOException if an I/O error occurs
-	 */
-	static <T> void writeNonNull(
-		final T value,
-		 final Writer<? super T> writer,
-		 final DataOutput out
-	)
-		throws IOException
-	{
-		if (value != null) {
-			writer.write(value, out);
-		}
 	}
 
 	/**
@@ -151,7 +128,7 @@ final class IO {
 	static void writeString(final String value, final DataOutput out)
 		throws IOException
 	{
-		final byte[] bytes = value.getBytes("UTF-8");
+		final byte[] bytes = value.getBytes(UTF_8);
 		writeInt(bytes.length, out);
 		out.write(bytes);
 	}
@@ -167,7 +144,7 @@ final class IO {
 	static String readString(final DataInput in) throws IOException {
 		final byte[] bytes = new byte[readInt(in)];
 		in.readFully(bytes);
-		return new String(bytes, "UTF-8");
+		return new String(bytes, UTF_8);
 	}
 
 	/**
@@ -241,7 +218,7 @@ final class IO {
 		for (int i = 0; i < length; ++i) {
 			elements.add(reader.read(in));
 		}
-		return immutable(elements);
+		return copyOf(elements);
 	}
 
 	/**
@@ -399,7 +376,7 @@ final class IO {
 					b = in.readByte() & 0xFF;
 					n ^= (b & 0x7F) << 21;
 					if (b > 0x7F) {
-						l = innerLongDecode((long)n, in);
+						l = innerLongDecode(n, in);
 					} else {
 						l = n;
 					}
@@ -485,8 +462,9 @@ final class IO {
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		try {
-			return DocumentBuilderFactory
-				.newInstance()
+			return XMLProvider
+				.provider()
+				.documentBuilderFactory()
 				.newDocumentBuilder()
 				.parse(bin);
 		} catch (ParserConfigurationException|SAXException e) {

@@ -25,13 +25,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
 
 import org.testng.Assert;
@@ -67,7 +64,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	public static <T> List<T> nextObjects(final Supplier<T> supplier, final Random random) {
 		return Stream.generate(supplier)
 			.limit(random.nextInt(20))
-			.collect(Collectors.toList());
+			.toList();
 	}
 
 	@Test(invocationCount = 10)
@@ -100,6 +97,22 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		final byte[] marshaled = toBytes(expected, params.writer);
 		final T actual = fromBytes(marshaled, params.reader);
 
+		/*
+		if (!Objects.equals(actual, expected)) {
+			//System.out.println(new String(marshaled));
+			//System.out.println();
+			//System.out.println(new String(toBytes(actual, params.writer)));
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/actual.xml"),
+				toBytes(actual, params.writer)
+			);
+			Files.write(
+				Path.of("/home/fwilhelm/Downloads/expected.xml"),
+				toBytes(expected, params.writer)
+			);
+		}
+		 */
+
 		assertEquals(actual, expected);
 	}
 
@@ -127,7 +140,7 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 		throws XMLStreamException
 	{
 		final ByteArrayOutputStream out = new ByteArrayOutputStream();
-		final XMLOutputFactory factory = XMLOutputFactory.newFactory();
+		final XMLOutputFactory factory = XMLProvider.provider().xmlOutputFactory();
 		final XMLStreamWriter streamWriter = new IndentingXMLStreamWriter(
 			factory.createXMLStreamWriter(out, "UTF-8"), "    ");
 
@@ -140,8 +153,8 @@ public abstract class XMLStreamTestBase<T> extends ObjectTester<T> {
 	{
 		final ByteArrayInputStream in = new ByteArrayInputStream(bytes);
 		final XMLStreamReaderAdapter streamReader = new XMLStreamReaderAdapter(
-			XMLInputFactory
-				.newFactory()
+			XMLProvider.provider()
+				.xmlInputFactory()
 				.createXMLStreamReader(in)
 		);
 

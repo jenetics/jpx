@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -33,26 +34,45 @@ import java.io.Serializable;
  * the range of {@code [-90..90]}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.0
  * @since 1.0
  */
 public final class Latitude extends Number implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	/**
-	 * A constant holding the maximum value a {@code Latitude} value can have, -90.
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -90 inclusively.
 	 *
-	 * @since 1.4
+	 * @since 2.0
 	 */
-	public static final Latitude MIN_VALUE = ofDegrees(-90);
+	public static final double MIN_DEGREES = -90;
 
 	/**
-	 * A constant holding the maximum value a {@code Latitude} value can have, 90.
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * -90 inclusively.
 	 *
 	 * @since 1.4
 	 */
-	public static final Latitude MAX_VALUE = ofDegrees(90);
+	public static final Latitude MIN_VALUE = ofDegrees(MIN_DEGREES);
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 90 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final double MAX_DEGREES = 90;
+
+	/**
+	 * A constant holding the maximum value a {@code Latitude} value can have,
+	 * 90 inclusively.
+	 *
+	 * @since 1.4
+	 */
+	public static final Latitude MAX_VALUE = ofDegrees(MAX_DEGREES);
 
 	private final double _value;
 
@@ -64,7 +84,7 @@ public final class Latitude extends Number implements Serializable {
 	 *         range of {@code [-90..90]}
 	 */
 	private Latitude(final double value) {
-		if (value < -90 || value > 90) {
+		if (value < MIN_DEGREES || value > MAX_DEGREES) {
 			throw new IllegalArgumentException(format(
 				"%f is not in range [-90, 90].", value
 			));
@@ -124,8 +144,8 @@ public final class Latitude extends Number implements Serializable {
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Latitude &&
-			Double.compare(((Latitude)obj)._value, _value) == 0;
+			obj instanceof Latitude lat &&
+			Double.compare(lat._value, _value) == 0;
 	}
 
 	@Override
@@ -173,10 +193,12 @@ public final class Latitude extends Number implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.LATITUDE, this);
+		return new SerialProxy(SerialProxy.LATITUDE, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

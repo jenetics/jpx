@@ -35,3 +35,21 @@ gradle-app.setting
 .idea
 build
 classes
+
+*/srv/var/dbdata
+*/srv/var/lib-pgadmin
+
+# NetBeans.gitignore https://github.com/github/gitignore/blob/master/Global/NetBeans.gitignore
+**/nbproject/private/
+**/nbproject/Makefile-*.mk
+**/nbproject/Package-*.bash
+jpx/build/
+jpx/bin/
+jpx/nbbuild/
+jpx/dist/
+jpx/nbdist/
+.nb-gradle/
+.project
+.settings/
+.classpath
+*.iml

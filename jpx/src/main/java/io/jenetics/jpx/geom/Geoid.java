@@ -29,8 +29,9 @@ import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
+import static io.jenetics.jpx.geom.MathUtils.equal;
 
-import java.time.ZonedDateTime;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.stream.Collector;
 
@@ -50,6 +51,8 @@ import io.jenetics.jpx.Speed;
  * @since 1.0
  */
 public final class Geoid {
+
+	private static final int EPSILON_ULP = 10_000;
 
 	/**
 	 * {@link Geoid} using of the <em>World Geodetic System: WGS 84</em>
@@ -120,7 +123,7 @@ public final class Geoid {
 	 *
 	 * @return the ellipsoid the {@code Geom} object is using
 	 */
-	public Ellipsoid getEllipsoid() {
+	public Ellipsoid ellipsoid() {
 		return _ellipsoid;
 	}
 
@@ -200,7 +203,7 @@ public final class Geoid {
 			sigma = atan2(sinsigma, cossigma);
 
 			// Eq. 17 Careful! sin2sigma might be almost 0!
-			final double sinalpha = sin2sigma == 0.0
+			final double sinalpha = equal(sin2sigma, 0.0, EPSILON_ULP)
 				? 0.0
 				: cosU1cosU2*sinlambda/sinsigma;
 			final double alpha = asin(sinalpha);
@@ -208,7 +211,7 @@ public final class Geoid {
 			double cos2alpha = cosalpha*cosalpha;
 
 			// Eq. 18 Careful! cos2alpha might be almost 0!
-			final double cos2sigmam = cos2alpha == 0.0
+			final double cos2sigmam = equal(cos2alpha, 0.0, EPSILON_ULP)
 				? 0.0
 				: cossigma - 2*sinU1sinU2/cos2alpha;
 			final double u2 = cos2alpha*AABBBB;
@@ -335,9 +338,9 @@ public final class Geoid {
 		);
 	}
 
-	private static long minus(final ZonedDateTime a, final ZonedDateTime b) {
-		final long i1 = a.toInstant().toEpochMilli();
-		final long i2 = b.toInstant().toEpochMilli();
+	private static long minus(final Instant a, final Instant b) {
+		final long i1 = a.toEpochMilli();
+		final long i2 = b.toEpochMilli();
 		return i2 - i1;
 	}
 

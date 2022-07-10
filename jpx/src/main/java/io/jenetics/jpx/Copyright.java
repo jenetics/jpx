@@ -19,16 +19,18 @@
  */
 package io.jenetics.jpx;
 
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.Format.parseURI;
-import static io.jenetics.jpx.Format.uriString;
-import static io.jenetics.jpx.Format.yearString;
+import static io.jenetics.jpx.Format.toUriString;
+import static io.jenetics.jpx.Format.toYearString;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.time.Year;
@@ -46,6 +48,7 @@ import java.util.Optional;
  */
 public final class Copyright implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _author;
@@ -95,20 +98,16 @@ public final class Copyright implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 31;
-		hash += 17*Objects.hashCode(_author) + 37;
-		hash += 17*Objects.hashCode(_year) + 37;
-		hash += 17*Objects.hashCode(_license) + 37;
-		return hash;
+		return hash(_author, _year, _license);
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Copyright &&
-			Objects.equals(((Copyright) obj)._author, _author) &&
-			Objects.equals(((Copyright) obj)._year, _year) &&
-			Objects.equals(((Copyright) obj)._license, _license);
+			obj instanceof Copyright cr &&
+			Objects.equals(cr._author, _author) &&
+			Objects.equals(cr._year, _year) &&
+			Objects.equals(cr._license, _license);
 	}
 
 	@Override
@@ -146,6 +145,7 @@ public final class Copyright implements Serializable {
 	 * @param license link to external file containing license text.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
+	 * @throws java.time.DateTimeException if the given {@code year} is invalid
 	 */
 	public static Copyright of(
 		final String author,
@@ -165,6 +165,7 @@ public final class Copyright implements Serializable {
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 * @throws IllegalArgumentException if the given {@code license} is not a
 	 *         valid {@code URI} object
+	 * @throws java.time.DateTimeException if the given {@code year} is invalid
 	 */
 	public static Copyright of(
 		final String author,
@@ -193,6 +194,7 @@ public final class Copyright implements Serializable {
 	 * @param year year of copyright.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
+	 * @throws java.time.DateTimeException if the given {@code year} is invalid
 	 */
 	public static Copyright of(final String author, final int year) {
 		return new Copyright(author, Year.of(year), null);
@@ -225,10 +227,12 @@ public final class Copyright implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.COPYRIGHT, this);
+		return new SerialProxy(SerialProxy.COPYRIGHT, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
@@ -256,8 +260,8 @@ public final class Copyright implements Serializable {
 
 	static final XMLWriter<Copyright> WRITER =  XMLWriter.elem("copyright",
 		XMLWriter.attr("author").map(cr -> cr._author),
-		XMLWriter.elem("year").map(cr -> yearString(cr._year)),
-		XMLWriter.elem("license").map(cr -> uriString(cr._license))
+		XMLWriter.elem("year").map(cr -> toYearString(cr._year)),
+		XMLWriter.elem("license").map(cr -> toUriString(cr._license))
 	);
 
 	static final XMLReader<Copyright> READER = XMLReader.elem(

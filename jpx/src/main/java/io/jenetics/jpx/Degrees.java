@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -35,7 +36,7 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 2.0
  * @since 1.0
  */
 public final class Degrees
@@ -45,7 +46,24 @@ public final class Degrees
 		Serializable
 {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
+
+	/**
+	 * A constant holding the maximum value a {@code Degrees} value can have,
+	 * 0 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final double MIN_VALUE = 0;
+
+	/**
+	 * A constant holding the maximum value a {@code Degrees} value can have,
+	 * 360 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final double MAX_VALUE = 360;
 
 	private final double _value;
 
@@ -58,7 +76,7 @@ public final class Degrees
 	 *         range of {@code [0..360]}
 	 */
 	private Degrees(final double value) {
-		if (value < 0 || value >= 360) {
+		if (value < MIN_VALUE || value >= MAX_VALUE) {
 			throw new IllegalArgumentException(format(
 				"%f not in the range [0, 360).", value
 			));
@@ -123,8 +141,8 @@ public final class Degrees
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Degrees &&
-			Double.compare(((Degrees)obj)._value, _value) == 0;
+			obj instanceof Degrees deg &&
+			Double.compare(deg._value, _value) == 0;
 	}
 
 	@Override
@@ -174,10 +192,12 @@ public final class Degrees
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.DEGREES, this);
+		return new SerialProxy(SerialProxy.DEGREES, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

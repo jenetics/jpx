@@ -40,9 +40,7 @@ final class Format {
 
 	static Double parseDouble(final String value) {
 		final String d = Strings.trim(value);
-		return d != null
-			? Double.parseDouble(d)
-			: null;
+		return d != null ? Double.parseDouble(d) : null;
 	}
 
 	/**
@@ -54,16 +52,13 @@ final class Format {
 	 */
 	static Duration parseDuration(final String value) {
 		final String duration = Strings.trim(value);
-
 		return duration != null
 			? Duration.ofSeconds(Long.parseLong(duration))
 			: null;
 	}
 
-	static String durationString(final Duration duration) {
-		return duration != null
-			? Long.toString(duration.getSeconds())
-			: null;
+	static String toDurationString(final Duration duration) {
+		return duration != null ? Long.toString(duration.getSeconds()) : null;
 	}
 
 	/**
@@ -78,7 +73,7 @@ final class Format {
 		return year != null ? Year.of(Integer.parseInt(year)) : null;
 	}
 
-	static String yearString(final Year year) {
+	static String toYearString(final Year year) {
 		return year != null ? Integer.toString(year.getValue()) : null;
 	}
 
@@ -100,15 +95,11 @@ final class Format {
 		}
 	}
 
-	static String uriString(final URI uri) {
+	static String toUriString(final URI uri) {
 		return uri != null ? uri.toString() : null;
 	}
 
-	static String doubleString(final Number number) {
-		return number != null ? Double.toString(number.doubleValue()) : null;
-	}
-
-	static String intString(final Number number) {
+	static String toIntString(final Number number) {
 		return number != null ? Integer.toString(number.intValue()) : null;
 	}
 

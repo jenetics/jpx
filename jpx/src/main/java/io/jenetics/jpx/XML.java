@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -131,14 +130,10 @@ final class XML {
 		throws XMLStreamException
 	{
 		try {
-			final DocumentBuilderFactory factory =
-				DocumentBuilderFactory.newInstance();
-
-			factory.setValidating(true);
-			factory.setIgnoringElementContentWhitespace(true);
-			factory.setNamespaceAware(true);
-
-			return factory.newDocumentBuilder();
+			return XMLProvider
+				.provider()
+				.documentBuilderFactory()
+				.newDocumentBuilder();
 		} catch (ParserConfigurationException e) {
 			throw new XMLStreamException(e);
 		}
@@ -165,7 +160,7 @@ final class XML {
 
 			final DOMSource source = new DOMSource(doc);
 			final DOMResult result = new DOMResult();
-			transformer.transform(source,result);
+			transformer.transform(source, result);
 			return (Document)result.getNode();
 		} catch (TransformerException e) {
 			throw (DOMException)
@@ -208,16 +203,12 @@ final class XML {
 		return true;
 	}
 
-	static int hashCode(final Node node) {
-		return node != null ? toString(node).hashCode() : 0;
-	}
-
-	static boolean isEmpty(final Document doc) {
+	private static boolean isEmpty(final Document doc) {
 		return doc == null ||
 			doc.getDocumentElement().getChildNodes().getLength() == 0;
 	}
 
-	static <T extends Node> T clean(final T node) {
+	private static <T extends Node> T clean(final T node) {
 		if (node == null) return null;
 
 		node.normalize();
@@ -277,27 +268,35 @@ final class XML {
 	}
 
 	static Document checkExtensions(final Document extensions) {
-		if (extensions != null &&
-			!"extensions".equals(extensions.getDocumentElement().getNodeName()))
-		{
-			throw new IllegalArgumentException(format(
-				"Expected 'extensions' root element, but got '%s'.",
-				extensions.getDocumentElement().getNodeName()
-			));
-		}
-		if (extensions != null &&
-			extensions.getDocumentElement().getNamespaceURI() != null)
-		{
-			final String ns = extensions.getDocumentElement().getNamespaceURI();
-			if (!ns.isEmpty() &&
-				!ns.startsWith("http://www.topografix.com/GPX/1/1") &&
-				!ns.startsWith("http://www.topografix.com/GPX/1/0"))
-			{
+		if (extensions != null) {
+			final Element root = extensions.getDocumentElement();
+
+			if (root == null) {
+				throw new IllegalArgumentException(
+					"'extensions' has no document element."
+				);
+			}
+
+			if (!"extensions".equals(root.getNodeName())) {
 				throw new IllegalArgumentException(format(
-					"Invalid document namespace: '%s'.", ns
+					"Expected 'extensions' root element, but got '%s'.",
+					root.getNodeName()
 				));
 			}
+
+			if (root.getNamespaceURI() != null) {
+				final String ns = root.getNamespaceURI();
+				if (!ns.isEmpty() &&
+					!ns.startsWith("http://www.topografix.com/GPX/1/1") &&
+					!ns.startsWith("http://www.topografix.com/GPX/1/0"))
+				{
+					throw new IllegalArgumentException(format(
+						"Invalid document namespace: '%s'.", ns
+					));
+				}
+			}
 		}
+
 		return extensions;
 	}
 

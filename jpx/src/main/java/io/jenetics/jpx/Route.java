@@ -20,17 +20,18 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
-import static java.util.Collections.singletonList;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Format.intString;
-import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Format.toIntString;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
@@ -41,7 +42,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
@@ -69,6 +69,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class Route implements Iterable<WayPoint>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final String _name;
@@ -110,11 +111,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		_comment = comment;
 		_description = description;
 		_source = source;
-		_links = immutable(links);
+		_links = copyOf(links);
 		_number = number;
 		_type = type;
 		_extensions = extensions;
-		_points = immutable(points);
+		_points = copyOf(points);
 	}
 
 	/**
@@ -273,31 +274,30 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 31;
-		hash += 17*Objects.hashCode(_name) + 37;
-		hash += 17*Objects.hashCode(_comment) + 37;
-		hash += 17*Objects.hashCode(_description) + 37;
-		hash += 17*Objects.hashCode(_source) + 37;
-		hash += 17*Objects.hashCode(_type) + 37;
-		hash += 17*Lists.hashCode(_links) + 31;
-		hash += 17*Objects.hashCode(_number) + 37;
-		hash += 17*Objects.hashCode(_points) + 37;
-
-		return hash;
+		return hash(
+			_name,
+			_comment,
+			_description,
+			_source,
+			_type,
+			Lists.hashCode(_links),
+			_number,
+			_points
+		);
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Route &&
-			Objects.equals(((Route)obj)._name, _name) &&
-			Objects.equals(((Route)obj)._comment, _comment) &&
-			Objects.equals(((Route)obj)._description, _description) &&
-			Objects.equals(((Route)obj)._source, _source) &&
-			Objects.equals(((Route)obj)._type, _type) &&
-			Lists.equals(((Route)obj)._links, _links) &&
-			Objects.equals(((Route)obj)._number, _number) &&
-			Objects.equals(((Route)obj)._points, _points);
+			obj instanceof Route route &&
+			Objects.equals(route._name, _name) &&
+			Objects.equals(route._comment, _comment) &&
+			Objects.equals(route._description, _description) &&
+			Objects.equals(route._source, _source) &&
+			Objects.equals(route._type, _type) &&
+			Lists.equals(route._links, _links) &&
+			Objects.equals(route._number, _number) &&
+			Objects.equals(route._points, _points);
 	}
 
 	@Override
@@ -444,7 +444,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder links(final List<Link> links) {
-			copy(links, _links);
+			copyTo(links, _links);
 			return this;
 		}
 
@@ -457,7 +457,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addLink(final Link link) {
 			_links.add(requireNonNull(link));
-
 			return this;
 		}
 
@@ -473,7 +472,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addLink(final String href) {
 			_links.add(Link.of(href));
-
 			return this;
 		}
 
@@ -584,7 +582,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @throws NullPointerException if one of the way-points is {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			copy(points, _points);
+			copyTo(points, _points);
 			return this;
 		}
 
@@ -597,7 +595,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addPoint(final WayPoint point) {
 			_points.add(requireNonNull(point));
-
 			return this;
 		}
 
@@ -607,7 +604,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		 * @param point the way-point builder
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
-		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
+		public Builder addPoint(final Consumer<? super WayPoint.Builder> point) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
 			return addPoint(builder.build());
@@ -626,12 +623,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 		@Override
 		public Builder filter(final Predicate<? super WayPoint> predicate) {
-			points(
-				_points.stream()
-					.filter(predicate)
-					.collect(Collectors.toList())
-			);
-
+			points(_points.stream().filter(predicate).toList());
 			return this;
 		}
 
@@ -642,9 +634,9 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.map(mapper)
-					.collect(Collectors.toList())
+					.map(WayPoint.class::cast)
+					.toList()
 			);
-
 			return this;
 		}
 
@@ -657,9 +649,8 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.flatMap(wp -> mapper.apply(wp).stream())
-					.collect(Collectors.toList())
+					.toList()
 			);
-
 			return this;
 		}
 
@@ -670,7 +661,6 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 				? extends List<WayPoint>> mapper
 		) {
 			points(mapper.apply(_points));
-
 			return this;
 		}
 
@@ -827,10 +817,12 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.ROUTE, this);
+		return new SerialProxy(SerialProxy.ROUTE, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
@@ -880,46 +872,57 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	}
 
 	// Define the needed writers for the different versions.
-	private static final XMLWriters<Route> WRITERS = new XMLWriters<Route>()
-		.v00(XMLWriter.elem("name").map(r -> r._name))
-		.v00(XMLWriter.elem("cmt").map(r -> r._comment))
-		.v00(XMLWriter.elem("desc").map(r -> r._description))
-		.v00(XMLWriter.elem("src").map(r -> r._source))
-		.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
-		.v10(XMLWriter.elem("url").map(Route::url))
-		.v10(XMLWriter.elem("urlname").map(Route::urlname))
-		.v00(XMLWriter.elem("number").map(r -> intString(r._number)))
-		.v00(XMLWriter.elem("type").map(r -> r._type))
-		.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
-		.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10, "rtept")).map(r -> r._points))
-		.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11, "rtept")).map(r -> r._points));
+	private static XMLWriters<Route>
+	writers(final Function<? super Number, String> formatter) {
+		return new XMLWriters<Route>()
+			.v00(XMLWriter.elem("name").map(r -> r._name))
+			.v00(XMLWriter.elem("cmt").map(r -> r._comment))
+			.v00(XMLWriter.elem("desc").map(r -> r._description))
+			.v00(XMLWriter.elem("src").map(r -> r._source))
+			.v11(XMLWriter.elems(Link.WRITER).map(r -> r._links))
+			.v10(XMLWriter.elem("url").map(Route::url))
+			.v10(XMLWriter.elem("urlname").map(Route::urlname))
+			.v00(XMLWriter.elem("number").map(r -> toIntString(r._number)))
+			.v00(XMLWriter.elem("type").map(r -> r._type))
+			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions))
+			.v10(XMLWriter.elems(WayPoint.xmlWriter(Version.V10, "rtept", formatter)).map(r -> r._points))
+			.v11(XMLWriter.elems(WayPoint.xmlWriter(Version.V11, "rtept", formatter)).map(r -> r._points));
+	}
 
 
 	// Define the needed readers for the different versions.
-	private static final XMLReaders READERS = new XMLReaders()
-		.v00(XMLReader.elem("name"))
-		.v00(XMLReader.elem("cmt"))
-		.v00(XMLReader.elem("desc"))
-		.v00(XMLReader.elem("src"))
-		.v11(XMLReader.elems(Link.READER))
-		.v10(XMLReader.elem("url").map(Format::parseURI))
-		.v10(XMLReader.elem("urlname"))
-		.v00(XMLReader.elem("number").map(UInt::parse))
-		.v00(XMLReader.elem("type"))
-		.v00(XMLReader.doc("extensions"))
-		.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept")))
-		.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept")));
-
-	static XMLWriter<Route> xmlWriter(final Version version) {
-		return XMLWriter.elem("rte", WRITERS.writers(version));
+	private static XMLReaders
+	readers(final Function<? super String, Length> lengthParser) {
+		return new XMLReaders()
+			.v00(XMLReader.elem("name"))
+			.v00(XMLReader.elem("cmt"))
+			.v00(XMLReader.elem("desc"))
+			.v00(XMLReader.elem("src"))
+			.v11(XMLReader.elems(Link.READER))
+			.v10(XMLReader.elem("url").map(Format::parseURI))
+			.v10(XMLReader.elem("urlname"))
+			.v00(XMLReader.elem("number").map(UInt::parse))
+			.v00(XMLReader.elem("type"))
+			.v00(XMLReader.doc("extensions"))
+			.v10(XMLReader.elems(WayPoint.xmlReader(Version.V10, "rtept", lengthParser)))
+			.v11(XMLReader.elems(WayPoint.xmlReader(Version.V11, "rtept", lengthParser)));
 	}
 
-	@SuppressWarnings("unchecked")
-	static XMLReader<Route> xmlReader(final Version version) {
+	static XMLWriter<Route> xmlWriter(
+		final Version version,
+		final Function<? super Number, String> formatter
+	) {
+		return XMLWriter.elem("rte", writers(formatter).writers(version));
+	}
+
+	static XMLReader<Route> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(
 			version == Version.V10 ? Route::toRouteV10 : Route::toRouteV11,
 			"rte",
-			READERS.readers(version)
+			readers(lengthParser).readers(version)
 		);
 	}
 
@@ -946,7 +949,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			(String)v[2],
 			(String)v[3],
 			v[4] != null
-				? singletonList(Link.of((URI)v[4], (String)v[5], null))
+				? List.of(Link.of((URI)v[4], (String)v[5], null))
 				: null,
 			(UInt)v[6],
 			(String)v[7],

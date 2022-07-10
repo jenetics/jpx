@@ -23,11 +23,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.5
- * @since 1.3
+ * @version 3.0
+ * @since 3.0
  */
 final class NonCloseableInputStream extends InputStream {
 
@@ -43,20 +44,38 @@ final class NonCloseableInputStream extends InputStream {
 	}
 
 	@Override
-	public int read(final byte[] b) throws IOException {
+	public int read(byte[] b) throws IOException {
 		return _input.read(b);
 	}
 
 	@Override
-	public int read(final byte[] b, final int off, final int len)
-		throws IOException
-	{
+	public int read(byte[] b, int off, int len) throws IOException {
 		return _input.read(b, off, len);
 	}
 
 	@Override
-	public long skip(final long n) throws IOException {
+	public byte[] readAllBytes() throws IOException {
+		return _input.readAllBytes();
+	}
+
+	@Override
+	public byte[] readNBytes(int len) throws IOException {
+		return _input.readNBytes(len);
+	}
+
+	@Override
+	public int readNBytes(byte[] b, int off, int len) throws IOException {
+		return _input.readNBytes(b, off, len);
+	}
+
+	@Override
+	public long skip(long n) throws IOException {
 		return _input.skip(n);
+	}
+
+	@Override
+	public void skipNBytes(long n) throws IOException {
+		_input.skipNBytes(n);
 	}
 
 	@Override
@@ -69,18 +88,23 @@ final class NonCloseableInputStream extends InputStream {
 	}
 
 	@Override
-	public synchronized void mark(final int readlimit) {
+	public void mark(int readlimit) {
 		_input.mark(readlimit);
 	}
 
 	@Override
-	public synchronized void reset() throws IOException {
+	public void reset() throws IOException {
 		_input.reset();
 	}
 
 	@Override
 	public boolean markSupported() {
 		return _input.markSupported();
+	}
+
+	@Override
+	public long transferTo(OutputStream out) throws IOException {
+		return _input.transferTo(out);
 	}
 
 }

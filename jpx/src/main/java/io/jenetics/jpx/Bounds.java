@@ -19,7 +19,10 @@
  */
 package io.jenetics.jpx;
 
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import static java.lang.String.format;
+import static java.util.Objects.hash;
 import static java.util.Objects.requireNonNull;
 
 import java.io.DataInput;
@@ -27,18 +30,22 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collector;
 
 /**
  * Two lat/lon pairs defining the extent of an element.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 1.6
  * @since 1.0
  */
 public final class Bounds implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final Latitude _minLatitude;
@@ -105,22 +112,17 @@ public final class Bounds implements Serializable {
 
 	@Override
 	public int hashCode() {
-		int hash = 17;
-		hash += 31*Objects.hashCode(_minLatitude) + 37;
-		hash += 31*Objects.hashCode(_minLongitude) + 37;
-		hash += 31*Objects.hashCode(_maxLatitude) + 37;
-		hash += 31*Objects.hashCode(_maxLongitude) + 37;
-		return hash;
+		return hash(_minLatitude, _minLongitude, _maxLatitude, _maxLongitude);
 	}
 
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof  Bounds &&
-			Objects.equals(((Bounds)obj)._minLatitude, _minLatitude) &&
-			Objects.equals(((Bounds)obj)._minLongitude, _minLongitude) &&
-			Objects.equals(((Bounds)obj)._maxLatitude, _maxLatitude) &&
-			Objects.equals(((Bounds)obj)._maxLongitude, _maxLongitude);
+			obj instanceof  Bounds bounds &&
+			Objects.equals(bounds._minLatitude, _minLatitude) &&
+			Objects.equals(bounds._minLongitude, _minLongitude) &&
+			Objects.equals(bounds._maxLatitude, _maxLatitude) &&
+			Objects.equals(bounds._maxLongitude, _maxLongitude);
 	}
 
 	@Override
@@ -134,6 +136,54 @@ public final class Bounds implements Serializable {
 		);
 	}
 
+	/**
+	 * Return a collector which calculates the bounds of a given way-point
+	 * stream. The following example shows how to calculate the bounds of all
+	 * track-points of a given GPX object.
+	 *
+	 * <pre>{@code
+	 * final Bounds bounds = gpx.tracks()
+	 *     .flatMap(Track::segments)
+	 *     .flatMap(TrackSegment::points)
+	 *     .collect(Bounds.toBounds());
+	 * }</pre>
+	 *
+	 * If the collecting way-point stream is empty, the collected {@code Bounds}
+	 * object is {@code null}.
+	 *
+	 * @since 1.6
+	 *
+	 * @param <P> The actual point type
+	 * @return a new bounds collector
+	 */
+	public static <P extends Point> Collector<P, ?, Bounds> toBounds() {
+		return Collector.of(
+			() -> {
+				final double[] a = new double[4];
+				a[0] = Double.MAX_VALUE;
+				a[1] = Double.MAX_VALUE;
+				a[2] = -Double.MAX_VALUE;
+				a[3] = -Double.MAX_VALUE;
+				return a;
+			},
+			(a, b) -> {
+				a[0] = min(b.getLatitude().doubleValue(), a[0]);
+				a[1] = min(b.getLongitude().doubleValue(), a[1]);
+				a[2] = max(b.getLatitude().doubleValue(), a[2]);
+				a[3] = max(b.getLongitude().doubleValue(), a[3]);
+			},
+			(a, b) -> {
+				a[0] = min(a[0], b[0]);
+				a[1] = min(a[1], b[1]);
+				a[2] = max(a[2], b[2]);
+				a[3] = max(a[3], b[3]);
+				return a;
+			},
+			a -> a[0] == Double.MAX_VALUE
+				? null
+				: Bounds.of(a[0], a[1], a[2], a[3])
+		);
+	}
 
 	/* *************************************************************************
 	 *  Static object creation methods
@@ -189,10 +239,12 @@ public final class Bounds implements Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.BOUNDS, this);
+		return new SerialProxy(SerialProxy.BOUNDS, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
@@ -217,12 +269,15 @@ public final class Bounds implements Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static final XMLWriter<Bounds> WRITER = XMLWriter.elem("bounds",
-		XMLWriter.attr("minlat").map(Bounds::getMinLatitude),
-		XMLWriter.attr("minlon").map(Bounds::getMinLongitude),
-		XMLWriter.attr("maxlat").map(Bounds::getMaxLatitude),
-		XMLWriter.attr("maxlon").map(Bounds::getMaxLongitude)
-	);
+	static XMLWriter<Bounds>
+	writer(final Function<? super Number, String> formatter) {
+		return XMLWriter.elem("bounds",
+			XMLWriter.attr("minlat").map(b -> formatter.apply(b.getMinLatitude())),
+			XMLWriter.attr("minlon").map(b -> formatter.apply(b.getMinLongitude())),
+			XMLWriter.attr("maxlat").map(b -> formatter.apply(b.getMaxLatitude())),
+			XMLWriter.attr("maxlon").map(b -> formatter.apply(b.getMaxLongitude()))
+		);
+	}
 
 	static final XMLReader<Bounds> READER = XMLReader.elem(
 		v -> Bounds.of(

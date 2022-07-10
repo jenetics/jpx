@@ -26,6 +26,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -35,7 +36,7 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Value_object">Value object</a>
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.2
+ * @version 2.0
  * @since 1.0
  */
 public final class DGPSStation
@@ -45,7 +46,24 @@ public final class DGPSStation
 		Serializable
 {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
+
+	/**
+	 * A constant holding the maximum value a {@code DGPSStation} value can have,
+	 * 0 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final int MIN_VALUE = 0;
+
+	/**
+	 * A constant holding the maximum value a {@code DGPSStation} value can have,
+	 * 1023 inclusively.
+	 *
+	 * @since 2.0
+	 */
+	public static final int MAX_VALUE = 1023;
 
 	private final int _value;
 
@@ -57,7 +75,7 @@ public final class DGPSStation
 	 *         range of {@code [0..1023]}
 	 */
 	private DGPSStation(final int value) {
-		if (value < 0 || value > 1023) {
+		if (value < MIN_VALUE || value > MAX_VALUE) {
 			throw new IllegalArgumentException(format(
 				"%d is out of range [0, 1023].", value
 			));
@@ -77,12 +95,12 @@ public final class DGPSStation
 
 	@Override
 	public double doubleValue() {
-		return (double)_value;
+		return _value;
 	}
 
 	@Override
 	public long longValue() {
-		return (long)_value;
+		return _value;
 	}
 
 	@Override
@@ -103,8 +121,8 @@ public final class DGPSStation
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof DGPSStation &&
-			((DGPSStation)obj)._value == _value;
+			obj instanceof DGPSStation dgps &&
+			dgps._value == _value;
 	}
 
 	@Override
@@ -140,10 +158,12 @@ public final class DGPSStation
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.DGPS_STATION, this);
+		return new SerialProxy(SerialProxy.DGPS_STATION, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{

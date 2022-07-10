@@ -20,15 +20,18 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
@@ -49,10 +52,14 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 
 	@Override
 	protected Params<Route> params(final Version version, final Random random) {
+		final var format = NumberFormat.getNumberInstance(ENGLISH);
+		final Function<String, Length> lengthParser = string ->
+			Length.parse(string, format);
+
 		return new Params<>(
 			() -> nextRoute(random),
-			Route.xmlReader(version),
-			Route.xmlWriter(version)
+			Route.xmlReader(version, lengthParser),
+			Route.xmlWriter(version, Formats::format)
 		);
 	}
 
@@ -79,7 +86,7 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(gpx.getRoutes().size(), 1);
@@ -92,7 +99,7 @@ public class RouteTest extends XMLStreamTestBase<Route> {
 				.build()
 		);
 		Assert.assertTrue(XML.equals(
-			gpx.getRoutes().get(0).getExtensions().get(),
+			gpx.getRoutes().get(0).getExtensions().orElseThrow(),
 			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
 		));
 	}

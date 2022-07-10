@@ -21,38 +21,54 @@ package io.jenetics.jpx.format;
 
 import static java.util.Objects.requireNonNull;
 
+import java.text.ParsePosition;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
-final class OptionalFormat<T> implements Format<T> {
+class OptionalFormat implements Format {
 
-	private final Format<T> _format;
+	private final Format _format;
 
-	private OptionalFormat(final Format<T> format) {
+	private OptionalFormat(final Format format) {
 		_format = requireNonNull(format);
 	}
 
 	@Override
-	public Optional<String> format(final T value) {
+	public Optional<String> format(final Location value) {
 		return Optional.of(_format.format(value).orElse(""));
 	}
 
 	@Override
-	public String toString() {
-		return String.format("[%s]", _format);
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		int index = pos.getIndex();
+		int errorIndex = pos.getErrorIndex();
+		LocationBuilder before = builder.copy();
+
+		try {
+			_format.parse(in, pos, builder);
+		} catch (ParseException e){
+			builder.copy(before);
+			pos.setIndex(index);
+			pos.setErrorIndex(errorIndex);
+		}
 	}
 
-	static <T> OptionalFormat<T> of(final Format<T> format) {
-		return new OptionalFormat<>(format);
+	@Override
+	public String toPattern() {
+		return String.format("[%s]", _format.toPattern());
 	}
 
-	static <T> OptionalFormat<T> of(final List<Format<T>> formats) {
-		return new OptionalFormat<>(CompositeFormat.of(formats));
+	static OptionalFormat of(final List<Format> formats) {
+		return new OptionalFormat(CompositeFormat.of(formats));
 	}
 
 }

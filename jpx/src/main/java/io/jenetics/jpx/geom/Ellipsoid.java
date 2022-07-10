@@ -21,6 +21,7 @@ package io.jenetics.jpx.geom;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -38,6 +39,7 @@ import java.io.Serializable;
  */
 public final class Ellipsoid implements Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	/**

@@ -23,6 +23,8 @@ import static java.lang.Double.isInfinite;
 import static java.lang.Double.isNaN;
 import static java.util.Objects.requireNonNull;
 
+import java.io.Serial;
+
 /**
  * This class implements the the
  * <a href="http://en.wikipedia.org/wiki/Kahan_summation_algorithm">Kahan
@@ -37,6 +39,7 @@ final class DoubleAdder
 	extends Number
 	implements Comparable<DoubleAdder>
 {
+	@Serial
 	private static final long serialVersionUID = 1L;
 
 	private double _sum = 0.0;

@@ -21,8 +21,8 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static io.jenetics.jpx.Lists.copy;
-import static io.jenetics.jpx.Lists.immutable;
+import static io.jenetics.jpx.Lists.copyOf;
+import static io.jenetics.jpx.Lists.copyTo;
 import static io.jenetics.jpx.XMLWriter.elem;
 
 import java.io.DataInput;
@@ -30,6 +30,7 @@ import java.io.DataOutput;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,7 +40,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.w3c.dom.Document;
@@ -58,6 +58,7 @@ import io.jenetics.jpx.GPX.Version;
  */
 public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
+	@Serial
 	private static final long serialVersionUID = 2L;
 
 	private final List<WayPoint> _points;
@@ -69,7 +70,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * @param points the points of the track-segment
 	 */
 	private TrackSegment(final List<WayPoint> points, final Document extensions) {
-		_points = immutable(points);
+		_points = copyOf(points);
 		_extensions = extensions;
 	}
 
@@ -202,7 +203,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 *         {@code null}
 		 */
 		public Builder points(final List<WayPoint> points) {
-			copy(points, _points);
+			copyTo(points, _points);
 			return this;
 		}
 
@@ -215,7 +216,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 */
 		public Builder addPoint(final WayPoint point) {
 			_points.add(requireNonNull(point));
-
 			return this;
 		}
 
@@ -235,7 +235,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws NullPointerException if the given {@code href} is {@code null}
 		 */
-		public Builder addPoint(final Consumer<WayPoint.Builder> point) {
+		public Builder addPoint(final Consumer<? super WayPoint.Builder> point) {
 			final WayPoint.Builder builder = WayPoint.builder();
 			point.accept(builder);
 			return addPoint(builder.build());
@@ -286,12 +286,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 		@Override
 		public Builder filter(final Predicate<? super WayPoint> predicate) {
-			points(
-				_points.stream()
-					.filter(predicate)
-					.collect(Collectors.toList())
-			);
-
+			points(_points.stream().filter(predicate).toList());
 			return this;
 		}
 
@@ -302,9 +297,9 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.map(mapper)
-					.collect(Collectors.toList())
+					.map(WayPoint.class::cast)
+					.toList()
 			);
-
 			return this;
 		}
 
@@ -317,9 +312,8 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 			points(
 				_points.stream()
 					.flatMap(wp -> mapper.apply(wp).stream())
-					.collect(Collectors.toList())
+					.toList()
 			);
-
 			return this;
 		}
 
@@ -330,7 +324,6 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 				? extends List<WayPoint>> mapper
 		) {
 			points(mapper.apply(_points));
-
 			return this;
 		}
 
@@ -398,10 +391,12 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  Java object serialization
 	 * ************************************************************************/
 
+	@Serial
 	private Object writeReplace() {
-		return new Serial(Serial.TRACK_SEGMENT, this);
+		return new SerialProxy(SerialProxy.TRACK_SEGMENT, this);
 	}
 
+	@Serial
 	private void readObject(final ObjectInputStream stream)
 		throws InvalidObjectException
 	{
@@ -425,23 +420,29 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 *  XML stream object serialization
 	 * ************************************************************************/
 
-	static XMLWriter<TrackSegment> xmlWriter(final Version version) {
+	static XMLWriter<TrackSegment> xmlWriter(
+		final Version version,
+		final Function<? super Number, String> formatter
+	) {
 		return elem("trkseg",
 			XMLWriter
-				.elems(WayPoint.xmlWriter(version,"trkpt"))
+				.elems(WayPoint.xmlWriter(version,"trkpt", formatter))
 				.map(ts -> ts._points),
 			XMLWriter.doc("extensions").map(gpx -> gpx._extensions)
 		);
 	}
 
 	@SuppressWarnings("unchecked")
-	static XMLReader<TrackSegment> xmlReader(final Version version) {
+	static XMLReader<TrackSegment> xmlReader(
+		final Version version,
+		final Function<? super String, Length> lengthParser
+	) {
 		return XMLReader.elem(a -> new TrackSegment(
 				(List<WayPoint>)a[0],
 				XML.extensions((Document)a[1])
 			),
 			"trkseg",
-			XMLReader.elems(WayPoint.xmlReader(version,"trkpt")),
+			XMLReader.elems(WayPoint.xmlReader(version,"trkpt", lengthParser)),
 			XMLReader.doc("extensions")
 		);
 	}

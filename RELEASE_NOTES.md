@@ -1,5 +1,90 @@
 ## Release notes
 
+### [3.0.1](https://github.com/jenetics/jpx/releases/tag/v3.0.1)
+
+#### Bugs
+
+* [#162](https://github.com/jenetics/jpx/issues/162): Elevation serialization for values > 1000m is incompatible with deserialization.
+
+### [3.0.0](https://github.com/jenetics/jpx/releases/tag/v3.0.0)
+
+#### Improvements
+
+* [#125](https://github.com/jenetics/jpx/issues/125): **Breaking change** - Use `Instant` instead of `ZonedDateTime` for `Point.time` property.
+* [#148](https://github.com/jenetics/jpx/issues/148): **Breaking change** - Update to Java17.
+* [#155](https://github.com/jenetics/jpx/issues/155): Improved `GPX.Reader` and `GPX.Writer` classes.
+* [#158](https://github.com/jenetics/jpx/issues/158): Add XML `Document` reader/writer methods.
+```java
+final GPX gpx = ...;
+
+final Document doc = XMLProvider.provider()
+    .documentBuilderFactory()
+    .newDocumentBuilder()
+    .newDocument();
+
+// The GPX data are written to the empty `doc` object.
+GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
+```
+
+#### Bugs
+
+* [#151](https://github.com/jenetics/jpx/issues/151): `Double`'s being written as exponents in GPX file.
+* [#152](https://github.com/jenetics/jpx/issues/152): `LocationFormatter::parse` method is not thread-safe.
+
+### [2.2.0](https://github.com/jenetics/jpx/releases/tag/v2.2.0)
+
+#### Improvements
+
+* [#72](https://github.com/jenetics/jpx/issues/72): Parsing of [ISO 6709](https://en.wikipedia.org/wiki/ISO_6709) location strings (thanks to [bunkenburg](https://github.com/bunkenburg)). This also contains fixes in the ISO 6709 location formatter.
+
+### [2.1.0](https://github.com/jenetics/jpx/releases/tag/v2.1.0)
+
+#### Improvements
+
+* [#128](https://github.com/jenetics/jpx/issues/128): Added Java Module System support ([Adito5393](https://github.com/Adito5393)).
+* [#132](https://github.com/jenetics/jpx/issues/132): Convert Gradle build scripts from Groovy to Kotlin.
+* [#134](https://github.com/jenetics/jpx/issues/134): Make distance calculation more stable.
+
+#### Bugs
+
+* [#129](https://github.com/jenetics/jpx/issues/129): Fixed spelling of build script name ([marcusfey](https://github.com/marcusfey)).
+
+### [2.0.0](https://github.com/jenetics/jpx/releases/tag/v2.0.0)
+
+#### Improvements
+
+* [#68](https://github.com/jenetics/jpx/issues/68): Remove deprecated methods.
+* [#113](https://github.com/jenetics/jpx/issues/113): Upgrade to Java 11.
+
+### [1.7.0](https://github.com/jenetics/jpx/releases/tag/v1.7.0)
+
+#### Improvements
+
+* [#116](https://github.com/jenetics/jpx/issues/116): Create `XMLProvider` SPI, which allows to change the used XML implementation. (Implemented by [avianey](https://github.com/avianey).)
+
+### [1.6.1](https://github.com/jenetics/jpx/releases/tag/v1.6.1)
+
+#### Bugs
+
+* [#105](https://github.com/jenetics/jpx/issues/105): Location dependent formatting in `LocationFormatter`. (Fixed by [Segelzwerg](https://github.com/Segelzwerg).)
+* [#108](https://github.com/jenetics/jpx/issues/108): Make library compileable with Java 13.
+* [#110](https://github.com/jenetics/jpx/issues/110): Fix `Bounds.toBounds` collector. Wrong results for only _negative_ points.
+
+### [1.6.0](https://github.com/jenetics/jpx/releases/tag/v1.6.0)
+
+#### Improvements
+
+* [#87](https://github.com/jenetics/jpx/issues/87): Consistent exception handling. Invalid GPX files, read from file or input stream throwing now an `InvalidObjectException`. (Implemented by [Segelzwerg](https://github.com/Segelzwerg).)
+* [#97](https://github.com/jenetics/jpx/issues/97): Implement `Bounds.toBounds()` collector. This collector finds the bounds of a given `Point` stream.
+* [#102](https://github.com/jenetics/jpx/issues/102): Add `Point.getInstant` method.
+
+
+### [1.5.3](https://github.com/jenetics/jpx/releases/tag/v1.5.3)
+
+#### Bugs
+
+* [#94](https://github.com/jenetics/jpx/issues/94): NPE for empty 'extensions' XML-document.
+
 ### [1.5.2](https://github.com/jenetics/jpx/releases/tag/v1.5.2)
 
 #### Bugs

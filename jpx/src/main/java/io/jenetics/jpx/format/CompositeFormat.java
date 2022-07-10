@@ -19,30 +19,29 @@
  */
 package io.jenetics.jpx.format;
 
-import java.util.ArrayList;
+import java.text.ParsePosition;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.4
+ * @version 2.2
  * @since 1.4
  */
-final class CompositeFormat<T> implements Format<T> {
+class CompositeFormat implements Format {
 
-	private final List<Format<T>> _formats;
+	private final List<Format> _formats;
 
-	private CompositeFormat(final List<Format<T>> formats) {
-		_formats = new ArrayList<>(formats);
+	private CompositeFormat(final List<Format> formats) {
+		_formats = List.copyOf(formats);
 	}
 
 	@Override
-	public Optional<String> format(final T value) {
+	public Optional<String> format(final Location value) {
 		final List<Optional<String>> strings = _formats.stream()
 			.map(format -> format.format(value))
-			.collect(Collectors.toList());
+			.toList();
 
 		final boolean complete = strings.stream().allMatch(Optional::isPresent);
 		return complete
@@ -54,14 +53,25 @@ final class CompositeFormat<T> implements Format<T> {
 	}
 
 	@Override
-	public String toString() {
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		for(var format : _formats) {
+			format.parse(in, pos, builder);
+		}
+	}
+
+	@Override
+	public String toPattern() {
 		return _formats.stream()
-			.map(Objects::toString)
+			.map(Format::toPattern)
 			.collect(Collectors.joining());
 	}
 
-	static <T> CompositeFormat<T> of(final List<Format<T>> formats) {
-		return new CompositeFormat<>(formats);
+	static CompositeFormat of(final List<Format> formats) {
+		return new CompositeFormat(formats);
 	}
 
 }

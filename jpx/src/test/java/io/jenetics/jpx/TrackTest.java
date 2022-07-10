@@ -20,15 +20,18 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.util.Locale.ENGLISH;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.testng.Assert;
@@ -49,10 +52,14 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 
 	@Override
 	protected Params<Track> params(final Version version, final Random random) {
+		final var format = NumberFormat.getNumberInstance(ENGLISH);
+		final Function<String, Length> lengthParser = string ->
+			Length.parse(string, format);
+
 		return new Params<>(
 			() -> nextTrack(random),
-			Track.xmlReader(version),
-			Track.xmlWriter(version)
+			Track.xmlReader(version, lengthParser),
+			Track.xmlWriter(version, Formats::format)
 		);
 	}
 
@@ -91,7 +98,7 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		Assert.assertEquals(gpx.getTracks().size(), 1);
@@ -105,7 +112,7 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 		);
 
 		Assert.assertTrue(XML.equals(
-			gpx.getTracks().get(0).getExtensions().get(),
+			gpx.getTracks().get(0).getExtensions().orElseThrow(),
 			XML.parse("<extensions xmlns=\"http://www.topografix.com/GPX/1/1\"><foo>asdf</foo><foo>asdf</foo></extensions>")
 		));
 	}
@@ -181,9 +188,9 @@ public class TrackTest extends XMLStreamTestBase<Track> {
 			object.toBuilder().build(),
 			object
 		);
-		Assert.assertNotSame(
-			object.toBuilder().build(),
-			object
+		Assert.assertNotEquals(
+			System.identityHashCode(object.toBuilder().build()),
+			System.identityHashCode(object)
 		);
 	}
 

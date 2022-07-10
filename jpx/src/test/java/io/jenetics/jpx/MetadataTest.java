@@ -50,7 +50,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 		return new Params<>(
 			() -> nextMetadata(random),
 			Metadata.READER,
-			Metadata.WRITER
+			Metadata.writer(Formats::format)
 		);
 	}
 
@@ -87,6 +87,8 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 			.author("Franz Wilhelmstötter")
 			.addLink(Link.of("http://jenetics.io/jpx"))
 			.build();
+
+		Assert.assertNotNull(metadata);
 	}
 
 	@Test
@@ -100,9 +102,9 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 			metadata.toBuilder().build(),
 			metadata
 		);
-		Assert.assertNotSame(
-			metadata.toBuilder().build(),
-			metadata
+		Assert.assertNotEquals(
+			System.identityHashCode(metadata.toBuilder().build()),
+			System.identityHashCode(metadata)
 		);
 	}
 
@@ -112,7 +114,7 @@ public class MetadataTest extends XMLStreamTestBase<Metadata> {
 
 		final GPX gpx;
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
-			gpx = GPX.read(in);
+			gpx = GPX.Reader.DEFAULT.read(in);
 		}
 
 		final Metadata md = gpx.getMetadata().get();

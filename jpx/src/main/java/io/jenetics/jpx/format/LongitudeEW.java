@@ -19,23 +19,53 @@
  */
 package io.jenetics.jpx.format;
 
-import org.testng.annotations.Test;
+import java.text.ParsePosition;
+import java.util.Optional;
+
+import io.jenetics.jpx.Longitude;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
+ * @version 2.2
+ * @since 1.4
  */
-public class ValueFormatTest {
+enum LongitudeEW implements Format {
 
-	// -7.287954696138044 07°17'17"S 07°17'S -07.28795
-	// +88.918540267041150	88°55'07
-	@Test
-	public void format() {
-		//final double d = -7.287954696138044;
-		final double d = 88.918540267041150;
+	INSTANCE;
 
-		//System.out.println(ValueFormat.ofDegrees("#00").format(d));
-		//System.out.println(ValueFormat.ofMinutes("#00").format(d));
-		//System.out.println(ValueFormat.ofSeconds("#00.000").format(d));
+	@Override
+	public Optional<String> format(final Location value) {
+		return value.longitude()
+			.map(Longitude::toDegrees)
+			.map(v -> Double.compare(v, 0.0) >= 0 ? "E" : "W");
+	}
+
+	@Override
+	public void parse(
+		final CharSequence in,
+		final ParsePosition pos,
+		final LocationBuilder builder
+	) {
+		final int i = pos.getIndex();
+		switch (in.charAt(i)) {
+			case 'E' -> {
+				pos.setIndex(i + 1);
+				builder.setLongitudeSign(+1);
+			}
+			case 'W' -> {
+				pos.setIndex(i + 1);
+				builder.setLongitudeSign(-1);
+			}
+			default -> {
+				pos.setErrorIndex(i);
+				throw new ParseException("Not found E/W", in, i);
+			}
+		}
+	}
+
+	@Override
+	public String toPattern() {
+		return "x";
 	}
 
 }
