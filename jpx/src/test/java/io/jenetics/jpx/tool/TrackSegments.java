@@ -2,13 +2,17 @@ package io.jenetics.jpx.tool;
 
 import static java.lang.String.format;
 
+import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import io.jenetics.jpx.GPX;
+import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.WayPoint;
 
@@ -91,6 +95,17 @@ public final class TrackSegments {
 		}
 
 		return segments;
+	}
+
+	public static void main(String[] args) throws IOException {
+		final GPX gpx = GPX.Reader.DEFAULT.read("some_file.gpx");
+
+		final Stream<WayPoint> points = gpx.tracks()
+			.flatMap(Track::segments)
+			.flatMap(TrackSegment::points);
+
+		final List<TrackSegment> segments = points
+			.collect(toTrackSegments(Duration.ofMinutes(1), 10));
 	}
 
 }
