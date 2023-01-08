@@ -52,7 +52,7 @@ public class Normalizer {
 	);
 
 	public static void main(final String[] args) throws Exception {
-		final Path gpxDir = Paths.get("/home/fwilhelm/Downloads/2021/");
+		final Path gpxDir = Paths.get("/home/fwilhelm/Downloads/gpx/");
 		final Path outputDir = Paths.get("/home/fwilhelm/Downloads/normalized/");
 
 		Files.walkFileTree(gpxDir, new SimpleFileVisitor<>() {

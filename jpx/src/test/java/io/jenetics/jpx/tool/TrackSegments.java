@@ -24,7 +24,7 @@ public final class TrackSegments {
 	 * Return a new collector, which collects a given way point list into a list
 	 * of {@link TrackSegment}s. All way points without a timestamp are filtered
 	 * out. A new segment is created if the timestamp of two consecutive points
-	 * are greater then the give {@code maxGap} duration. Each segment will
+	 * are greater than the give {@code maxGap} duration. Each segment will
 	 * contain at least {@code minSegmentSize} points.
 	 *
 	 * @param maxGap the maximal allowed gap between two points within a
