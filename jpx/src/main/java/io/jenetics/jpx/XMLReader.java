@@ -128,6 +128,21 @@ abstract class XMLReader<T> {
 	 *         {@code null}
 	 */
 	public <B> XMLReader<B> map(final Function<? super T, ? extends B> mapper) {
+		return map(mapper, null);
+	}
+
+	/**
+	 * Create a new reader for the new mapped type {@code B}.
+	 *
+	 * @param mapper the mapper function
+	 * @param devault the default value if the mapping function fails and the
+	 *        reader is in {@link io.jenetics.jpx.GPX.Reader.Mode#LENIENT} mode
+	 * @param <B> the target type of the new reader
+	 * @return a new reader
+	 * @throws NullPointerException if the given {@code mapper} function is
+	 *         {@code null}
+	 */
+	public <B> XMLReader<B> map(final Function<? super T, ? extends B> mapper, B devault) {
 		requireNonNull(mapper);
 
 		return new XMLReader<B>(_name, _type) {
@@ -147,7 +162,7 @@ abstract class XMLReader<T> {
 							e
 						);
 					} else {
-						return null;
+						return devault;
 					}
 				}
 			}
