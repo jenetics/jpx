@@ -35,7 +35,7 @@ dependencyResolutionManagement {
 		create("libs") {
 			library("assertj", "org.assertj:assertj-core:3.24.2")
 			library("commons-math", "org.apache.commons:commons-math3:3.6.1")
-			library("equalsverifier", "nl.jqno.equalsverifier:equalsverifier:3.7.2")
+			library("equalsverifier", "nl.jqno.equalsverifier:equalsverifier:3.15.3")
 			library("guava", "com.google.guava:guava:32.1.3-jre")
 			library("prngine", "io.jenetics:prngine:2.0.0")
 			library("rxjava", "io.reactivex.rxjava2:rxjava:2.2.21")
