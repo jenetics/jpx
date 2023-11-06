@@ -25,13 +25,13 @@
  */
 plugins {
 	base
-	id("me.champeau.jmh") version "0.6.6" apply false
+	id("me.champeau.jmh") version "0.7.2" apply false
 }
 
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "7.4"
+	version = "8.4"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -129,7 +129,7 @@ fun setupTestReporting(project: Project) {
 	project.apply(plugin = "jacoco")
 
 	project.configure<JacocoPluginExtension> {
-		toolVersion = "0.8.7"
+		toolVersion = "0.8.9"
 	}
 
 	project.tasks {
