@@ -1966,7 +1966,7 @@ public final class GPX implements Serializable {
 	private static XMLReaders
 	readers(final Function<? super String, Length> lengthParser) {
 		return new XMLReaders()
-			.v00(XMLReader.attr("version").map(Version::of))
+			.v00(XMLReader.attr("version").map(Version::of, Version.V11))
 			.v00(XMLReader.attr("creator"))
 			.v11(Metadata.READER)
 			.v10(XMLReader.elem("name"))

@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
@@ -31,6 +33,10 @@ plugins {
 repositories {
 	mavenLocal()
 	gradlePluginPortal()
+}
+
+tasks.withType<KotlinCompile>().configureEach {
+	kotlinOptions.jvmTarget = "17"
 }
 
 configure<JavaPluginExtension> {
