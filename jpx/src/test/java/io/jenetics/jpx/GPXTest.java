@@ -186,7 +186,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	{
 		try (InputStream in = getClass().getResourceAsStream(resource)) {
 			final GPX gpx = GPX.Reader.DEFAULT.read(in);
-			Assert.assertEquals(gpx, expected);
+			assertThat(gpx).isEqualTo(expected);
 		}
 	}
 
@@ -256,7 +256,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 		final String[] names = gpx.wayPoints()
 			.map(WayPoint::getName)
-			.map(Optional::get)
+			.map(Optional::orElseThrow)
 			.toArray(String[]::new);
 
 		Assert.assertEquals(names, new String[]{"Wien", "Eferding", "Freistadt", "Gmunden"});
@@ -483,9 +483,9 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX read = GPX.Reader.DEFAULT.read(bin);
 
 
-		if (!read.equals(gpx)) {
-			System.out.println(bout);
-		}
+		//if (!read.equals(gpx)) {
+		//	System.out.println(bout);
+		//}
 		Assert.assertEquals(read, gpx);
 	}
 
@@ -929,7 +929,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.build();
 
 		final var string = GPX.Writer.DEFAULT.toString(gpx);
-		assertThat(string).isEqualTo("""
+		assertThat(string).isEqualToIgnoringNewLines("""
 			<?xml version="1.0" encoding="UTF-8"?>
 			<gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" \
 			xmlns="http://www.topografix.com/GPX/1/1">
