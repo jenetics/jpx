@@ -33,7 +33,7 @@ pluginManagement {
 dependencyResolutionManagement {
 	versionCatalogs {
 		create("libs") {
-			library("assertj", "org.assertj:assertj-core:3.20.2")
+			library("assertj", "org.assertj:assertj-core:3.24.2")
 			library("commons-math", "org.apache.commons:commons-math3:3.6.1")
 			library("equalsverifier", "nl.jqno.equalsverifier:equalsverifier:3.7.2")
 			library("guava", "com.google.guava:guava:31.0.1-jre")
