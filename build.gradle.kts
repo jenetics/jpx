@@ -25,7 +25,6 @@
  */
 plugins {
 	base
-	id("me.champeau.jmh") version "0.7.2" apply false
 }
 
 rootProject.version = JPX.VERSION
