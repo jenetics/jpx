@@ -254,12 +254,12 @@ public final class Geoid {
 	 * Return a collector which calculates the length of the (open) path which
 	 * is defined by the {@code Point} stream.
 	 *
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Length length = gpx.tracks()
 	 *     .flatMap(Track::segments)
 	 *     .flatMap(TrackSegment::points)
 	 *     .collect(Geoid.WGSC_84.toPathLength());
-	 * }</pre>
+	 * }
 	 *
 	 * <b>The returned {@code Collector} doesn't work for <em>parallel</em>
 	 * stream. Using it for a <em>parallel</em> point stream will throw an
@@ -283,12 +283,12 @@ public final class Geoid {
 	 * is defined by the {@code Point} stream. The <em>tour</em> length
 	 * additionally adds the distance of the last point back to the first point.
 	 *
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Length length = gpx.tracks()
 	 *     .flatMap(Track::segments)
 	 *     .flatMap(TrackSegment::points)
 	 *     .collect(Geoid.WGSC_84.toTourLength());
-	 * }</pre>
+	 * }
 	 *
 	 * <b>The returned {@code Collector} doesn't work for <em>parallel</em>
 	 * stream. Using it for a <em>parallel</em> point stream will throw an
