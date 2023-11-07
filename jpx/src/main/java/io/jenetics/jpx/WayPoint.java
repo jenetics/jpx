@@ -118,7 +118,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param source source of data. Included to give user some idea of
 	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
 	 *        Boston North", e.g. (optional)
-	 * @param links links to additional information about the way-point. May be
+	 * @param links links to additional information about the way-point. Maybe
 	 *        empty, but not {@code null}.
 	 * @param symbol text of GPS symbol name. For interchange with other
 	 *        programs, use the exact spelling of the symbol as displayed on the
@@ -1771,8 +1771,8 @@ public final class WayPoint implements Point, Serializable {
 	public static WayPoint of(final Point point) {
 		requireNonNull(point);
 
-		return point instanceof WayPoint
-			? (WayPoint)point
+		return point instanceof WayPoint wp
+			? wp
 			: of(
 				point.getLatitude(),
 				point.getLongitude(),
