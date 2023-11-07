@@ -21,7 +21,6 @@ package io.jenetics.jpx.geom;
 
 import static java.util.Objects.requireNonNull;
 
-import java.io.Serial;
 import java.io.Serializable;
 
 /**
@@ -33,14 +32,18 @@ import java.io.Serializable;
  * @see <a href="https://en.wikipedia.org/wiki/Earth_ellipsoid">Earth ellipsoid</a>
  * @see Geoid
  *
+ * @param name the name of the earth ellipsoid model
+ * @param A the equatorial radius, in meter
+ * @param B the polar radius, in meter
+ * @param F the inverse flattening
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version !__version__!
  * @since 1.0
  */
-public final class Ellipsoid implements Serializable {
-
-	@Serial
-	private static final long serialVersionUID = 1L;
+public record Ellipsoid(String name, double A, double B, double F)
+	implements Serializable
+{
 
 	/**
 	 * The ellipsoid of the <em>World Geodetic System: WGS 84</em>
@@ -48,7 +51,7 @@ public final class Ellipsoid implements Serializable {
 	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
 	 *     WGS-84</a>
 	 */
-	public static final Ellipsoid WGS84 = of(
+	public static final Ellipsoid WGS84 = new Ellipsoid(
 		"WGS-84",
 		6_378_137,
 		6_356_752.314245,
@@ -61,7 +64,7 @@ public final class Ellipsoid implements Serializable {
 	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
 	 */
-	public static final Ellipsoid IERS_1989 = of(
+	public static final Ellipsoid IERS_1989 = new Ellipsoid(
 		"IERS-1989",
 		6_378_136,
 		6_356_751.302,
@@ -74,7 +77,7 @@ public final class Ellipsoid implements Serializable {
 	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
 	 */
-	public static final Ellipsoid IERS_2003 = of(
+	public static final Ellipsoid IERS_2003 = new Ellipsoid(
 		"IERS-2003",
 		6_378_136.6,
 		6_356_751.9,
@@ -86,84 +89,17 @@ public final class Ellipsoid implements Serializable {
 	 */
 	public static final Ellipsoid DEFAULT = WGS84;
 
-	private final String _name;
-	private final double _a;
-	private final double _b;
-	private final double _f;
-
 	/**
 	 * Create a new earth ellipsoid with the given parameters.
 	 *
 	 * @param name the name of the earth ellipsoid model
-	 * @param a the equatorial radius, in meter
-	 * @param b the polar radius, in meter
-	 * @param f the inverse flattening
+	 * @param A the equatorial radius, in meter
+	 * @param B the polar radius, in meter
+	 * @param F the inverse flattening
 	 * @throws NullPointerException if the given {@code name} is {@code null}
 	 */
-	private Ellipsoid(
-		final String name,
-		final double a,
-		final double b,
-		final double f
-	) {
-		_name = requireNonNull(name);
-		_a = a;
-		_b = b;
-		_f = f;
-	}
-
-	/**
-	 * Return the name of the earth ellipsoid model.
-	 *
-	 * @return the name of the earth ellipsoid model
-	 */
-	public String getName() {
-		return _name;
-	}
-
-	/**
-	 * Return the equatorial radius, in meter.
-	 *
-	 * @return the equatorial radius, in meter
-	 */
-	public double A() {
-		return _a;
-	}
-
-	/**
-	 * Return the polar radius, in meter.
-	 *
-	 * @return the polar radius, in meter
-	 */
-	public double B() {
-		return _b;
-	}
-
-	/**
-	 * Return the inverse flattening.
-	 *
-	 * @return the inverse flattening
-	 */
-	public double F() {
-		return _f;
-	}
-
-	/**
-	 * Create a new earth ellipsoid with the given parameters.
-	 *
-	 * @param name the name of the earth ellipsoid model
-	 * @param a the equatorial radius, in meter
-	 * @param b the polar radius, in meter
-	 * @param f the inverse flattening
-	 * @return  a new earth ellipsoid with the given parameters
-	 */
-	public static Ellipsoid of(
-		final String name,
-		final double a,
-		final double b,
-		final double f
-	) {
-		return new Ellipsoid(name, a, b, f);
+	public Ellipsoid {
+		requireNonNull(name);
 	}
 
 }

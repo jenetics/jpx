@@ -27,10 +27,10 @@ import java.util.Optional;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 2.2
+ * @version !__version__!
  * @since 1.4
  */
-class OptionalFormat implements Format {
+final class OptionalFormat implements Format {
 
 	private final Format _format;
 

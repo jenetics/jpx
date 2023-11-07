@@ -26,10 +26,19 @@ import java.util.Optional;
  * Base interface for formatting and parsing a location.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 2.2
+ * @version !__version__!
  * @since 1.4
  */
-interface Format {
+sealed interface Format
+	permits
+		CompositeFormat,
+		ConstFormat,
+		Field,
+		LatitudeNS,
+		LongitudeEW,
+		OptionalFormat,
+		Plus
+{
 
 	/**
 	 * Formats the given {@code value} to its string representation. If it is not
