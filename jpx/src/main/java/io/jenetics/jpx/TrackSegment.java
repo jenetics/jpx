@@ -101,11 +101,11 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	/**
 	 * Return the (cloned) extensions document. The root element of the returned
 	 * document has the name {@code extensions}.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * <extensions>
 	 *     ...
 	 * </extensions>
-	 * }</pre>
+	 * }
 	 *
 	 * @since 1.5
 	 *
@@ -178,13 +178,13 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 	 * Builder class for creating immutable {@code TrackSegment} objects.
 	 * <p>
 	 * Creating a {@code TrackSegment} object with  3 track-points:
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final TrackSegment segment = TrackSegment.builder()
 	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
 	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
 	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
 	 *     .build();
-	 * }</pre>
+	 * }
 	 */
 	public static final class Builder implements Filter<WayPoint, TrackSegment> {
 		private final List<WayPoint> _points = new ArrayList<>();
@@ -223,13 +223,13 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		 * Add a way-point to the track-segment, via the given way-point builder.
 		 * <p>
 		 * Creating a {@code TrackSegment} object with  3 track-points:
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final TrackSegment segment = TrackSegment.builder()
 		 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
 		 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
 		 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @param point the segment way-point builder
 		 * @return {@code this} {@code Builder} for method chaining
@@ -255,11 +255,11 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Sets the extensions object, which may be {@code null}. The root
 		 * element of the extensions document must be {@code extensions}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * <extensions>
 		 *     ...
 		 * </extensions>
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.5
 		 *

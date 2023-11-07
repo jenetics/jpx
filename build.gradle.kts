@@ -25,7 +25,6 @@
  */
 plugins {
 	base
-	id("me.champeau.jmh") version "0.7.2" apply false
 }
 
 rootProject.version = JPX.VERSION
@@ -68,8 +67,8 @@ gradle.projectsEvaluated {
 
 		plugins.withType<JavaPlugin> {
 			configure<JavaPluginExtension> {
-				sourceCompatibility = JavaVersion.VERSION_17
-				targetCompatibility = JavaVersion.VERSION_17
+				sourceCompatibility = JavaVersion.VERSION_21
+				targetCompatibility = JavaVersion.VERSION_21
 			}
 
 			configure<JavaPluginExtension> {
@@ -166,13 +165,12 @@ fun setupJavadoc(project: Project) {
 		doclet.charSet = "UTF-8"
 		doclet.linkSource(true)
 		doclet.linksOffline(
-			"https://docs.oracle.com/en/java/javase/17/docs/api/",
+			"https://docs.oracle.com/en/java/javase/21/docs/api/",
 			"${project.rootDir}/buildSrc/resources/javadoc/java.se"
 		)
 		doclet.windowTitle = "JPX ${project.version}"
 		doclet.docTitle = "<h1>JPX ${project.version}</h1>"
 		doclet.bottom = "&copy; ${Env.COPYRIGHT_YEAR} Franz Wilhelmst&ouml;tter  &nbsp;<i>(${Env.BUILD_DATE})</i>"
-		doclet.stylesheetFile = project.file("${project.rootDir}/buildSrc/resources/javadoc/stylesheet.css")
 
 		doclet.tags = listOf(
 			"apiNote:a:API Note:",
@@ -187,38 +185,6 @@ fun setupJavadoc(project: Project) {
 				}
 				includeEmptyDirs = false
 				into(destinationDir!!)
-			}
-		}
-	}
-
-	val javadoc = project.tasks.findByName("javadoc") as Javadoc?
-	if (javadoc != null) {
-		project.tasks.register<io.jenetics.gradle.ColorizerTask>("colorizer") {
-			directory = javadoc.destinationDir!!
-		}
-
-		project.tasks.register("java2html") {
-			doLast {
-				project.javaexec {
-					mainClass.set("de.java2html.Java2Html")
-					args = listOf(
-						"-srcdir", "src/main/java",
-						"-targetdir", "${javadoc.destinationDir}/src-html/${project.extra["moduleName"]}"
-					)
-					classpath = files("${project.rootDir}/buildSrc/lib/java2html.jar")
-				}
-			}
-		}
-
-		javadoc.doLast {
-			val colorizer = project.tasks.findByName("colorizer")
-			colorizer?.actions?.forEach {
-				it.execute(colorizer)
-			}
-
-			val java2html = project.tasks.findByName("java2html")
-			java2html?.actions?.forEach {
-				it.execute(java2html)
 			}
 		}
 	}
@@ -239,13 +205,18 @@ fun xlint(): String {
 		"empty",
 		"exports",
 		"finally",
+		"lossy-conversions",
 		"module",
 		"opens",
 		"overrides",
 		"rawtypes",
 		"removal",
-		"serial",
+		// "serial",
 		"static",
+		"strictfp",
+		"synchronization",
+		"text-blocks",
+		"this-escape",
 		"try",
 		"unchecked",
 		"varargs"

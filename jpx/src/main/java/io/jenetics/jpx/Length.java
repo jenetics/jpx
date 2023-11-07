@@ -112,9 +112,9 @@ public final class Length
 		 * length value of {@code this} length unit. The given example converts 3
 		 * inches into yards.
 		 *
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final double yards = YARD.convert(3, INCH);
-		 * }</pre>
+		 * }
 		 *
 		 * @param length the length value
 		 * @param sourceUnit the source length unit

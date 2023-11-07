@@ -23,16 +23,16 @@ import java.util.Optional;
 import io.jenetics.jpx.Longitude;
 
 /**
- * This field allows to access the longitude degrees of a given location. If the
+ * This field allows accessing the longitude degrees of a given location. If the
  * pattern has a fractional part, the longitude is rounded to match the pattern.
  * If the pattern has no fractional part, the longitude is truncated rather than
  * rounded, on the assumption that the fractional part will be represented by
  * minutes and seconds.
  *
- * @version 2.2
+ * @version !__version__!
  * @since 2.2
  */
-class LongitudeDegree extends Field {
+final class LongitudeDegree extends Field {
 
 	LongitudeDegree(final String pattern) {
 		super(pattern, 'd');

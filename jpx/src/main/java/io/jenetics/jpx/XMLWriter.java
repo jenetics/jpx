@@ -110,9 +110,9 @@ interface XMLWriter<T> {
 	 * Writes the attribute with the given {@code name} to the current
 	 * <em>outer</em> element.
 	 *
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final XMLWriter<String> writer1 = elem("element", attr("attribute"));
-	 * }</pre>
+	 * }
 	 *
 	 * @param name the attribute name
 	 * @param <T> the writer base type
