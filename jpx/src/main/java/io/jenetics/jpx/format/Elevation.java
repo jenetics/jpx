@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * This field allows accessing the elevation (in meter) of a given location.
  *
- * @version !__version__!
+ * @version 4.0
  * @since 2.2
  */
 final class Elevation extends Field {

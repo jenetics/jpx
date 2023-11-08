@@ -38,7 +38,7 @@ import java.io.Serializable;
  * @param F the inverse flattening
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 4.0
  * @since 1.0
  */
 public record Ellipsoid(String name, double A, double B, double F)

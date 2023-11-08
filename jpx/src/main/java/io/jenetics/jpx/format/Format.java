@@ -26,7 +26,7 @@ import java.util.Optional;
  * Base interface for formatting and parsing a location.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 4.0
  * @since 1.4
  */
 sealed interface Format

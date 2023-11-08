@@ -27,7 +27,7 @@ import java.util.Optional;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 4.0
  * @since 1.4
  */
 final class OptionalFormat implements Format {

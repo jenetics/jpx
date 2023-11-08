@@ -29,7 +29,7 @@ import io.jenetics.jpx.Longitude;
  * rounded, on the assumption that the fractional part will be represented by
  * minutes and seconds.
  *
- * @version !__version__!
+ * @version 4.0
  * @since 2.2
  */
 final class LongitudeDegree extends Field {

@@ -47,7 +47,7 @@ import io.jenetics.jpx.Point;
  * @param ellipsoid the ellipsoid used by the geoid
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version !__version__!
+ * @version 4.0
  * @since 1.0
  */
 public record Geoid(Ellipsoid ellipsoid) implements Serializable {
