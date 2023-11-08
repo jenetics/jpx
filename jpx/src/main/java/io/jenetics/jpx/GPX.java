@@ -2076,7 +2076,7 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read a GPX object from the given {@code input} stream.
 	 * This method is a shortcut for
 	 * {@snippet lang="java":
 	 * GPX.Reader.DEFAULT.read(path);

@@ -21,7 +21,7 @@
 /**
  * This is the base package of the <a href="https://github.com/jenetics/jpx">
  * JPX</a> library. It contains the <em>domain</em> objects which are needed
- * for fully modelling of the <a href="https://www.topografix.com/GPX/1/1/">
+ * for full modeling of the <a href="https://www.topografix.com/GPX/1/1/">
  * GPX standard 1.1</a> and <a href="http://www.topografix.com/gpx_manual.as">
  * 1.0</a>.
  *
