@@ -24,6 +24,8 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
+import io.jenetics.facilejdbc.spi.SqlTypeMapper;
+
 import io.jenetics.jpx.DGPSStation;
 import io.jenetics.jpx.Degrees;
 import io.jenetics.jpx.Fix;
@@ -32,8 +34,6 @@ import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Longitude;
 import io.jenetics.jpx.Speed;
 import io.jenetics.jpx.UInt;
-
-import io.jenetics.facilejdbc.spi.SqlTypeMapper;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>

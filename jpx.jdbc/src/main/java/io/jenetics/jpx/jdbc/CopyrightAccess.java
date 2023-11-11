@@ -27,11 +27,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.time.Year;
 
-import io.jenetics.jpx.Copyright;
-
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
 import io.jenetics.facilejdbc.RowParser;
+
+import io.jenetics.jpx.Copyright;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -41,15 +41,17 @@ import io.jenetics.facilejdbc.RowParser;
 public final class CopyrightAccess {
 	private CopyrightAccess() {}
 
-	private static final Query SELECT = Query.of(
-		"SELECT id, author, year, license " +
-		"FROM copyright " +
-		"WHERE id = :id"
+	private static final Query SELECT = Query.of("""
+		SELECT id, author, year, license
+		FROM copyright
+		WHERE id = :id
+		"""
 	);
 
-	private static final Query INSERT = Query.of(
-		"INSERT INTO copyright(author, year, license) " +
-		"VALUES(:author, :year, :license)"
+	private static final Query INSERT = Query.of("""
+		INSERT INTO copyright(author, year, license)
+		VALUES(:author, :year, :license)
+		"""
 	);
 
 	private static final RowParser<Copyright> PARSER = (row, conn) -> Copyright.of(

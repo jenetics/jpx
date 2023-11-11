@@ -25,14 +25,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
+
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.Route;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.WayPoint;
-
-import io.jenetics.facilejdbc.Batch;
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -42,9 +42,10 @@ import io.jenetics.facilejdbc.Query;
 public final class GPXAccess {
 	private GPXAccess() {}
 
-	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO gpx(version, creator, metadata_id) " +
-		"VALUES(:version, :creator, :metadata_id);"
+	private static final Query INSERT_QUERY = Query.of("""
+		INSERT INTO gpx(version, creator, metadata_id)
+		VALUES(:version, :creator, :metadata_id)
+		"""
 	);
 
 	private static final Dctor<GPX> DCTOR = Dctor.of(
@@ -52,7 +53,7 @@ public final class GPXAccess {
 		field("creator", GPX::getCreator),
 		field(
 			"metadata_id",
-			(g, c) -> MetadataAccess.insert(g.getMetadata().orElse(null), c)
+			(gpx, conn) -> MetadataAccess.insert(gpx.getMetadata().orElse(null), conn)
 		)
 	);
 
@@ -73,9 +74,10 @@ public final class GPXAccess {
 		return id;
 	}
 
-	private static final Query WAY_POINT_INSERT_QUERY = Query.of(
-		"INSERT INTO gpx_way_point(gpx_id, way_point_id) " +
-		"VALUES(:gpx_id, :way_point_id);"
+	private static final Query WAY_POINT_INSERT_QUERY = Query.of("""
+		INSERT INTO gpx_way_point(gpx_id, way_point_id)
+		VALUES(:gpx_id, :way_point_id)
+		"""
 	);
 
 	private static void insertWayPoints(
@@ -96,9 +98,10 @@ public final class GPXAccess {
 		WAY_POINT_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
-	private static final Query ROUTE_INSERT_QUERY = Query.of(
-		"INSERT INTO gpx_route(gpx_id, route_id) " +
-		"VALUES(:gpx_id, :route_id);"
+	private static final Query ROUTE_INSERT_QUERY = Query.of("""
+		INSERT INTO gpx_route(gpx_id, route_id)
+		VALUES(:gpx_id, :route_id)
+		"""
 	);
 
 	private static void insertRoutes(
@@ -119,9 +122,10 @@ public final class GPXAccess {
 		ROUTE_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
-	private static final Query TRACK_INSERT_QUERY = Query.of(
-		"INSERT INTO gpx_track(gpx_id, track_id) " +
-		"VALUES(:gpx_id, :track_id);"
+	private static final Query TRACK_INSERT_QUERY = Query.of("""
+		INSERT INTO gpx_track(gpx_id, track_id)
+		VALUES(:gpx_id, :track_id)
+		"""
 	);
 
 	private static void insertTracks(

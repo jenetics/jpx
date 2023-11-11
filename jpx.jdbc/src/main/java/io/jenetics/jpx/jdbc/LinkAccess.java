@@ -26,11 +26,11 @@ import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import io.jenetics.jpx.Link;
-
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
 import io.jenetics.facilejdbc.RowParser;
+
+import io.jenetics.jpx.Link;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -40,15 +40,17 @@ import io.jenetics.facilejdbc.RowParser;
 public final class LinkAccess {
 	private LinkAccess() {}
 
-	private static final Query SELECT = Query.of(
-		"SELECT id, href, text, type " +
-		"FROM link " +
-		"WHERE id = :id;"
+	private static final Query SELECT = Query.of("""
+		SELECT id, href, text, type
+		FROM link
+		WHERE id = :id
+		"""
 	);
 
-	private static final Query INSERT = Query.of(
-		"INSERT INTO link(href, text, type) " +
-		"VALUES(:href, :text, :type);"
+	private static final Query INSERT = Query.of("""
+		INSERT INTO link(href, text, type)
+		VALUES(:href, :text, :type)
+		"""
 	);
 
 	private static final RowParser<Link> PARSER = (row, conn) -> Link.of(

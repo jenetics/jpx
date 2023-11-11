@@ -25,13 +25,13 @@ import static io.jenetics.facilejdbc.Param.value;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import io.jenetics.jpx.Email;
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.Person;
-
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
 import io.jenetics.facilejdbc.RowParser;
+
+import io.jenetics.jpx.Email;
+import io.jenetics.jpx.Link;
+import io.jenetics.jpx.Person;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -41,16 +41,18 @@ import io.jenetics.facilejdbc.RowParser;
 public final class PersonAccess {
 	private PersonAccess() {}
 
-	private static final Query SELECT = Query.of(
-		"SELECT person.id, name, email, link_href, link_text, link_type " +
-		"FROM person " +
-		"INNER JOIN link on person.link_id = link.id " +
-		"WHERE person.id = :id"
+	private static final Query SELECT = Query.of("""
+		SELECT person.id, name, email, link_href, link_text, link_type
+		FROM person
+		INNER JOIN link on person.link_id = link.id
+		WHERE person.id = :id
+		"""
 	);
 
-	private static final Query INSERT = Query.of(
-		"INSERT INTO person(name, email, link_id) " +
-		"VALUES(:name, :email, :link_id);"
+	private static final Query INSERT = Query.of("""
+		INSERT INTO person(name, email, link_id)
+		VALUES(:name, :email, :link_id)
+		"""
 	);
 
 	private static final RowParser<Person> PARSER = (row, conn) -> Person.of(

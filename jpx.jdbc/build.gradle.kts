@@ -24,102 +24,25 @@
  * @version 1.0
  */
 
-import io.franzbecker.gradle.lombok.task.DelombokTask
-
 plugins {
-	id "io.franzbecker.gradle-lombok" version "3.2.0"
+	`java-library`
+	idea
+	`maven-publish`
+	alias(libs.plugins.lombok)
 }
 
-apply plugin: 'java-library'
-apply plugin: 'maven'
-apply plugin: 'signing'
+description = "JPX - Java GPX (GPS) Library"
 
-compileTestJava.dependsOn tasks.getByPath(':jpx:compileTestJava')
-
-description = 'JPX - Java GPX Library'
-
-repositories {
-	mavenCentral()
-	jcenter()
-}
+extra["moduleName"] = "io.jenetics.jpx.jdbc"
 
 dependencies {
-	api project(':jpx')
-	implementation 'io.jenetics:facilejdbc:0.3.0'
+	api(project(":jpx"))
+	api(libs.facilejdbc)
 
-	testImplementation project(':jpx').sourceSets.test.output
-	testImplementation 'org.testng:testng:6.9.10'
-	testImplementation 'com.h2database:h2:1.4.193'
-	testImplementation 'mysql:mysql-connector-java:6.0.5'
-	testImplementation 'org.mariadb.jdbc:mariadb-java-client:2.4.3'
-	testImplementation 'org.postgresql:postgresql:42.2.7'
+	testImplementation(libs.assertj)
+	testImplementation(libs.equalsverifier)
+	testImplementation(libs.prngine)
+	testImplementation(libs.testng)
+	testImplementation(libs.h2)
 }
 
-task delombok(type: DelombokTask, dependsOn: compileJava) {
-	ext.outputDir = file("$buildDir/delombok")
-	outputs.dir(outputDir)
-	sourceSets.main.java.srcDirs.each {
-		inputs.dir(it)
-		args(it, "-d", outputDir)
-	}
-	doFirst {
-		outputDir.deleteDir()
-	}
-}
-
-javadoc {
-	dependsOn delombok
-
-	project.configure(options) {
-		memberLevel = 'PROTECTED'
-		version = true
-		author = true
-		docEncoding = 'UTF-8'
-		charSet = 'UTF-8'
-		linkSource = true
-		links = [
-			'https://docs.oracle.com/javase/8/docs/api',
-			'https://jenetics.github.io/jpx/javadoc/jpx'
-		]
-		windowTitle = "JPX ${project.version}"
-		docTitle = "<h1>JPX ${project.version}</h1>"
-		bottom = "&copy; ${copyrightYear} Franz Wilhelmst&ouml;tter  &nbsp;<i>(${dateformat.format(now)})</i>"
-		options.tags = ["apiNote:a:API Note:",
-						"implSpec:a:Implementation Requirements:",
-						"implNote:a:Implementation Note:"]
-		//exclude '**/internal/**'
-	}
-
-	// Copy the doc-files.
-	doLast {
-		project.copy {
-			from('src/main/java') {
-				include 'org/**/doc-files/*.*'
-			}
-			includeEmptyDirs = false
-			into destinationDir.path
-		}
-	}
-}
-
-test {
-	testLogging.showStandardStreams = true
-	useTestNG {
-		preserveOrder true
-		parallel = 'tests' // 'methods'
-	}
-}
-
-jar {
-	manifest {
-		attributes(
-			'Implementation-Title': 'JPX - Java GPX library',
-			'Implementation-Version': "${project.name}-${project.version}",
-			'Implementation-URL': 'https://jenetics.github.io/jpx',
-			'Implementation-Vendor': 'jenetics',
-			'ProjectName': project.name,
-			'Version': project.version,
-			'Maintainer': 'Franz Wilhelmstötter'
-		)
-	}
-}

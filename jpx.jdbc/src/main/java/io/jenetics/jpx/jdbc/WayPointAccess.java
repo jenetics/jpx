@@ -25,12 +25,13 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import io.jenetics.jpx.Link;
-import io.jenetics.jpx.WayPoint;
-
 import io.jenetics.facilejdbc.Batch;
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
+import io.jenetics.facilejdbc.RowParser;
+
+import io.jenetics.jpx.Link;
+import io.jenetics.jpx.WayPoint;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -40,54 +41,30 @@ import io.jenetics.facilejdbc.Query;
 public final class WayPointAccess {
 	private WayPointAccess() {}
 
-	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO way_point(" +
-			"lat, " +
-			"lon, " +
-			"ele, " +
-			"speed, " +
-			"time, " +
-			"magvar, " +
-			"geoidheight, " +
-			"name, " +
-			"cmt, " +
-			"dscr, " +
-			"src," +
-			"sym, " +
-			"type, " +
-			"fix, " +
-			"sat, " +
-			"hdop, " +
-			"vdop, " +
-			"pdop, " +
-			"ageofdgpsdata, " +
-			"dgpsid, " +
-			"course " +
-		") " +
-		"VALUES(" +
-			":lat, " +
-			":lon, " +
-			":ele, " +
-			":speed, " +
-			":time, " +
-			":magvar, " +
-			":geoidheight, " +
-			":name, " +
-			":cmt, " +
-			":dscr, " +
-			":src," +
-			":sym, " +
-			":type, " +
-			":fix, " +
-			":sat, " +
-			":hdop, " +
-			":vdop, " +
-			":pdop, " +
-			":ageofdgpsdata, " +
-			":dgpsid, " +
-			":course" +
-		");"
+	private static final Query INSERT = Query.of("""
+		INSERT INTO way_point(
+			lat, lon, ele, speed, time, magvar, geoidheight, name, cmt,
+			dscr, src, sym, type, fix, sat, hdop, vdop, pdop, ageofdgpsdata,
+			dgpsid, course
+		)
+		VALUES(
+			:lat, :lon, :ele, :speed, :time, :magvar, :geoidheight, :name, :cmt,
+			:dscr, :src, :sym, :type, :fix, :sat, :hdop, :vdop, :pdop, :ageofdgpsdata,
+			:dgpsid, :course
+		)
+		"""
 	);
+
+	private static final RowParser<WayPoint> PARSER = (row, conn) -> {
+		WayPoint.builder()
+			.lat(row.getDouble("lat"))
+			.lon(row.getDouble("lon"))
+			.ele(row.getDouble("ele"))
+			.speed(row.getDouble("speed"))
+			//.time(row.getTimestamp("time"))
+			.build();
+		return null;
+	};
 
 	private static final Dctor<WayPoint> DCTOR = Dctor.of(
 		field("lat", WayPoint::getLatitude),
@@ -118,7 +95,7 @@ public final class WayPointAccess {
 	{
 		if (wp == null) return null;
 
-		final Long id = INSERT_QUERY
+		final Long id = INSERT
 			.on(wp, DCTOR)
 			.executeInsert(conn)
 			.orElseThrow();
@@ -127,9 +104,10 @@ public final class WayPointAccess {
 		return id;
 	}
 
-	private static final Query LINK_INSERT_QUERY = Query.of(
-		"INSERT INTO way_point_link(way_point_id, link_id) " +
-		"VALUES(:way_point_id, :link_id);"
+	private static final Query LINK_INSERT_QUERY = Query.of("""
+		INSERT INTO way_point_link(way_point_id, link_id)
+		VALUES(:way_point_id, :link_id)
+		"""
 	);
 
 	private static void insertLinks(

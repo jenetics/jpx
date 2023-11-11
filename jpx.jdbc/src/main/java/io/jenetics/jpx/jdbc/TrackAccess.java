@@ -26,14 +26,14 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
+
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Track;
 import io.jenetics.jpx.TrackSegment;
 import io.jenetics.jpx.UInt;
-
-import io.jenetics.facilejdbc.Batch;
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -43,9 +43,10 @@ import io.jenetics.facilejdbc.Query;
 public final class TrackAccess {
 	private TrackAccess() {}
 
-	private static final Query INSERT_QUERY = Query.of(
-		"INSERT INTO track(name, cmt, dscr, src, number, type) " +
-		"VALUES(:name, :cmt, :dscr, :src, :number, :type)"
+	private static final Query INSERT_QUERY = Query.of("""
+		INSERT INTO track(name, cmt, dscr, src, number, type)
+		VALUES(:name, :cmt, :dscr, :src, :number, :type)
+		"""
 	);
 
 	private static final Dctor<Track> DCTOR = Dctor.of(
@@ -72,9 +73,10 @@ public final class TrackAccess {
 		return id;
 	}
 
-	private static final Query LINK_INSERT_QUERY = Query.of(
-		"INSERT INTO track_link(track_id, link_id) " +
-		"VALUES(:track_id, :link_id);"
+	private static final Query LINK_INSERT_QUERY = Query.of("""
+		INSERT INTO track_link(track_id, link_id)
+		VALUES(:track_id, :link_id)
+		"""
 	);
 
 	private static void insertLinks(
@@ -95,9 +97,10 @@ public final class TrackAccess {
 		LINK_INSERT_QUERY.executeUpdate(batch, conn);
 	}
 
-	private static final Query SEGMENT_INSERT_QUERY = Query.of(
-		"INSERT INTO track_track_segment(track_id, track_segment_id) " +
-		"VALUES(:track_id, :track_segment_id);"
+	private static final Query SEGMENT_INSERT_QUERY = Query.of("""
+		INSERT INTO track_track_segment(track_id, track_segment_id)
+		VALUES(:track_id, :track_segment_id)
+		"""
 	);
 
 	private static void insertSegments(

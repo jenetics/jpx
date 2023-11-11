@@ -25,11 +25,11 @@ import static io.jenetics.facilejdbc.Param.value;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import io.jenetics.jpx.Bounds;
-
 import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
 import io.jenetics.facilejdbc.RowParser;
+
+import io.jenetics.jpx.Bounds;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -39,15 +39,17 @@ import io.jenetics.facilejdbc.RowParser;
 public final class BoundsAccess {
 	private BoundsAccess() {}
 
-	private static final Query SELECT = Query.of(
-		"SELECT minlat, minlon, maxlat, maxlon " +
-		"FROM bounds " +
-		"WHERE id = :id"
+	private static final Query SELECT = Query.of("""
+		SELECT minlat, minlon, maxlat, maxlon
+		FROM bounds
+		WHERE id = :id
+		"""
 	);
 
-	private static final Query INSERT = Query.of(
-		"INSERT INTO bounds(minlat, minlon, maxlat, maxlon) " +
-		"VALUES(:minlat, :minlon, :maxlat, :maxlon)"
+	private static final Query INSERT = Query.of("""
+		INSERT INTO bounds(minlat, minlon, maxlat, maxlon)
+		VALUES(:minlat, :minlon, :maxlat, :maxlon)
+		"""
 	);
 
 	private static final RowParser<Bounds> PARSER = (row, conn) -> Bounds.of(

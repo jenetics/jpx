@@ -30,23 +30,11 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.time.ZonedDateTime;
-import java.util.Comparator;
 import java.util.Random;
-import java.util.stream.Stream;
 
-import org.testng.annotations.Test;
-
-import io.jenetics.jpx.Bounds;
-import io.jenetics.jpx.Copyright;
-import io.jenetics.jpx.Email;
 import io.jenetics.jpx.GPX;
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
-import io.jenetics.jpx.GPXTest;
-import io.jenetics.jpx.Person;
-import io.jenetics.jpx.Track;
-import io.jenetics.jpx.TrackSegment;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -56,7 +44,7 @@ import io.jenetics.jpx.TrackSegment;
 public class GPXAccessTest {
 
 	private final Random random = new Random(1231321);
-	private final GPX gpx = GPXTest.nextGPX(random);
+	private final GPX gpx = GPX.builder().build(); //GPXTest.nextGPX(random);
 
 	//@BeforeClass
 	public void setup() throws IOException, SQLException {
@@ -111,7 +99,7 @@ public class GPXAccessTest {
 					file.toString().endsWith(".gpx") &&
 					!file.toString().contains("Raw"))
 				{
-					final GPX gpx = fix(GPX.reader(Version.V10, Mode.LENIENT).read(file));
+					final GPX gpx = GPX.Reader.of(Version.V10, Mode.LENIENT).read(file);
 
 //					final Path export = Paths.get(
 //						"/home/fwilhelm/Downloads/gpx/",
@@ -138,35 +126,35 @@ public class GPXAccessTest {
 		});
 	}
 
-	private static GPX fix(final GPX gpx) {
-		final Person author = Person.of(
-			"Franz Wilhelmstötter",
-			Email.of("franz.wilhelmstoetter@gmail.com")
-		);
-		final Copyright copyright = Copyright.of("Franz Wilhelmstötter");
-		final Bounds bounds = gpx.tracks()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points)
-			.collect(Bounds.toBounds());
-
-		final ZonedDateTime time = gpx.tracks()
-			.flatMap(Track::segments)
-			.flatMap(TrackSegment::points)
-			.flatMap(wp -> wp.getTime().map(Stream::of).orElse(Stream.empty()))
-			.min(Comparator.naturalOrder())
-			.orElse(null);
-
-
-		return gpx.toBuilder()
-			.version(Version.V11)
-			.creator("JPX - https://github.com/jenetics/jpx")
-			.metadata(md -> md
-				.name(format("tracks-%s", time != null ? time.toLocalDate() : null))
-				.author(author)
-				.copyright(copyright)
-				.bounds(bounds)
-				.time(time))
-			.build();
-	}
+//	private static GPX fix(final GPX gpx) {
+//		final Person author = Person.of(
+//			"Franz Wilhelmstötter",
+//			Email.of("franz.wilhelmstoetter@gmail.com")
+//		);
+//		final Copyright copyright = Copyright.of("Franz Wilhelmstötter");
+//		final Bounds bounds = gpx.tracks()
+//			.flatMap(Track::segments)
+//			.flatMap(TrackSegment::points)
+//			.collect(Bounds.toBounds());
+//
+//		final ZonedDateTime time = gpx.tracks()
+//			.flatMap(Track::segments)
+//			.flatMap(TrackSegment::points)
+//			.flatMap(wp -> wp.getTime().map(Stream::of).orElse(Stream.empty()))
+//			.min(Comparator.naturalOrder())
+//			.orElse(null);
+//
+//
+//		return gpx.toBuilder()
+//			.version(Version.V11)
+//			.creator("JPX - https://github.com/jenetics/jpx")
+//			.metadata(md -> md
+//				.name(format("tracks-%s", time != null ? time.toLocalDate() : null))
+//				.author(author)
+//				.copyright(copyright)
+//				.bounds(bounds)
+//				.time(time))
+//			.build();
+//	}
 
 }

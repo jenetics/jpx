@@ -29,20 +29,18 @@ import lombok.experimental.Accessors;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
+
+import io.jenetics.facilejdbc.Batch;
+import io.jenetics.facilejdbc.Dctor;
+import io.jenetics.facilejdbc.Query;
+import io.jenetics.facilejdbc.RowParser;
 
 import io.jenetics.jpx.Bounds;
 import io.jenetics.jpx.Copyright;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.Metadata;
 import io.jenetics.jpx.Person;
-
-import io.jenetics.facilejdbc.Batch;
-import io.jenetics.facilejdbc.Dctor;
-import io.jenetics.facilejdbc.Query;
-import io.jenetics.facilejdbc.RowParser;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
@@ -65,31 +63,17 @@ public final class MetadataAccess {
 		private final Long boundsId;
 	}
 
-	private static final Query SELECT = Query.of(
-		"SELECT name, dscr, time, keywords, person_id, copyright_id, bounds_id " +
-		"FROM metadata " +
-		"WHERE id = :id"
+	private static final Query SELECT = Query.of("""
+		SELECT name, dscr, time, keywords, person_id, copyright_id, bounds_id
+		FROM metadata
+		WHERE id = :id
+		"""
 	);
 
-	private static final Query INSERT = Query.of(
-		"INSERT INTO metadata(" +
-			"name, " +
-			"dscr, " +
-			"time, " +
-			"keywords, " +
-			"person_id, " +
-			"copyright_id, " +
-			"bounds_id" +
-		") " +
-		"VALUES(" +
-			":name, " +
-			":dscr, " +
-			":time, " +
-			":keywords, " +
-			":person_id, " +
-			":copyright_id, " +
-			":bounds_id" +
-		")"
+	private static final Query INSERT = Query.of("""
+		INSERT INTO metadata(name, dscr, time, keywords, person_id, copyright_id, bounds_id)
+		VALUES(:name, :dscr, :time, :keywords, :person_id, :copyright_id, :bounds_id)
+		"""
 	);
 
 	private static final RowParser<MetadataRow> ROW_PARSER = (row, conn) ->
@@ -140,7 +124,7 @@ public final class MetadataAccess {
 		return Metadata.builder()
 			.name(row.name())
 			.desc(row.desc())
-			.time(ZonedDateTime.ofInstant(row.time().toInstant(), ZoneId.systemDefault()))
+			.time(row.time().toInstant())
 			.keywords(row.keyword())
 			.author(author)
 			.copyright(copyright)
@@ -162,9 +146,10 @@ public final class MetadataAccess {
 		return id;
 	}
 
-	private static final Query LINK_INSERT_QUERY = Query.of(
-		"INSERT INTO metadata_link(metadata_id, link_id " +
-		"VALUES(:metadata_id, :link_id);"
+	private static final Query LINK_INSERT_QUERY = Query.of("""
+		INSERT INTO metadata_link(metadata_id, link_id)
+		VALUES(:metadata_id, :link_id)
+		"""
 	);
 
 	private static void insertLinks(
