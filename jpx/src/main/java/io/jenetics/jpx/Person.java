@@ -52,7 +52,7 @@ public final class Person implements Serializable {
 	 *
 	 * @param name name of person or organization
 	 * @param email the person's email address
-	 * @param link link to Web site or other external information about person
+	 * @param link link to website or other external information about person
 	 */
 	private Person(final String name, final Email email, final Link link) {
 		_name = name;
@@ -79,9 +79,9 @@ public final class Person implements Serializable {
 	}
 
 	/**
-	 * Return the link to Web site or other external information about person.
+	 * Return the link to website or other external information about person.
 	 *
-	 * @return the link to Web site or other external information about person
+	 * @return the link to website or other external information about person
 	 */
 	public Optional<Link> getLink() {
 		return Optional.ofNullable(_link);
@@ -137,7 +137,7 @@ public final class Person implements Serializable {
 	 *
 	 * @param name name of person or organization
 	 * @param email the person's email address
-	 * @param link link to Web site or other external information about person
+	 * @param link link to website or other external information about person
 	 * @return a new {@code Person} object with the given parameters
 	 */
 	public static Person of(final String name, final Email email, final Link link) {

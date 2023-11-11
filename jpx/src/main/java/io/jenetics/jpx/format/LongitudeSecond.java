@@ -21,7 +21,7 @@ import java.util.Optional;
 import io.jenetics.jpx.Longitude;
 
 /**
- * This field allows to access the absolute value of the second part of the
+ * This field allows accessing the absolute value of the second part of the
  * longitude of a given location.
  *
  * @version 2.2

@@ -43,7 +43,7 @@ public final class Filters {
 	/**
 	 * Merges the given segments into one segment containing all way-points. The
 	 * order of the way-points is preserved.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final GPX merged = gpx.toBuilder()
 	 *     .trackFilter()
 	 *         .map(track -> track.toBuilder()
@@ -52,7 +52,7 @@ public final class Filters {
 	 *             .build())
 	 *         .build()
 	 *     .build();
-	 * }</pre>
+	 * }
 	 *
 	 * @param segments the segment list to merge
 	 * @return a list with one segment, containing all way-points of the original
@@ -72,14 +72,14 @@ public final class Filters {
 	/**
 	 * Merges the given tracks into one track containing all segments. The order
 	 * of the segments is preserved.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final GPX merged = gpx.toBuilder()
 	 *     .trackFilter()
 	 *         .listMap(Filters::mergeTracks)
 	 *         .filter(Track::nonEmpty)
 	 *         .build())
 	 *     .build();
-	 * }</pre>
+	 * }
 	 *
 	 * @param tracks the track list to merge
 	 * @return a list with one track, containing all segments
@@ -103,13 +103,13 @@ public final class Filters {
 	 * Merges all way-points of all segments of the given track list into one
 	 * track with one segment, containing all way-points. The order of the
 	 * way-points is preserved.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final GPX merged = gpx.toBuilder()
 	 *     .trackFilter()
 	 *         .listMap(Filters::fullyMergeTracks)
 	 *         .build())
 	 *     .build();
-	 * }</pre>
+	 * }
 	 *
 	 *
 	 * @param tracks the track list to merge
@@ -135,10 +135,10 @@ public final class Filters {
 	 * Return a new {@code GPX} object with all <i>empty</i> elements (tracks,
 	 * track-segments, routes and metadata) removed. This method can be used
 	 * to clean up the GPX object before writing it to file.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final GPX gpx = ...;
 	 * final GPX.write(Filters.nonEmptyGPX(gpx), "tracks.gpx", "    ");
-	 * }</pre>
+	 * }
 	 *
 	 * @param gpx the GPX object to clean up
 	 * @return a new {@code GPX} object with all <i>empty</i> elements removed

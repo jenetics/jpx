@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+	 xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	 xmlns:ns3="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
+	 creator="Zepp App" version="7.7.5-play"
+>
+	<trk>
+		<name><![CDATA[20230507 mile iles]]></name>
+		<trkseg>
+			<trkpt lat="45.5898" lon="-73.67509">
+				<ele>42.05</ele>
+				<time>2023-05-07T18:34:59Z</time>
+				<extensions>
+					<ns3:TrackPointExtension>
+						<ns3:speed>2.3255813</ns3:speed>
+						<ns3:cad>0.0</ns3:cad>
+						<ns3:hr>72</ns3:hr>
+					</ns3:TrackPointExtension>
+				</extensions>
+			</trkpt>
+			<trkpt lat="45.589817" lon="-73.67511">
+				<ele>42.05</ele>
+				<time>2023-05-07T18:34:59Z</time>
+				<extensions>
+					<ns3:TrackPointExtension>
+						<ns3:speed>2.3255813</ns3:speed>
+						<ns3:cad>0.0</ns3:cad>
+						<ns3:hr>72</ns3:hr>
+					</ns3:TrackPointExtension>
+				</extensions>
+			</trkpt>
+		</trkseg>
+	</trk>
+</gpx>

@@ -6,17 +6,17 @@
 
 **JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java [Stream](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
 
-Beside the basic functionality of reading and writing GPX files, the library also allows to manipulate the read GPX object in a functional way.
+Besides the basic functionality of reading and writing GPX files, the library also allows manipulating the read GPX object in a functional way.
 
 
 ## Dependencies
 
-No external dependencies are needed by the _JPX_ library. It only needs **Java 17** to compile and run.
+No external dependencies are needed by the _JPX_ library. It only needs **Java 17** to compile and run. It also runs and compiles with **Java 21**.
 
 
 ## Building JPX
 
-For  building the JPX library you have to check out the master branch from Github.
+For building the JPX library you have to check out the `master` branch from GitHub.
 
     $ git clone https://github.com/jenetics/jpx.git
     
@@ -314,7 +314,7 @@ org.acme.NonValidatingDocumentBuilder
 
 The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
-    Copyright 2016-2022 Franz Wilhelmstötter
+    Copyright 2016-2023 Franz Wilhelmstötter
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -329,6 +329,22 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
     limitations under the License.
 
 ## Release notes
+
+### [3.1.0](https://github.com/jenetics/jpx/releases/tag/v3.1.0)
+
+#### Improvements
+
+* [#170](https://github.com/jenetics/jpx/issues/170): GPX files with invalid version number are now readable in _LENIENT_ mode.
+```java
+final GPX gpx;
+try (InputStream in = new FileInputStream(resource)) {
+	gpx = GPX.Reader.of(Mode.LENIENT).read(in);
+}
+```
+
+#### Bugs
+
+* [#167](https://github.com/jenetics/jpx/issues/167): Fixing a test case for Windows.
 
 ### [3.0.1](https://github.com/jenetics/jpx/releases/tag/v3.0.1)
 

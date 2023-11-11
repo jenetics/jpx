@@ -31,6 +31,7 @@ import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
 import static io.jenetics.jpx.geom.MathUtils.equal;
 
+import java.io.Serializable;
 import java.util.stream.Collector;
 
 import io.jenetics.jpx.Length;
@@ -43,11 +44,13 @@ import io.jenetics.jpx.Point;
  * @see <a href="https://en.wikipedia.org/wiki/Geoid">Wikipedia: Geoid</a>
  * @see Ellipsoid
  *
+ * @param ellipsoid the ellipsoid used by the geoid
+ *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 1.0
+ * @version 4.0
  * @since 1.0
  */
-public final class Geoid {
+public record Geoid(Ellipsoid ellipsoid) implements Serializable {
 
 	private static final int EPSILON_ULP = 10_000;
 
@@ -57,7 +60,7 @@ public final class Geoid {
 	 * @see <a href="https://en.wikipedia.org/wiki/World_Geodetic_System#A_new_World_Geodetic_System:_WGS_84">
 	 *     WGS-84</a>
 	 */
-	public static final Geoid WGS84 = of(Ellipsoid.WGS84);
+	public static final Geoid WGS84 = new Geoid(Ellipsoid.WGS84);
 
 	/**
 	 * {@link Geoid} using the <em>International Earth Rotation and Reference
@@ -65,7 +68,7 @@ public final class Geoid {
 	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
 	 */
-	public static final Geoid IERS_1989 = of(Ellipsoid.IERS_1989);
+	public static final Geoid IERS_1989 = new Geoid(Ellipsoid.IERS_1989);
 
 	/**
 	 * {@link Geoid} using the <em>International Earth Rotation and Reference
@@ -73,22 +76,12 @@ public final class Geoid {
 	 *
 	 * @see <a href="https://en.wikipedia.org/wiki/IERS">IERS-89</a>
 	 */
-	public static final Geoid IERS_2003 = of(Ellipsoid.IERS_2003);
+	public static final Geoid IERS_2003 = new Geoid(Ellipsoid.IERS_2003);
 
 	/**
 	 * {@link Geoid} using the {@link Ellipsoid#DEFAULT} ellipsoid.
 	 */
-	public static final Geoid DEFAULT = of(Ellipsoid.DEFAULT);
-
-	private final Ellipsoid _ellipsoid;
-
-	// Minor semi-axes of the ellipsoid.
-	private final double B;
-
-	private final double AABBBB;
-
-	// Flattening (A - B)/A
-	private final double F;
+	public static final Geoid DEFAULT = new Geoid(Ellipsoid.DEFAULT);
 
 	// The maximal iteration of the 'distance'
 	private static final int DISTANCE_ITERATION_MAX = 1000;
@@ -102,26 +95,8 @@ public final class Geoid {
 	 * @param ellipsoid the ellipsoid used by the geoid
 	 * @throws NullPointerException if the given {@code ellipsoid} is {@code null}
 	 */
-	private Geoid(final Ellipsoid ellipsoid) {
-		_ellipsoid = requireNonNull(ellipsoid);
-
-		final double a = ellipsoid.A();
-		final double aa = a*a;
-
-		B = ellipsoid.B();
-		final double bb = B*B;
-
-		AABBBB = (aa - bb)/bb;
-		F = 1.0/ellipsoid.F();
-	}
-
-	/**
-	 * Return the ellipsoid the {@code Geom} object is using.
-	 *
-	 * @return the ellipsoid the {@code Geom} object is using
-	 */
-	public Ellipsoid ellipsoid() {
-		return _ellipsoid;
+	public Geoid {
+		requireNonNull(ellipsoid);
 	}
 
 	/**
@@ -145,6 +120,14 @@ public final class Geoid {
 	 *         which is the case for a point and its (near) antidote.
 	 */
 	public Length distance(final Point start, final Point end) {
+		final double aa =  ellipsoid.A()*ellipsoid.A();
+
+		final double B = ellipsoid.B();
+		final double bb = B*B;
+
+		final double AABB_BB = (aa - bb)/bb;
+		final double F = 1.0/ellipsoid.F();
+
 		final double lat1 = start.getLatitude().toRadians();
 		final double lon1 = start.getLongitude().toRadians();
 		final double lat2 = end.getLatitude().toRadians();
@@ -211,7 +194,7 @@ public final class Geoid {
 			final double cos2sigmam = equal(cos2alpha, 0.0, EPSILON_ULP)
 				? 0.0
 				: cossigma - 2*sinU1sinU2/cos2alpha;
-			final double u2 = cos2alpha*AABBBB;
+			final double u2 = cos2alpha*AABB_BB;
 
 			final double cos2sigmam2 = cos2sigmam*cos2sigmam;
 
@@ -253,13 +236,12 @@ public final class Geoid {
 	/**
 	 * Return a collector which calculates the length of the (open) path which
 	 * is defined by the {@code Point} stream.
-	 *
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Length length = gpx.tracks()
 	 *     .flatMap(Track::segments)
 	 *     .flatMap(TrackSegment::points)
 	 *     .collect(Geoid.WGSC_84.toPathLength());
-	 * }</pre>
+	 * }
 	 *
 	 * <b>The returned {@code Collector} doesn't work for <em>parallel</em>
 	 * stream. Using it for a <em>parallel</em> point stream will throw an
@@ -282,13 +264,12 @@ public final class Geoid {
 	 * Return a collector which calculates the length of the (closed) tour which
 	 * is defined by the {@code Point} stream. The <em>tour</em> length
 	 * additionally adds the distance of the last point back to the first point.
-	 *
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Length length = gpx.tracks()
 	 *     .flatMap(Track::segments)
 	 *     .flatMap(TrackSegment::points)
 	 *     .collect(Geoid.WGSC_84.toTourLength());
-	 * }</pre>
+	 * }
 	 *
 	 * <b>The returned {@code Collector} doesn't work for <em>parallel</em>
 	 * stream. Using it for a <em>parallel</em> point stream will throw an
@@ -305,19 +286,6 @@ public final class Geoid {
 			LengthCollector::combine,
 			LengthCollector::tourLength
 		);
-	}
-
-
-
-	/**
-	 * Create a new {@code Geoid} object with the given ellipsoid.
-	 *
-	 * @param ellipsoid the ellipsoid used by the geoid
-	 * @return a new {@code Geoid} object with the given ellipsoid
-	 * @throws NullPointerException if the given {@code ellipsoid} is {@code null}
-	 */
-	public static Geoid of(final Ellipsoid ellipsoid) {
-		return new Geoid(ellipsoid);
 	}
 
 }

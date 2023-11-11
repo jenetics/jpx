@@ -53,7 +53,7 @@ import io.jenetics.jpx.GPX.Version;
  * turn points leading to a destination.
  * <p>
  * Create a new route via the builder:
- * <pre>{@code
+ * {@snippet lang="java":
  * final Route route = Route.builder()
  *     .name("Route 1")
  *     .description("Fancy mountain-bike tour.")
@@ -61,7 +61,7 @@ import io.jenetics.jpx.GPX.Version;
  *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
  *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
  *     .build();
- * }</pre>
+ * }
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.5
@@ -203,11 +203,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	/**
 	 * Return the (cloned) extensions document. The root element of the returned
 	 * document has the name {@code extensions}.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * <extensions>
 	 *     ...
 	 * </extensions>
-	 * }</pre>
+	 * }
 	 *
 	 * @since 1.5
 	 *
@@ -320,7 +320,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	/**
 	 * Builder class for building {@code Route} objects.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Route route = Route.builder()
 	 *     .name("Route 1")
 	 *     .description("Fancy mountain-bike tour.")
@@ -328,7 +328,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
 	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
 	 *     .build();
-	 * }</pre>
+	 * }
 	 */
 	public static final class Builder implements Filter<WayPoint, Route> {
 
@@ -544,11 +544,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Sets the extensions object, which may be {@code null}. The root
 		 * element of the extensions document must be {@code extensions}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * <extensions>
 		 *     ...
 		 * </extensions>
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.5
 		 *
