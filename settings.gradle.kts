@@ -34,3 +34,4 @@ rootProject.name = "jpx"
 
 // The JPX projects.
 include("jpx")
+//include("jpx.jdbc")
