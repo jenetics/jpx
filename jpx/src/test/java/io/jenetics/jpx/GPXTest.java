@@ -57,6 +57,7 @@ import org.testng.Assert;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import io.jenetics.jpx.GPX.Reader.Mode;
 import io.jenetics.jpx.GPX.Version;
@@ -958,6 +959,59 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 			.isEqualTo("20230507 mile iles");
 		assertThat(gpx.getTracks().get(0).getSegments()).hasSize(1);
 		assertThat(gpx.getTracks().get(0).getSegments().get(0)).hasSize(2);
+	}
+
+	@Test
+	public void issue_179() {
+		final GPX gpx = GPX.Reader.of(Mode.LENIENT).fromString("""
+			<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+			<gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
+				xmlns="http://www.topografix.com/GPX/1/1"
+				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				xmlns:ns3="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
+				xmlns:ns2="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
+				xmlns:ns1="http://www.cluetrust.com/XML/GPXDATA/1/0"
+				creator="Zepp App"
+				version="8.0.2-play"
+			>
+				<trk>
+					<name><![CDATA[20230811 splitvicte-national-parc]]></name>
+					<trkseg>
+						<trkpt lat="44.873146" lon="15.599844">
+							<ele>622.95</ele>
+							<time>2023-08-11T10:25:52Z</time>
+							<extensions>
+								<ns3:TrackPointExtension>
+									<ns3:speed>0.11750881</ns3:speed>
+									<ns3:cad>0.0</ns3:cad>
+									<ns3:hr>88</ns3:hr>
+								</ns3:TrackPointExtension>
+							</extensions>
+						</trkpt>
+					</trkseg>
+				</trk>
+			</gpx>
+			"""
+		);
+
+		final Document extensions = gpx
+			.getTracks().get(0)
+			.getSegments().get(0)
+			.getPoints().get(0)
+			.getExtensions().orElseThrow();
+
+		final NodeList trackPointExtension = extensions
+			.getDocumentElement()
+			.getFirstChild()
+			.getChildNodes();
+
+		final String speed = trackPointExtension.item(0).getTextContent();
+		final String cad = trackPointExtension.item(1).getTextContent();
+		final String hr = trackPointExtension.item(2).getTextContent();
+
+		assertThat(speed).isEqualTo("0.11750881");
+		assertThat(cad).isEqualTo("0.0");
+		assertThat(hr).isEqualTo("88");
 	}
 
 }
