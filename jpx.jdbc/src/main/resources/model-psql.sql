@@ -3,9 +3,9 @@
 -- -----------------------------------------------------------------------------
 CREATE TABLE link(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
-	href VARCHAR(255) NOT NULL,
-	text VARCHAR(255),
-	type VARCHAR(255)
+	href TEXT NOT NULL,
+	text TEXT,
+	type TEXT
 );
 CREATE INDEX i_link_href ON link(href);
 CREATE INDEX i_link_text ON link(text);
@@ -15,8 +15,8 @@ CREATE INDEX i_link_text ON link(text);
 -- -----------------------------------------------------------------------------
 CREATE TABLE person(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
-	name VARCHAR(255) NOT NULL,
-	email VARCHAR(255),
+	name TEXT NOT NULL,
+	email TEXT,
 	link_id BIGINT REFERENCES link(id)
 );
 CREATE INDEX i_person_name ON person(name);
@@ -28,12 +28,12 @@ CREATE INDEX i_person_link_id ON person(link_id);
 -- -----------------------------------------------------------------------------
 CREATE TABLE copyright(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
-	author VARCHAR(255) NOT NULL,
-	year INT,
-	license VARCHAR(255)
+    author TEXT NOT NULL,
+    copyright_year SMALLINT,
+	license TEXT
 );
 CREATE INDEX i_copyright_author ON copyright(author);
-CREATE INDEX i_copyright_year ON copyright(year);
+CREATE INDEX i_copyright_year ON copyright(copyright_year);
 CREATE INDEX i_copyright_license ON copyright(license);
 
 -- -----------------------------------------------------------------------------
@@ -52,13 +52,14 @@ CREATE TABLE bounds(
 -- -----------------------------------------------------------------------------
 CREATE TABLE metadata(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
-	name VARCHAR(255),
+	name TEXT,
 	dscr TEXT,
+    person_id BIGINT REFERENCES person(id),
+    copyright_id BIGINT REFERENCES copyright(id),
 	time TIMESTAMP WITH TIME ZONE,
-	keywords VARCHAR(255),
-	person_id BIGINT REFERENCES person(id),
-	copyright_id BIGINT REFERENCES copyright(id),
-	bounds_id BIGINT REFERENCES bounds(id)
+	keywords TEXT,
+	bounds_id BIGINT REFERENCES bounds(id),
+    extensions TEXT
 );
 CREATE INDEX i_metadata_name ON metadata(name);
 CREATE INDEX i_metadata_time ON metadata(time);
@@ -86,13 +87,13 @@ CREATE TABLE way_point(
 	time TIMESTAMP WITH TIME ZONE,
 	magvar NUMERIC(8, 5),
 	geoidheight NUMERIC(8, 2),
-	name VARCHAR(255),
-	cmt VARCHAR(255),
+	name TEXT,
+	cmt TEXT,
 	dscr TEXT,
-	src VARCHAR(255),
-	sym VARCHAR(255),
-	type VARCHAR(255),
-	fix VARCHAR(10),
+	src TEXT,
+	sym TEXT,
+	type TEXT,
+	fix VARCHAR(4),
 	sat INT,
 	hdop NUMERIC(12, 2),
 	vdop NUMERIC(12, 2),
@@ -119,14 +120,18 @@ CREATE TABLE way_point_link(
 -- -----------------------------------------------------------------------------
 CREATE TABLE route(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
-	name VARCHAR(255),
-	cmt VARCHAR(255),
+	name TEXT,
+	cmt TEXT,
 	dscr TEXT,
-	src VARCHAR(255),
+	src TEXT,
 	number INT,
-	type VARCHAR(255)
+	type TEXT,
+    extensions TEXT
 );
 CREATE INDEX i_route_name ON route(name);
+CREATE INDEX i_route_src ON route(src);
+CREATE INDEX i_route_number ON route(number);
+CREATE INDEX i_route_type ON route(type);
 
 CREATE TABLE route_link(
 	route_id BIGINT NOT NULL REFERENCES route(id) ON DELETE CASCADE,
@@ -147,7 +152,8 @@ CREATE TABLE route_way_point(
 -- -----------------------------------------------------------------------------
 CREATE TABLE track_segment(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
-	number INT NOT NULL
+	number INT NOT NULL,
+    extensions TEXT
 );
 CREATE INDEX i_track_segment_number ON track_segment(number);
 
@@ -164,15 +170,18 @@ CREATE TABLE track_segment_way_point(
 -- -----------------------------------------------------------------------------
 CREATE TABLE track(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
-	name VARCHAR(255),
-	cmt VARCHAR(255),
+	name TEXT,
+	cmt TEXT,
 	dscr TEXT,
-	src VARCHAR(255),
+	src TEXT,
 	number INT,
-	type VARCHAR(255)
+	type TEXT,
+    extensions TEXT
 );
 CREATE INDEX i_track_name ON track(name);
+CREATE INDEX i_track_src ON track(src);
 CREATE INDEX i_track_number ON track(number);
+CREATE INDEX i_track_type ON track(type);
 
 CREATE TABLE track_track_segment(
 	track_id BIGINT NOT NULL REFERENCES track(id),
@@ -195,8 +204,9 @@ CREATE TABLE track_link(
 CREATE TABLE gpx(
 	id BIGSERIAL NOT NULL PRIMARY KEY,
 	version VARCHAR(5) NOT NULL DEFAULT '1.1',
-	creator VARCHAR(255) NOT NULL,
-	metadata_id BIGINT REFERENCES metadata(id)
+	creator TEXT NOT NULL,
+	metadata_id BIGINT REFERENCES metadata(id),
+    extensions TEXT
 );
 CREATE INDEX i_gpx_creator ON gpx(creator);
 CREATE INDEX i_gpx_metadata_id ON gpx(metadata_id);

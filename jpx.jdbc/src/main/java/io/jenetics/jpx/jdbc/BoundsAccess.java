@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +37,22 @@ import io.jenetics.jpx.Bounds;
  * @since !__version__!
  */
 public final class BoundsAccess {
-	private BoundsAccess() {}
+	private BoundsAccess() {
+	}
+
+	static final RowParser<Bounds> PARSER = (row, conn) -> Bounds.of(
+		row.getDouble("minlat"),
+		row.getDouble("minlon"),
+		row.getDouble("maxlat"),
+		row.getDouble("maxlon")
+	);
+
+	static final Dctor<Bounds> DCTOR = Dctor.of(
+		field("minlat", Bounds::getMinLatitude),
+		field("minlon", Bounds::getMinLongitude),
+		field("maxlat", Bounds::getMaxLatitude),
+		field("maxlon", Bounds::getMaxLongitude)
+	);
 
 	private static final Query SELECT = Query.of("""
 		SELECT minlat, minlon, maxlat, maxlon
@@ -50,20 +65,6 @@ public final class BoundsAccess {
 		INSERT INTO bounds(minlat, minlon, maxlat, maxlon)
 		VALUES(:minlat, :minlon, :maxlat, :maxlon)
 		"""
-	);
-
-	private static final RowParser<Bounds> PARSER = (row, conn) -> Bounds.of(
-		row.getDouble("minlat"),
-		row.getDouble("minlon"),
-		row.getDouble("maxlat"),
-		row.getDouble("maxlon")
-	);
-
-	private static final Dctor<Bounds> DCTOR = Dctor.of(
-		field("minlat", Bounds::getMinLatitude),
-		field("minlon", Bounds::getMinLongitude),
-		field("maxlat", Bounds::getMaxLatitude),
-		field("maxlon", Bounds::getMaxLongitude)
 	);
 
 	public static Bounds selectById(final Long id, final Connection conn)

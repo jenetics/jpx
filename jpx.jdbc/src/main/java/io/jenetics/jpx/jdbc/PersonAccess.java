@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
 import static io.jenetics.facilejdbc.Param.value;
+import static io.jenetics.facilejdbc.Row.map;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -39,7 +40,24 @@ import io.jenetics.jpx.Person;
  * @since !__version__!
  */
 public final class PersonAccess {
-	private PersonAccess() {}
+	private PersonAccess() {
+	}
+
+	private static final RowParser<Person> PARSER = (row, conn) -> Person.of(
+		row.getString("name"),
+		map(row.getString("email"), Email::of),
+		Link.of(
+			row.getString("link_href"),
+			row.getString("link_text"),
+			row.getString("link_type")
+		)
+	);
+
+	private static final Dctor<Person> DCTOR = Dctor.of(
+		field("name", Person::getName),
+		field("email", p -> p.getEmail().map(Email::getAddress)),
+		field("link_id", (p, c) -> LinkAccess.insert(p.getLink().orElse(null), c))
+	);
 
 	private static final Query SELECT = Query.of("""
 		SELECT person.id, name, email, link_href, link_text, link_type
@@ -53,22 +71,6 @@ public final class PersonAccess {
 		INSERT INTO person(name, email, link_id)
 		VALUES(:name, :email, :link_id)
 		"""
-	);
-
-	private static final RowParser<Person> PARSER = (row, conn) -> Person.of(
-		row.getString("name"),
-		Email.of(row.getString("email")),
-		Link.of(
-			row.getString("link_href"),
-			row.getString("link_text"),
-			row.getString("link_type")
-		)
-	);
-
-	private static final Dctor<Person> DCTOR = Dctor.of(
-		field("name", Person::getName),
-		field("email", p -> p.getEmail().map(Email::getAddress)),
-		field("link_id", (p, c) -> LinkAccess.insert(p.getLink().orElse(null), c))
 	);
 
 	public static Person selectById(final Long id, final Connection conn)

@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,8 @@
 package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
+import static io.jenetics.facilejdbc.Row.map;
+import static io.jenetics.jpx.Length.Unit.METER;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,6 +32,8 @@ import io.jenetics.facilejdbc.Dctor;
 import io.jenetics.facilejdbc.Query;
 import io.jenetics.facilejdbc.RowParser;
 
+import io.jenetics.jpx.Degrees;
+import io.jenetics.jpx.Length;
 import io.jenetics.jpx.Link;
 import io.jenetics.jpx.WayPoint;
 
@@ -39,34 +43,34 @@ import io.jenetics.jpx.WayPoint;
  * @since !__version__!
  */
 public final class WayPointAccess {
-	private WayPointAccess() {}
+	private WayPointAccess() {
+	}
 
-	private static final Query INSERT = Query.of("""
-		INSERT INTO way_point(
-			lat, lon, ele, speed, time, magvar, geoidheight, name, cmt,
-			dscr, src, sym, type, fix, sat, hdop, vdop, pdop, ageofdgpsdata,
-			dgpsid, course
-		)
-		VALUES(
-			:lat, :lon, :ele, :speed, :time, :magvar, :geoidheight, :name, :cmt,
-			:dscr, :src, :sym, :type, :fix, :sat, :hdop, :vdop, :pdop, :ageofdgpsdata,
-			:dgpsid, :course
-		)
-		"""
-	);
+	static final RowParser<WayPoint> PARSER = (row, conn) -> WayPoint.builder()
+		.lat(row.getDouble("lat"))
+		.lon(row.getDouble("lon"))
+		.ele(row.getDouble("ele"))
+		.speed(row.getDouble("speed"))
+		.time(row.getInstant("time"))
+		.magvar(map(row.getDouble("magvar"), Degrees::ofDegrees))
+		.geoidheight(map(row.getDouble("geoidheight"), v -> Length.of(v, METER)))
+		.name(row.getString("name"))
+		.cmt(row.getString("cmt"))
+		.desc(row.getString("desc"))
+		.src(row.getString("scr"))
+		.sym(row.getString("sym"))
+		.type(row.getString("type"))
+		.fix(row.getString("fix"))
+		.sat(row.getInt("sat"))
+		.hdop(row.getDouble("hdop"))
+		.vdop(row.getDouble("vdop"))
+		.pdop(row.getDouble("pdop"))
+		.ageofdgpsdata(row.getDouble("argeofgpsdata"))
+		.dgpsid(row.getInt("dgpsid"))
+		.course(row.getDouble("course"))
+		.build();
 
-	private static final RowParser<WayPoint> PARSER = (row, conn) -> {
-		WayPoint.builder()
-			.lat(row.getDouble("lat"))
-			.lon(row.getDouble("lon"))
-			.ele(row.getDouble("ele"))
-			.speed(row.getDouble("speed"))
-			//.time(row.getTimestamp("time"))
-			.build();
-		return null;
-	};
-
-	private static final Dctor<WayPoint> DCTOR = Dctor.of(
+	static final Dctor<WayPoint> DCTOR = Dctor.of(
 		field("lat", WayPoint::getLatitude),
 		field("lon", WayPoint::getLongitude),
 		field("ele", WayPoint::getElevation),
@@ -88,6 +92,20 @@ public final class WayPointAccess {
 		field("ageofdgpsdata", WayPoint::getAgeOfGPSData),
 		field("dgpsid", WayPoint::getDGPSID),
 		field("course", WayPoint::getCourse)
+	);
+
+	private static final Query INSERT = Query.of("""
+		INSERT INTO way_point(
+			lat, lon, ele, speed, time, magvar, geoidheight, name, cmt,
+			dscr, src, sym, type, fix, sat, hdop, vdop, pdop,
+			ageofdgpsdata, dgpsid, course
+		)
+		VALUES(
+			:lat, :lon, :ele, :speed, :time, :magvar, :geoidheight, :name, :cmt,
+			:dscr, :src, :sym, :type, :fix, :sat, :hdop, :vdop, :pdop,
+			:ageofdgpsdata, :dgpsid, :course
+		)
+		"""
 	);
 
 	public static Long insert(final WayPoint wp, final Connection conn)

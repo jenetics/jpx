@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
 import static io.jenetics.facilejdbc.Param.value;
+import static io.jenetics.facilejdbc.Row.map;
 
 import java.net.URI;
 import java.sql.Connection;
@@ -38,41 +39,61 @@ import io.jenetics.jpx.Link;
  * @since !__version__!
  */
 public final class LinkAccess {
-	private LinkAccess() {}
+	private LinkAccess() {
+	}
 
-	private static final Query SELECT = Query.of("""
+	static final RowParser<Link> PARSER = (row, conn) -> Link.of(
+		map(row.getString("href"), URI::create),
+		row.getString("text"),
+		row.getString("type")
+	);
+
+	static final Dctor<Link> DCTOR = Dctor.of(
+		field("href", Link::getHref),
+		field("text", Link::getText),
+		field("type", Link::getType)
+	);
+
+	static final Query SELECT_BY_ID = Query.of("""
 		SELECT id, href, text, type
 		FROM link
 		WHERE id = :id
 		"""
 	);
 
-	private static final Query INSERT = Query.of("""
+	static final Query INSERT = Query.of("""
 		INSERT INTO link(href, text, type)
 		VALUES(:href, :text, :type)
 		"""
-	);
-
-	private static final RowParser<Link> PARSER = (row, conn) -> Link.of(
-		URI.create(row.getString("href")),
-		row.getString("text"),
-		row.getString("type")
-	);
-
-	private static final Dctor<Link> DCTOR = Dctor.of(
-		field("href", Link::getHref),
-		field("text", Link::getText),
-		field("type", Link::getType)
 	);
 
 	public static Link selectById(final Long id, final Connection conn)
 		throws SQLException
 	{
 		return id != null
-			? SELECT
+			? SELECT_BY_ID
 				.on(value("id", id))
 				.as(PARSER.singleNull(), conn)
 			: null;
+	}
+
+	public static Long insertIfMissing(final Link link, final Connection conn)
+		throws SQLException
+	{
+		final var select = Query.of("""
+			SELECT id FROM link
+			WHERE href = :href AND text = :text AND type = :type
+			"""
+		);
+
+		final var id = select
+			.on(
+				value("href", link.getHref()),
+				value("text", link.getText()),
+				value("type", link.getType()))
+			.as(RowParser.int64(1).singleNull(), conn);
+
+		return 1L;
 	}
 
 	public static Long insert(final Link link, final Connection conn)

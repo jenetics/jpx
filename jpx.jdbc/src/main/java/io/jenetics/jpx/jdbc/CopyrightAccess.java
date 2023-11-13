@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
 import static io.jenetics.facilejdbc.Param.value;
+import static io.jenetics.facilejdbc.Row.map;
 
 import java.net.URI;
 import java.sql.Connection;
@@ -39,7 +40,20 @@ import io.jenetics.jpx.Copyright;
  * @since !__version__!
  */
 public final class CopyrightAccess {
-	private CopyrightAccess() {}
+	private CopyrightAccess() {
+	}
+
+	static final RowParser<Copyright> PARSER = (row, conn) -> Copyright.of(
+		row.getString("author"),
+		map(row.getInt("year"), Year::of),
+		map(row.getString("license"), URI::create)
+	);
+
+	static final Dctor<Copyright> DCTOR = Dctor.of(
+		field("author", Copyright::getAuthor),
+		field("year", c -> c.getYear().map(Year::getValue)),
+		field("license", Copyright::getLicense)
+	);
 
 	private static final Query SELECT = Query.of("""
 		SELECT id, author, year, license
@@ -52,18 +66,6 @@ public final class CopyrightAccess {
 		INSERT INTO copyright(author, year, license)
 		VALUES(:author, :year, :license)
 		"""
-	);
-
-	private static final RowParser<Copyright> PARSER = (row, conn) -> Copyright.of(
-		row.getString("author"),
-		Year.of(row.getInt("year")),
-		URI.create(row.getString("license"))
-	);
-
-	private static final Dctor<Copyright> DCTOR = Dctor.of(
-		field("author", Copyright::getAuthor),
-		field("year", c -> c.getYear().map(Year::getValue)),
-		field("license", Copyright::getLicense)
 	);
 
 	public static Copyright selectById(final Long id, final Connection conn)

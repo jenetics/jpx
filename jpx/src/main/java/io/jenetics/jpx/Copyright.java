@@ -60,7 +60,7 @@ public final class Copyright implements Serializable {
 	 *
 	 * @param author copyright holder (TopoSoft, Inc.)
 	 * @param year year of copyright.
-	 * @param license link to external file containing license text.
+	 * @param license link to an external file containing license text.
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 */
 	private Copyright(final String author, final Year year, final URI license) {

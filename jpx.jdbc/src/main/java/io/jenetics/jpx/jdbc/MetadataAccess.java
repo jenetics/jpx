@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,10 +21,6 @@ package io.jenetics.jpx.jdbc;
 
 import static io.jenetics.facilejdbc.Dctor.field;
 import static io.jenetics.facilejdbc.Param.value;
-
-import lombok.Builder;
-import lombok.Value;
-import lombok.experimental.Accessors;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -48,20 +44,39 @@ import io.jenetics.jpx.Person;
  * @since !__version__!
  */
 public final class MetadataAccess {
-	private MetadataAccess() {}
-
-	@Value
-	@Builder(builderClassName = "Builder", toBuilder = true)
-	@Accessors(fluent = true)
-	private static final class MetadataRow {
-		private final String name;
-		private final String desc;
-		private final Timestamp time;
-		private final String keyword;
-		private final Long personId;
-		private final Long copyrightId;
-		private final Long boundsId;
+	private MetadataAccess() {
 	}
+
+	record Row(
+		String name,
+		String desc,
+		Timestamp time,
+		String keywords,
+		Long personId,
+		Long copyrightId,
+		Long boundsId
+	) {}
+
+	private static final RowParser<Row> ROW_PARSER = RowParser.record(Row.class);
+
+	private static final Dctor<Metadata> DCTOR = Dctor.of(
+		field("name", Metadata::getName),
+		field("dscr", Metadata::getDescription),
+		field("time", Metadata::getTime),
+		field("keywords", Metadata::getKeywords),
+		field(
+			"person_id",
+			(md, conn) -> PersonAccess.insert(md.getAuthor().orElse(null), conn)
+		),
+		field(
+			"copyright_id",
+			(md, conn) -> CopyrightAccess.insert(md.getCopyright().orElse(null), conn)
+		),
+		field(
+			"bounds_id",
+			(md, conn) -> BoundsAccess.insert(md.getBounds().orElse(null), conn)
+		)
+	);
 
 	private static final Query SELECT = Query.of("""
 		SELECT name, dscr, time, keywords, person_id, copyright_id, bounds_id
@@ -76,42 +91,12 @@ public final class MetadataAccess {
 		"""
 	);
 
-	private static final RowParser<MetadataRow> ROW_PARSER = (row, conn) ->
-		MetadataRow.builder()
-			.name(row.getString("name"))
-			.desc(row.getString("dscr"))
-			.time(row.getTimestamp("time"))
-			.keyword(row.getString("keywords"))
-			.personId(row.getObject("person_id", Long.class))
-			.copyrightId(row.getObject("copyright_id", Long.class))
-			.boundsId(row.getObject("bounds_id", Long.class))
-			.build();
-
-	private static final Dctor<Metadata> DCTOR = Dctor.of(
-		field("name", Metadata::getName),
-		field("dscr", Metadata::getDescription),
-		field("time", Metadata::getTime),
-		field("keywords", Metadata::getKeywords),
-		field(
-			"person_id",
-			(m, c) -> PersonAccess.insert(m.getAuthor().orElse(null), c)
-		),
-		field(
-			"copyright_id",
-			(m, c) -> CopyrightAccess.insert(m.getCopyright().orElse(null), c)
-		),
-		field(
-			"bounds_id",
-			(m, c) -> BoundsAccess.insert(m.getBounds().orElse(null), c)
-		)
-	);
-
 	public static Metadata selectById(final Long id, final Connection conn)
 		throws SQLException
 	{
 		if (id == null) return null;
 
-		final MetadataRow row = SELECT
+		final Row row = SELECT
 			.on(value("id", id))
 			.as(ROW_PARSER.singleNull(), conn);
 
@@ -125,7 +110,7 @@ public final class MetadataAccess {
 			.name(row.name())
 			.desc(row.desc())
 			.time(row.time().toInstant())
-			.keywords(row.keyword())
+			.keywords(row.keywords())
 			.author(author)
 			.copyright(copyright)
 			.bounds(bounds)

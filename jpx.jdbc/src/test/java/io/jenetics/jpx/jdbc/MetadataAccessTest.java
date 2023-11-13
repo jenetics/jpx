@@ -17,31 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx.jdbc;
 
-/**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
- * @version 2.1
- */
-pluginManagement {
-	repositories {
-		mavenLocal()
-		gradlePluginPortal()
-	}
+public class MetadataAccessTest {
 }
-
-rootProject.name = "jpx"
-
-val facilejdbc = file("../FacileJDBC")
-if (facilejdbc.isDirectory) {
-	includeBuild(facilejdbc) {
-		dependencySubstitution {
-			substitute(module("io.jenetics:facilejdbc"))
-				.using(project(":facilejdbc"))
-		}
-	}
-}
-
-// The JPX projects.
-include("jpx")
-include("jpx.jdbc")

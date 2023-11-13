@@ -37,7 +37,7 @@ import org.h2.jdbcx.JdbcDataSource;
  */
 public class H2DB extends DB {
 
-	public static final DB INSTANCE = new H2DB("jdbc:h2:mem:testdb-gpx;MODE=MySQL");
+	public static final DB INSTANCE = new H2DB("jdbc:h2:mem:testdb-gpx;MODE=PostgreSQL");
 
 	private final DataSource _dataSource;
 	private Connection _connection;

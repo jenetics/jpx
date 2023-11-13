@@ -1,5 +1,5 @@
 /*
- * Java Genetic Algorithm Library (@__identifier__@).
+ * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,7 +54,7 @@ public class GpxTypeMapper extends SqlTypeMapper {
 		if (value instanceof ZonedDateTime) return ((ZonedDateTime)value).toOffsetDateTime();
 		if (value instanceof Duration) return ((Duration)value).getSeconds();
 		if (value instanceof URI) return value.toString();
-		if (value instanceof  URL) return value.toString();
+		if (value instanceof URL) return value.toString();
 		return value;
 	}
 }

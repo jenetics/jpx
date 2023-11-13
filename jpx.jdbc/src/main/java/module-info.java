@@ -1,6 +1,5 @@
 /*
  * Java GPX Library (@__identifier__@).
- * Copyright (c) @__year__@ Franz Wilhelmstötter
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 
-/**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
- * @version 2.1
- */
-plugins {
-	`java-library`
-	idea
-	`maven-publish`
-}
+module io.jenetics.jpx.jdbc {
+	requires transitive io.jenetics.jpx;
+	requires transitive io.jenetics.facilejdbc;
+	requires lombok;
 
-description = "JPX - Java GPX (GPS) Library"
+	exports io.jenetics.jpx.jdbc;
 
-extra["moduleName"] = "io.jenetics.jpx"
-
-dependencies {
-    testImplementation(libs.assertj)
-	testImplementation(libs.equalsverifier)
-	testImplementation(libs.prngine)
-	testImplementation(libs.testng)
+	provides io.jenetics.facilejdbc.spi.SqlTypeMapper
+		with io.jenetics.jpx.jdbc.GpxTypeMapper;
 }
