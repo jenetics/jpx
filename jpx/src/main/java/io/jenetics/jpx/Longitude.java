@@ -31,7 +31,7 @@ import java.io.Serializable;
 
 /**
  * The longitude of the point. Decimal degrees, WGS84 datum, which must be within
- * the range of {@code [-180..180]}.
+ * the range of {@code [-180..180)}.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 2.0
@@ -81,7 +81,7 @@ public final class Longitude extends Number implements Serializable {
 	 *
 	 * @param value the longitude value in decimal degrees
 	 * @throws IllegalArgumentException if the given value is not within the
-	 *         range of {@code [-180..180]}
+	 *         range of {@code [-180..180)}
 	 */
 	private Longitude(final double value) {
 		if (value < MIN_DEGREES || value > MAX_DEGREES) {

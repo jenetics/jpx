@@ -86,7 +86,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 	}
 
-	static GPX nextGPX(final Random random) {
+	public static GPX nextGPX(final Random random) {
 		return GPX.of(
 			Version.V11,
 			format("creator_%s", random.nextInt(100)),
