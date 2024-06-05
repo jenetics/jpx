@@ -47,7 +47,7 @@ final GPX gpx = GPX.builder()
 **Writing GPX object to a file**
 
 ```java
-GPX.write(gpx, "track.gpx");
+GPX.write(gpx, Path.of("track.gpx"));
 ```
 
 *GPX output*
@@ -75,7 +75,7 @@ GPX.write(gpx, "track.gpx");
 This example writes a given `GPX` object to a file, reads it again and prints the `WayPoint`s of all tracks and all track-segments to the console.
 
 ```java
-GPX.write(gpx, "track.gpx");
+GPX.write(gpx, Path.of("track.gpx"));
 GPX.read("gpx.xml").tracks()
     .flatMap(Track::segments)
     .flatMap(TrackSegment::points)
@@ -145,7 +145,7 @@ final GPX gpx11 = gpx10.toBuilder()
     .build();
 
 // Writing GPX to file.
-GPX.write(gpx11, "track-v11.gpx");
+GPX.write(gpx11, Path.of("track-v11.gpx"));
 ```
 
 ### ISO 6709 location strings
