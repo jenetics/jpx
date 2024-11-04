@@ -11,7 +11,7 @@ Besides the basic functionality of reading and writing GPX files, the library al
 
 ## Dependencies
 
-The _JPX_ library needs no external dependencies. It only needs **Java 17** to compile and run. It also runs and compiles with **Java 21**.
+The _JPX_ library needs no external dependencies. It only needs **Java 17** to compile and run. It also runs and compiles with **Java 21** and **Java 23**.
 
 
 ## Building JPX
