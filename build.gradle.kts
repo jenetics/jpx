@@ -1,3 +1,6 @@
+import io.jenetics.gradle.dsl.isModule
+import io.jenetics.gradle.dsl.moduleName
+
 /*
  * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
@@ -111,8 +114,8 @@ fun setupJava(project: Project) {
 		"Build-OS-Arch" to Env.BUILD_OS_ARCH,
 		"Build-OS-Version" to Env.BUILD_OS_VERSION
 	)
-	if (project.extra.has("moduleName")) {
-		attr["Automatic-Module-Name"] = project.extra["moduleName"].toString()
+	if (project.isModule) {
+		attr["Automatic-Module-Name"] = project.moduleName
 	}
 
 	project.tasks.withType<Jar> {

@@ -1,5 +1,3 @@
-import io.jenetics.gradle.dsl.moduleName
-
 /*
  * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
@@ -22,22 +20,24 @@ import io.jenetics.gradle.dsl.moduleName
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.0
- * @version 2.1
+ * @since !__version__!
+ * @version !__version__!
  */
-plugins {
-	`java-library`
-	idea
-	`maven-publish`
-}
+package io.jenetics.gradle.dsl
 
-description = "JPX - Java GPX (GPS) Library"
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.extra
 
-moduleName = "io.jenetics.jpx"
+/**
+ * Gets the module name of the project, as configured in the build file.
+ */
+var Project.moduleName: String
+	get() = if (this.isModule) this.extra.get("moduleName").toString()
+			else this.name
+	set(value) = this.extra.set("moduleName", value)
 
-dependencies {
-	testImplementation(libs.assertj)
-	testImplementation(libs.equalsverifier)
-	testImplementation(libs.prngine)
-	testImplementation(libs.testng)
-}
+/**
+ * Checks if the project is configured as a module.
+ */
+val Project.isModule: Boolean
+	get() = this.extra.has("moduleName")
