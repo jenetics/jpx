@@ -193,8 +193,8 @@ public final class Length
 	@Override
 	public boolean equals(final Object obj) {
 		return obj == this ||
-			obj instanceof Length &&
-			Double.compare(((Length)obj)._value, _value) == 0;
+			obj instanceof Length lng &&
+			Double.compare(lng._value, _value) == 0;
 	}
 
 	@Override

@@ -67,12 +67,14 @@
  *
  * <b>Reading a GPX file</b>
  * <pre>{@code
- * final GPX gpx = GPX.read("points.xml");
+ * final GPX gpx = GPX.read(Path.of("points.gpx"));
  * }</pre>
  *
  * <b>Reading erroneous GPX files</b>
  * <pre>{@code
- * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
+ * final GPX gpx = GPX.Reader
+ *     .of(GPX.Reader.Mode.LENIENT)
+ *     .read(Path.of("points.gpx"));
  * }</pre>
  *
  * This allows reading otherwise invalid GPX files, like

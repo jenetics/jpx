@@ -1159,7 +1159,7 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
-		 * Set the number of seconds since last DGPS update.
+		 * Set the number of seconds since the last DGPS update.
 		 *
 		 * @param seconds the age since last DGPS update
 		 * @return {@code this} {@code Builder} for method chaining
@@ -1218,11 +1218,11 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
-		 * Set the the instantaneous course at the point.
+		 * Set the instantaneous course at the point.
 		 *
 		 * @since 1.3
 		 *
-		 * @param course the the instantaneous course at the point
+		 * @param course the instantaneous course at the point
 		 * @return {@code this} {@code Builder} for method chaining
 		 */
 		public Builder course(final Degrees course) {
@@ -1231,11 +1231,11 @@ public final class WayPoint implements Point, Serializable {
 		}
 
 		/**
-		 * Set the the instantaneous course at the point.
+		 * Set the instantaneous course at the point.
 		 *
 		 * @since 1.3
 		 *
-		 * @param courseDegrees the the instantaneous course at the point
+		 * @param courseDegrees the instantaneous course at the point
 		 * @return {@code this} {@code Builder} for method chaining
 		 * @throws IllegalArgumentException if the give value is not within the
 		 *         range of {@code [0..360]}
@@ -1380,7 +1380,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
 	 * @param elevation the elevation (in meters) of the point (optional)
 	 * @param speed the current GPS speed (optional)
-	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 * @param time creation/modification timestamp for an element. Conforms to ISO
 	 *        8601 specification for date/time representation. Fractional seconds
 	 *        are allowed for millisecond timing in tracklogs. (optional)
 	 * @param magneticVariation the magnetic variation at the point (optional)
@@ -1398,7 +1398,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param source source of data. Included to give user some idea of
 	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
 	 *        Boston North", e.g. (optional)
-	 * @param links links to additional information about the way-point. May be
+	 * @param links links to additional information about the way-point. Maybe
 	 *        empty, but not {@code null}.
 	 * @param symbol text of GPS symbol name. For interchange with other
 	 *        programs, use the exact spelling of the symbol as displayed on the
@@ -1669,7 +1669,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param longitude the longitude of the point, WGS84 datum (mandatory)
 	 * @param elevation the elevation (in meters) of the point (optional)
 	 * @param speed the current GPS speed (optional)
-	 * @param time creation/modification timestamp for element. Conforms to ISO
+	 * @param time creation/modification timestamp for an element. Conforms to ISO
 	 *        8601 specification for date/time representation. Fractional seconds
 	 *        are allowed for millisecond timing in tracklogs. (optional)
 	 * @param magneticVariation the magnetic variation at the point (optional)
@@ -1687,7 +1687,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param source source of data. Included to give user some idea of
 	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
 	 *        Boston North", e.g. (optional)
-	 * @param links links to additional information about the way-point. May be
+	 * @param links links to additional information about the way-point. Maybe
 	 *        empty, but not {@code null}.
 	 * @param symbol text of GPS symbol name. For interchange with other
 	 *        programs, use the exact spelling of the symbol as displayed on the
@@ -1955,7 +1955,7 @@ public final class WayPoint implements Point, Serializable {
 			: point.getLinks().get(0).getText().orElse(null);
 	}
 
-	// Define the needed writers for the different versions.
+	// Define the necessary writers for the different versions.
 	private static XMLWriters<WayPoint>
 	writers(final Function<? super Number, String> formatter) {
 		return new XMLWriters<WayPoint>()
@@ -1986,7 +1986,7 @@ public final class WayPoint implements Point, Serializable {
 			.v00(XMLWriter.doc("extensions").map(gpx -> gpx._extensions));
 	}
 
-	// Define the needed readers for the different versions.
+	// Define the necessary readers for the different versions.
 	private static XMLReaders
 	readers(final Function<? super String, Length> lengthParser) {
 		return new XMLReaders()
@@ -2025,7 +2025,6 @@ public final class WayPoint implements Point, Serializable {
 		return XMLWriter.elem(name, writers(formatter).writers(version));
 	}
 
-	@SuppressWarnings("unchecked")
 	static XMLReader<WayPoint> xmlReader(
 		final Version version,
 		final String name,

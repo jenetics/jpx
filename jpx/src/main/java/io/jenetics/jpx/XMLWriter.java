@@ -55,7 +55,7 @@ interface XMLWriter<T> {
 	/**
 	 * Maps this writer to a different base type. Mapping to a different data
 	 * type is necessary when you are going to write <em>sub</em>-objects of
-	 * your basic data type {@code T}. E.g. the chromosome length or the
+	 * your basic data type {@code T}. E.g., the chromosome length or the
 	 * {@code min} and {@code max} value of an {@code IntegerChromosome}.
 	 *
 	 * @param mapper the mapper function
@@ -77,7 +77,7 @@ interface XMLWriter<T> {
 	/**
 	 * Maps this writer to a different base type. Mapping to a different data
 	 * type is necessary when you are going to write <em>sub</em>-objects of
-	 * your basic data type {@code T}. E.g. the chromosome length or the
+	 * your basic data type {@code T}. E.g., the chromosome length or the
 	 * {@code min} and {@code max} value of an {@code IntegerChromosome}.
 	 *
 	 * @param mapper the mapper function
@@ -139,7 +139,7 @@ interface XMLWriter<T> {
 	}
 
 	/**
-	 * Create a new {@code XMLWriter}, which writes a XML element with the given
+	 * Create a new {@code XMLWriter}, which writes an XML element with the given
 	 * name and writes the given children into it.
 	 *
 	 * @param name the root element name
