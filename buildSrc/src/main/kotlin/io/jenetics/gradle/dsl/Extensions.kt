@@ -20,8 +20,8 @@
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since !__version__!
- * @version !__version__!
+ * @since 3.2
+ * @version 3.2
  */
 package io.jenetics.gradle.dsl
 
