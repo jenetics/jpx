@@ -4,19 +4,19 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.jenetics/jpx/badge.svg)](http://search.maven.org/#search%7Cga%7C1%7Ca%3A%22jpx%22)
 [![Javadoc](https://www.javadoc.io/badge/io.jenetics/jpx.svg)](http://www.javadoc.io/doc/io.jenetics/jpx)
 
-**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They  are working also nicely with the Java [Stream](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
+**JPX** is a Java library for creating, reading and writing [GPS](https://en.wikipedia.org/wiki/Global_Positioning_System) data in [GPX](https://en.wikipedia.org/wiki/GPS_Exchange_Format) format. It is a *full* implementation of version [1.1](http://www.topografix.com/GPX/1/1/) and version [1.0](http://www.topografix.com/gpx_manual.asp) of the GPX format. The data classes are completely immutable and allows a functional programming style. They are working also nicely with the Java [Stream](https://docs.oracle.com/en/java/javase/17/docs/api/java.base/java/util/stream/Stream.html) API. It is also possible to convert the location information into strings which are compatible to the [ISO 6709](http://en.wikipedia.org/wiki/ISO_6709) standard.
 
 Besides the basic functionality of reading and writing GPX files, the library also allows manipulating the read GPX object in a functional way.
 
 
 ## Dependencies
 
-No external dependencies are needed by the _JPX_ library. It only needs **Java 17** to compile and run. It also runs and compiles with **Java 21**.
+The _JPX_ library needs no external dependencies. It only needs **Java 17** to compile and run. It also runs and compiles with **Java 21** and **Java 23**.
 
 
 ## Building JPX
 
-For building the JPX library you have to check out the `master` branch from GitHub.
+For building the JPX library, you have to check out the `master` branch from GitHub.
 
     $ git clone https://github.com/jenetics/jpx.git
     
@@ -32,7 +32,7 @@ For building the JPX library you have to check out the `master` branch from GitH
 
 ## Examples
 
-### Creating new GPX object with 3 track-points
+### Creating a new GPX object with 3 track-points
 
 ```java
 final GPX gpx = GPX.builder()
@@ -283,7 +283,7 @@ final GPX gpx1 = gpx.toBuilder()
 
 ### XML configuration
 
-The _JPX_ library uses the XML classes available in the Java [`java.xml`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/module-summary.html) module. This API is highly configurable and it is possible to replace the underlying implementation. Especially for Android, using different XML implementation is a necessity. _JPX_ uses three _factory_ classes for reading/writing GPX files:
+The _JPX_ library uses the XML classes available in the Java [`java.xml`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/module-summary.html) module. This API is highly configurable, and it is possible to replace the underlying implementation. Especially for Android, using different XML implementation is a necessity. _JPX_ uses three _factory_ classes for reading/writing GPX files:
 
 1. [`XMLInputFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/stream/XMLInputFactory.html): This class is needed for reading GPX files.
 1. [`XMLOutputFactory`](https://docs.oracle.com/en/java/javase/11/docs/api/java.xml/javax/xml/stream/XMLOutputFactory.html): This class is needed for writing GPX files.
@@ -304,7 +304,7 @@ final class ValidatingDocumentBuilder extends XMLProvider {
     }
 }
 ```
-And don't forget to create a `META-INF/services/io.jenetics.jpx.XMLProvider` file with the following content:
+And remember to create a `META-INF/services/io.jenetics.jpx.XMLProvider` file with the following content:
 
 ```
 org.acme.NonValidatingDocumentBuilder
@@ -314,7 +314,7 @@ org.acme.NonValidatingDocumentBuilder
 
 The library is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).
 
-    Copyright 2016-2023 Franz Wilhelmstötter
+    Copyright 2016-2024 Franz Wilhelmstötter
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

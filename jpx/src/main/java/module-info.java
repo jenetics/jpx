@@ -21,7 +21,7 @@
  * format. It is a <em>full</em> implementation of version
  * <a href="http://www.topografix.com/GPX/1/1/">1.1</a> and version
  * <a href="http://www.topografix.com/gpx_manual.as">1.0</a> of the GPX format.
- * The data classes are completely immutable and allows a functional programming
+ * The data classes are completely immutable and allow a functional programming
  * style. It is also possible to convert the location information into strings
  * which are compatible to the <a href="http://en.wikipedia.org/wiki/ISO_6709">
  * ISO 6709</a> standard.
@@ -75,7 +75,7 @@
  * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
  * }</pre>
  *
- * This allows to read otherwise invalid GPX files, like
+ * This allows reading otherwise invalid GPX files, like
  * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
