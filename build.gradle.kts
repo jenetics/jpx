@@ -34,7 +34,7 @@ plugins {
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "8.10.2"
+	version = "8.11"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -202,7 +202,7 @@ fun setupJavadoc(project: Project) {
 
 		project.tasks.register("java2html") {
 			doLast {
-				project.javaexec {
+				providers.javaexec {
 					mainClass.set("de.java2html.Java2Html")
 					args = listOf(
 						"-srcdir", "src/main/java",

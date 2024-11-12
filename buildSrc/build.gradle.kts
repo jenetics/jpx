@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /*
@@ -23,7 +24,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @since 2.1
- * @version 2.1
+ * @version 3.2
  */
 plugins {
 	`java-gradle-plugin`
@@ -35,8 +36,10 @@ repositories {
 	gradlePluginPortal()
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-	kotlinOptions.jvmTarget = "17"
+tasks.withType<KotlinCompile> {
+	compilerOptions {
+		jvmTarget.set(JvmTarget.JVM_17)
+	}
 }
 
 configure<JavaPluginExtension> {
