@@ -38,7 +38,9 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
@@ -473,7 +475,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Test(invocationCount = 10)
 	public void readWriteRandomNonIndentedGPX() throws IOException {
-		final Random random = new Random();
+		final var random = new Random();
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
