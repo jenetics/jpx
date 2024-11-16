@@ -477,7 +477,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.Writer.of(Indent.NULL, 20).write(gpx, bout);
+		GPX.Writer.of(Indent.NULL, 25).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.Reader.DEFAULT.read(bin);
@@ -486,7 +486,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		//if (!read.equals(gpx)) {
 		//	System.out.println(bout);
 		//}
-		Assert.assertEquals(read, gpx);
+		assertThat(read).isEqualTo(gpx);
 	}
 
 	@Test(dataProvider = "readWriteGPX")
