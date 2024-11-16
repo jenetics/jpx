@@ -141,12 +141,12 @@ public final class Bounds implements Serializable {
 	 * stream. The following example shows how to calculate the bounds of all
 	 * track-points of a given GPX object.
 	 *
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Bounds bounds = gpx.tracks()
 	 *     .flatMap(Track::segments)
 	 *     .flatMap(TrackSegment::points)
 	 *     .collect(Bounds.toBounds());
-	 * }</pre>
+	 * }
 	 *
 	 * If the collecting way-point stream is empty, the collected {@code Bounds}
 	 * object is {@code null}.

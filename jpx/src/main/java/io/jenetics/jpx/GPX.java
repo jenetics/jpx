@@ -77,7 +77,7 @@ import org.w3c.dom.Document;
  * <em><b>Examples:</b></em>
  * <p>
  * <b>Creating a GPX object with one track-segment and 3 track-points</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final GPX gpx = GPX.builder()
  *     .addTrack(track -> track
  *         .addSegment(segment -> segment
@@ -85,16 +85,16 @@ import org.w3c.dom.Document;
  *             .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
  *             .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
  *     .build();
- * }</pre>
+ * }
  *
  * <b>Writing a GPX file</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final var indent = new GPX.Writer.Indent("    ");
  * GPX.Writer.of(indent).write(gpx, Path.of("points.gpx"));
- * }</pre>
+ * }
  *
  * This will produce the following output.
- * <pre>{@code
+ * {@snippet lang="java":
  * <gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" xmlns="http://www.topografix.com/GPX/1/1">
  *     <trk>
  *         <trkseg>
@@ -110,20 +110,20 @@ import org.w3c.dom.Document;
  *         </trkseg>
  *     </trk>
  * </gpx>
- * }</pre>
+ * }
  *
  * <b>Reading a GPX file</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final GPX gpx = GPX.read("points.xml");
- * }</pre>
+ * }
  *
  * <b>Reading erroneous GPX files</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
- * }</pre>
+ * }
  *
- * This allows reading otherwise invalid GPX files, like
- * <pre>{@code
+ * This allows to read otherwise invalid GPX files, like
+ * {@snippet lang="java":
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *   <metadata>
@@ -155,10 +155,10 @@ import org.w3c.dom.Document;
  *     </trkseg>
  *   </trk>
  * </gpx>
- * }</pre>
+ * }
  *
  * which is read as (if you write it again)
- * <pre>{@code
+ * {@snippet lang="java":
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *     <metadata>
@@ -190,10 +190,10 @@ import org.w3c.dom.Document;
  *         </trkseg>
  *     </trk>
  * </gpx>
- * }</pre>
+ * }
  *
  * <b>Converting a GPX object to an XML {@link Document}</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final GPX gpx = ...;
  *
  * final Document doc = XMLProvider.provider()
@@ -203,7 +203,7 @@ import org.w3c.dom.Document;
  *
  * // The GPX data are written to the empty `doc` object.
  * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
- * }</pre>
+ * }
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 2.0
@@ -416,11 +416,11 @@ public final class GPX implements Serializable {
 	/**
 	 * Return the (cloned) extensions document. The root element of the returned
 	 * document has the name {@code extensions}.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * <extensions>
 	 *     ...
 	 * </extensions>
-	 * }</pre>
+	 * }
 	 *
 	 * @since 1.5
 	 *
@@ -484,7 +484,7 @@ public final class GPX implements Serializable {
 	 * Builder class for creating immutable {@code GPX} objects.
 	 * <p>
 	 * Creating a GPX object with one track-segment and 3 track-points:
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final GPX gpx = GPX.builder()
 	 *     .addTrack(track -> track
 	 *         .addSegment(segment -> segment
@@ -492,7 +492,7 @@ public final class GPX implements Serializable {
 	 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
 	 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
 	 *     .build();
-	 * }</pre>
+	 * }
 	 */
 	public static final class Builder {
 		private String _creator;
@@ -570,12 +570,12 @@ public final class GPX implements Serializable {
 		/**
 		 * Allows setting partial metadata without messing up with the
 		 * {@link Metadata.Builder} class.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX gpx = GPX.builder()
 		 *     .metadata(md -> md.author("Franz Wilhelmstötter"))
 		 *     .addTrack(...)
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @param metadata the metadata consumer
 		 * @return {@code this} {@code Builder} for method chaining
@@ -632,11 +632,11 @@ public final class GPX implements Serializable {
 		/**
 		 * Add a way-point to the {@code GPX} object using a
 		 * {@link WayPoint.Builder}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX gpx = GPX.builder()
 		 *     .addWayPoint(wp -> wp.lat(23.6).lon(13.5).ele(50))
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @param wayPoint the way-point to add, configured by the way-point
 		 *        builder
@@ -687,13 +687,13 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Add a route the {@code GPX} object.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX gpx = GPX.builder()
 		 *     .addRoute(route -> route
 		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(160))
 		 *         .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161)))
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @param route the route to add, configured by the route builder
 		 * @return {@code this} {@code Builder} for method chaining
@@ -743,7 +743,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Add a track the {@code GPX} object.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX gpx = GPX.builder()
 		 *     .addTrack(track -> track
 		 *         .addSegment(segment -> segment
@@ -751,7 +751,7 @@ public final class GPX implements Serializable {
 		 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
 		 *             .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @param track the track to add, configured by the track builder
 		 * @return {@code this} {@code Builder} for method chaining
@@ -778,11 +778,11 @@ public final class GPX implements Serializable {
 		/**
 		 * Sets the extensions object, which may be {@code null}. The root
 		 * element of the extensions document must be {@code extensions}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * <extensions>
 		 *     ...
 		 * </extensions>
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.5
 		 *
@@ -826,13 +826,13 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Return a new {@link WayPoint} filter.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX filtered = gpx.toBuilder()
 		 *     .wayPointFilter()
 		 *         .filter(wp -> wp.getTime().isPresent())
 		 *         .build())
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.1
 		 *
@@ -898,13 +898,13 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Return a new {@link Route} filter.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX filtered = gpx.toBuilder()
 		 *     .routeFilter()
 		 *         .filter(Route::nonEmpty)
 		 *         .build())
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.1
 		 *
@@ -973,7 +973,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Return a new {@link Track} filter.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX merged = gpx.toBuilder()
 		 *     .trackFilter()
 		 *         .map(track -> track.toBuilder()
@@ -982,7 +982,7 @@ public final class GPX implements Serializable {
 		 *             .build())
 		 *         .build()
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.1
 		 *
@@ -1459,7 +1459,7 @@ public final class GPX implements Serializable {
 		 * <p>
 		 * The following example shows how to create an XML-Document from a
 		 * given {@code GPX} object.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final GPX gpx = ...;
 		 *
 		 * final Document doc = XMLProvider.provider()
@@ -1469,7 +1469,7 @@ public final class GPX implements Serializable {
 		 *
 		 * // The GPX data are written to the empty `doc` object.
 		 * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
-		 * }</pre>
+		 * }
 		 *
 		 * @since 3.0
 		 *
@@ -1623,13 +1623,13 @@ public final class GPX implements Serializable {
 		 * {@link WayPoint#getLongitude()}, ...
 		 * <p>
 		 * The example below shows the <em>lat</em> and <em>lon</em> values with
-		 * maximal five fractional digits.
-		 * <pre>{@code
+		 * maximal 5 fractional digits.
+		 * {@snippet lang="java":
 		 * <trkpt lat="45.78068" lon="12.55368">
 		 *     <ele>1.2</ele>
 		 *     <time>2009-08-30T07:08:21Z</time>
 		 * </trkpt>
-		 * }</pre>
+		 * }
 		 *
 		 * The following table should give you a feeling about the accuracy of a
 		 * given fraction digits count, at the equator.
@@ -2058,9 +2058,9 @@ public final class GPX implements Serializable {
 	 * Writes the given {@code gpx} object (in GPX XML format) to the given
 	 * {@code path}.
 	 * This method is a shortcut for
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * GPX.Writer.DEFAULT.write(gpx, path);
-	 * }</pre>
+	 * }
 	 *
 	 * @see Writer
 	 *
@@ -2078,9 +2078,9 @@ public final class GPX implements Serializable {
 	/**
 	 * Read a GPX object from the given {@code input} stream.
 	 * This method is a shortcut for
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * GPX.Reader.DEFAULT.read(path);
-	 * }</pre>
+	 * }
 	 *
 	 * @see Reader
 	 *

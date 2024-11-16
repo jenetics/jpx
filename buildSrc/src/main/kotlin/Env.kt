@@ -52,7 +52,7 @@ object Env {
  * Information about the library and author.
  */
 object JPX {
-	const val VERSION = "3.2.0"
+	const val VERSION = "4.0.0-SNAPSHOT"
 	const val ID = "jpx"
 	const val NAME = "jpx"
 	const val GROUP = "io.jenetics"

@@ -650,52 +650,67 @@ public final class LocationFormatter {
 			Elevation E = null;
 
 			for (var format : _formats) {
-				if (format instanceof LatitudeDegree ld) {
-					if (D == null) {
-						D = ld;
-					} else {
-						throw iae("Only one 'D' pattern allowed.");
+				switch (format) {
+					case LatitudeDegree latd -> {
+						if (D == null) {
+							D = latd;
+						} else {
+							throw iae("Only one 'D' pattern allowed.");
+						}
 					}
-				} else if (format instanceof LatitudeMinute lm) {
-					if (M == null) {
-						M = lm;
-					} else {
-						throw iae("Only one 'M' pattern allowed.");
+					case LatitudeMinute latm -> {
+						if (M == null) {
+							M = latm;
+						} else {
+							throw iae("Only one 'M' pattern allowed.");
+						}
 					}
-				} else if (format instanceof LatitudeSecond ls) {
-					if (S == null) {
-						S = ls;
-					} else {
-						throw iae("Only one 'S' pattern allowed.");
+					case LatitudeSecond lats -> {
+						if (S == null) {
+							S = lats;
+						} else {
+							throw iae("Only one 'S' pattern allowed.");
+						}
 					}
-				} else if (format instanceof LatitudeNS && X==null) {
-					X = (LatitudeNS)format;
-				} else if (format instanceof LongitudeDegree ld) {
-					if (d == null) {
-						d = ld;
-					} else {
-						throw iae("Only one 'd' pattern allowed.");
+					case LatitudeNS latns -> {
+						if (X == null) {
+							X = (LatitudeNS)format;
+						}
 					}
-				} else if (format instanceof LongitudeMinute lm) {
-					if (m == null) {
-						m = lm;
-					} else {
-						throw iae("Only one 'm' pattern allowed.");
+					case LongitudeDegree lond -> {
+						if (d == null) {
+							d = lond;
+						} else {
+							throw iae("Only one 'd' pattern allowed.");
+						}
 					}
-				} else if (format instanceof LongitudeSecond ls) {
-					if (s == null) {
-						s = ls;
-					} else {
-						throw iae("Only one 's' pattern allowed.");
+					case LongitudeMinute lonm -> {
+						if (m == null) {
+							m = lonm;
+						} else {
+							throw iae("Only one 'm' pattern allowed.");
+						}
 					}
-				} else if (format instanceof LongitudeEW lew && x == null) {
-					x = lew;
-				} else if (format instanceof Elevation ele) {
-					if (E == null) {
-						E = ele;
-					} else {
-						throw iae("Only one 'E' pattern allowed.");
+					case LongitudeSecond lons -> {
+						if (s == null) {
+							s = lons;
+						} else {
+							throw iae("Only one 's' pattern allowed.");
+						}
 					}
+					case LongitudeEW lonew -> {
+						if (x == null) {
+							x = lonew;
+						}
+					}
+					case Elevation ele -> {
+						if (E == null) {
+							E = ele;
+						} else {
+							throw iae("Only one 'E' pattern allowed.");
+						}
+					}
+					default -> { }
 				}
 			}
 
