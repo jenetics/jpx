@@ -32,8 +32,7 @@ import io.jenetics.jpx.Point;
 import io.jenetics.jpx.WayPoint;
 
 /**
- * Aggregation of the three location components: latitude, longitude and
- * elevation.
+ * Aggregation of the three location parts: latitude, longitude and elevation.
  *
  * @see Point
  *
@@ -128,7 +127,7 @@ public final class Location {
 	 * Create a new location form the given GPS point.
 	 *
 	 * @param point the GPS point
-	 * @return a new location form the given GPS point
+	 * @return a new location forms the given GPS point
 	 * @throws NullPointerException if the given {@code point} is {@code null}
 	 */
 	public static Location of(final Point point) {

@@ -49,7 +49,7 @@ public abstract class XMLProvider {
 	/**
 	 * Returns {@link XMLInputFactory} to be used for reading files.
 	 *
-	 * @return the xml input factory
+	 * @return the XML input factory
 	 */
 	public XMLInputFactory xmlInputFactory() {
 		return XMLInputFactory.newInstance();
@@ -58,7 +58,7 @@ public abstract class XMLProvider {
 	/**
 	 * Returns {@link XMLOutputFactory} to be used for writing files.
 	 *
-	 * @return the xml output factory
+	 * @return the XML output factory
 	 */
 	public XMLOutputFactory xmlOutputFactory() {
 		return XMLOutputFactory.newInstance();

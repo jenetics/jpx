@@ -60,7 +60,7 @@ public final class Copyright implements Serializable {
 	 *
 	 * @param author copyright holder (TopoSoft, Inc.)
 	 * @param year year of copyright.
-	 * @param license link to external file containing license text.
+	 * @param license link to an external file containing license text.
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 */
 	private Copyright(final String author, final Year year, final URI license) {
@@ -125,7 +125,7 @@ public final class Copyright implements Serializable {
 	 *
 	 * @param author copyright holder (TopoSoft, Inc.)
 	 * @param year year of copyright.
-	 * @param license link to external file containing license text.
+	 * @param license link to an external file containing license text.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 */
@@ -142,7 +142,7 @@ public final class Copyright implements Serializable {
 	 *
 	 * @param author copyright holder (TopoSoft, Inc.)
 	 * @param year year of copyright.
-	 * @param license link to external file containing license text.
+	 * @param license link to an external file containing license text.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 * @throws java.time.DateTimeException if the given {@code year} is invalid
@@ -160,7 +160,7 @@ public final class Copyright implements Serializable {
 	 *
 	 * @param author copyright holder (TopoSoft, Inc.)
 	 * @param year year of copyright.
-	 * @param license link to external file containing license text.
+	 * @param license link to an external file containing license text.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 * @throws IllegalArgumentException if the given {@code license} is not a
@@ -204,7 +204,7 @@ public final class Copyright implements Serializable {
 	 * Create a new {@code Copyright} object with the given data.
 	 *
 	 * @param author copyright holder (TopoSoft, Inc.)
-	 * @param license link to external file containing license text.
+	 * @param license link to an external file containing license text.
 	 * @return a new {@code Copyright} object with the given data
 	 * @throws NullPointerException if the {@code author} is {@code null}
 	 */

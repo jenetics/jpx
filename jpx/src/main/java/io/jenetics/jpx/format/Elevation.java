@@ -21,7 +21,7 @@ import java.text.ParsePosition;
 import java.util.Optional;
 
 /**
- * This field allows to access the elevation (in meter) of a given location.
+ * This field allows accessing the elevation (in meter) of a given location.
  *
  * @version 2.2
  * @since 2.2

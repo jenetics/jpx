@@ -122,7 +122,7 @@ import org.w3c.dom.Document;
  * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
  * }</pre>
  *
- * This allows to read otherwise invalid GPX files, like
+ * This allows reading otherwise invalid GPX files, like
  * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
@@ -1100,7 +1100,7 @@ public final class GPX implements Serializable {
 		public enum Mode {
 
 			/**
-			 * In this mode the GPX reader tries to ignore invalid GPX values
+			 * In this mode, the GPX reader tries to ignore invalid GPX values
 			 * and elements.
 			 */
 			LENIENT,
@@ -1372,7 +1372,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Represents the indentation value, the writer is using. An indentation
 		 * string of {@code null} means that the GPX data is written as one XML
-		 * line. An empty string adds line feeds, but with no indentation.
+		 * line. An empty string adds line feeds but with no indentation.
 		 *
 		 * @since 3.0
 		 *
@@ -1592,7 +1592,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Converts the given {@code gpx} object into a {@code byte[]} array.
-		 * This method can be used for short term storage of GPX objects.
+		 * This method can be used for short-term storage of GPX objects.
 		 *
 		 * @since 3.0
 		 *
@@ -1623,7 +1623,7 @@ public final class GPX implements Serializable {
 		 * {@link WayPoint#getLongitude()}, ...
 		 * <p>
 		 * The example below shows the <em>lat</em> and <em>lon</em> values with
-		 * maximal 5 fractional digits.
+		 * maximal five fractional digits.
 		 * <pre>{@code
 		 * <trkpt lat="45.78068" lon="12.55368">
 		 *     <ele>1.2</ele>
@@ -2076,7 +2076,7 @@ public final class GPX implements Serializable {
 	}
 
 	/**
-	 * Read an GPX object from the given {@code input} stream.
+	 * Read a GPX object from the given {@code input} stream.
 	 * This method is a shortcut for
 	 * <pre>{@code
 	 * GPX.Reader.DEFAULT.read(path);

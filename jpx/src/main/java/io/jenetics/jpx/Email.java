@@ -54,7 +54,7 @@ public final class Email implements Comparable<Email>, Serializable {
 	 *
 	 * @param id id half of email address (billgates2004)
 	 * @param domain domain half of email address (hotmail.com)
-	 * @throws NullPointerException if one of the argument is {@code null}
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	private Email(final String id, final String domain) {
 		_id = requireNonNull(id);
@@ -128,7 +128,7 @@ public final class Email implements Comparable<Email>, Serializable {
 	 * @param id id half of email address (billgates2004)
 	 * @param domain domain half of email address (hotmail.com)
 	 * @return a new {@code Email} object with the given values
-	 * @throws NullPointerException if one of the argument is {@code null}
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	public static Email of(final String id, final String domain) {
 		return new Email(id, domain);
@@ -139,7 +139,7 @@ public final class Email implements Comparable<Email>, Serializable {
 	 *
 	 * @param address the email address string
 	 * @return a new {@code Email} object with {@code address}
-	 * @throws NullPointerException if one of the argument is {@code null}
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 * @throws IllegalArgumentException if the given {@code address} is invalid
 	 */
 	public static Email of(final String address) {
@@ -150,7 +150,7 @@ public final class Email implements Comparable<Email>, Serializable {
 		}
 
 		final int index = address.indexOf('@');
-		if (index == -1 || index == 0 || index == address.length()) {
+		if (index == -1 || index == 0 || index == address.length() - 1) {
 			throw new IllegalArgumentException(format(
 				"Invalid email: '%s'.", address
 			));

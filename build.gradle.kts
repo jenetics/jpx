@@ -1,3 +1,6 @@
+import io.jenetics.gradle.dsl.isModule
+import io.jenetics.gradle.dsl.moduleName
+
 /*
  * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
@@ -31,7 +34,7 @@ plugins {
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "8.4"
+	version = "8.11"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -111,8 +114,8 @@ fun setupJava(project: Project) {
 		"Build-OS-Arch" to Env.BUILD_OS_ARCH,
 		"Build-OS-Version" to Env.BUILD_OS_VERSION
 	)
-	if (project.extra.has("moduleName")) {
-		attr["Automatic-Module-Name"] = project.extra["moduleName"].toString()
+	if (project.isModule) {
+		attr["Automatic-Module-Name"] = project.moduleName
 	}
 
 	project.tasks.withType<Jar> {
@@ -129,7 +132,7 @@ fun setupTestReporting(project: Project) {
 	project.apply(plugin = "jacoco")
 
 	project.configure<JacocoPluginExtension> {
-		toolVersion = "0.8.9"
+		toolVersion = "0.8.12"
 	}
 
 	project.tasks {
@@ -199,7 +202,7 @@ fun setupJavadoc(project: Project) {
 
 		project.tasks.register("java2html") {
 			doLast {
-				project.javaexec {
+				providers.javaexec {
 					mainClass.set("de.java2html.Java2Html")
 					args = listOf(
 						"-srcdir", "src/main/java",

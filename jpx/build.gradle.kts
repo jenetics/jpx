@@ -1,3 +1,5 @@
+import io.jenetics.gradle.dsl.moduleName
+
 /*
  * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
@@ -31,7 +33,7 @@ plugins {
 
 description = "JPX - Java GPX (GPS) Library"
 
-extra["moduleName"] = "io.jenetics.jpx"
+moduleName = "io.jenetics.jpx"
 
 dependencies {
 	testImplementation(libs.assertj)
