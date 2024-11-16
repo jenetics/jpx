@@ -93,9 +93,9 @@ public class WayPointTest extends XMLStreamTestBase<WayPoint> {
 	}
 
 	private static double nextDouble(final RandomGenerator random) {
-		//final int scale = 10_000;
-		//return random.nextInt(scale)/(double)scale;
-		return random.nextDouble();
+		final int scale = 1_000_000;
+		return random.nextInt(scale)/(double)scale;
+		//return random.nextDouble();
 	}
 
 	public static List<WayPoint> nextWayPoints(final Random random) {

@@ -23,7 +23,7 @@ import java.util.Optional;
 import io.jenetics.jpx.Latitude;
 
 /**
- * This field allows to access the latitude degrees of a given location. If the
+ * This field allows accessing the latitude degrees of a given location. If the
  * pattern has a fractional part, the latitude is rounded to match the pattern.
  * If the pattern has no fractional part, the latitude is truncated rather than
  * rounded, on the assumption that the fractional part will be represented by

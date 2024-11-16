@@ -54,7 +54,7 @@ public final class Email implements Comparable<Email>, Serializable {
 	 *
 	 * @param id id half of email address (billgates2004)
 	 * @param domain domain half of email address (hotmail.com)
-	 * @throws NullPointerException if one of the argument is {@code null}
+	 * @throws NullPointerException if one of the arguments is {@code null}
 	 */
 	private Email(final String id, final String domain) {
 		_id = requireNonNull(id);

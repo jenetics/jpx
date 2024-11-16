@@ -218,7 +218,7 @@ public final class Bounds implements Serializable {
 	 * @return a new {@code Bounds} object with the given extent
 	 * @throws IllegalArgumentException if the latitude values are not within
 	 *         the range of {@code [-90..90]}
-	 * @throws IllegalArgumentException if the longitudes value are not within
+	 * @throws IllegalArgumentException if the longitude values are not within
 	 *         the range of {@code [-180..180]}
 	 */
 	public static Bounds of(

@@ -1100,7 +1100,7 @@ public final class GPX implements Serializable {
 		public enum Mode {
 
 			/**
-			 * In this mode the GPX reader tries to ignore invalid GPX values
+			 * In this mode, the GPX reader tries to ignore invalid GPX values
 			 * and elements.
 			 */
 			LENIENT,
@@ -1372,7 +1372,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Represents the indentation value, the writer is using. An indentation
 		 * string of {@code null} means that the GPX data is written as one XML
-		 * line. An empty string adds line feeds, but with no indentation.
+		 * line. An empty string adds line feeds but with no indentation.
 		 *
 		 * @since 3.0
 		 *
@@ -1592,7 +1592,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Converts the given {@code gpx} object into a {@code byte[]} array.
-		 * This method can be used for short term storage of GPX objects.
+		 * This method can be used for short-term storage of GPX objects.
 		 *
 		 * @since 3.0
 		 *
