@@ -352,7 +352,7 @@ public final class WayPoint implements Point, Serializable {
 	}
 
 	/**
-	 * Return the number of seconds since last DGPS update.
+	 * Return the number of seconds since the last DGPS update.
 	 *
 	 * @return number of seconds since last DGPS update
 	 */
