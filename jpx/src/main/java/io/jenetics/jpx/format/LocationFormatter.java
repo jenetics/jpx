@@ -915,7 +915,7 @@ public final class LocationFormatter {
 				switch (c) {
 					case '\'':
 						quote = !quote;
-						if (token.length() > 0) {
+						if (!token.isEmpty()) {
 							tokens.add(token.toString());
 							token.setLength(0);
 						}
@@ -925,7 +925,7 @@ public final class LocationFormatter {
 						if (quote) {
 							token.append(c);
 						} else {
-							if (token.length() > 0) {
+							if (!token.isEmpty()) {
 								tokens.add(token.toString());
 								token.setLength(0);
 							}
@@ -939,7 +939,7 @@ public final class LocationFormatter {
 							pc != ',' &&
 							!quote)
 						{
-							if (token.length() > 0) {
+							if (!token.isEmpty()) {
 								tokens.add(token.toString());
 								token.setLength(0);
 							}
@@ -951,7 +951,7 @@ public final class LocationFormatter {
 						break;
 					default:
 						if (PROTECTED_CHARS.contains(pc) || pc == '\'') {
-							if (token.length() > 0) {
+							if (!token.isEmpty()) {
 								tokens.add(token.toString());
 								token.setLength(0);
 							}
@@ -963,7 +963,7 @@ public final class LocationFormatter {
 				pc = c;
 			}
 
-			if (token.length() > 0) {
+			if (!token.isEmpty()) {
 				tokens.add(token.toString());
 			}
 
