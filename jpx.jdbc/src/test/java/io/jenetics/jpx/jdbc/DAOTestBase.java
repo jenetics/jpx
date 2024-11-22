@@ -17,10 +17,40 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx.jdbc;
+
+import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.4
- * @version 1.4
  */
-package io.jenetics.gradle;
+public abstract class DAOTestBase {
+
+	public DB db = H2DB.newTestInstance();
+
+	@BeforeClass
+	public void setup() throws IOException, SQLException {
+		final String[] queries = IO.
+			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
+			.split(";");
+
+		db.transaction(conn -> {
+			for (String query : queries) {
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute(query);
+				}
+			}
+		});
+	}
+
+	@AfterClass
+	public void shutdown() throws SQLException {
+		db.close();
+	}
+
+}
