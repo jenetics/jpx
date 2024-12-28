@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<gpx version="1.1">
+	<trk>
+		<trkseg>
+			<trkpt lat="47.1849902" lon="9.3118156"><ele>1411.7906106047938</ele><time>2018-09-30T09:43:37Z</time></trkpt>
+			<trkpt lat="47.1847356" lon="9.3116516"><ele>1392.486126435269</ele><time>2018-09-30T09:44:41Z</time></trkpt>
+			<trkpt lat="47.1844677" lon="9.3115969"><ele>1395.0386210201773</ele><time>2018-09-30T09:45:09Z</time></trkpt>
+			<trkpt lat="47.1841943" lon="9.3116178"><ele>1399.1852111777555</ele><time>2018-09-30T09:45:39Z</time></trkpt>
+			<trkpt lat="47.1839262" lon="9.311698"><ele>1400.9042412783833</ele><time>2018-09-30T09:46:06Z</time></trkpt>
+			<trkpt lat="47.1836688" lon="9.3118495"><ele>1404.8712068295272</ele><time>2018-09-30T09:46:30Z</time></trkpt>
+			<trkpt lat="47.1834009" lon="9.3119155"><ele>1406.7036626781644</ele><time>2018-09-30T09:46:56Z</time></trkpt>
+			<trkpt lat="47.1831309" lon="9.3119291"><ele>1408.6363346678631</ele><time>2018-09-30T09:47:24Z</time></trkpt>
+			<trkpt lat="47.18286" lon="9.311905"><ele>1410.9618086711207</ele><time>2018-09-30T09:47:48Z</time></trkpt>
+		</trkseg>
+	</trk>
+</gpx>

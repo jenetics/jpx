@@ -309,7 +309,7 @@ public final class GPX implements Serializable {
 	 * @param routes the routes
 	 * @param tracks the tracks
 	 * @param extensions the XML extensions document
-	 * @throws NullPointerException if the {@code creator} or {@code version} is
+	 * @throws NullPointerException if the {@code version} is
 	 *         {@code null}
 	 */
 	private GPX(
@@ -322,7 +322,7 @@ public final class GPX implements Serializable {
 		final Document extensions
 	) {
 		_version = requireNonNull(version);
-		_creator = requireNonNull(creator);
+		_creator = creator;
 		_metadata = metadata;
 		_wayPoints = copyOf(wayPoints);
 		_routes = copyOf(routes);
