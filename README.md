@@ -330,7 +330,7 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
-### 3.2.1
+### [3.2.1](https://github.com/jenetics/jpx/releases/tag/v3.2.1)
 
 #### Improvements
 
