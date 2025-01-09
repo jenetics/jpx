@@ -969,7 +969,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		}
 
 		assertThat(gpx_lenient.getVersion()).isEqualTo("1.1");
-		assertThat(gpx_lenient.getCreator()).isNull();
+		assertThat(gpx_lenient.getCreator()).isEqualTo("JPX - https://github.com/jenetics/jpx");
 		assertThat(gpx_lenient.getTracks()).hasSize(1);
 		assertThat(gpx_lenient.getTracks().get(0).getSegments()).hasSize(1);
 		assertThat(gpx_lenient.getTracks().get(0).getSegments().get(0)).hasSize(9);
@@ -983,8 +983,22 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		} catch (Exception e) {
 			Assert.fail("Unexpected exception was thrown: " + e);
 		}
+	}
 
+	@Test
+	public void issue186_NullCreator() throws IOException {
+		Random random = new Random();
+		GPX createGPX = GPX.of(
+			Version.V11,
+			null,
+			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
+			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
+			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
+			random.nextBoolean() ? TrackTest.nextTracks(random) : null,
+			random.nextBoolean() ? doc() : null
+		);
 
+		assertThat(createGPX.getCreator()).isEqualTo("JPX - https://github.com/jenetics/jpx");
 	}
 
 }
