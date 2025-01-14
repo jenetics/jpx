@@ -125,7 +125,7 @@ public final class Person implements Serializable {
 
 	@Override
 	public String toString() {
-		return Objects.toString(_name);
+		return _name + ":" + _email + ":" + _link;
 	}
 
 	/* *************************************************************************

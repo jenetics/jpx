@@ -62,9 +62,9 @@ public class FiltersTest {
 
 		final GPX merged = gpx.toBuilder()
 			.trackFilter()
-				.listMap(Filters::mergeTracks)
-				.filter(Track::nonEmpty)
-				.build()
+			.listMap(Filters::mergeTracks)
+			.filter(Track::nonEmpty)
+			.build()
 			.build();
 
 		Assert.assertEquals(merged.getTracks().size(), 1);
