@@ -1,5 +1,6 @@
 import io.jenetics.gradle.dsl.isModule
 import io.jenetics.gradle.dsl.moduleName
+import org.apache.tools.ant.filters.ReplaceTokens
 
 /*
  * Java GPX Library (@__identifier__@).
@@ -9,7 +10,7 @@ import io.jenetics.gradle.dsl.moduleName
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *	  http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,7 +19,7 @@ import io.jenetics.gradle.dsl.moduleName
  * limitations under the License.
  *
  * Author:
- *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
+ *	Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
 
 /**
@@ -28,7 +29,7 @@ import io.jenetics.gradle.dsl.moduleName
  */
 plugins {
 	base
-    alias(libs.plugins.version.catalog.update)
+	alias(libs.plugins.version.catalog.update)
 }
 
 rootProject.version = JPX.VERSION
@@ -232,6 +233,9 @@ val identifier = "${JPX.ID}-${JPX.VERSION}"
 /**
  * Setup of the Maven publishing.
  */
+/**
+ * Setup of the Maven publishing.
+ */
 fun setupPublishing(project: Project) {
 	project.configure<JavaPluginExtension> {
 		withJavadocJar()
@@ -240,26 +244,29 @@ fun setupPublishing(project: Project) {
 
 	project.tasks.named<Jar>("sourcesJar") {
 		filter(
-			org.apache.tools.ant.filters.ReplaceTokens::class, "tokens" to mapOf(
-			"__identifier__" to identifier,
-			"__year__" to Env.COPYRIGHT_YEAR
-		)
+			ReplaceTokens::class, "tokens" to mapOf(
+				"__identifier__" to identifier,
+				"__year__" to Env.COPYRIGHT_YEAR
+			)
 		)
 	}
 
 	project.tasks.named<Jar>("javadocJar") {
 		filter(
-			org.apache.tools.ant.filters.ReplaceTokens::class, "tokens" to mapOf(
-			"__identifier__" to identifier,
-			"__year__" to Env.COPYRIGHT_YEAR
-		)
+			ReplaceTokens::class, "tokens" to mapOf(
+				"__identifier__" to identifier,
+				"__year__" to Env.COPYRIGHT_YEAR
+			)
 		)
 	}
 
 	project.configure<PublishingExtension> {
 		publications {
 			create<MavenPublication>("mavenJava") {
-				artifactId = JPX.ID
+				suppressPomMetadataWarningsFor("testFixturesApiElements")
+				suppressPomMetadataWarningsFor("testFixturesRuntimeElements")
+
+				artifactId = project.name
 				from(project.components["java"])
 				versionMapping {
 					usage("java-api") {
@@ -299,24 +306,23 @@ fun setupPublishing(project: Project) {
 		}
 		repositories {
 			maven {
-				url = if (version.toString().endsWith("SNAPSHOT")) {
-					uri(Maven.SNAPSHOT_URL)
-				} else {
-					uri(Maven.RELEASE_URL)
-				}
+				url = if (version.toString().endsWith("SNAPSHOT"))
+					uri(layout.buildDirectory.dir("repos/snapshots"))
+				else
+					uri(layout.buildDirectory.dir("repos/releases"))
+			}
+		}
 
-				credentials {
-					username = if (extra.properties["nexus_username"] != null) {
-						extra.properties["nexus_username"] as String
-					} else {
-						"nexus_username"
-					}
-					password = if (extra.properties["nexus_password"] != null) {
-						extra.properties["nexus_password"] as String
-					} else {
-						"nexus_password"
-					}
-				}
+		// Exclude test fixtures from publication, as we use them only internally
+		plugins.withId("org.gradle.java-test-fixtures") {
+			val component = components["java"] as AdhocComponentWithVariants
+			component.withVariantsFromConfiguration(configurations["testFixturesApiElements"]) { skip() }
+			component.withVariantsFromConfiguration(configurations["testFixturesRuntimeElements"]) { skip() }
+
+			// Workaround to not publish test fixtures sources added by com.vanniktech.maven.publish plugin
+			// TODO: Remove as soon as https://github.com/vanniktech/gradle-maven-publish-plugin/issues/779 closed
+			afterEvaluate {
+				component.withVariantsFromConfiguration(configurations["testFixturesSourcesElements"]) { skip() }
 			}
 		}
 	}
