@@ -122,8 +122,8 @@ import org.w3c.dom.Document;
  * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
  * }
  *
- * This allows to read otherwise invalid GPX files, like
- * {@snippet lang="java":
+ * This allows reading otherwise invalid GPX files, like
+ * <pre>{@code
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *   <metadata>
@@ -302,14 +302,16 @@ public final class GPX implements Serializable {
 	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
-	 *        instance document that fails to validate.
+	 *        instance document that fails to validate. If the {@code creator}
+	 *        is {@code null}, {@code "JPX - https://github.com/jenetics/jpx"}
+	 *        is used instead.
 	 * @param version the GPX version
 	 * @param metadata the metadata about the GPS file
 	 * @param wayPoints the way-points
 	 * @param routes the routes
 	 * @param tracks the tracks
 	 * @param extensions the XML extensions document
-	 * @throws NullPointerException if the {@code creator} or {@code version} is
+	 * @throws NullPointerException if the {@code version} is
 	 *         {@code null}
 	 */
 	private GPX(
@@ -322,7 +324,7 @@ public final class GPX implements Serializable {
 		final Document extensions
 	) {
 		_version = requireNonNull(version);
-		_creator = requireNonNull(creator);
+		_creator = creator != null ? creator : _CREATOR;
 		_metadata = metadata;
 		_wayPoints = copyOf(wayPoints);
 		_routes = copyOf(routes);
@@ -1100,7 +1102,7 @@ public final class GPX implements Serializable {
 		public enum Mode {
 
 			/**
-			 * In this mode the GPX reader tries to ignore invalid GPX values
+			 * In this mode, the GPX reader tries to ignore invalid GPX values
 			 * and elements.
 			 */
 			LENIENT,
@@ -1372,7 +1374,7 @@ public final class GPX implements Serializable {
 		/**
 		 * Represents the indentation value, the writer is using. An indentation
 		 * string of {@code null} means that the GPX data is written as one XML
-		 * line. An empty string adds line feeds, but with no indentation.
+		 * line. An empty string adds line feeds but with no indentation.
 		 *
 		 * @since 3.0
 		 *
@@ -1592,7 +1594,7 @@ public final class GPX implements Serializable {
 
 		/**
 		 * Converts the given {@code gpx} object into a {@code byte[]} array.
-		 * This method can be used for short term storage of GPX objects.
+		 * This method can be used for short-term storage of GPX objects.
 		 *
 		 * @since 3.0
 		 *
@@ -1623,8 +1625,8 @@ public final class GPX implements Serializable {
 		 * {@link WayPoint#getLongitude()}, ...
 		 * <p>
 		 * The example below shows the <em>lat</em> and <em>lon</em> values with
-		 * maximal 5 fractional digits.
-		 * {@snippet lang="java":
+		 * maximal five fractional digits.
+		 * <pre>{@code
 		 * <trkpt lat="45.78068" lon="12.55368">
 		 *     <ele>1.2</ele>
 		 *     <time>2009-08-30T07:08:21Z</time>
@@ -1701,7 +1703,9 @@ public final class GPX implements Serializable {
 	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
-	 *        instance document that fails to validate.
+	 *        instance document that fails to validate. If the {@code creator}
+	 *        is {@code null}, {@code "JPX - https://github.com/jenetics/jpx"}
+	 *        is used instead.
 	 * @param  version the GPX version
 	 * @param metadata the metadata about the GPS file
 	 * @param wayPoints the way-points
@@ -1737,7 +1741,9 @@ public final class GPX implements Serializable {
 	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
-	 *        instance document that fails to validate.
+	 *        instance document that fails to validate. If the {@code creator}
+	 *        is {@code null}, {@code "JPX - https://github.com/jenetics/jpx"}
+	 *        is used instead.
 	 * @param metadata the metadata about the GPS file
 	 * @param wayPoints the way-points
 	 * @param routes the routes
@@ -1771,7 +1777,9 @@ public final class GPX implements Serializable {
 	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
-	 *        instance document that fails to validate.
+	 *        instance document that fails to validate. If the {@code creator}
+	 *        is {@code null}, {@code "JPX - https://github.com/jenetics/jpx"}
+	 *        is used instead.
 	 * @param metadata the metadata about the GPS file
 	 * @param wayPoints the way-points
 	 * @param routes the routes
@@ -1805,7 +1813,9 @@ public final class GPX implements Serializable {
 	 *
 	 * @param creator the name or URL of the software that created your GPX
 	 *        document. This allows others to inform the creator of a GPX
-	 *        instance document that fails to validate.
+	 *        instance document that fails to validate. If the {@code creator}
+	 *        is {@code null}, {@code "JPX - https://github.com/jenetics/jpx"}
+	 *        is used instead.
 	 * @param  version the GPX version
 	 * @param metadata the metadata about the GPS file
 	 * @param wayPoints the way-points

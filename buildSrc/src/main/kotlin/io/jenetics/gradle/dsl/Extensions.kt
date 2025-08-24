@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
@@ -23,26 +20,24 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 2.1
+ * @since 3.2
  * @version 3.2
  */
-plugins {
-	`java-gradle-plugin`
-	`kotlin-dsl`
-}
+package io.jenetics.gradle.dsl
 
-repositories {
-	mavenLocal()
-	gradlePluginPortal()
-}
+import org.gradle.api.Project
+import org.gradle.kotlin.dsl.extra
 
-tasks.withType<KotlinCompile> {
-	compilerOptions {
-		jvmTarget.set(JvmTarget.JVM_17)
-	}
-}
+/**
+ * Gets the module name of the project, as configured in the build file.
+ */
+var Project.moduleName: String
+	get() = if (this.isModule) this.extra.get("moduleName").toString()
+			else this.name
+	set(value) = this.extra.set("moduleName", value)
 
-configure<JavaPluginExtension> {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
-}
+/**
+ * Checks if the project is configured as a module.
+ */
+val Project.isModule: Boolean
+	get() = this.extra.has("moduleName")

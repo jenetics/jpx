@@ -347,7 +347,7 @@ abstract class XMLReader<T> {
 
 	/**
 	 * Return a {@code XMLReader} which collects the elements, read by the given
-	 * child {@code reader}, and returns it as list of these elements.
+	 * child {@code reader}, and returns it as a list of these elements.
 	 * <p>
 	 * <b>XML</b>
 	 * <pre> {@code
@@ -438,7 +438,7 @@ final class TextReader extends XMLReader<String> {
 }
 
 /**
- * Reader implementation for reading list of elements.
+ * Reader implementation for reading a list of elements.
  *
  * @param <T> the element type
  *

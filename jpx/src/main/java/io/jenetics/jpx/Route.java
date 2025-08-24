@@ -871,7 +871,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 			: route.getLinks().get(0).getText().orElse(null);
 	}
 
-	// Define the needed writers for the different versions.
+	// Define the necessary writers for the different versions.
 	private static XMLWriters<Route>
 	writers(final Function<? super Number, String> formatter) {
 		return new XMLWriters<Route>()
@@ -890,7 +890,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	}
 
 
-	// Define the needed readers for the different versions.
+	// Define the necessary readers for the different versions.
 	private static XMLReaders
 	readers(final Function<? super String, Length> lengthParser) {
 		return new XMLReaders()

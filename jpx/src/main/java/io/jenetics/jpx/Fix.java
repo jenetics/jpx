@@ -25,14 +25,14 @@ import java.util.Optional;
 
 /**
  * Type of GPS fix. {@code none} means GPS had no fix. To signify "the fix info
- * is unknown, leave out {@code Fix} entirely. {@code pps} = military signal
+ * is unknown", leave out {@code Fix} entirely. {@code pps} = military signal
  * used.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.2
  * @since 1.0
  */
-public enum  Fix {
+public enum Fix {
 
 	NONE("none"),
 	DIM_2("2d"),

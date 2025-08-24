@@ -60,7 +60,7 @@ final class MathUtils {
 			final long diffPositive = a - POSITIVE_ZERO_BITS;
 			final long diffNegative = b - NEGATIVE_ZERO_BITS;
 			equal = diffPositive <= ulps && diffNegative <= (ulps - diffPositive);
-		} else {           // a and b have the same sign.
+		} else {         // a and b have the same sign.
 			equal = a - b <= ulps;
 		}
 

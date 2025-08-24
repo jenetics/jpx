@@ -98,7 +98,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * @param number the GPS track number
 	 * @param type the type (classification) of track
 	 * @param extensions the extensions document
-	 * @param segments the track-segments holds a list of track-points which are
+	 * @param segments the track-segments hold a list of track-points which are
 	 *        logically connected in order. To represent a single GPS track
 	 *        where GPS reception was lost, or the GPS receiver was turned off,
 	 *        start a new track-segment for each continuous span of track data.
@@ -716,7 +716,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * @param number the GPS track number
 	 * @param type the type (classification) of track
 	 * @param extensions the extensions document
-	 * @param segments the track-segments holds a list of track-points which are
+	 * @param segments the track-segments hold a list of track-points which are
 	 *        logically connected in order. To represent a single GPS track
 	 *        where GPS reception was lost, or the GPS receiver was turned off,
 	 *        start a new track-segment for each continuous span of track data.
@@ -759,7 +759,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * @param links the links to external information about track
 	 * @param number the GPS track number
 	 * @param type the type (classification) of track
-	 * @param segments the track-segments holds a list of track-points which are
+	 * @param segments the track-segments hold a list of track-points which are
 	 *        logically connected in order. To represent a single GPS track
 	 *        where GPS reception was lost, or the GPS receiver was turned off,
 	 *        start a new track-segment for each continuous span of track data.
@@ -849,7 +849,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			: track.getLinks().get(0).getText().orElse(null);
 	}
 
-	// Define the needed writers for the different versions.
+	// Define the necessary writers for the different versions.
 	private static XMLWriters<Track>
 	writers(final Function<? super Number, String> formatter) {
 		return new XMLWriters<Track>()
@@ -867,7 +867,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 			.v11(XMLWriter.elems(TrackSegment.xmlWriter(Version.V11, formatter)).map(r -> r._segments));
 	}
 
-	// Define the needed readers for the different versions.
+	// Define the necessary readers for the different versions.
 	private static XMLReaders
 	readers(final Function<? super String, Length> lengthParser) {
 		return new XMLReaders()

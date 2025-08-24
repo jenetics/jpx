@@ -37,7 +37,7 @@ import java.util.Optional;
 
 /**
  * Represents a link to an external resource (Web page, digital photo, video
- * clip, etc) with additional information.
+ * clip, etc.) with additional information.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.2

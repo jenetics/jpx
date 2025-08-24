@@ -171,7 +171,7 @@ public final class Degrees
 	/**
 	 * Create a new {@code Degrees} object with the given radians value.
 	 *
-	 * @param radians the radians value
+	 * @param radians the radian value
 	 * @return a new {@code Degrees} object
 	 * @throws IllegalArgumentException if the give value is not within the
 	 *         range of {@code [0..2*Pi]}

@@ -32,8 +32,7 @@ import io.jenetics.jpx.Point;
 import io.jenetics.jpx.WayPoint;
 
 /**
- * Aggregation of the three location components: latitude, longitude and
- * elevation.
+ * Aggregation of the three location parts: latitude, longitude and elevation.
  *
  * @see Point
  *

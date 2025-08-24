@@ -147,7 +147,7 @@ public final class Metadata implements Serializable {
 
 	/**
 	 * Return the URLs associated with the location described in the file. The
-	 * returned list immutable.
+	 * returned list is immutable.
 	 *
 	 * @return the URLs associated with the location described in the file
 	 */

@@ -1,5 +1,18 @@
 ## Release notes
 
+### [3.2.1](https://github.com/jenetics/jpx/releases/tag/v3.2.1)
+
+#### Improvements
+
+* [#186](https://github.com/jenetics/jpx/issues/186): LENIENT mode allows GPX tags without creator attributes.
+
+### [3.2.0](https://github.com/jenetics/jpx/releases/tag/v3.2.0)
+
+#### Improvements
+
+* [#183](https://github.com/jenetics/jpx/issues/183): Update Gradle to 8.11 and improve build scripts.
+* [#181](https://github.com/jenetics/jpx/pull/181): Update code examples in README.
+
 ### [3.0.1](https://github.com/jenetics/jpx/releases/tag/v3.0.1)
 
 #### Bugs

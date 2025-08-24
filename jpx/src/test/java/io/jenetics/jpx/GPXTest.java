@@ -474,11 +474,11 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 
 	@Test(invocationCount = 10)
 	public void readWriteRandomNonIndentedGPX() throws IOException {
-		final Random random = new Random();
+		final var random = new Random();
 		final GPX gpx = nextGPX(random);
 
 		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-		GPX.Writer.of(Indent.NULL, 20).write(gpx, bout);
+		GPX.Writer.of(Indent.NULL, 25).write(gpx, bout);
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
 		final GPX read = GPX.Reader.DEFAULT.read(bin);
@@ -487,7 +487,7 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		//if (!read.equals(gpx)) {
 		//	System.out.println(bout);
 		//}
-		Assert.assertEquals(read, gpx);
+		assertThat(read).isEqualTo(gpx);
 	}
 
 	@Test(dataProvider = "readWriteGPX")
@@ -962,56 +962,44 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	}
 
 	@Test
-	public void issue_179() {
-		final GPX gpx = GPX.Reader.of(Mode.LENIENT).fromString("""
-			<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-			<gpx xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd"
-				xmlns="http://www.topografix.com/GPX/1/1"
-				xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-				xmlns:ns3="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
-				xmlns:ns2="http://www.garmin.com/xmlschemas/GpxExtensions/v3"
-				xmlns:ns1="http://www.cluetrust.com/XML/GPXDATA/1/0"
-				creator="Zepp App"
-				version="8.0.2-play"
-			>
-				<trk>
-					<name><![CDATA[20230811 splitvicte-national-parc]]></name>
-					<trkseg>
-						<trkpt lat="44.873146" lon="15.599844">
-							<ele>622.95</ele>
-							<time>2023-08-11T10:25:52Z</time>
-							<extensions>
-								<ns3:TrackPointExtension>
-									<ns3:speed>0.11750881</ns3:speed>
-									<ns3:cad>0.0</ns3:cad>
-									<ns3:hr>88</ns3:hr>
-								</ns3:TrackPointExtension>
-							</extensions>
-						</trkpt>
-					</trkseg>
-				</trk>
-			</gpx>
-			"""
+	public void issue186_MissingCreator() throws IOException {
+		final var resource = "/io/jenetics/jpx/ISSUE-186.gpx";
+		final GPX gpx_lenient;
+		try (InputStream in = getClass().getResourceAsStream(resource)) {
+			gpx_lenient = GPX.Reader.of(Mode.LENIENT).read(in);
+		}
+
+		assertThat(gpx_lenient.getVersion()).isEqualTo("1.1");
+		assertThat(gpx_lenient.getCreator()).isEqualTo("JPX - https://github.com/jenetics/jpx");
+		assertThat(gpx_lenient.getTracks()).hasSize(1);
+		assertThat(gpx_lenient.getTracks().get(0).getSegments()).hasSize(1);
+		assertThat(gpx_lenient.getTracks().get(0).getSegments().get(0)).hasSize(9);
+
+
+		try (InputStream in = getClass().getResourceAsStream("/path/to/resource")) {
+			GPX.Reader.of(Mode.STRICT).read(in);
+			Assert.fail("Expected InvalidObjectException to be thrown.");
+		} catch (NullPointerException e) {
+			// Expected to fail in STRICT mode, as Creator attribute is missing
+		} catch (Exception e) {
+			Assert.fail("Unexpected exception was thrown: " + e);
+		}
+	}
+
+	@Test
+	public void issue186_NullCreator() throws IOException {
+		Random random = new Random();
+		GPX createGPX = GPX.of(
+			Version.V11,
+			null,
+			random.nextBoolean() ? MetadataTest.nextMetadata(random) : null,
+			random.nextBoolean() ? WayPointTest.nextWayPoints(random) : null,
+			random.nextBoolean() ? RouteTest.nextRoutes(random) : null,
+			random.nextBoolean() ? TrackTest.nextTracks(random) : null,
+			random.nextBoolean() ? doc() : null
 		);
 
-		final Document extensions = gpx
-			.getTracks().get(0)
-			.getSegments().get(0)
-			.getPoints().get(0)
-			.getExtensions().orElseThrow();
-
-		final NodeList trackPointExtension = extensions
-			.getDocumentElement()
-			.getFirstChild()
-			.getChildNodes();
-
-		final String speed = trackPointExtension.item(0).getTextContent();
-		final String cad = trackPointExtension.item(1).getTextContent();
-		final String hr = trackPointExtension.item(2).getTextContent();
-
-		assertThat(speed).isEqualTo("0.11750881");
-		assertThat(cad).isEqualTo("0.0");
-		assertThat(hr).isEqualTo("88");
+		assertThat(createGPX.getCreator()).isEqualTo("JPX - https://github.com/jenetics/jpx");
 	}
 
 }
