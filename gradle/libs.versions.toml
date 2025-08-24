@@ -1,5 +1,5 @@
 [versions]
-assertj = "3.27.3"
+assertj = "3.27.4"
 codemodel = "4.0.5"
 commons-csv = "1.14.1"
 commons-math4-legacy = "4.0-beta1"
@@ -11,10 +11,12 @@ commons-rng-sampling = "1.6"
 commons-rng-simple = "1.6"
 commons-statistics-descriptive = "1.1"
 commons-statistics-distribution = "1.1"
-equalsverifier = "4.0.7"
+equalsverifier = "4.0.9"
+facilejdbc = "2.1.1"
 guava = "33.4.8-jre"
+h2 = "2.3.232"
 jackson = "2.19.2"
-jackson-databind-nullable = "0.2.6"
+jackson-databind-nullable = "0.2.7"
 jackson-datatype-jsr310 = "2.19.2"
 jacoco-agent = "0.8.13"
 jakarta-annotation-api = "3.0.0"
@@ -23,27 +25,25 @@ javacsv = "2.0"
 jexl = "3.5.0"
 jmh = "0.7.3"
 jpx = "3.2.1"
+lombok = "8.14.2"
 mvel = "2.5.2.Final"
-nashorn = "15.6"
+nashorn = "15.7"
 openapi-generator = "7.14.0"
 opencsv = "5.12.0"
 prngine = "2.0.0"
-reactor-core = "3.7.8"
+reactor-core = "3.7.9"
 rxjava = "2.2.21"
 supercsv = "2.4.0"
-swagger-models = "2.2.35"
-swagger-parser = "2.1.31"
+swagger-models = "2.2.36"
+swagger-parser = "2.1.32"
 testng = "7.11.0"
 version-catalog-update = "1.0.0"
-lombok = "8.14.2"
-facilejdbc = "2.1.1"
-h2 = "2.2.224"
 
 [plugins]
 jmh = { id = "me.champeau.jmh", version.ref = "jmh" }
+lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
 openapi-generator = { id = "org.openapi.generator", version.ref = "openapi-generator" }
 version-catalog-update = { id = "nl.littlerobots.version-catalog-update", version.ref = "version-catalog-update" }
-lombok = { id = "io.freefair.lombok", version.ref = "lombok" }
 
 [libraries]
 assertj-core = { module = "org.assertj:assertj-core", version.ref = "assertj" }
@@ -59,7 +59,9 @@ commons-rng-simple = { module = "org.apache.commons:commons-rng-simple", version
 commons-statistics-descriptive = { module = "org.apache.commons:commons-statistics-descriptive", version.ref = "commons-statistics-descriptive" }
 commons-statistics-distribution = { module = "org.apache.commons:commons-statistics-distribution", version.ref = "commons-statistics-distribution" }
 equalsverifier = { module = "nl.jqno.equalsverifier:equalsverifier", version.ref = "equalsverifier" }
+facilejdbc = { module = "io.jenetics:facilejdbc", version.ref = "facilejdbc" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
+h2 = { module = "com.h2database:h2", version.ref = "h2" }
 jackson-annotations = { module = "com.fasterxml.jackson.core:jackson-annotations", version.ref = "jackson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 jackson-databind-nullable = { module = "org.openapitools:jackson-databind-nullable", version.ref = "jackson-databind-nullable" }
@@ -80,5 +82,3 @@ supercsv = { module = "net.sf.supercsv:super-csv", version.ref = "supercsv" }
 swagger-models = { module = "io.swagger.core.v3:swagger-models", version.ref = "swagger-models" }
 swagger-parser = { module = "io.swagger.parser.v3:swagger-parser", version.ref = "swagger-parser" }
 testng = { module = "org.testng:testng", version.ref = "testng" }
-facilejdbc = { module = "io.jenetics:facilejdbc", version.ref = "facilejdbc" }
-h2 =  { module = "com.h2database:h2", version.ref = "h2" }
