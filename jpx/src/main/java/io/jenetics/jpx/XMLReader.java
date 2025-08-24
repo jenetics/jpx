@@ -100,13 +100,13 @@ abstract class XMLReader<T> {
 	/**
 	 * Read the given type from the underlying XML stream {@code reader}.
 	 *
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * try (AutoCloseableXMLStreamReader xml = XML.reader(in)) {
 	 *     // Move XML stream to first element.
 	 *     xml.next();
 	 *     return reader.read(xml);
 	 * }
-	 * }</pre>
+	 * }
 	 *
 	 * @param xml the underlying XML stream {@code reader}
 	 * @param lenient lenient read mode
@@ -201,17 +201,17 @@ abstract class XMLReader<T> {
 	 * Return a {@code Reader} for reading an attribute of an element.
 	 * <p>
 	 * <b>XML</b>
-	 * <pre> {@code <element length="3"/>}</pre>
+	 * <pre> {@code <element length="3"/>}
 	 *
 	 * <b>Reader definition</b>
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Reader<Integer> reader =
 	 *     elem(
 	 *         v -> (Integer)v[0],
 	 *         "element",
 	 *         attr("length").map(Integer::parseInt)
 	 *     );
-	 * }</pre>
+	 * }
 	 *
 	 * @param name the attribute name
 	 * @return an attribute reader
@@ -225,17 +225,17 @@ abstract class XMLReader<T> {
 	 * Return a {@code Reader} for reading the text of an element.
 	 * <p>
 	 * <b>XML</b>
-	 * <pre> {@code <element>1234<element>}</pre>
+	 * <pre> {@code <element>1234<element>}
 	 *
 	 * <b>Reader definition</b>
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Reader<Integer> reader =
 	 *     elem(
 	 *         v -> (Integer)v[0],
 	 *         "element",
 	 *         text().map(Integer::parseInt)
 	 *     );
-	 * }</pre>
+	 * }
 	 *
 	 * @return an element text reader
 	 */
@@ -249,10 +249,10 @@ abstract class XMLReader<T> {
 	 *
 	 * <p>
 	 * <b>XML</b>
-	 * <pre> {@code <property name="size">1234<property>}</pre>
+	 * <pre> {@code <property name="size">1234<property>}
 	 *
 	 * <b>Reader definition</b>
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final XMLReader<Property> reader =
 	 *     elem(
 	 *         v -> {
@@ -264,7 +264,7 @@ abstract class XMLReader<T> {
 	 *         attr("name"),
 	 *         text().map(Integer::parseInt)
 	 *     );
-	 * }</pre>
+	 * }
 	 *
 	 * @param generator the generator function, which build the result object
 	 *        from the given parameter array
@@ -294,10 +294,10 @@ abstract class XMLReader<T> {
 	 * the given parent element {@code name}.
 	 * <p>
 	 * <b>XML</b>
-	 * <pre> {@code <min><property name="size">1234<property></min>}</pre>
+	 * <pre> {@code <min><property name="size">1234<property></min>}
 	 *
 	 * <b>Reader definition</b>
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final XMLReader<Property> reader =
 	 *     elem("min",
 	 *         elem(
@@ -311,7 +311,7 @@ abstract class XMLReader<T> {
 	 *             text().map(Integer::parseInt)
 	 *         )
 	 *     );
-	 * }</pre>
+	 * }
 	 *
 	 * @param name the parent element name
 	 * @param reader the child elements reader
@@ -356,17 +356,17 @@ abstract class XMLReader<T> {
 	 *     <property>-957346595</property>
 	 *     <property>-88668137</property>
 	 * </properties>
-	 * }</pre>
+	 * }
 	 *
 	 * <b>Reader definition</b>
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * XMLReader<List<Integer>> reader =
 	 *     elem(
 	 *         v -> (List<Integer>)v[0],
 	 *         "properties",
 	 *         elems(elem("property", text().map(Integer::parseInt)))
 	 *     );
-	 * }</pre>
+	 * }
 	 *
 	 * @param reader the child element reader
 	 * @param <T> the element type

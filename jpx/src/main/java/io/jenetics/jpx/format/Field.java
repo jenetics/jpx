@@ -34,10 +34,20 @@ import java.util.concurrent.atomic.AtomicReference;
  * elevation.
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 3.0
+ * @version 4.0
  * @since 1.4
  */
-abstract class Field implements Format {
+abstract sealed class Field
+	implements Format
+	permits
+		Elevation,
+		LatitudeDegree,
+		LatitudeMinute,
+		LatitudeSecond,
+		LongitudeDegree,
+		LongitudeMinute,
+		LongitudeSecond
+{
 
 	private static final DecimalFormatSymbols SYMBOLS =
 		DecimalFormatSymbols.getInstance(Locale.US);

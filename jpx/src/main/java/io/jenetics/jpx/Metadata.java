@@ -45,12 +45,12 @@ import org.w3c.dom.Document;
  * files allows others to search for and use your GPS data.
  * <p>
  * Creating a GPX object with one track-segment and 3 track-points:
- * <pre>{@code
+ * {@snippet lang="java":
  * final Metadata gpx = Metadata.builder()
  *     .author("Franz Wilhelmstötter")
  *     .addLink(Link.of("http://jenetics.io"))
  *     .build();
- * }</pre>
+ * }
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 3.0
@@ -188,11 +188,11 @@ public final class Metadata implements Serializable {
 	/**
 	 * Return the (cloned) extensions document. The root element of the returned
 	 * document has the name {@code extensions}.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * <extensions>
 	 *     ...
 	 * </extensions>
-	 * }</pre>
+	 * }
 	 *
 	 * @since 1.5
 	 *
@@ -286,12 +286,12 @@ public final class Metadata implements Serializable {
 	 * Builder class for creating immutable {@code Metadata} objects.
 	 * <p>
 	 * Creating a GPX object with one track-segment and 3 track-points:
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Metadata gpx = Metadata.builder()
 	 *     .author("Franz Wilhelmstötter")
 	 *     .addLink(Link.of("http://jenetics.io"))
 	 *     .build();
-	 * }</pre>
+	 * }
 	 */
 	public static final class Builder {
 		private String _name;
@@ -555,11 +555,11 @@ public final class Metadata implements Serializable {
 		/**
 		 * Sets the extensions object, which may be {@code null}. The root
 		 * element of the extensions document must be {@code extensions}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * <extensions>
 		 *     ...
 		 * </extensions>
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.5
 		 *

@@ -17,47 +17,40 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
-package io.jenetics.gradle;
+package io.jenetics.jpx.jdbc;
 
-import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.sql.Statement;
 
-import org.gradle.api.DefaultTask;
-import org.gradle.api.tasks.InputFile;
-import org.gradle.api.tasks.TaskAction;
-import org.gradle.api.tasks.TaskExecutionException;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.4
- * @version 6.1
  */
-public class ColorizerTask extends DefaultTask {
+public abstract class DAOTestBase {
 
-	private File _directory;
+	public DB db = H2DB.newTestInstance();
 
-	@InputFile
-	public File getDirectory() {
-		return _directory;
+	@BeforeClass
+	public void setup() throws IOException, SQLException {
+		final String[] queries = IO.
+			toSQLText(getClass().getResourceAsStream("/model-mysql.sql"))
+			.split(";");
+
+		db.transaction(conn -> {
+			for (String query : queries) {
+				try (Statement stmt = conn.createStatement()) {
+					stmt.execute(query);
+				}
+			}
+		});
 	}
 
-	public void setDirectory(final File directory) {
-		_directory = directory;
-	}
-
-	@TaskAction
-	public void colorize() {
-		try {
-			final Colorizer colorizer = new Colorizer(_directory);
-			colorizer.colorize();
-
-			getLogger().lifecycle(
-				"Colorizer processed {} files and modified {}.",
-				colorizer.getProcessed(), colorizer.getModified()
-			);
-		} catch (final IOException e) {
-			throw new TaskExecutionException(this, e);
-		}
+	@AfterClass
+	public void shutdown() throws SQLException {
+		db.close();
 	}
 
 }

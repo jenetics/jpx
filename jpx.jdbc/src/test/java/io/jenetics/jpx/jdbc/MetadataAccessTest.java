@@ -17,10 +17,7 @@
  * Author:
  *    Franz Wilhelmstötter (franz.wilhelmstoetter@gmail.com)
  */
+package io.jenetics.jpx.jdbc;
 
-/**
- * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @since 1.4
- * @version 1.4
- */
-package io.jenetics.gradle;
+public class MetadataAccessTest {
+}
