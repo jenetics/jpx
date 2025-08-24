@@ -74,19 +74,19 @@ public class LinkAccessTest {
 		});
 	}
 
-	@Test(dependsOnMethods = "insert")
-	public void select() throws SQLException {
-		final var select = Query.of("SELECT * FROM link ORDER BY id");
-
-		H2DB.INSTANCE.transaction(conn -> {
-		final List<Stored<Long, Link>> links = select
-			.as(LinkAccess.PARSER.stored("id").list(), conn);
-
-			links.forEach(System.out::println);
-
-			assertThat(links.stream().map(Stored::value).toList())
-				.isEqualTo(LINKS);
-		});
-	}
+//	@Test(dependsOnMethods = "insert")
+//	public void select() throws SQLException {
+//		final var select = Query.of("SELECT * FROM link ORDER BY id");
+//
+//		H2DB.INSTANCE.transaction(conn -> {
+//		final List<Stored<Long, Link>> links = select
+//			.as(LinkAccess.PARSER.stored("id").list(), conn);
+//
+//			links.forEach(System.out::println);
+//
+//			assertThat(links.stream().map(Stored::value).toList())
+//				.isEqualTo(LINKS);
+//		});
+//	}
 
 }

@@ -17,7 +17,6 @@
 module io.jenetics.jpx.jdbc {
 	requires transitive io.jenetics.jpx;
 	requires transitive io.jenetics.facilejdbc;
-	requires lombok;
 
 	exports io.jenetics.jpx.jdbc;
 

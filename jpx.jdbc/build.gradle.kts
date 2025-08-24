@@ -26,9 +26,7 @@
 
 plugins {
 	`java-library`
-	idea
 	`maven-publish`
-	alias(libs.plugins.lombok)
 }
 
 description = "JPX - Java GPX (GPS) Library"
