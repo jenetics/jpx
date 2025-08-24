@@ -24,11 +24,11 @@
  * @version 3.2
  */
 plugins {
-    `java-gradle-plugin`
-    `kotlin-dsl`
+	`java-gradle-plugin`
+	`kotlin-dsl`
 }
 
 repositories {
-    mavenLocal()
-    gradlePluginPortal()
+	mavenLocal()
+	gradlePluginPortal()
 }

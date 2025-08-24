@@ -122,8 +122,8 @@ import org.w3c.dom.Document;
  * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
  * }
  *
- * This allows reading otherwise invalid GPX files, like
- * <pre>{@code
+ * This allows to read otherwise invalid GPX files, like
+ * {@snippet lang="java":
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *   <metadata>
@@ -1625,8 +1625,8 @@ public final class GPX implements Serializable {
 		 * {@link WayPoint#getLongitude()}, ...
 		 * <p>
 		 * The example below shows the <em>lat</em> and <em>lon</em> values with
-		 * maximal five fractional digits.
-		 * <pre>{@code
+		 * maximal 5 fractional digits.
+		 * {@snippet lang="java":
 		 * <trkpt lat="45.78068" lon="12.55368">
 		 *     <ele>1.2</ele>
 		 *     <time>2009-08-30T07:08:21Z</time>

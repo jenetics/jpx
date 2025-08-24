@@ -35,7 +35,7 @@ description = "JPX - Java GPX (GPS) Library"
 moduleName = "io.jenetics.jpx"
 
 dependencies {
-    testImplementation(libs.assertj.core)
+	testImplementation(libs.assertj.core)
 	testImplementation(libs.equalsverifier)
 	testImplementation(libs.prngine)
 	testImplementation(libs.testng)
