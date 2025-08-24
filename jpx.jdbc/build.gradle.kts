@@ -39,10 +39,10 @@ dependencies {
 	api(project(":jpx"))
 	api(libs.facilejdbc)
 
-	testImplementation(libs.assertj)
+	testImplementation(libs.assertj.core)
 	testImplementation(libs.equalsverifier)
+	testImplementation(libs.h2)
 	testImplementation(libs.prngine)
 	testImplementation(libs.testng)
-	testImplementation(libs.h2)
 }
 

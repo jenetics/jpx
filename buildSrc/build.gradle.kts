@@ -1,6 +1,3 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Java GPX Library (@__identifier__@).
  * Copyright (c) @__year__@ Franz Wilhelmstötter
@@ -27,22 +24,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * @version 3.2
  */
 plugins {
-	`java-gradle-plugin`
-	`kotlin-dsl`
+    `java-gradle-plugin`
+    `kotlin-dsl`
 }
 
 repositories {
-	mavenLocal()
-	gradlePluginPortal()
-}
-
-tasks.withType<KotlinCompile> {
-	compilerOptions {
-		jvmTarget.set(JvmTarget.JVM_17)
-	}
-}
-
-configure<JavaPluginExtension> {
-	sourceCompatibility = JavaVersion.VERSION_17
-	targetCompatibility = JavaVersion.VERSION_17
+    mavenLocal()
+    gradlePluginPortal()
 }

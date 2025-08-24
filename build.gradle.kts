@@ -28,7 +28,7 @@ import io.jenetics.gradle.dsl.moduleName
  */
 plugins {
 	base
-	id("me.champeau.jmh") version "0.7.2" apply false
+    alias(libs.plugins.version.catalog.update)
 }
 
 rootProject.version = JPX.VERSION
@@ -42,53 +42,77 @@ tasks.named<Wrapper>("wrapper") {
  * Project configuration *before* the projects has been evaluated.
  */
 allprojects {
-	group =  JPX.GROUP
-	version = JPX.VERSION
+    group =  JPX.GROUP
+    version = rootProject.version
 
-	repositories {
-		flatDir {
-			dirs("${rootDir}/buildSrc/lib")
-		}
-		mavenLocal()
-		mavenCentral()
-	}
+    repositories {
+        flatDir {
+            dirs("${rootDir}/buildSrc/lib")
+        }
+        mavenLocal()
+        mavenCentral()
+    }
 
-	configurations.all {
-		resolutionStrategy.preferProjectModules()
-	}
+    configurations.all {
+        resolutionStrategy.preferProjectModules()
+    }
 }
 
 /**
  * Project configuration *after* the projects has been evaluated.
  */
+subprojects {
+    val project = this
+
+    tasks.withType<Test> {
+        useTestNG()
+    }
+
+    plugins.withType<JavaPlugin> {
+        configure<JavaPluginExtension> {
+            modularity.inferModulePath = true
+
+            sourceCompatibility = JavaVersion.VERSION_21
+            targetCompatibility = JavaVersion.VERSION_21
+
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(21)
+            }
+        }
+
+        setupJava(project)
+        setupTestReporting(project)
+    }
+
+    tasks.withType<JavaCompile> {
+        modularity.inferModulePath = true
+
+        options.compilerArgs.add("-Xlint:${xlint()}")
+    }
+
+}
+
 gradle.projectsEvaluated {
-	subprojects {
-		val project = this
+    subprojects {
+        if (plugins.hasPlugin("maven-publish")) {
+            setupPublishing(project)
+        }
 
-		tasks.withType<JavaCompile> {
-			options.compilerArgs.add("-Xlint:" + xlint())
-		}
+        // Enforcing the library version defined in the version catalogs.
+        val catalogs = extensions.getByType<VersionCatalogsExtension>()
+        val libraries = catalogs.catalogNames
+            .map { catalogs.named(it) }
+            .flatMap { catalog -> catalog.libraryAliases.map { alias -> Pair(catalog, alias) } }
+            .map { it.first.findLibrary(it.second).get().get() }
+            .filter { it.version != null }
+            .map { it.toString() }
+            .toTypedArray()
 
-		plugins.withType<JavaPlugin> {
-			configure<JavaPluginExtension> {
-				sourceCompatibility = JavaVersion.VERSION_21
-				targetCompatibility = JavaVersion.VERSION_21
-			}
-
-			configure<JavaPluginExtension> {
-				modularity.inferModulePath.set(true)
-			}
-
-			setupJava(project)
-			setupTestReporting(project)
-			setupJavadoc(project)
-		}
-
-		if (plugins.hasPlugin("maven-publish")) {
-			setupPublishing(project)
-		}
-	}
-
+        configurations.all {
+            resolutionStrategy.preferProjectModules()
+            resolutionStrategy.force(*libraries)
+        }
+    }
 }
 
 /**
@@ -189,38 +213,6 @@ fun setupJavadoc(project: Project) {
 				}
 				includeEmptyDirs = false
 				into(destinationDir!!)
-			}
-		}
-	}
-
-	val javadoc = project.tasks.findByName("javadoc") as Javadoc?
-	if (javadoc != null) {
-		project.tasks.register<io.jenetics.gradle.ColorizerTask>("colorizer") {
-			directory = javadoc.destinationDir!!
-		}
-
-		project.tasks.register("java2html") {
-			doLast {
-				providers.javaexec {
-					mainClass.set("de.java2html.Java2Html")
-					args = listOf(
-						"-srcdir", "src/main/java",
-						"-targetdir", "${javadoc.destinationDir}/src-html/${project.extra["moduleName"]}"
-					)
-					classpath = files("${project.rootDir}/buildSrc/lib/java2html.jar")
-				}
-			}
-		}
-
-		javadoc.doLast {
-			val colorizer = project.tasks.findByName("colorizer")
-			colorizer?.actions?.forEach {
-				it.execute(colorizer)
-			}
-
-			val java2html = project.tasks.findByName("java2html")
-			java2html?.actions?.forEach {
-				it.execute(java2html)
 			}
 		}
 	}

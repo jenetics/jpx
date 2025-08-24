@@ -27,7 +27,6 @@ import io.jenetics.gradle.dsl.moduleName
  */
 plugins {
 	`java-library`
-	idea
 	`maven-publish`
 }
 
@@ -36,7 +35,7 @@ description = "JPX - Java GPX (GPS) Library"
 moduleName = "io.jenetics.jpx"
 
 dependencies {
-    testImplementation(libs.assertj)
+    testImplementation(libs.assertj.core)
 	testImplementation(libs.equalsverifier)
 	testImplementation(libs.prngine)
 	testImplementation(libs.testng)
