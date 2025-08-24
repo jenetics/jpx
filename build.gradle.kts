@@ -28,6 +28,7 @@ import io.jenetics.gradle.dsl.moduleName
  */
 plugins {
 	base
+    alias(libs.plugins.version.catalog.update)
 }
 
 rootProject.version = JPX.VERSION
