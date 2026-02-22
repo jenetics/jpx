@@ -35,7 +35,7 @@ plugins {
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "9.0.0"
+	version = "9.3.1"
 	distributionType = Wrapper.DistributionType.ALL
 }
 
@@ -72,8 +72,8 @@ gradle.projectsEvaluated {
 
 		plugins.withType<JavaPlugin> {
 			configure<JavaPluginExtension> {
-				sourceCompatibility = JavaVersion.VERSION_21
-				targetCompatibility = JavaVersion.VERSION_21
+				sourceCompatibility = JavaVersion.VERSION_25
+				targetCompatibility = JavaVersion.VERSION_25
 			}
 
 			configure<JavaPluginExtension> {
@@ -133,7 +133,7 @@ fun setupTestReporting(project: Project) {
 	project.apply(plugin = "jacoco")
 
 	project.configure<JacocoPluginExtension> {
-		toolVersion = "0.8.12"
+		toolVersion = libs.jacoco.agent.get().version.toString()
 	}
 
 	project.tasks {
@@ -170,7 +170,7 @@ fun setupJavadoc(project: Project) {
 		doclet.charSet = "UTF-8"
 		doclet.linkSource(true)
 		doclet.linksOffline(
-			"https://docs.oracle.com/en/java/javase/21/docs/api/",
+			"https://docs.oracle.com/en/java/javase/25/docs/api/",
 			"${project.rootDir}/buildSrc/resources/javadoc/java.se"
 		)
 		doclet.windowTitle = "JPX ${project.version}"

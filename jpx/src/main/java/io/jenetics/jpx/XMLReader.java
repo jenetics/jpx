@@ -99,7 +99,6 @@ abstract class XMLReader<T> {
 
 	/**
 	 * Read the given type from the underlying XML stream {@code reader}.
-	 *
 	 * {@snippet lang="java":
 	 * try (AutoCloseableXMLStreamReader xml = XML.reader(in)) {
 	 *     // Move XML stream to first element.

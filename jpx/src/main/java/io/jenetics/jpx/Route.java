@@ -288,8 +288,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Route route &&
+		return obj instanceof Route route &&
 			Objects.equals(route._name, _name) &&
 			Objects.equals(route._comment, _comment) &&
 			Objects.equals(route._description, _description) &&
@@ -862,13 +861,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	private static String url(final Route route) {
 		return route.getLinks().isEmpty()
 			? null
-			: route.getLinks().get(0).getHref().toString();
+			: route.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final Route route) {
 		return route.getLinks().isEmpty()
 			? null
-			: route.getLinks().get(0).getText().orElse(null);
+			: route.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.

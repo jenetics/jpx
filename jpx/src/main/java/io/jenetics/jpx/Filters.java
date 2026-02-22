@@ -93,7 +93,7 @@ public final class Filters {
 		return tracks.isEmpty()
 			? List.of()
 			: List.of(
-				tracks.get(0).toBuilder()
+				tracks.getFirst().toBuilder()
 					.segments(segments)
 					.build()
 				);
@@ -125,7 +125,7 @@ public final class Filters {
 		return tracks.isEmpty()
 			? List.of()
 			: List.of(
-				tracks.get(0).toBuilder()
+				tracks.getFirst().toBuilder()
 					.segments(List.of(TrackSegment.of(points)))
 					.build()
 				);

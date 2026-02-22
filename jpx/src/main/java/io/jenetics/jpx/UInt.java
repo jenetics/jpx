@@ -105,8 +105,7 @@ public final class UInt
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof UInt uint &&
+		return obj instanceof UInt uint &&
 			uint._value == _value;
 	}
 

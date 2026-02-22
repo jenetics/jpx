@@ -88,7 +88,6 @@ public final class Speed
 		 * Convert the given speed value of the given {@code sourceUnit} into a
 		 * speed value of {@code this} speed unit. The given example converts 3
 		 * knots into kilometers per hour.
-		 *
 		 * {@snippet lang="java":
 		 * final double kilometersPerHour = KILOMETERS_PER_HOUR.convert(3, KNOTS);
 		 * }
@@ -167,8 +166,7 @@ public final class Speed
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Speed speed &&
+		return obj instanceof Speed speed &&
 			Double.compare(speed._value, _value) == 0;
 	}
 

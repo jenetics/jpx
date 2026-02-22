@@ -270,8 +270,7 @@ public final class Metadata implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Metadata meta &&
+		return obj instanceof Metadata meta &&
 			Objects.equals(meta._name, _name) &&
 			Objects.equals(meta._description, _description) &&
 			Objects.equals(meta._author, _author) &&

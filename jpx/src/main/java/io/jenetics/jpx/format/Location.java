@@ -108,8 +108,7 @@ public final class Location {
 
 	@Override
 	public boolean equals(final Object other) {
-		return other == this ||
-			other instanceof Location loc &&
+		return other instanceof Location loc &&
 			Objects.equals(_latitude, loc._latitude) &&
 			Objects.equals(_longitude, loc._longitude) &&
 			Objects.equals(_elevation, loc._elevation);

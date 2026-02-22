@@ -76,7 +76,9 @@ public final class Degrees
 	 *         range of {@code [0..360]}
 	 */
 	private Degrees(final double value) {
-		if (value < MIN_VALUE || value >= MAX_VALUE) {
+		if (Double.compare(value, MIN_VALUE) < 0 ||
+			Double.compare(value, MAX_VALUE) >= 0)
+		{
 			throw new IllegalArgumentException(format(
 				"%f not in the range [0, 360).", value
 			));
@@ -140,8 +142,7 @@ public final class Degrees
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Degrees deg &&
+		return obj instanceof Degrees deg &&
 			Double.compare(deg._value, _value) == 0;
 	}
 

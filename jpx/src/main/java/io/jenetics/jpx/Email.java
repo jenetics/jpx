@@ -105,8 +105,7 @@ public final class Email implements Comparable<Email>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Email email &&
+		return obj instanceof Email email &&
 			Objects.equals(email._id, _id) &&
 			Objects.equals(email._domain, _domain);
 	}

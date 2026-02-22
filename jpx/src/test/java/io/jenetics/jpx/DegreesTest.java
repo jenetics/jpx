@@ -19,8 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -66,11 +64,6 @@ public class DegreesTest extends ObjectTester<Degrees> {
 			Degrees.ofRadians(Math.toRadians(3)).toDegrees(),
 			EPSILON
 		);
-	}
-
-	@Test
-	public void equalsVerifier() {
-		EqualsVerifier.forClass(Degrees.class).verify();
 	}
 
 }

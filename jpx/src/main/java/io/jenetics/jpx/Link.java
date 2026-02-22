@@ -101,8 +101,7 @@ public final class Link implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Link link &&
+		return obj instanceof Link link &&
 			Objects.equals(link._href, _href) &&
 			Objects.equals(link._text, _text) &&
 			Objects.equals(link._type, _type);

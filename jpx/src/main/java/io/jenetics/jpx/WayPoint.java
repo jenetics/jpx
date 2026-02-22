@@ -467,8 +467,7 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof WayPoint wp &&
+		return obj instanceof WayPoint wp &&
 			Objects.equals(wp._latitude, _latitude) &&
 			Objects.equals(wp._longitude, _longitude) &&
 			Objects.equals(wp._elevation, _elevation) &&
@@ -1946,13 +1945,13 @@ public final class WayPoint implements Point, Serializable {
 	private static String url(final WayPoint point) {
 		return point.getLinks().isEmpty()
 			? null
-			: point.getLinks().get(0).getHref().toString();
+			: point.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final WayPoint point) {
 		return point.getLinks().isEmpty()
 			? null
-			: point.getLinks().get(0).getText().orElse(null);
+			: point.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.

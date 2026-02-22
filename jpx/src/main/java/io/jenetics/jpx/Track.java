@@ -296,8 +296,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Track track &&
+		return obj instanceof Track track &&
 			Objects.equals(track._name, _name) &&
 			Objects.equals(track._comment, _comment) &&
 			Objects.equals(track._description, _description) &&
@@ -840,13 +839,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	private static String url(final Track track) {
 		return track.getLinks().isEmpty()
 			? null
-			: track.getLinks().get(0).getHref().toString();
+			: track.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final Track track) {
 		return track.getLinks().isEmpty()
 			? null
-			: track.getLinks().get(0).getText().orElse(null);
+			: track.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.
