@@ -467,8 +467,7 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof WayPoint wp &&
+		return obj instanceof WayPoint wp &&
 			Objects.equals(wp._latitude, _latitude) &&
 			Objects.equals(wp._longitude, _longitude) &&
 			Objects.equals(wp._elevation, _elevation) &&

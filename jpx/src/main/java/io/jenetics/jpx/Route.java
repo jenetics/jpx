@@ -288,8 +288,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Route route &&
+		return obj instanceof Route route &&
 			Objects.equals(route._name, _name) &&
 			Objects.equals(route._comment, _comment) &&
 			Objects.equals(route._description, _description) &&

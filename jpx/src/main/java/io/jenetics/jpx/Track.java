@@ -296,8 +296,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Track track &&
+		return obj instanceof Track track &&
 			Objects.equals(track._name, _name) &&
 			Objects.equals(track._comment, _comment) &&
 			Objects.equals(track._description, _description) &&

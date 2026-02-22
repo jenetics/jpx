@@ -117,8 +117,7 @@ public final class Bounds implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof  Bounds bounds &&
+		return obj instanceof  Bounds bounds &&
 			Objects.equals(bounds._minLatitude, _minLatitude) &&
 			Objects.equals(bounds._minLongitude, _minLongitude) &&
 			Objects.equals(bounds._maxLatitude, _maxLatitude) &&
@@ -140,7 +139,6 @@ public final class Bounds implements Serializable {
 	 * Return a collector which calculates the bounds of a given way-point
 	 * stream. The following example shows how to calculate the bounds of all
 	 * track-points of a given GPX object.
-	 *
 	 * {@snippet lang="java":
 	 * final Bounds bounds = gpx.tracks()
 	 *     .flatMap(Track::segments)

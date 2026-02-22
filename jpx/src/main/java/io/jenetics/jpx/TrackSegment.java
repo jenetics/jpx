@@ -164,8 +164,7 @@ public final class TrackSegment implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof TrackSegment &&
+		return obj instanceof TrackSegment &&
 			Objects.equals(((TrackSegment)obj)._points, _points);
 	}
 
