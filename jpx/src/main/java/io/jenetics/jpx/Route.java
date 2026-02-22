@@ -861,13 +861,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	private static String url(final Route route) {
 		return route.getLinks().isEmpty()
 			? null
-			: route.getLinks().get(0).getHref().toString();
+			: route.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final Route route) {
 		return route.getLinks().isEmpty()
 			? null
-			: route.getLinks().get(0).getText().orElse(null);
+			: route.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.

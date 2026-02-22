@@ -1945,13 +1945,13 @@ public final class WayPoint implements Point, Serializable {
 	private static String url(final WayPoint point) {
 		return point.getLinks().isEmpty()
 			? null
-			: point.getLinks().get(0).getHref().toString();
+			: point.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final WayPoint point) {
 		return point.getLinks().isEmpty()
 			? null
-			: point.getLinks().get(0).getText().orElse(null);
+			: point.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.

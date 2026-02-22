@@ -839,13 +839,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	private static String url(final Track track) {
 		return track.getLinks().isEmpty()
 			? null
-			: track.getLinks().get(0).getHref().toString();
+			: track.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final Track track) {
 		return track.getLinks().isEmpty()
 			? null
-			: track.getLinks().get(0).getText().orElse(null);
+			: track.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.
