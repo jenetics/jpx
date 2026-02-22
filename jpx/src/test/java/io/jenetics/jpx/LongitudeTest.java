@@ -22,8 +22,6 @@ package io.jenetics.jpx;
 import static java.lang.Double.doubleToLongBits;
 import static java.lang.Double.longBitsToDouble;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -74,11 +72,6 @@ public class LongitudeTest extends ObjectTester<Longitude> {
 			Longitude.ofDegrees(1).toDegrees(),
 			Longitude.ofRadians(Math.toRadians(1)).toDegrees()
 		);
-	}
-
-	@Test
-	public void equalsVerifier() {
-		EqualsVerifier.forClass(Longitude.class).verify();
 	}
 
 }

@@ -84,7 +84,9 @@ public final class Longitude extends Number implements Serializable {
 	 *         range of {@code [-180..180]}
 	 */
 	private Longitude(final double value) {
-		if (value < MIN_DEGREES || value > MAX_DEGREES) {
+		if (Double.compare(value, MIN_DEGREES) < 0 ||
+			Double.compare(value, MAX_DEGREES) > 0)
+		{
 			throw new IllegalArgumentException(format(
 				"%f is not in range [-180, 180).", value
 			));
@@ -143,8 +145,7 @@ public final class Longitude extends Number implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Longitude lng &&
+		return obj instanceof Longitude lng &&
 			Double.compare(lng._value, _value) == 0;
 	}
 
