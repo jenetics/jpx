@@ -52,7 +52,7 @@ import io.jenetics.jpx.GPX.Version;
  * Represents a GPX track - an ordered list of points describing a path.
  * <p>
  * Creating a Track object with one track-segment and 3 track-points:
- * <pre>{@code
+ * {@snippet lang="java":
  * final Track track = Track.builder()
  *     .name("Track 1")
  *     .description("Mountain bike tour.")
@@ -65,7 +65,7 @@ import io.jenetics.jpx.GPX.Version;
  *         .addPoint(p -> p.lat(47.2081743).lon(16.3738189).ele(161))
  *         .addPoint(p -> p.lat(49.2081743).lon(16.3738189).ele(162))))
  *     .build();
- * }</pre>
+ * }
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.5
@@ -192,11 +192,11 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	/**
 	 * Return the (cloned) extensions document. The root element of the returned
 	 * document has the name {@code extensions}.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * <extensions>
 	 *     ...
 	 * </extensions>
-	 * }</pre>
+	 * }
 	 *
 	 * @since 1.5
 	 *
@@ -296,8 +296,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Track track &&
+		return obj instanceof Track track &&
 			Objects.equals(track._name, _name) &&
 			Objects.equals(track._comment, _comment) &&
 			Objects.equals(track._description, _description) &&
@@ -317,7 +316,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 * Builder class for creating immutable {@code Track} objects.
 	 * <p>
 	 * Creating a Track object with one track-segment and 3 track-points:
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Track track = Track.builder()
 	 *     .name("Track 1")
 	 *     .description("Mountain bike tour.")
@@ -330,7 +329,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	 *         .addPoint(p -> p.lat(47.2081743).lon(16.3738189).ele(161))
 	 *         .addPoint(p -> p.lat(49.2081743).lon(16.3738189).ele(162))))
 	 *     .build();
-	 * }</pre>
+	 * }
 	 */
 	public static final class Builder implements Filter<TrackSegment, Track> {
 		private String _name;
@@ -536,11 +535,11 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		/**
 		 * Sets the extensions object, which may be {@code null}. The root
 		 * element of the extensions document must be {@code extensions}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * <extensions>
 		 *     ...
 		 * </extensions>
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.5
 		 *
@@ -592,7 +591,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 
 		/**
 		 * Add a track segment to the track, via the given builder.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * final Track track = Track.builder()
 		 *     .name("Track 1")
 		 *     .description("Mountain bike tour.")
@@ -605,7 +604,7 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 		 *         .addPoint(p -> p.lat(47.2081743).lon(16.3738189).ele(161))
 		 *         .addPoint(p -> p.lat(49.2081743).lon(16.3738189).ele(162))))
 		 *     .build();
-		 * }</pre>
+		 * }
 		 *
 		 * @param segment the track segment
 		 * @return {@code this} {@code Builder} for method chaining
@@ -840,13 +839,13 @@ public final class Track implements Iterable<TrackSegment>, Serializable {
 	private static String url(final Track track) {
 		return track.getLinks().isEmpty()
 			? null
-			: track.getLinks().get(0).getHref().toString();
+			: track.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final Track track) {
 		return track.getLinks().isEmpty()
 			? null
-			: track.getLinks().get(0).getText().orElse(null);
+			: track.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.

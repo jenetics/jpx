@@ -84,7 +84,9 @@ public final class Latitude extends Number implements Serializable {
 	 *         range of {@code [-90..90]}
 	 */
 	private Latitude(final double value) {
-		if (value < MIN_DEGREES || value > MAX_DEGREES) {
+		if (Double.compare(value, MIN_DEGREES) < 0 ||
+			Double.compare(value, MAX_DEGREES) > 0)
+		{
 			throw new IllegalArgumentException(format(
 				"%f is not in range [-90, 90].", value
 			));
@@ -143,8 +145,7 @@ public final class Latitude extends Number implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Latitude lat &&
+		return obj instanceof Latitude lat &&
 			Double.compare(lat._value, _value) == 0;
 	}
 

@@ -108,8 +108,7 @@ public final class Location {
 
 	@Override
 	public boolean equals(final Object other) {
-		return other == this ||
-			other instanceof Location loc &&
+		return other instanceof Location loc &&
 			Objects.equals(_latitude, loc._latitude) &&
 			Objects.equals(_longitude, loc._longitude) &&
 			Objects.equals(_elevation, loc._elevation);
@@ -127,7 +126,7 @@ public final class Location {
 	 * Create a new location form the given GPS point.
 	 *
 	 * @param point the GPS point
-	 * @return a new location forms the given GPS point
+	 * @return a new location from the given GPS point
 	 * @throws NullPointerException if the given {@code point} is {@code null}
 	 */
 	public static Location of(final Point point) {

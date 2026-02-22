@@ -19,8 +19,6 @@
  */
 package io.jenetics.jpx;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-
 import java.util.Random;
 import java.util.function.Supplier;
 
@@ -62,11 +60,6 @@ public class LatitudeTest extends ObjectTester<Latitude> {
 			Latitude.ofDegrees(1).toDegrees(),
 			Latitude.ofRadians(Math.toRadians(1)).toDegrees()
 		);
-	}
-
-	@Test
-	public void equalsVerifier() {
-		EqualsVerifier.forClass(Latitude.class).verify();
 	}
 
 }

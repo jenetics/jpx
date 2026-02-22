@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
- * @version 2.2
+ * @version 4.0
  * @since 1.4
  */
-class CompositeFormat implements Format {
+final class CompositeFormat implements Format {
 
 	private final List<Format> _formats;
 

@@ -116,8 +116,7 @@ public final class Person implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Person person &&
+		return obj instanceof Person person &&
 			Objects.equals(person._name, _name) &&
 			Objects.equals(person._email, _email) &&
 			Objects.equals(person._link, _link);

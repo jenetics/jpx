@@ -53,7 +53,7 @@ import io.jenetics.jpx.GPX.Version;
  * turn points leading to a destination.
  * <p>
  * Create a new route via the builder:
- * <pre>{@code
+ * {@snippet lang="java":
  * final Route route = Route.builder()
  *     .name("Route 1")
  *     .description("Fancy mountain-bike tour.")
@@ -61,7 +61,7 @@ import io.jenetics.jpx.GPX.Version;
  *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
  *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
  *     .build();
- * }</pre>
+ * }
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 1.5
@@ -203,11 +203,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	/**
 	 * Return the (cloned) extensions document. The root element of the returned
 	 * document has the name {@code extensions}.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * <extensions>
 	 *     ...
 	 * </extensions>
-	 * }</pre>
+	 * }
 	 *
 	 * @since 1.5
 	 *
@@ -288,8 +288,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Route route &&
+		return obj instanceof Route route &&
 			Objects.equals(route._name, _name) &&
 			Objects.equals(route._comment, _comment) &&
 			Objects.equals(route._description, _description) &&
@@ -320,7 +319,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 
 	/**
 	 * Builder class for building {@code Route} objects.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final Route route = Route.builder()
 	 *     .name("Route 1")
 	 *     .description("Fancy mountain-bike tour.")
@@ -328,7 +327,7 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(161))
 	 *     .addPoint(p -> p.lat(48.2081743).lon(16.3738189).ele(162))))
 	 *     .build();
-	 * }</pre>
+	 * }
 	 */
 	public static final class Builder implements Filter<WayPoint, Route> {
 
@@ -544,11 +543,11 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 		/**
 		 * Sets the extensions object, which may be {@code null}. The root
 		 * element of the extensions document must be {@code extensions}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * <extensions>
 		 *     ...
 		 * </extensions>
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.5
 		 *
@@ -862,13 +861,13 @@ public final class Route implements Iterable<WayPoint>, Serializable {
 	private static String url(final Route route) {
 		return route.getLinks().isEmpty()
 			? null
-			: route.getLinks().get(0).getHref().toString();
+			: route.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final Route route) {
 		return route.getLinks().isEmpty()
 			? null
-			: route.getLinks().get(0).getText().orElse(null);
+			: route.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.

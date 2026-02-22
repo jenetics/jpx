@@ -30,7 +30,7 @@
  * <em><b>Examples:</b></em>
  * <p>
  * <b>Creating a GPX object with one track-segment and 3 track-points</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final GPX gpx = GPX.builder()
  *     .addTrack(track -> track
  *         .addSegment(segment -> segment
@@ -38,16 +38,16 @@
  *             .addPoint(p -> p.lat(48.20112).lon(16.31639).ele(278))
  *             .addPoint(p -> p.lat(48.20126).lon(16.31601).ele(274))))
  *     .build();
- * }</pre>
+ * }
  *
  * <b>Writing a GPX file</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final var indent = new GPX.Writer.Indent("    ");
  * GPX.Writer.of(indent).write(gpx, Path.of("points.gpx"));
- * }</pre>
+ * }
  *
  * This will produce the following output.
- * <pre>{@code
+ * {@snippet lang="java":
  * <gpx version="1.1" creator="JPX - https://github.com/jenetics/jpx" xmlns="http://www.topografix.com/GPX/1/1">
  *     <trk>
  *         <trkseg>
@@ -63,22 +63,20 @@
  *         </trkseg>
  *     </trk>
  * </gpx>
- * }</pre>
+ * }
  *
  * <b>Reading a GPX file</b>
- * <pre>{@code
- * final GPX gpx = GPX.read(Path.of("points.gpx"));
- * }</pre>
+ * {@snippet lang="java":
+ * final GPX gpx = GPX.read("points.xml");
+ * }
  *
  * <b>Reading erroneous GPX files</b>
- * <pre>{@code
- * final GPX gpx = GPX.Reader
- *     .of(GPX.Reader.Mode.LENIENT)
- *     .read(Path.of("points.gpx"));
- * }</pre>
+ * {@snippet lang="java":
+ * final GPX gpx = GPX.Reader.of(GPX.Reader.Mode.LENIENT).read("track.xml");
+ * }
  *
- * This allows reading otherwise invalid GPX files, like
- * <pre>{@code
+ * This allows to read otherwise invalid GPX files, like
+ * {@snippet lang="java":
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *   <metadata>
@@ -110,10 +108,10 @@
  *     </trkseg>
  *   </trk>
  * </gpx>
- * }</pre>
+ * }
  *
  * which is read as (if you write it again)
- * <pre>{@code
+ * {@snippet lang="java":
  * <?xml version="1.0" encoding="UTF-8"?>
  * <gpx version="1.1" creator="GPSBabel - http://www.gpsbabel.org" xmlns="http://www.topografix.com/GPX/1/1">
  *     <metadata>
@@ -145,10 +143,10 @@
  *         </trkseg>
  *     </trk>
  * </gpx>
- * }</pre>
+ * }
  *
  * <b>Converting a GPX object to an XML {@link org.w3c.dom.Document}</b>
- * <pre>{@code
+ * {@snippet lang="java":
  * final GPX gpx = ...;
  *
  * final Document doc = XMLProvider.provider()
@@ -158,7 +156,7 @@
  *
  * // The GPX data are written to the empty `doc` object.
  * GPX.Writer.DEFAULT.write(gpx, new DOMResult(doc));
- * }</pre>
+ * }
  */
 module io.jenetics.jpx {
 	requires transitive java.xml;

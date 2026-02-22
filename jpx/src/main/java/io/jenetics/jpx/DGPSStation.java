@@ -120,8 +120,7 @@ public final class DGPSStation
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof DGPSStation dgps &&
+		return obj instanceof DGPSStation dgps &&
 			dgps._value == _value;
 	}
 

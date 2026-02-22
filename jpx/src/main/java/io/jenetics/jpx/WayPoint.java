@@ -53,11 +53,11 @@ import io.jenetics.jpx.GPX.Version;
  * feature on a map.
  * <p>
  * Creating a {@code WayPoint}:
- * <pre>{@code
+ * {@snippet lang="java":
  * final WayPoint point = WayPoint.builder()
  *     .lat(48.2081743).lon(16.3738189).ele(160)
  *     .build();
- * }</pre>
+ * }
  *
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  * @version 3.0
@@ -118,7 +118,7 @@ public final class WayPoint implements Point, Serializable {
 	 * @param source source of data. Included to give user some idea of
 	 *        reliability and accuracy of data. "Garmin eTrex", "USGS quad
 	 *        Boston North", e.g. (optional)
-	 * @param links links to additional information about the way-point. May be
+	 * @param links links to additional information about the way-point. Maybe
 	 *        empty, but not {@code null}.
 	 * @param symbol text of GPS symbol name. For interchange with other
 	 *        programs, use the exact spelling of the symbol as displayed on the
@@ -385,11 +385,11 @@ public final class WayPoint implements Point, Serializable {
 	/**
 	 * Return the (cloned) extensions document. The root element of the returned
 	 * document has the name {@code extensions}.
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * <extensions>
 	 *     ...
 	 * </extensions>
-	 * }</pre>
+	 * }
 	 *
 	 * @since 1.5
 	 *
@@ -467,8 +467,7 @@ public final class WayPoint implements Point, Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof WayPoint wp &&
+		return obj instanceof WayPoint wp &&
 			Objects.equals(wp._latitude, _latitude) &&
 			Objects.equals(wp._longitude, _longitude) &&
 			Objects.equals(wp._elevation, _elevation) &&
@@ -507,11 +506,11 @@ public final class WayPoint implements Point, Serializable {
 	 * Builder for creating a way-point with different parameters.
 	 * <p>
 	 * Creating a {@code WayPoint}:
-	 * <pre>{@code
+	 * {@snippet lang="java":
 	 * final WayPoint point = WayPoint.builder()
 	 *     .lat(48.2081743).lon(16.3738189).ele(160)
 	 *     .build();
-	 * }</pre>
+	 * }
 	 *
 	 * @see  #builder()
 	 */
@@ -1259,11 +1258,11 @@ public final class WayPoint implements Point, Serializable {
 		/**
 		 * Sets the extensions object, which may be {@code null}. The root
 		 * element of the extensions document must be {@code extensions}.
-		 * <pre>{@code
+		 * {@snippet lang="java":
 		 * <extensions>
 		 *     ...
 		 * </extensions>
-		 * }</pre>
+		 * }
 		 *
 		 * @since 1.5
 		 *
@@ -1771,8 +1770,8 @@ public final class WayPoint implements Point, Serializable {
 	public static WayPoint of(final Point point) {
 		requireNonNull(point);
 
-		return point instanceof WayPoint
-			? (WayPoint)point
+		return point instanceof WayPoint wp
+			? wp
 			: of(
 				point.getLatitude(),
 				point.getLongitude(),
@@ -1946,13 +1945,13 @@ public final class WayPoint implements Point, Serializable {
 	private static String url(final WayPoint point) {
 		return point.getLinks().isEmpty()
 			? null
-			: point.getLinks().get(0).getHref().toString();
+			: point.getLinks().getFirst().getHref().toString();
 	}
 
 	private static String urlname(final WayPoint point) {
 		return point.getLinks().isEmpty()
 			? null
-			: point.getLinks().get(0).getText().orElse(null);
+			: point.getLinks().getFirst().getText().orElse(null);
 	}
 
 	// Define the necessary writers for the different versions.

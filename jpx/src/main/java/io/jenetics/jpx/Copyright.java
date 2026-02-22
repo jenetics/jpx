@@ -103,8 +103,7 @@ public final class Copyright implements Serializable {
 
 	@Override
 	public boolean equals(final Object obj) {
-		return obj == this ||
-			obj instanceof Copyright cr &&
+		return obj instanceof Copyright cr &&
 			Objects.equals(cr._author, _author) &&
 			Objects.equals(cr._year, _year) &&
 			Objects.equals(cr._license, _license);

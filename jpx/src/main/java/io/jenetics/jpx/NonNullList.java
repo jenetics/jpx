@@ -292,7 +292,7 @@ final class NonNullList<E> implements List<E>, Serializable {
 
 	@Override
 	public boolean equals(final Object o) {
-		return o == this || _adoptee.equals(o);
+		return o instanceof List<?> list && _adoptee.equals(list);
 	}
 
 }

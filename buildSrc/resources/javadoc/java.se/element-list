@@ -2,7 +2,12 @@ module:java.base
 java.io
 java.lang
 java.lang.annotation
+java.lang.classfile
+java.lang.classfile.attribute
+java.lang.classfile.constantpool
+java.lang.classfile.instruction
 java.lang.constant
+java.lang.foreign
 java.lang.invoke
 java.lang.module
 java.lang.ref
@@ -90,6 +95,7 @@ javax.print
 javax.print.attribute
 javax.print.attribute.standard
 javax.print.event
+javax.sound
 javax.sound.midi
 javax.sound.midi.spi
 javax.sound.sampled
@@ -209,7 +215,6 @@ com.sun.source.tree
 com.sun.source.util
 com.sun.tools.javac
 module:jdk.crypto.cryptoki
-module:jdk.crypto.ec
 module:jdk.dynalink
 jdk.dynalink
 jdk.dynalink.beans
@@ -221,12 +226,9 @@ module:jdk.hotspot.agent
 module:jdk.httpserver
 com.sun.net.httpserver
 com.sun.net.httpserver.spi
-module:jdk.incubator.foreign
-jdk.incubator.foreign
 module:jdk.incubator.vector
 jdk.incubator.vector
 module:jdk.jartool
-com.sun.jarsigner
 jdk.security.jarsigner
 module:jdk.javadoc
 jdk.javadoc.doclet
@@ -257,6 +259,7 @@ module:jdk.jstatd
 module:jdk.localedata
 module:jdk.management
 com.sun.management
+jdk.management
 module:jdk.management.agent
 module:jdk.management.jfr
 jdk.management.jfr
