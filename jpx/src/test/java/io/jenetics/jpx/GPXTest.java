@@ -20,6 +20,10 @@
 package io.jenetics.jpx;
 
 import static java.lang.String.format;
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.nio.charset.StandardCharsets.UTF_16BE;
+import static java.nio.charset.StandardCharsets.UTF_16LE;
 import static java.util.Arrays.asList;
 import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +42,8 @@ import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.Collections;
@@ -506,6 +512,93 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 	public Object[][] readWriteGPX() {
 		return new Object[][] {
 			{"/io/jenetics/jpx/ISSUE-38.gpx.xml"}
+		};
+	}
+
+	@Test(dataProvider = "gpxEncodings")
+	public void readEncodedGPX(final Charset charset, final boolean bom)
+		throws IOException
+	{
+		final String xml = """
+			<?xml version="1.0" encoding="%s"?>
+			<gpx version="1.1" creator="test"
+			    xmlns="http://www.topografix.com/GPX/1/1">
+			    <metadata><name>München</name></metadata>
+			    <wpt lat="48.1" lon="11.5"/>
+			</gpx>
+			""".formatted(charset.name());
+		final GPX expected = GPX.builder("test")
+			.metadata(metadata -> metadata.name("München"))
+			.addWayPoint(point -> point.lat(48.1).lon(11.5))
+			.build();
+		final byte[] bytes = ((bom ? "\uFEFF" : "") + xml).getBytes(charset);
+
+		try (var input = new ByteArrayInputStream(bytes)) {
+			assertThat(GPX.Reader.DEFAULT.read(input)).isEqualTo(expected);
+		}
+
+		final var path = Files.createTempFile("jpx-encoding-", ".gpx");
+		try {
+			Files.write(path, bytes);
+			assertThat(GPX.read(path)).isEqualTo(expected);
+		} finally {
+			Files.deleteIfExists(path);
+		}
+	}
+
+	@Test
+	public void readDecodedGPX() {
+		for (var charset : List.of(UTF_8, UTF_16BE, UTF_16LE, ISO_8859_1)) {
+			final String xml = """
+				<?xml version="1.0" encoding="%s"?>
+				<gpx version="1.1" creator="test"
+				    xmlns="http://www.topografix.com/GPX/1/1">
+				    <metadata><name>München</name></metadata>
+				</gpx>
+				""".formatted(charset.name());
+
+			assertThat(GPX.Reader.DEFAULT.fromString(xml).getMetadata())
+				.flatMap(Metadata::getName)
+				.hasValue("München");
+		}
+	}
+
+	@DataProvider(name = "gpxEncodings")
+	public Object[][] gpxEncodings() {
+		return new Object[][] {
+			{UTF_8, false},
+			{UTF_8, true},
+			{UTF_16BE, true},
+			{UTF_16LE, true},
+			{ISO_8859_1, false}
+		};
+	}
+
+	@Test(dataProvider = "readInputIsNotClosed")
+	public void readDoesNotCloseInputStream(final String xml, final boolean valid)
+		throws IOException
+	{
+		final boolean[] closed = {false};
+		final var input = new ByteArrayInputStream(xml.getBytes(UTF_8)) {
+			@Override
+			public void close() {
+				closed[0] = true;
+			}
+		};
+
+		if (valid) {
+			GPX.Reader.DEFAULT.read(input);
+		} else {
+			Assert.expectThrows(IOException.class, () -> GPX.Reader.DEFAULT.read(input));
+		}
+		assertThat(closed[0]).isFalse();
+	}
+
+	@DataProvider(name = "readInputIsNotClosed")
+	public Object[][] readInputIsNotClosed() {
+		return new Object[][] {
+			{"<gpx version=\"1.1\" creator=\"test\"/>", true},
+			{"<gpx", false}
 		};
 	}
 
