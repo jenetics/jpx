@@ -1,5 +1,18 @@
 ## Release notes
 
+### [4.0.1](https://github.com/jenetics/jpx/releases/tag/v4.0.1)
+
+#### Bugs
+
+* [#190](https://github.com/jenetics/jpx/issues/190): GPX.read cannot handle Files with BOM.
+
+### [4.0.0](https://github.com/jenetics/jpx/releases/tag/v4.0.0)
+
+#### Improvements
+
+* [#177](https://github.com/jenetics/jpx/issues/177): Convert 'geom' classes to records.
+* [#192](https://github.com/jenetics/jpx/issues/192): Update library to Java 25.
+
 ### [3.2.1](https://github.com/jenetics/jpx/releases/tag/v3.2.1)
 
 #### Improvements

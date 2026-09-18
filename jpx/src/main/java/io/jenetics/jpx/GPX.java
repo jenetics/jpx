@@ -36,13 +36,13 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.InvalidObjectException;
 import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serial;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.io.UncheckedIOException;
 import java.net.URI;
 import java.nio.file.Files;
@@ -1209,10 +1209,7 @@ public final class GPX implements Serializable {
 		public GPX read(final InputStream input)
 			throws IOException
 		{
-			final var wrapper = new NonCloseableInputStream(input);
-			try (var reader = new InputStreamReader(wrapper, UTF_8)) {
-				return read(new StreamSource(reader));
-			}
+			return read(new StreamSource(new NonCloseableInputStream(input)));
 		}
 
 		/**
@@ -1273,7 +1270,7 @@ public final class GPX implements Serializable {
 		 */
 		public GPX fromString(final String xml) {
 			try {
-				return read(new ByteArrayInputStream(xml.getBytes()));
+				return read(new StreamSource(new StringReader(xml)));
 			} catch (InvalidObjectException e) {
 				if (e.getCause() instanceof IllegalArgumentException iae) {
 					throw iae;
