@@ -331,6 +331,12 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [4.0.1](https://github.com/jenetics/jpx/releases/tag/v4.0.1)
+
+#### Bugs
+
+* [#190](https://github.com/jenetics/jpx/issues/190): GPX.read cannot handle Files with BOM.
+
 ### [4.0.0](https://github.com/jenetics/jpx/releases/tag/v4.0.0)
 
 #### Improvements
