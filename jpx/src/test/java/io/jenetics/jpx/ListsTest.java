@@ -20,12 +20,41 @@
 package io.jenetics.jpx;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 /**
  * @author <a href="mailto:franz.wilhelmstoetter@gmail.com">Franz Wilhelmstötter</a>
  */
 public class ListsTest {
+
+	@Test
+	public void equalityCountsDuplicateElements() {
+		Assert.assertFalse(Lists.equals(List.of("a", "a"), List.of("a", "b")));
+		Assert.assertFalse(Lists.equals(List.of("a", "b"), List.of("a", "a")));
+		Assert.assertFalse(Lists.equals(List.of("a", "a", "b"), List.of("a", "b", "b")));
+		Assert.assertTrue(Lists.equals(List.of("a", "a", "b"), List.of("b", "a", "a")));
+	}
+
+	@Test
+	public void equalityCountsNullElements() {
+		Assert.assertFalse(Lists.equals(Arrays.asList(null, null), Arrays.asList(null, "a")));
+		Assert.assertFalse(Lists.equals(Arrays.asList(null, "a"), Arrays.asList(null, null)));
+		Assert.assertTrue(Lists.equals(Arrays.asList(null, "a"), Arrays.asList("a", null)));
+	}
+
+	@Test
+	public void wayPointEqualityWithDuplicateLinksIsSymmetric() {
+		final var a = Link.of("https://example.com/a");
+		final var b = Link.of("https://example.com/b");
+		final var first = WayPoint.builder().lat(0).lon(0).links(List.of(a, a)).build();
+		final var second = WayPoint.builder().lat(0).lon(0).links(List.of(a, b)).build();
+		Assert.assertFalse(first.equals(second));
+		Assert.assertFalse(second.equals(first));
+	}
 
 	static <T> List<T> revert(final List<T> list) {
 		final List<T> result = new ArrayList<T>(list.size());
