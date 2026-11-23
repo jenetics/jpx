@@ -52,8 +52,8 @@ public class ListsTest {
 		final var b = Link.of("https://example.com/b");
 		final var first = WayPoint.builder().lat(0).lon(0).links(List.of(a, a)).build();
 		final var second = WayPoint.builder().lat(0).lon(0).links(List.of(a, b)).build();
-		Assert.assertFalse(first.equals(second));
-		Assert.assertFalse(second.equals(first));
+		Assert.assertNotEquals(second, first);
+		Assert.assertNotEquals(first, second);
 	}
 
 	static <T> List<T> revert(final List<T> list) {
