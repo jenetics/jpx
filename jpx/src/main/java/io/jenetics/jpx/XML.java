@@ -21,6 +21,7 @@ package io.jenetics.jpx;
 
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static javax.xml.XMLConstants.XMLNS_ATTRIBUTE;
 import static javax.xml.transform.OutputKeys.OMIT_XML_DECLARATION;
 import static javax.xml.transform.OutputKeys.VERSION;
 
@@ -103,7 +104,18 @@ final class XML {
 	static void copy(final Node source, final XMLStreamWriter sink)
 		throws XMLStreamException
 	{
-		__copy(new DOMSource(source), new StAXResult(sink));
+		// The JDK's SAX2StAXStreamWriter passes "xmlns" to setPrefix for a
+		// default declaration. Bind the default namespace with the empty prefix.
+		__copy(new DOMSource(source), new StAXResult(
+			new XMLStreamWriterAdapter(sink) {
+				@Override
+				public void setPrefix(final String prefix, final String uri)
+					throws XMLStreamException
+				{
+					super.setPrefix(XMLNS_ATTRIBUTE.equals(prefix) ? "" : prefix, uri);
+				}
+			}
+		));
 	}
 
 	static void copy(final Node source, final OutputStream sink)
