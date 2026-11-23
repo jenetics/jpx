@@ -331,6 +331,13 @@ The library is licensed under the [Apache License, Version 2.0](http://www.apach
 
 ## Release notes
 
+### [4.0.2](https://github.com/jenetics/jpx/releases/tag/v4.0.2)
+
+#### Bugs
+
+* [#196](https://github.com/jenetics/jpx/issues/196): Duplicate links make WayPoint.equals asymmetric.
+* [#198](https://github.com/jenetics/jpx/issues/198): Fix writing GPX extensions with Woodstox.
+
 ### [4.0.1](https://github.com/jenetics/jpx/releases/tag/v4.0.1)
 
 #### Bugs
