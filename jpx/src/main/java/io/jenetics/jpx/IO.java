@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
@@ -462,11 +463,18 @@ final class IO {
 
 		final ByteArrayInputStream bin = new ByteArrayInputStream(data);
 		try {
-			return XMLProvider
+			final DocumentBuilder builder = XMLProvider
 				.provider()
 				.documentBuilderFactory()
-				.newDocumentBuilder()
-				.parse(bin);
+				.newDocumentBuilder();
+
+			// Serialized extension documents never reference external
+			// entities. Refuse them, whatever the DOM implementation.
+			builder.setEntityResolver((publicId, systemId) -> {
+				throw new SAXException("External entity not allowed: " + systemId);
+			});
+
+			return builder.parse(bin);
 		} catch (ParserConfigurationException|SAXException e) {
 			throw new IOException(e);
 		}

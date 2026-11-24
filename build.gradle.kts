@@ -35,7 +35,7 @@ plugins {
 rootProject.version = JPX.VERSION
 
 tasks.named<Wrapper>("wrapper") {
-	version = "9.7.1"
+	version = "9.9.2"
 	distributionType = Wrapper.DistributionType.ALL
 }
 

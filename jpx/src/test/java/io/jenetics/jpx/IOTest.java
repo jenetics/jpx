@@ -19,11 +19,15 @@
  */
 package io.jenetics.jpx;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Random;
 
 import org.testng.Assert;
@@ -87,6 +91,53 @@ public class IOTest {
 		final Document read = IO.readDoc(din);
 
 		Assert.assertTrue(XML.equals(value, read));
+	}
+
+	@Test
+	public void readDocDoesNotResolveExternalEntities() throws IOException {
+		final Path secret = Files.createTempFile("jpx-secret", ".txt");
+		secret.toFile().deleteOnExit();
+		Files.writeString(secret, XMLProviderTest.SECRET);
+
+		final byte[] xml = """
+			<!DOCTYPE extensions [<!ENTITY secret SYSTEM "%s">]>
+			<extensions>&secret;</extensions>
+			""".formatted(secret.toUri()).getBytes(UTF_8);
+
+		final ByteArrayOutputStream bout = new ByteArrayOutputStream();
+		final DataOutputStream dout = new DataOutputStream(bout);
+		IO.writeInt(xml.length, dout);
+		dout.write(xml);
+		dout.flush();
+
+		final ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
+		final DataInputStream din = new DataInputStream(bin);
+		String text = "";
+		try {
+			text = IO.readDoc(din).getDocumentElement().getTextContent();
+		} catch (IOException ignore) {
+			// Rejecting the document is fine, resolving the entity is not.
+		}
+
+		Assert.assertFalse(text.contains(XMLProviderTest.SECRET));
+	}
+
+	@Test
+	public void readDocDoesNotResolveExternalEntitiesIfAccessIsAllowed()
+		throws IOException
+	{
+		final String property = "javax.xml.accessExternalDTD";
+		final String value = System.getProperty(property);
+		System.setProperty(property, "all");
+		try {
+			readDocDoesNotResolveExternalEntities();
+		} finally {
+			if (value != null) {
+				System.setProperty(property, value);
+			} else {
+				System.clearProperty(property);
+			}
+		}
 	}
 
 }

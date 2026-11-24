@@ -27,6 +27,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Locale.ENGLISH;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static io.jenetics.jpx.ListsTest.revert;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -44,12 +45,14 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.NumberFormat;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -1092,6 +1095,25 @@ public class GPXTest extends XMLStreamTestBase<GPX> {
 		);
 
 		assertThat(createGPX.getCreator()).isEqualTo("JPX - https://github.com/jenetics/jpx");
+	}
+
+	@Test
+	public void readDoesNotResolveExternalEntities() throws IOException {
+		final Path dir = Files.createTempDirectory("jpx");
+		dir.toFile().deleteOnExit();
+		final Path dtd = dir.resolve("missing-" + UUID.randomUUID() + ".dtd");
+		final Path gpx = dir.resolve("external-entity.gpx");
+		gpx.toFile().deleteOnExit();
+		Files.writeString(gpx, """
+			<?xml version="1.0" encoding="UTF-8"?>
+			<!DOCTYPE gpx [<!ENTITY %% dtd SYSTEM "%s"> %%dtd;]>
+			<gpx version="1.1" creator="test" xmlns="http://www.topografix.com/GPX/1/1"/>
+			""".formatted(dtd.toUri()));
+
+		// The reader must not try to load the external DTD.
+		assertThatThrownBy(() -> GPX.read(gpx))
+			.isInstanceOf(InvalidObjectException.class)
+			.hasMessageNotContaining(dtd.getFileName().toString());
 	}
 
 }

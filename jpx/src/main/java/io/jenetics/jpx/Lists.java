@@ -22,11 +22,10 @@ package io.jenetics.jpx;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * Helper methods for handling lists. All method handles null values correctly.
@@ -82,27 +81,20 @@ final class Lists {
 	}
 
 	private static boolean containsAll(final Collection<?> a, final Collection<?> b) {
-		final Iterator<?> ita = a.iterator();
-		final Set<Object> visited = new HashSet<>();
+		final Map<Object, Integer> counts = new HashMap<>();
+		for (final Object element : a) {
+			counts.merge(element, 1, Integer::sum);
+		}
 
-		for (final Object next : b) {
-			if (visited.contains(next)) {
-				continue;
-			}
-
-			boolean foundCurrentElement = false;
-			while (ita.hasNext()) {
-				final Object p = ita.next();
-				visited.add(p);
-
-				if (Objects.equals(next, p)) {
-					foundCurrentElement = true;
-					break;
-				}
-			}
-
-			if (!foundCurrentElement) {
+		for (final Object element : b) {
+			final Integer count = counts.get(element);
+			if (count == null) {
 				return false;
+			}
+			if (count == 1) {
+				counts.remove(element);
+			} else {
+				counts.put(element, count - 1);
 			}
 		}
 
