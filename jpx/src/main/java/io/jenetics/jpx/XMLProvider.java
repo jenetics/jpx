@@ -23,7 +23,9 @@ package io.jenetics.jpx;
 import java.util.Iterator;
 import java.util.ServiceLoader;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 
@@ -48,11 +50,18 @@ public abstract class XMLProvider {
 
 	/**
 	 * Returns {@link XMLInputFactory} to be used for reading files.
+	 * <p>
+	 * GPX files don't use a DTD. The returned factory has DTD processing and
+	 * external entity resolution disabled, which protects against XML external
+	 * entity (XXE) attacks when reading untrusted GPX files.
 	 *
 	 * @return the XML input factory
 	 */
 	public XMLInputFactory xmlInputFactory() {
-		return XMLInputFactory.newInstance();
+		final XMLInputFactory factory = XMLInputFactory.newInstance();
+		factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+		factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+		return factory;
 	}
 
 	/**
@@ -66,6 +75,10 @@ public abstract class XMLProvider {
 
 	/**
 	 * Returns the {@link DocumentBuilderFactory} used for handling extensions documents
+	 * <p>
+	 * The returned factory has {@link XMLConstants#FEATURE_SECURE_PROCESSING}
+	 * enabled, if the DOM implementation supports it. With the JDK's built-in
+	 * parser, this blocks the loading of external DTDs and external entities.
 	 *
 	 * @return the document builder factory
 	 */
@@ -73,6 +86,11 @@ public abstract class XMLProvider {
 		final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setIgnoringElementContentWhitespace(true);
 		factory.setNamespaceAware(true);
+		try {
+			factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+		} catch (ParserConfigurationException ignore) {
+			// Not supported by this DOM implementation, e.g. on Android.
+		}
 		return factory;
 	}
 
